@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../features/groups/groups_page.dart';
 import '../shared/widgets/app_footer.dart';
-import '../theme/styles.dart';
+import '../core/theme/styles.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});

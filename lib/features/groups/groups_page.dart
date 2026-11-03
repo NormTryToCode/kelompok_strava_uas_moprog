@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'tabs/challenges_tab.dart';
-import 'tabs/clubs_tab.dart';
-import 'tabs/events_tab.dart';
+import 'package:kelompok_strava_uas_moprog/features/challenges/challenges_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/clubs/clubs_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/events/events_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/groups_page.dart';
 
-import '../../theme/styles.dart';
-import 'widgets/groups_tab_bar.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/groups_tab_bar.dart';
 
 class GroupsPage extends StatelessWidget {
   final int initialTab;
@@ -33,4 +34,3 @@ class GroupsPage extends StatelessWidget {
     );
   }
 }
-

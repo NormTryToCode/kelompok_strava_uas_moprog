@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/styles.dart';
+import '../../core/theme/styles.dart';
 
 class AppFooter extends StatelessWidget {
   final int currentIndex;
