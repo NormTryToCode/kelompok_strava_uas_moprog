@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../features/groups/groups_page.dart';
 import '../shared/widgets/app_footer.dart';
 import '../core/theme/styles.dart';
-import '../features/map/map_page.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -16,7 +15,7 @@ class _MainShellState extends State<MainShell> {
 
   static const _pages = [
     _Placeholder('Home'),
-    MapPage(),
+    _Placeholder('Maps'),
     _Placeholder('Record'),
     GroupsPage(),
     _Placeholder('You'),
