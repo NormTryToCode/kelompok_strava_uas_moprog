@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class AppFooter extends StatelessWidget {
   final int currentIndex;
