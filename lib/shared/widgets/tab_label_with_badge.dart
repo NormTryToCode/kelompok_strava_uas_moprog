@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class TabLabelWithBadge extends StatelessWidget {
   //class untuk notifikasi, belum terpasang karena functionnya belum lengkap
@@ -28,4 +28,3 @@ class TabLabelWithBadge extends StatelessWidget {
     );
   }
 }
-
