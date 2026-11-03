@@ -4,7 +4,7 @@ import 'tabs/challenges_tab.dart';
 import 'tabs/clubs_tab.dart';
 import 'tabs/events_tab.dart';
 
-import 'theme/groups_colors.dart';
+import '../../theme/styles.dart';
 import 'widgets/groups_tab_bar.dart';
 
 class GroupsPage extends StatelessWidget {
@@ -18,22 +18,19 @@ class GroupsPage extends StatelessWidget {
       length: 3,
       initialIndex: initialTab,
       child: const Material(
-        color: GroupsColors.background,
+        color: Styles.background,
         child: Column(
           children: [
             GroupsTabBar(),
             Expanded(
               child: TabBarView(
-                children: [
-                  ChallengesTab(),
-                  ClubsTab(),
-                  EventsTab(),
-                ],
-              )
-            )
+                children: [ChallengesTab(), ClubsTab(), EventsTab()],
+              ),
+            ),
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 }
+

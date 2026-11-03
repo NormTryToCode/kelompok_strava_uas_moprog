@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/theme/groups_colors.dart';
+import 'package:kelompok_strava_uas_moprog/theme/styles.dart';
 
-class TabLabelWithBadge extends StatelessWidget { //class untuk notifikasi, belum terpasang karena functionnya belum lengkap
+class TabLabelWithBadge extends StatelessWidget {
+  //class untuk notifikasi, belum terpasang karena functionnya belum lengkap
   final String label;
   final bool showBadge;
 
-  const TabLabelWithBadge({super.key, required this.label, this.showBadge = false,});
+  const TabLabelWithBadge({
+    super.key,
+    required this.label,
+    this.showBadge = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +22,10 @@ class TabLabelWithBadge extends StatelessWidget { //class untuk notifikasi, belu
           const Positioned(
             top: 0,
             right: -10,
-            child: CircleAvatar(radius: 3.5, backgroundColor: GroupsColors.badge),
-          )
+            child: CircleAvatar(radius: 3.5, backgroundColor: Styles.badge),
+          ),
       ],
     );
   }
 }
+
