@@ -13,7 +13,7 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  int _index = 1;
+  int _index = 0;
 
   static const _pages = [
     _Placeholder('Home'),
