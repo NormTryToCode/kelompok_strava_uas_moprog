@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class AktivitasTab extends StatelessWidget {
   final int activityCount;
@@ -13,58 +14,100 @@ class AktivitasTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(12.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (activityCount == 0)
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.timeline,
-                color: Colors.deepOrange,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "Rekam Aktivitas Pertama Anda",
-                style: TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                "Saat Merekam Aktivitas, Anda Akan Melihatnya Di sini.",
-                style: TextStyle(fontSize: 13, color: Colors.grey),
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: onAddFirstActivity, 
-                child: const Text("Simulasi Rekam Lari (+1)"),
-              ),
-            ],
+          Container(
+            color: Styles.surface,
+            padding: const EdgeInsets.all(14.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.timeline,
+                      color: Styles.tabActive,
+                      size: 28,
+                    ),
+                    SizedBox(width: 14),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Rekam aktivitas pertama Anda",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Styles.tabActive,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Saat merekam aktivitas, Anda akan\nmelihatnya di sini.",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Styles.tabInactive,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                IconButton.filled(
+                  onPressed: onAddFirstActivity,
+                  icon: const Icon(
+                    Icons.chevron_right,
+                    color: Styles.tabActive,
+                  ),
+                ),
+              ],
+            ),
           ),
+          const SizedBox(height: 12),
           if (activityCount > 0)
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.directions_run,
-                color: Colors.green,
+            Container(
+              color: Styles.surface,
+              padding: const EdgeInsets.all(14.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.directions_run,
+                        color: Styles.active,
+                        size: 28,
+                      ),
+                      const SizedBox(width: 14),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Lari Pagi Jakarta ($activityCount Sesi)",
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Styles.tabActive,
+                            ),
+                          ),
+                          Text(
+                            "Total Jarak: ${activityCount * 3} km • Waktu: ${activityCount * 20}m",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Styles.active,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Icon(
+                    Icons.check_circle,
+                    color: Styles.active,
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Total $activityCount Aktivitas Lari Tercatat!",
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "Estimasi Total Jarak: ${activityCount * 3} km",
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.deepOrange,
-                )
-              )
-            ],
-          )
+            ),
         ],
       ),
     );

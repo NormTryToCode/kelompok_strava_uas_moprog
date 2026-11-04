@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../widgets/best_efforts_widget.dart';
 import '../widgets/weekly_run_counter.dart';
 
@@ -23,57 +24,81 @@ class KemajuanTab extends StatefulWidget {
 }
 
 class _KemajuanTabState extends State<KemajuanTab> {
-  bool showBestEfforts = false;
+  int _subSection = 0;
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showBestEfforts = false;
-                });
-              }, 
-              child: const Text("Target Minggu Ini"),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  showBestEfforts = true;
-                });
-              }, 
-              child: const Text("Usaha Terbaik (5K)"),
-            )
-          ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _subSection = 0;
+                  });
+                },
+                child: Text(
+                  "Berlari",
+                  style: TextStyle(
+                    color: (_subSection == 0)
+                      ? Styles.accent
+                      : Styles.background,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _subSection = 1;
+                  });
+                },
+                child: Text(
+                  "Usaha & Target",
+                  style: TextStyle(
+                    color: (_subSection == 1)
+                      ? Styles.accent
+                      : Styles.background,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _subSection = 2;
+                  });
+                },
+                child: Text(
+                  "Catatan",
+                  style: TextStyle(
+                    color: (_subSection == 2)
+                      ? Styles.accent
+                      : Styles.background,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        if (!showBestEfforts)
+        if (_subSection == 0)
           WeeklyRunCounter(
-            runSessions: widget.runSessions, 
-            onDecrement: widget.onDecrement, 
-            onReset: widget.onReset, 
+            runSessions: widget.runSessions,
+            onDecrement: widget.onDecrement,
+            onReset: widget.onReset,
             onIncrement: widget.onIncrement,
           ),
-        if (showBestEfforts) const BestEffortsWidget(),
-        const SizedBox(height: 6),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Tertarik Berbagi Masukan ?",
-              style: TextStyle(fontSize: 13),
-            ),
-            ElevatedButton(
-              onPressed: widget.onOpenFeedback, 
-              child: const Text("Beri Masukan"),
-            )
-          ],
-        )
+        if (_subSection != 0)
+          BestEffortsWidget(
+            viewMode: _subSection,
+            runSessions: widget.runSessions,
+            onOpenFeedback: widget.onOpenFeedback,
+          ),
       ],
     );
   }
