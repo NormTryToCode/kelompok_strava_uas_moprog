@@ -59,7 +59,7 @@ class ProfileTabBar extends StatelessWidget {
                   IconButton.filled(
                     onPressed: onTapAktivitas,
                     icon: Icon(
-                      Icons.water,
+                      Icons.timeline,
                       color: (activeTab == 1)
                         ? Styles.accent
                         : Styles.tabInactive,
