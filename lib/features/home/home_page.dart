@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 18.0),
           HomeStreakWidget(),
         ],
       ),

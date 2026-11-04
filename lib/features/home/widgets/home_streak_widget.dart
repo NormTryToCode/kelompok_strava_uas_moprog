@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 class HomeStreakWidget extends StatelessWidget {
@@ -15,10 +13,10 @@ class HomeStreakWidget extends StatelessWidget {
         Column(
           children: [
             const Text(
-              'Hello user',
+              'Hello user 👋🏻',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 24,
+                fontSize: 42,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -26,13 +24,13 @@ class HomeStreakWidget extends StatelessWidget {
               'Streak: $dayStreak days',
               style: const TextStyle(
                 color: Colors.white70,
-                fontSize: 16,
+                fontSize: 21,
               ),
             ),
           ],
         ),
         const CircleAvatar(
-          radius: 30,
+          radius: 64,
           child: Icon(Icons.person, size: 32),
         ),
       ],
