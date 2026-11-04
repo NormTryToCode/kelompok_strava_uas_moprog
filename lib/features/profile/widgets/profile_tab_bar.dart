@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class ProfileTabBar extends StatelessWidget {
   final int activeTab;
@@ -16,42 +17,111 @@ class ProfileTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      color: Styles.background,
+      child: Column(
         children: [
-          ElevatedButton(
-            onPressed: onTapKemajuan, 
-            child: Text(
-              "Kemajuan",
-              style: TextStyle(
-                color: (activeTab == 0) ? Colors.deepOrange : Colors.black,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  IconButton.filled(
+                    onPressed: onTapKemajuan,
+                    icon: Icon(
+                      Icons.assessment,
+                      color: (activeTab == 0)
+                        ? Styles.accent
+                        : Styles.tabInactive,
+                    ),
+                  ),
+                  Text(
+                    "Kemajuan",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: (activeTab == 0)
+                        ? Styles.tabActive
+                        : Styles.tabInactive,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 110,
+                    height: 3,
+                    color: (activeTab == 0)
+                      ? Styles.accent
+                      : Styles.background,
+                  ),
+                ],
               ),
-            ),
+              Column(
+                children: [
+                  IconButton.filled(
+                    onPressed: onTapAktivitas,
+                    icon: Icon(
+                      Icons.water,
+                      color: (activeTab == 1)
+                        ? Styles.accent
+                        : Styles.tabInactive,
+                    ),
+                  ),
+                  Text(
+                    "Aktivitas",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: (activeTab == 1)
+                        ? Styles.tabActive
+                        : Styles.tabInactive,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 110,
+                    height: 3,
+                    color: (activeTab == 1)
+                      ? Styles.accent
+                      : Styles.background,
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  IconButton.filled(
+                    onPressed: onTapLainnya,
+                    icon: Icon(
+                      Icons.menu,
+                      color: (activeTab == 2)
+                        ? Styles.accent
+                        : Styles.tabInactive,
+                    ),
+                  ),
+                  Text(
+                    "Lainnya",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: (activeTab == 2)
+                          ? Styles.tabActive
+                          : Styles.tabInactive,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 110,
+                    height: 3,
+                    color: (activeTab == 2)
+                      ? Styles.accent
+                      : Styles.background,
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: onTapAktivitas, 
-            child: Text(
-              "Aktivitas",
-              style: TextStyle(
-                color: (activeTab == 1) ? Colors.deepOrange : Colors.black,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: onTapLainnya,
-            child: Text(
-              "Lainnya",
-              style: TextStyle(
-                color: (activeTab == 2) ? Colors.deepOrange : Colors.black,
-              ),
-            ),
+          Container(
+            height: 1,
+            color: Styles.inactive,
           ),
         ],
-      )
+      ),
     );
   }
 }
