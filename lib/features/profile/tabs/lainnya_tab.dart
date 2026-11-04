@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LainnyaTab extends StatefulWidget{
-  final VoidCallback onOpenThropyCase;
+  final VoidCallback onOpenTrophyCase;
 
   const LainnyaTab({
     super.key,
-    required this.onOpenThropyCase,
+    required this.onOpenTrophyCase,
   });
 
   @override
@@ -69,7 +69,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
               ),
               const SizedBox(width: 12),
               ElevatedButton(
-                onPressed: widget.onOpenThropyCase, 
+                onPressed: widget.onOpenTrophyCase, 
                 child: const Text("Semua Trofi"),
               ),
             ],

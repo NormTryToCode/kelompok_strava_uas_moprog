@@ -13,7 +13,7 @@ class TrophyCaseView extends StatelessWidget {
     'Aktivitas ke30'
   ];
 
-  static const thropyIcons = [
+  static const trophyIcons = [
     'https://cdn-icons-png.flaticon.com/512/3112/3112946.png',
     'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
     'https://cdn-icons-png.flaticon.com/512/2583/2583319.png',
@@ -28,7 +28,7 @@ class TrophyCaseView extends StatelessWidget {
       crossAxisCount: 2,
       children: List.generate(millestoneNames.length, (index) {
         return TrophyCard(
-          imageURL : thropyIcons[index],
+          imageURL : trophyIcons[index],
           milestoneTitle: millestoneNames[index],
         );
       }),
