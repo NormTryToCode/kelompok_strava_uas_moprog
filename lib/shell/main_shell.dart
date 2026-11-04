@@ -16,7 +16,7 @@ class _MainShellState extends State<MainShell> {
   int _index = 0;
 
   static const _pages = [
-    _Placeholder('Home'),
+    HomePage(),
     MapPage(),
     _Placeholder('Record'),
     GroupsPage(),
