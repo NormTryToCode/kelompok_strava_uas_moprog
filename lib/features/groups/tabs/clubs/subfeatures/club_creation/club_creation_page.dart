@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_progress_bar.dart';
 
 class ClubCreationPage extends StatefulWidget {
   const ClubCreationPage({super.key});
@@ -71,6 +72,13 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
               title: _title,
               onBack: _onBack,
               onClose: () => Navigator.of(context).pop(),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: StepProgressBar(
+                totalSteps: ClubCreationPage.totalSteps,
+                currentStep: _step,
+              ),
             ),
             Expanded(child: _buildStep()),
             _BottomBar(onNext: _onNext),
