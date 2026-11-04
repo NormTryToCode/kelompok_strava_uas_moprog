@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widget/tab_label_with_badge.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/tab_label_with_badge.dart';
 
 class GroupsTabBar extends StatelessWidget {
   const GroupsTabBar({super.key});
