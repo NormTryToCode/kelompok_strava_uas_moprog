@@ -7,20 +7,33 @@ class HomeStreakWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
-      width: double.infinity,
-      child: Row(
-        children: [
-          Text(
-            'Hello world',
-            style: TextStyle(color: Colors.white),
-          ),
-          Text(
-            'Streak: 0',
-            style: TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Column(
+          children: [
+            const Text(
+              'Hello user 👋🏻',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 42,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              'Streak: $dayStreak days',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 21,
+              ),
+            ),
+          ],
+        ),
+        const CircleAvatar(
+          radius: 64,
+          child: Icon(Icons.person, size: 32),
+        ),
+      ],
     );
   }
 }

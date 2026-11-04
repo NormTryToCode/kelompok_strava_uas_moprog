@@ -7,12 +7,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SizedBox(
-      width: double.infinity,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 18.0),
           HomeStreakWidget(),
         ],
       ),
     );
   }
 }
+
