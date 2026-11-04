@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class EditProfileView extends StatelessWidget {
   final String sportCategory;
@@ -20,65 +21,192 @@ class EditProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Edit Profile Atlet",
-              style: TextStyle(fontSize: 22, color: Colors.deepOrange),
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  IconButton.filled(
+                    onPressed: onSaveProfile,
+                    icon: const Icon(Icons.arrow_back, color: Styles.tabActive),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    "Edit Profil",
+                    style: TextStyle(fontSize: 20, color: Styles.tabActive),
+                  ),
+                ],
+              ),
+              ElevatedButton(
+                onPressed: onSaveProfile,
+                child: const Text(
+                  "SELESAI",
+                  style: TextStyle(color: Styles.accent),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Center(
+            child: SizedBox(
+              width: 64,
+              height: 64,
+              child: Image(
+                image: NetworkImage(
+                  'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
+                ),
+              ),
             ),
-            const SizedBox(height: 8),
-            const Text("Nama Depan : Michael"),
-            const Text("Nama Belakang : Respati Sanjaya Ho"),
-            const Text("Kota : Jakarta  |   Negara : Indonesia"),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 170,
+                color: Styles.surface,
+                padding: const EdgeInsets.all(10.0),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Nama depan",
+                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "Michael",
+                      style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 170,
+                color: Styles.surface,
+                padding: const EdgeInsets.all(10.0),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Nama belakang",
+                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "Respati Sanjaya Ho",
+                      style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            color: Styles.surface,
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Olahraga Utama: $sportCategory"),
-                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Olahraga Utama",
+                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                    ),
+                    Text(
+                      sportCategory,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Styles.tabActive,
+                      ),
+                    ),
+                  ],
+                ),
                 ElevatedButton(
-                  onPressed: onToggleSport, 
-                  child: const Text("Ganti Olahraga"),
+                  onPressed: onToggleSport,
+                  child: const Text("Ubah"),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            const Text(
-              "INFORMASI ATLET",
-              style: TextStyle(fontSize: 16, color: Colors.deepOrange),
-            ),
-            const Text("Tanggal Lahir: 30/08/2007   |   Jenis Kelamin: Pria"),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            "INFORMASI ATLET",
+            style: TextStyle(fontSize: 13, color: Styles.tabActive),
+          ),
+          const Text(
+            "Digunakan untuk menghitung kalori, kekuatan, dan lainnya",
+            style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            color: Styles.surface,
+            padding: const EdgeInsets.all(10.0),
+            child: const Row(
               children: [
-                IconButton(
-                  onPressed: onDecreaseWeight, 
-                  icon: const Icon(Icons.remove)
-                ),
-                const SizedBox(width: 12),
+                Icon(Icons.favorite_border, color: Styles.accent),
+                SizedBox(width: 10),
                 Text(
-                  "Berat: $weightKg kg",
-                  style: const TextStyle(fontSize: 18),
-                ),
-                const SizedBox(width: 12),
-                IconButton(
-                  onPressed: onIncreaseWeight, 
-                  icon: const Icon(Icons.add),
+                  "Perbarui profil otomatis dengan Google Fit",
+                  style: TextStyle(fontSize: 13, color: Styles.accent),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: onSaveProfile, 
-              child: const Text("SELESAI & SIMPAN"),
-            )
-          ],
-        ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            color: Styles.surface,
+            padding: const EdgeInsets.all(10.0),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Tanggal Lahir: 30/08/2007",
+                  style: TextStyle(fontSize: 14, color: Styles.tabActive),
+                ),
+                Text(
+                  "Jenis Kelamin: Pria",
+                  style: TextStyle(fontSize: 14, color: Styles.tabActive),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            color: Styles.surface,
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Berat (kg): $weightKg kg",
+                  style: const TextStyle(fontSize: 15, color: Styles.tabActive),
+                ),
+                Row(
+                  children: [
+                    IconButton.filled(
+                      onPressed: onDecreaseWeight,
+                      icon: const Icon(Icons.remove),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton.filled(
+                      onPressed: onIncreaseWeight,
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
