@@ -10,7 +10,7 @@ class ClubsTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CreateClubBar(onCreate: () => ClubsTab.new),
+        CreateClubBar(onCreate: () => ClubCreationPage.open(context)),
       ],
     );
   }

@@ -12,6 +12,8 @@ class Styles {
   static const badge = Color(0xFFC04E01);
 
   static const surface = Color(0xFF0F1826);
+  static const active = Color(0xFF8CD45B);
+  static const inactive = Color(0xFF2A3442);
 
   static final gradientOrangeBright = [
     const Color(0xFFEFD7AB),
