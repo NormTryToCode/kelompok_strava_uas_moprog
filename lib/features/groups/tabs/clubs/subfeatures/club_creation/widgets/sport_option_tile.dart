@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/radio_dot.dart';
 
 class SportOptionTile extends StatelessWidget {
   final ClubSport sport;
@@ -46,6 +47,8 @@ class SportOptionTile extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(width: 16),
+            RadioDot(selected: selected),
           ],
         ),
       ),
