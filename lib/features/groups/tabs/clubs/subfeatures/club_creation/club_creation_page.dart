@@ -3,6 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_2_club_type.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_3_club_details.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_progress_bar.dart';
 
 class ClubCreationPage extends StatefulWidget {
@@ -31,6 +32,8 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
         return 'Sport';
       case 2:
         return 'Club Type';
+      case 3:
+        return 'Club Info';
       default:
         return '';
     }
@@ -39,6 +42,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
   String get _hint {
     switch (_step) {
       case 2:
+      case 3:
         return 'You can edit this anytime';
       default:
         return 'You can always change this later';
@@ -52,6 +56,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
 
   bool get _canProceed {
     if (_step == 2) return _draft.types.isNotEmpty;
+    if (_step == 3) return _draft.name.trim().isNotEmpty;
     return true;
   }
 
@@ -68,6 +73,13 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
     setState(() => _draft = _draft.copyWith(types: updated));
   }
 
+  void _onPickPhoto() {
+    // TODO: pilih & upload foto, nanti dihubungkan ke database.
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Photo upload is coming soon')),
+    );
+  }
+
   Widget _buildStep() {
     switch (_step) {
       case 1:
@@ -82,13 +94,23 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
           maxSelection: ClubCreationPage.maxTypes,
           onToggle: _toggleType,
         );
+      case 3:
+        return Step3ClubDetails(
+          name: _draft.name,
+          description: _draft.description,
+          onNameChanged: (value) =>
+              setState(() => _draft = _draft.copyWith(name: value)),
+          onDescriptionChanged: (value) =>
+              setState(() => _draft = _draft.copyWith(description: value)),
+          onPickPhoto: _onPickPhoto,
+        );
       default:
         return const SizedBox.shrink();
     }
   }
 
   void _onNext() {
-    if (_step < 2) {
+    if (_step < 3) {
       setState(() => _step++);
       return;
     }
