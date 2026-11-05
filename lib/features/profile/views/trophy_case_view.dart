@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../models/trophy_badge.dart';
+import '../utils/profile_api_utils.dart';
 import '../widgets/trophy_card.dart';
 
-class TrophyCaseView extends StatelessWidget {
+class TrophyCaseView extends StatefulWidget {
   final VoidCallback onBack;
 
   const TrophyCaseView({
@@ -10,23 +12,18 @@ class TrophyCaseView extends StatelessWidget {
     required this.onBack,
   });
 
-  static const milestoneNames = [
-    'Aktivitas Pertama',
-    'Aktivitas Ketiga',
-    'Aktivitas Kelima',
-    'Aktivitas Ke10',
-    'Aktivitas Ke20',
-    'Aktivitas Ke30',
-  ];
+  @override
+  State<TrophyCaseView> createState() => _TrophyCaseViewState();
+}
 
-  static const trophyIcons = [
-    'https://cdn-icons-png.flaticon.com/512/3112/3112946.png',
-    'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
-    'https://cdn-icons-png.flaticon.com/512/2583/2583319.png',
-    'https://cdn-icons-png.flaticon.com/512/2583/2583434.png',
-    'https://cdn-icons-png.flaticon.com/512/860/860511.png',
-    'https://cdn-icons-png.flaticon.com/512/548/548427.png',
-  ];
+class _TrophyCaseViewState extends State<TrophyCaseView> {
+  late Future<List<TrophyBadge>> trophyBadges;
+
+  @override
+  void initState() {
+    super.initState();
+    trophyBadges = fetchTrophyBadgeData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,43 +35,66 @@ class TrophyCaseView extends StatelessWidget {
           child: Row(
             children: [
               IconButton.filled(
-                onPressed: onBack,
+                onPressed: widget.onBack,
                 icon: const Icon(Icons.arrow_back, color: Styles.tabActive),
               ),
               const SizedBox(width: 12),
               const Text(
-                "Tempat Trofi",
+                "Tempat Trofi (API Collection)",
                 style: TextStyle(fontSize: 20, color: Styles.tabActive),
               ),
             ],
           ),
         ),
         const Padding(
-          padding: EdgeInsets.all(12.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Tonggak pencapaian",
+                "Tonggak pencapaian (Ketuk untuk detail)",
                 style: TextStyle(fontSize: 14, color: Styles.tabActive),
               ),
               Text(
                 "Lihat Semua",
-                style: TextStyle(fontSize: 13, color: Styles.tabInactive),
+                style: TextStyle(fontSize: 13, color: Styles.accent),
               ),
             ],
           ),
         ),
-        SizedBox(
-          height: 460,
-          child: GridView.count(
-            crossAxisCount: 2,
-            children: List.generate(milestoneNames.length, (index) {
-              return TrophyCard(
-                imageURL: trophyIcons[index],
-                milestoneTitle: milestoneNames[index],
-              );
-            }),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: FutureBuilder<List<TrophyBadge>>(
+              future: trophyBadges,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      'An error has occurred!',
+                      style: TextStyle(color: Styles.accent),
+                    ),
+                  );
+                } else if (snapshot.hasData) {
+                  final badges = snapshot.data!;
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 0.78,
+                      crossAxisCount: 2,
+                    ),
+                    itemCount: badges.length,
+                    itemBuilder: (context, index) {
+                      return TrophyCard(badge: badges[index]);
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Styles.accent),
+                  );
+                }
+              },
+            ),
           ),
         ),
       ],
