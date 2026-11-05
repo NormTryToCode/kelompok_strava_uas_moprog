@@ -88,6 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   )
                 : (_activeScreen == 2)
                   ? TrophyCaseView(
+                    currentActivities: _runSessions,
                     onBack: () {
                       setState(() {
                         _activeScreen = 0;

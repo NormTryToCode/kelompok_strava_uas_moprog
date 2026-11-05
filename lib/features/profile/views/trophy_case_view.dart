@@ -3,13 +3,16 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../models/trophy_badge.dart';
 import '../utils/profile_api_utils.dart';
 import '../widgets/trophy_card.dart';
+import 'milestone_all_screen.dart';
 
 class TrophyCaseView extends StatefulWidget {
   final VoidCallback onBack;
+  final int currentActivities;
 
   const TrophyCaseView({
     super.key,
     required this.onBack,
+    this.currentActivities = 0,
   });
 
   @override
@@ -40,61 +43,107 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
               ),
               const SizedBox(width: 12),
               const Text(
-                "Tempat Trofi (API Collection)",
-                style: TextStyle(fontSize: 20, color: Styles.tabActive),
-              ),
-            ],
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Tonggak pencapaian (Ketuk untuk detail)",
-                style: TextStyle(fontSize: 14, color: Styles.tabActive),
-              ),
-              Text(
-                "Lihat Semua",
-                style: TextStyle(fontSize: 13, color: Styles.accent),
+                "Tempat Trofi",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Styles.tabActive,
+                ),
               ),
             ],
           ),
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: FutureBuilder<List<TrophyBadge>>(
-              future: trophyBadges,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text(
-                      'An error has occurred!',
-                      style: TextStyle(color: Styles.accent),
+          child: FutureBuilder<List<TrophyBadge>>(
+            future: trophyBadges,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    'Gagal memuat tonggak pencapaian.',
+                    style: TextStyle(color: Styles.accent),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                final allBadges = snapshot.data!;
+                final previewBadges = allBadges.take(6).toList();
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Tonggak pencapaian",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Styles.tabActive,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MilestoneAllScreen(
+                                    badges: allBadges,
+                                    currentActivities: widget.currentActivities,
+                                  ),
+                                ),
+                              );
+                              setState(() {});
+                            },
+                            child: const Text(
+                              "Lihat Semua",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Styles.tabInactive,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                } else if (snapshot.hasData) {
-                  final badges = snapshot.data!;
-                  return GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 0.78,
-                      crossAxisCount: 2,
+                    Container(
+                      color: Styles.surface,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12.0,
+                        horizontal: 8.0,
+                      ),
+                      height: 270,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: 0.85,
+                          crossAxisCount: 3,
+                        ),
+                        itemCount: previewBadges.length,
+                        itemBuilder: (context, index) {
+                          return TrophyCard(
+                            badge: previewBadges[index],
+                            currentActivities: widget.currentActivities,
+                            onStatusChanged: () {
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
                     ),
-                    itemCount: badges.length,
-                    itemBuilder: (context, index) {
-                      return TrophyCard(badge: badges[index]);
-                    },
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Styles.accent),
-                  );
-                }
-              },
-            ),
+                  ],
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(color: Styles.accent),
+                );
+              }
+            },
           ),
         ),
       ],
