@@ -40,12 +40,43 @@ class ClubSport {
   ];
 }
 
+class ClubType {
+  final String id;
+  final String name;
+  final IconData icon;
+
+  const ClubType({
+    required this.id,
+    required this.name,
+    required this.icon,
+  });
+
+  static const option = <ClubType>[
+    ClubType(id: 'casual', name: 'Casual & social', icon: Icons.emoji_emotions_outlined),
+    ClubType(id: 'brand', name: 'Brand or company', icon: Icons.storefront_outlined),
+    ClubType(id: 'team', name: 'Team', icon: Icons.groups_outlined),
+    ClubType(id: 'workplace', name: 'Workplace group', icon: Icons.business_center_outlined),
+    ClubType(id: 'coached', name: 'Coached', icon: Icons.sports_outlined),
+    ClubType(id: 'training', name: 'Training group', icon: Icons.fitness_center),
+    ClubType(id: 'school', name: 'School or university', icon: Icons.school_outlined),
+    ClubType(id: 'charity', name: 'Charity & causes', icon: Icons.volunteer_activism_outlined),
+    ClubType(id: 'community', name: 'Local community', icon: Icons.diversity_3_outlined),
+  ];
+}
+
 class ClubCreationModel {
   final ClubSport sport;
+  final List<ClubType> types;
 
-  const ClubCreationModel({this.sport = ClubSport.allSports});
+  const ClubCreationModel({
+    this.sport = ClubSport.allSports,
+    this.types = const [],
+  });
 
-  ClubCreationModel copyWith({ClubSport? sport}) {
-    return ClubCreationModel(sport: sport ?? this.sport);
+  ClubCreationModel copyWith({ClubSport? sport, List<ClubType>? types}) {
+    return ClubCreationModel(
+      sport: sport ?? this.sport,
+      types: types ?? this.types,
+    );
   }
 }
