@@ -1,21 +1,19 @@
 class TrophyBadge {
   final String id;
-  final String image;
-  final String localId;
-  final String name;
+  final String title;
+  final String watermarkNumber;
+  final int requiredActivities;
+  final String description;
 
   bool isChecked = false;
 
   TrophyBadge({
     required this.id,
-    required this.image,
-    required this.localId,
-    required this.name,
+    required this.title,
+    required this.watermarkNumber,
+    required this.requiredActivities,
+    required this.description,
   });
-
-  String get imageLow => '$image/low.png';
-
-  String get imageHigh => '$image/high.png';
 
   void toggleIsChecked() {
     isChecked = !isChecked;
@@ -23,10 +21,11 @@ class TrophyBadge {
 
   factory TrophyBadge.fromJson(Map<String, dynamic> json) {
     return TrophyBadge(
-      id: json['id'] as String, 
-      image: json['image'] as String, 
-      localId: json['localId'] as String, 
-      name: json['name'] as String,
+      id: json['id'] as String,
+      title: json['title'] as String,
+      watermarkNumber: json['watermarkNumber'] as String,
+      requiredActivities: json['requiredActivities'] as int,
+      description: json['description'] as String,
     );
   }
 }
