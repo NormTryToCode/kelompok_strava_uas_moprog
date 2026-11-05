@@ -24,95 +24,107 @@ class ProfileTabBar extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Column(
-                children: [
-                  IconButton.filled(
-                    onPressed: onTapKemajuan,
-                    icon: Icon(
+              GestureDetector(
+                onTap: onTapKemajuan,
+                child: Column(
+                  children: [
+                    Icon(
                       Icons.assessment,
                       color: (activeTab == 0)
-                        ? Styles.accent
-                        : Styles.tabInactive,
-                    ),
-                  ),
-                  Text(
-                    "Kemajuan",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: (activeTab == 0)
-                        ? Styles.tabActive
-                        : Styles.tabInactive,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    width: 110,
-                    height: 3,
-                    color: (activeTab == 0)
-                      ? Styles.accent
-                      : Styles.background,
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  IconButton.filled(
-                    onPressed: onTapAktivitas,
-                    icon: Icon(
-                      Icons.timeline,
-                      color: (activeTab == 1)
-                        ? Styles.accent
-                        : Styles.tabInactive,
-                    ),
-                  ),
-                  Text(
-                    "Aktivitas",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: (activeTab == 1)
-                        ? Styles.tabActive
-                        : Styles.tabInactive,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    width: 110,
-                    height: 3,
-                    color: (activeTab == 1)
-                      ? Styles.accent
-                      : Styles.background,
-                  ),
-                ],
-              ),
-              Column(
-                children: [
-                  IconButton.filled(
-                    onPressed: onTapLainnya,
-                    icon: Icon(
-                      Icons.menu,
-                      color: (activeTab == 2)
-                        ? Styles.accent
-                        : Styles.tabInactive,
-                    ),
-                  ),
-                  Text(
-                    "Lainnya",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: (activeTab == 2)
-                          ? Styles.tabActive
+                          ? Styles.accent
                           : Styles.tabInactive,
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    width: 110,
-                    height: 3,
-                    color: (activeTab == 2)
-                      ? Styles.accent
-                      : Styles.background,
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      "Kemajuan",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: (activeTab == 0)
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                        color: (activeTab == 0)
+                            ? Styles.tabActive
+                            : Styles.tabInactive,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 110,
+                      height: 3,
+                      color: (activeTab == 0)
+                          ? Styles.accent
+                          : Styles.background,
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: onTapAktivitas,
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.timeline,
+                      color: (activeTab == 1)
+                          ? Styles.accent
+                          : Styles.tabInactive,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Aktivitas",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: (activeTab == 1)
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                        color: (activeTab == 1)
+                            ? Styles.tabActive
+                            : Styles.tabInactive,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 110,
+                      height: 3,
+                      color: (activeTab == 1)
+                          ? Styles.accent
+                          : Styles.background,
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: onTapLainnya,
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.menu,
+                      color: (activeTab == 2)
+                          ? Styles.accent
+                          : Styles.tabInactive,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Lainnya",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: (activeTab == 2)
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                        color: (activeTab == 2)
+                            ? Styles.tabActive
+                            : Styles.tabInactive,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 110,
+                      height: 3,
+                      color: (activeTab == 2)
+                          ? Styles.accent
+                          : Styles.background,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
