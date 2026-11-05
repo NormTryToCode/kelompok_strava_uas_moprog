@@ -45,11 +45,7 @@ class ClubType {
   final String name;
   final IconData icon;
 
-  const ClubType({
-    required this.id,
-    required this.name,
-    required this.icon,
-  });
+  const ClubType({required this.id, required this.name, required this.icon});
 
   static const option = <ClubType>[
     ClubType(id: 'casual', name: 'Casual & social', icon: Icons.emoji_emotions_outlined),
@@ -67,16 +63,27 @@ class ClubType {
 class ClubCreationModel {
   final ClubSport sport;
   final List<ClubType> types;
+  final String name;
+  final String description;
 
   const ClubCreationModel({
     this.sport = ClubSport.allSports,
     this.types = const [],
+    this.name = '',
+    this.description = '',
   });
 
-  ClubCreationModel copyWith({ClubSport? sport, List<ClubType>? types}) {
+  ClubCreationModel copyWith({
+    ClubSport? sport,
+    List<ClubType>? types,
+    String? name,
+    String? description,
+  }) {
     return ClubCreationModel(
       sport: sport ?? this.sport,
       types: types ?? this.types,
+      name: name ?? this.name,
+      description: description ?? this.description,
     );
   }
 }
