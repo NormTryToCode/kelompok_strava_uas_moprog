@@ -30,7 +30,7 @@ class EditProfileView extends StatefulWidget {
   State<EditProfileView> createState() => _EditProfileViewState();
 }
 
-class _EditProfileViewState extends State<EditProfileView>{
+class _EditProfileViewState extends State<EditProfileView> {
   TextEditingController controller = TextEditingController();
   bool switchValue = false;
   String statusMessage = '';
@@ -38,7 +38,7 @@ class _EditProfileViewState extends State<EditProfileView>{
   final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     controller.text = widget.initialBio;
     load();
@@ -47,8 +47,9 @@ class _EditProfileViewState extends State<EditProfileView>{
   void load() async {
     String savedText = await asyncPrefs.getString('text') ?? '';
     bool savedSwitch = await asyncPrefs.getBool('switch') ?? false;
+    if (!mounted) return;
     setState(() {
-      if(savedText.isNotEmpty) {
+      if (savedText.isNotEmpty) {
         controller.text = savedText;
       }
       switchValue = savedSwitch;
@@ -61,8 +62,9 @@ class _EditProfileViewState extends State<EditProfileView>{
     await asyncPrefs.setString('text', controller.text);
     await asyncPrefs.setBool('switch', switchValue);
     widget.onBioSaved(controller.text);
+    if (!mounted) return;
     setState(() {
-      statusMessage = 'Bio & Pengaturan Google Fit Tersimpan!';
+      statusMessage = 'Bio & pengaturan Google Fit tersimpan!';
     });
   }
 
@@ -74,7 +76,7 @@ class _EditProfileViewState extends State<EditProfileView>{
     });
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
@@ -137,7 +139,7 @@ class _EditProfileViewState extends State<EditProfileView>{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Nama Depan",
+                        "Nama depan",
                         style: TextStyle(
                           fontSize: 11,
                           color: Styles.tabInactive,
@@ -159,7 +161,7 @@ class _EditProfileViewState extends State<EditProfileView>{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Nama Belakang",
+                        "Nama belakang",
                         style: TextStyle(
                           fontSize: 11,
                           color: Styles.tabInactive,
