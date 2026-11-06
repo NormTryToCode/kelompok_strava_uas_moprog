@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/repositories/club_repository.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/location_search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_2_club_type.dart';
@@ -15,9 +17,9 @@ class ClubCreationPage extends StatefulWidget {
   static const totalSteps = 5;
   static const maxTypes = 3;
 
-  static Future<void> open(BuildContext context) {
-    return Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(builder: (_) => const ClubCreationPage()),
+  static Future<Club?> open(BuildContext context) {
+    return Navigator.of(context, rootNavigator: true).push<Club>(
+      MaterialPageRoute<Club>(builder: (_) => const ClubCreationPage()),
     );
   }
 
@@ -27,7 +29,8 @@ class ClubCreationPage extends StatefulWidget {
 
 class _ClubCreationPageState extends State<ClubCreationPage> {
   ClubCreationModel _draft = const ClubCreationModel();
-  int _step = 1; 
+  int _step = 1;
+  bool _saving = false;
 
   String get _title {
     switch (_step) {
@@ -59,6 +62,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
   }
 
   String get _nextLabel {
+    if (_saving) return 'Creating...';
     if (_step == 2 && _draft.types.isEmpty) return 'Pick at least 1';
     if (_step == ClubCreationPage.totalSteps) return 'Create Club';
     return 'Next';
@@ -144,9 +148,25 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
       setState(() => _step++);
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Club data is ready, database not connected yet')),
-    );
+    _createClub();
+  }
+
+  Future<void> _createClub() async {
+    if (_saving) return;
+    setState(() => _saving = true);
+
+    try {
+      final club = Club.fromCreation(_draft);
+      await ClubRepository.instance.addClub(club);
+      if (!mounted) return;
+      Navigator.of(context).pop(club);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not save the club. Please try again.')),
+      );
+    }
   }
 
   void _onBack() {
@@ -180,7 +200,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
             _BottomBar(
               hint: _hint,
               label: _nextLabel,
-              onNext: _canProceed ? _onNext : null,
+              onNext: _canProceed && !_saving ? _onNext : null,
             ),
           ],
         ),
