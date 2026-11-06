@@ -4,6 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/clu
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_2_club_type.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_3_club_details.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_4_club_privacy.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_progress_bar.dart';
 
 class ClubCreationPage extends StatefulWidget {
@@ -34,6 +35,8 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
         return 'Club Type';
       case 3:
         return 'Club Info';
+      case 4:
+        return 'Privacy';
       default:
         return '';
     }
@@ -44,6 +47,8 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
       case 2:
       case 3:
         return 'You can edit this anytime';
+      case 4:
+        return '';
       default:
         return 'You can always change this later';
     }
@@ -74,7 +79,6 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
   }
 
   void _onPickPhoto() {
-    // TODO: pilih & upload foto, nanti dihubungkan ke database.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Photo upload is coming soon')),
     );
@@ -104,13 +108,19 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
               setState(() => _draft = _draft.copyWith(description: value)),
           onPickPhoto: _onPickPhoto,
         );
+      case 4:
+        return Step4ClubPrivacy(
+          selected: _draft.privacy,
+          onChanged: (privacy) =>
+              setState(() => _draft = _draft.copyWith(privacy: privacy)),
+        );
       default:
         return const SizedBox.shrink();
     }
   }
 
   void _onNext() {
-    if (_step < 3) {
+    if (_step < 4) {
       setState(() => _step++);
       return;
     }
@@ -232,11 +242,13 @@ class _BottomBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            hint,
-            style: const TextStyle(fontSize: 15, color: Styles.tabInactive),
-          ),
-          const SizedBox(height: 12),
+          if (hint.isNotEmpty) ...[
+            Text(
+              hint,
+              style: const TextStyle(fontSize: 15, color: Styles.tabInactive),
+            ),
+            const SizedBox(height: 12),
+          ],
           SizedBox(
             width: double.infinity,
             height: 54,
