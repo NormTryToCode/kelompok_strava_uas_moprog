@@ -86,12 +86,28 @@ class ClubPrivacy {
   static const option = <ClubPrivacy>[public, private];
 }
 
+class ClubLocation {
+  final String name;
+  final String detail;
+  final double? latitude;
+  final double? longitude;
+
+  const ClubLocation({
+    required this.name,
+    this.detail = '',
+    this.latitude,
+    this.longitude,
+  });
+}
+
 class ClubCreationModel {
   final ClubSport sport;
   final List<ClubType> types;
   final String name;
   final String description;
   final ClubPrivacy privacy;
+  final bool isGlobal;
+  final ClubLocation? location;
 
   const ClubCreationModel({
     this.sport = ClubSport.allSports,
@@ -99,6 +115,8 @@ class ClubCreationModel {
     this.name = '',
     this.description = '',
     this.privacy = ClubPrivacy.public,
+    this.isGlobal = true,
+    this.location,
   });
 
   ClubCreationModel copyWith({
@@ -107,6 +125,8 @@ class ClubCreationModel {
     String? name,
     String? description,
     ClubPrivacy? privacy,
+    bool? isGlobal,
+    ClubLocation? location,
   }) {
     return ClubCreationModel(
       sport: sport ?? this.sport,
@@ -114,6 +134,8 @@ class ClubCreationModel {
       name: name ?? this.name,
       description: description ?? this.description,
       privacy: privacy ?? this.privacy,
+      isGlobal: isGlobal ?? this.isGlobal,
+      location: location ?? this.location,
     );
   }
 }
