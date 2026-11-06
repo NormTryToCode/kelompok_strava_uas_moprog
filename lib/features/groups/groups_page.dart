@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/challenges/challenges_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/clubs_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/events_tab.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/groups_page.dart';
 
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/groups_tab_bar.dart';

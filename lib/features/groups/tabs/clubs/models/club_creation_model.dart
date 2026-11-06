@@ -60,17 +60,45 @@ class ClubType {
   ];
 }
 
+class ClubPrivacy {
+  final String id;
+  final String name;
+  final String description;
+
+  const ClubPrivacy({
+    required this.id,
+    required this.name,
+    required this.description,
+  });
+
+  static const public = ClubPrivacy(
+    id: 'public',
+    name: 'Public',
+    description: 'Anyone can join and see what the club is up to.',
+  );
+
+  static const private = ClubPrivacy(
+    id: 'private',
+    name: 'Private',
+    description: 'People send a request, and an admin approves new members.',
+  );
+
+  static const option = <ClubPrivacy>[public, private];
+}
+
 class ClubCreationModel {
   final ClubSport sport;
   final List<ClubType> types;
   final String name;
   final String description;
+  final ClubPrivacy privacy;
 
   const ClubCreationModel({
     this.sport = ClubSport.allSports,
     this.types = const [],
     this.name = '',
     this.description = '',
+    this.privacy = ClubPrivacy.public,
   });
 
   ClubCreationModel copyWith({
@@ -78,12 +106,14 @@ class ClubCreationModel {
     List<ClubType>? types,
     String? name,
     String? description,
+    ClubPrivacy? privacy,
   }) {
     return ClubCreationModel(
       sport: sport ?? this.sport,
       types: types ?? this.types,
       name: name ?? this.name,
       description: description ?? this.description,
+      privacy: privacy ?? this.privacy,
     );
   }
 }
