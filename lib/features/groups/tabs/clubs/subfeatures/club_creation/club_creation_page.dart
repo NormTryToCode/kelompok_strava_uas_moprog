@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/location_search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_2_club_type.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_3_club_details.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_4_club_privacy.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_5_club_location.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_progress_bar.dart';
 
 class ClubCreationPage extends StatefulWidget {
@@ -37,6 +39,8 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
         return 'Club Info';
       case 4:
         return 'Privacy';
+      case 5:
+        return 'Location';
       default:
         return '';
     }
@@ -56,12 +60,14 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
 
   String get _nextLabel {
     if (_step == 2 && _draft.types.isEmpty) return 'Pick at least 1';
+    if (_step == ClubCreationPage.totalSteps) return 'Create Club';
     return 'Next';
   }
 
   bool get _canProceed {
     if (_step == 2) return _draft.types.isNotEmpty;
     if (_step == 3) return _draft.name.trim().isNotEmpty;
+    if (_step == 5) return _draft.isGlobal || _draft.location != null;
     return true;
   }
 
@@ -82,6 +88,12 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Photo upload is coming soon')),
     );
+  }
+
+  Future<void> _onPickLocation() async {
+    final result = await LocationSearchPage.open(context);
+    if (result == null || !mounted) return;
+    setState(() => _draft = _draft.copyWith(isGlobal: false, location: result));
   }
 
   Widget _buildStep() {
@@ -114,20 +126,26 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
           onChanged: (privacy) =>
               setState(() => _draft = _draft.copyWith(privacy: privacy)),
         );
+      case 5:
+        return Step5ClubLocation(
+          isGlobal: _draft.isGlobal,
+          location: _draft.location,
+          onSelectGlobal: () =>
+              setState(() => _draft = _draft.copyWith(isGlobal: true)),
+          onPickLocation: _onPickLocation,
+        );
       default:
         return const SizedBox.shrink();
     }
   }
 
   void _onNext() {
-    if (_step < 4) {
+    if (_step < ClubCreationPage.totalSteps) {
       setState(() => _step++);
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('To be soon (masih belum ada, on progress)'),
-      ),
+      const SnackBar(content: Text('Club data is ready, database not connected yet')),
     );
   }
 
