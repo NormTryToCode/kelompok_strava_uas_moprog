@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'custom_image_network.dart';
 
 class ProfileHeaderWidget extends StatelessWidget {
   final String fullName;
   final String sportCategory;
+  final String bioText;
   final int activityCount;
   final int weightKg;
   final VoidCallback onEditProfile;
@@ -13,6 +15,7 @@ class ProfileHeaderWidget extends StatelessWidget {
     super.key,
     required this.fullName,
     required this.sportCategory,
+    required this.bioText,
     required this.activityCount,
     required this.weightKg,
     required this.onEditProfile,
@@ -33,6 +36,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                 sportCategory.toUpperCase(),
                 style: const TextStyle(
                   fontSize: 12,
+                  fontWeight: FontWeight.bold,
                   color: Styles.accent,
                 ),
               ),
@@ -57,10 +61,10 @@ class ProfileHeaderWidget extends StatelessWidget {
               const SizedBox(
                 width: 64,
                 height: 64,
-                child: Image(
-                  image: NetworkImage(
-                    'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
-                  ),
+                child: CustomImageNetwork(
+                  imageUrl:
+                      'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
+                  height: 64,
                 ),
               ),
               const SizedBox(width: 14),
@@ -71,6 +75,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                     fullName,
                     style: const TextStyle(
                       fontSize: 19,
+                      fontWeight: FontWeight.bold,
                       color: Styles.tabActive,
                     ),
                   ),
@@ -86,7 +91,19 @@ class ProfileHeaderWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          if (bioText.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                bioText,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  color: Styles.tabInactive,
+                ),
+              ),
+            ),
+          const SizedBox(height: 10),
           const Text(
             "0 pengikut  •  0 mengikuti",
             style: TextStyle(

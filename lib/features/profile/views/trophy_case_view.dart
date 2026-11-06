@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../models/trophy_badge.dart';
+import '../utils/profile_api_utils.dart';
 import '../widgets/trophy_card.dart';
+import 'milestone_all_screen.dart';
 
-class TrophyCaseView extends StatelessWidget {
+class TrophyCaseView extends StatefulWidget {
   final VoidCallback onBack;
+  final int currentActivities;
 
   const TrophyCaseView({
     super.key,
     required this.onBack,
+    this.currentActivities = 0,
   });
 
-  static const milestoneNames = [
-    'Aktivitas Pertama',
-    'Aktivitas Ketiga',
-    'Aktivitas Kelima',
-    'Aktivitas Ke10',
-    'Aktivitas Ke20',
-    'Aktivitas Ke30',
-  ];
+  @override
+  State<TrophyCaseView> createState() => _TrophyCaseViewState();
+}
 
-  static const trophyIcons = [
-    'https://cdn-icons-png.flaticon.com/512/3112/3112946.png',
-    'https://cdn-icons-png.flaticon.com/512/2583/2583344.png',
-    'https://cdn-icons-png.flaticon.com/512/2583/2583319.png',
-    'https://cdn-icons-png.flaticon.com/512/2583/2583434.png',
-    'https://cdn-icons-png.flaticon.com/512/860/860511.png',
-    'https://cdn-icons-png.flaticon.com/512/548/548427.png',
-  ];
+class _TrophyCaseViewState extends State<TrophyCaseView> {
+  late Future<List<TrophyBadge>> trophyBadges;
+
+  @override
+  void initState() {
+    super.initState();
+    trophyBadges = fetchTrophyBadgeData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,43 +38,112 @@ class TrophyCaseView extends StatelessWidget {
           child: Row(
             children: [
               IconButton.filled(
-                onPressed: onBack,
+                onPressed: widget.onBack,
                 icon: const Icon(Icons.arrow_back, color: Styles.tabActive),
               ),
               const SizedBox(width: 12),
               const Text(
                 "Tempat Trofi",
-                style: TextStyle(fontSize: 20, color: Styles.tabActive),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Styles.tabActive,
+                ),
               ),
             ],
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Tonggak pencapaian",
-                style: TextStyle(fontSize: 14, color: Styles.tabActive),
-              ),
-              Text(
-                "Lihat Semua",
-                style: TextStyle(fontSize: 13, color: Styles.tabInactive),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 460,
-          child: GridView.count(
-            crossAxisCount: 2,
-            children: List.generate(milestoneNames.length, (index) {
-              return TrophyCard(
-                imageURL: trophyIcons[index],
-                milestoneTitle: milestoneNames[index],
-              );
-            }),
+        Expanded(
+          child: FutureBuilder<List<TrophyBadge>>(
+            future: trophyBadges,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text(
+                    'Gagal memuat tonggak pencapaian.',
+                    style: TextStyle(color: Styles.accent),
+                  ),
+                );
+              } else if (snapshot.hasData) {
+                final allBadges = snapshot.data!;
+                final previewBadges = allBadges.take(6).toList();
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Tonggak pencapaian",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Styles.tabActive,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MilestoneAllScreen(
+                                    badges: allBadges,
+                                    currentActivities: widget.currentActivities,
+                                  ),
+                                ),
+                              );
+                              setState(() {});
+                            },
+                            child: const Text(
+                              "Lihat Semua",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Styles.tabInactive,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      color: Styles.surface,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12.0,
+                        horizontal: 8.0,
+                      ),
+                      height: 270,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          childAspectRatio: 0.85,
+                          crossAxisCount: 3,
+                        ),
+                        itemCount: previewBadges.length,
+                        itemBuilder: (context, index) {
+                          return TrophyCard(
+                            badge: previewBadges[index],
+                            currentActivities: widget.currentActivities,
+                            onStatusChanged: () {
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(color: Styles.accent),
+                );
+              }
+            },
           ),
         ),
       ],

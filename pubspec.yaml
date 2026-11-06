@@ -37,7 +37,11 @@ dependencies:
   flutter_map: ^8.3.2
   latlong2: ^0.10.1
   geolocator: ^14.1.2
-  http: ^1.6.0
+  http: ^1.2.2
+  flutter_animate: ^4.5.0
+  shared_preferences: ^2.3.2
+  path_provider: ^2.1.4
+  lorem_ipsum: ^0.0.3 
 
 dev_dependencies:
   flutter_test:
