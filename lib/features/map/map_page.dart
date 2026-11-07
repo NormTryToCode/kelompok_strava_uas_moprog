@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -33,7 +34,19 @@ class _MapPageState extends State<MapPage> {
     }
 
     
-    final pos = await Geolocator.getCurrentPosition();
+    Position pos;
+    try {
+      pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 10),
+        ),
+      );
+    } catch (e) {
+      _showMessage('Gagal ambil lokasi: $e');
+      return;
+    }
+
     if (!mounted) return;
     final latLng = LatLng(pos.latitude, pos.longitude);
     setState(() => _userPosition = latLng);
@@ -47,17 +60,66 @@ class _MapPageState extends State<MapPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return FlutterMap(
-      mapController: _mapController,
-      options: MapOptions(
-        initialCenter: LatLng(-6.2088, 106.8456),
-        initialZoom: 14,
-        onMapReady: _locate,
-      ),
+    return Stack(
       children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
+        FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            initialCenter: LatLng(-6.2088, 106.8456),
+            initialZoom: 14,
+            onMapReady: _locate,
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
+            ),
+            if (_userPosition != null)
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: _userPosition!,
+                    width: 48,
+                    height: 48,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: const BoxDecoration(
+                            color: Color(0x402196F3),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        // titik utama
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 3),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black38, blurRadius: 6),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton(
+            backgroundColor: Styles.accent,
+            onPressed: _locate,
+            child: const Icon(Icons.my_location, color: Colors.white),
+          ),
         ),
       ],
     );
