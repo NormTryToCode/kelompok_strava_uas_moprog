@@ -37,10 +37,11 @@ class NotificationTile extends StatelessWidget {
                 children: [
                   Text(
                     item.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Styles.tabActive,
                       fontSize: 17,
-                      fontWeight: FontWeight.w700,
+                      fontWeight:
+                          item.isRead ? FontWeight.w500 : FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -59,6 +60,11 @@ class NotificationTile extends StatelessWidget {
                 ],
               ),
             ),
+            if (!item.isRead)
+              const Padding(
+                padding: EdgeInsets.only(left: 8, top: 6),
+                child: Icon(Icons.circle, size: 10, color: Styles.accent),
+              ),
           ],
         ),
       ),

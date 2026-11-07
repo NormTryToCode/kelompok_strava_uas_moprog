@@ -31,7 +31,10 @@ class NotificationsPage extends StatelessWidget {
                 )
               : ListView.builder(
                   itemCount: list.length,
-                  itemBuilder: (_, i) => NotificationTile(item: list[i]),
+                  itemBuilder: (_, i) => NotificationTile(
+                    item: list[i],
+                    onTap: () => source.markAsRead(list[i].id),
+                  ),
                 ),
         );
       },
