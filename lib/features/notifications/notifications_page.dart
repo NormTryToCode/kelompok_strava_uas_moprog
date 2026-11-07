@@ -18,9 +18,16 @@ class NotificationsPage extends StatelessWidget {
         final list = source.items;
         return Scaffold(
           backgroundColor: Styles.background,
-          appBar: const AppHeader(
+          appBar: AppHeader(
             title: 'Notifications',
             showBackButton: true,
+            actions: [
+              if (source.unreadCount > 0)
+                TextButton(
+                  onPressed: source.markAllAsRead,
+                  child: const Text('Mark all read'),
+                ),
+            ],
           ),
           body: list.isEmpty
               ? const Center(
