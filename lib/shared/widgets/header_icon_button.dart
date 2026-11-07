@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class HeaderIconButton extends StatelessWidget {
   final IconData icon;
@@ -17,6 +18,8 @@ class HeaderIconButton extends StatelessWidget {
     return IconButton(
       icon: Badge(
         isLabelVisible: badgeCount > 0,
+        backgroundColor: Styles.accent,
+        textColor: Styles.tabActive,
         label: Text('$badgeCount'),
         child: Icon(icon),
       ),
