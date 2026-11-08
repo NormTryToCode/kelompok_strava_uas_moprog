@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/repositories/club_repository.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
 import 'package:path_provider/path_provider.dart';
 
 class JsonClubRepository implements ClubRepository {
