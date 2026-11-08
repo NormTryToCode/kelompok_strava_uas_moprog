@@ -8,7 +8,7 @@ Future<ClubSport?> showSportPickerSheet(
   required ClubSport? selected,
 }) {
   final sports =
-      ClubSport.all.where((s) => s.id != ClubSport.allSports.id).toList();
+      ClubSport.option.where((s) => s.id != ClubSport.allSports.id).toList();
 
   return showModalBottomSheet<ClubSport>(
     context: context,
