@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/widgets/user_location_marker.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/widgets/my_location_button.dart';
 import 'dart:async';
 
 class MapPage extends StatefulWidget {
@@ -106,32 +108,7 @@ class _MapPageState extends State<MapPage> {
                     point: _userPosition!,
                     width: 48,
                     height: 48,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: const BoxDecoration(
-                            color: Color(0x402196F3),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        // titik utama
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black38, blurRadius: 6),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: const UserLocationMarker(),
                   ),
                 ],
               ),
@@ -140,14 +117,7 @@ class _MapPageState extends State<MapPage> {
         Positioned(
           right: 16,
           bottom: 16,
-          child: FloatingActionButton(
-            backgroundColor: Styles.accent,
-            onPressed: _recenter,
-            child: Icon(
-              _follow ? Icons.my_location : Icons.location_searching,
-              color: Colors.white,
-            ),
-          ),
+          child: MyLocationButton(following: _follow, onPressed: _recenter),
         ),
       ],
     );
