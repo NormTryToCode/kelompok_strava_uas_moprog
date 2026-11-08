@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/home_streak_widget.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/widgets/badge_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
@@ -48,9 +49,11 @@ class HomePage extends StatelessWidget {
       body: const SizedBox(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 32,
           children: [
-            SizedBox(height: 18.0),
+            SizedBox(height: 4.0),
             HomeStreakWidget(),
+            BadgeWidget(),
           ],
         ),
       ),
