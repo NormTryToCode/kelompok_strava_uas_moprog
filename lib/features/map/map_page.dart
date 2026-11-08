@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -39,11 +40,19 @@ class _MapPageState extends State<MapPage> {
     if (_positionSub != null) return;
     if (!await _ensurePermission()) return;
 
+    final settings = defaultTargetPlatform == TargetPlatform.android
+        ? AndroidSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 2,
+            intervalDuration: const Duration(seconds: 1),
+          )
+        : const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 2,
+          );
+
     _positionSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 5, // update setiap 5 meter
-      ),
+      locationSettings: settings,
     ).listen(
       (pos) {
         if (!mounted) return;
@@ -53,7 +62,11 @@ class _MapPageState extends State<MapPage> {
           _mapController.move(latLng, _mapController.camera.zoom);
         }
       },
-      onError: (e) => _showMessage('Gagal ambil lokasi: $e'),
+      onError: (e) {
+        _positionSub?.cancel();
+        _positionSub = null;
+        _showMessage('Gagal ambil lokasi: $e');
+      },
     );
   }
 
@@ -75,6 +88,7 @@ class _MapPageState extends State<MapPage> {
     _positionSub?.cancel();
     super.dispose();
   }
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
@@ -92,6 +106,7 @@ class _MapPageState extends State<MapPage> {
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
+              maxNativeZoom: 19,
             ),
             if (_userPosition != null)
               MarkerLayer(
