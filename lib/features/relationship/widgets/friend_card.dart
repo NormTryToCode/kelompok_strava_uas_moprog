@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import '../models/friend.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
 
 class FriendCard extends StatelessWidget {
   final Friend friend;

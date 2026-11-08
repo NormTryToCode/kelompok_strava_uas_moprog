@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/friend.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
 
 abstract class FriendRepository {
   Future<List<Friend>> getFriends();

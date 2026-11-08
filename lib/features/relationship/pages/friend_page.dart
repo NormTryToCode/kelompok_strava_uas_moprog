@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import '../repositories/friend_repository.dart';
-import '../models/friend.dart';
-import '../widgets/friend_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/friend_repository.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/widgets/friend_card.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
