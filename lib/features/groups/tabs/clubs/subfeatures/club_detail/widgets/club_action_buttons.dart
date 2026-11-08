@@ -13,7 +13,11 @@ class ClubActionButtons extends StatelessWidget {
       (Icons.edit_outlined, 'Edit Club Details'),
       (Icons.share_outlined, 'Share'),
       (Icons.insights_outlined, 'Event Insights'),
-      (Icons.groups_outlined, 'Members'),
+      (Icons.event_available_outlined, 'Events'),
+      (Icons.info_outline, 'Overview'),
+      (Icons.monitor_heart_outlined, 'Activities'),
+      (Icons.leaderboard_outlined, 'Stats'),
+      (Icons.article_outlined, 'Posts'),
     ];
 
     return SingleChildScrollView(
