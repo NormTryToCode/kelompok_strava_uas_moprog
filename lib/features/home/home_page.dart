@@ -7,6 +7,7 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/upgrade_pill.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -31,7 +32,9 @@ class HomePage extends StatelessWidget {
           ),
           HeaderIconButton(
             icon: Icons.search,
-            onPressed: () => _comingSoon(context),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SearchPage()),
+            ),
           ),
           ListenableBuilder(
             listenable: NotificationController.instance,
