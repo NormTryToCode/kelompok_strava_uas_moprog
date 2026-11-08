@@ -58,4 +58,4 @@ app.*.map.json
 *.un~
 Session.vim
 .netrwhist
-
+devtools_options.yaml
