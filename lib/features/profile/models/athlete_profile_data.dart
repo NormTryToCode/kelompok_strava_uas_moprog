@@ -8,7 +8,7 @@ class AthleteProfileData {
   final String birthDate;
   final String gender;
   final String weightKg;
-  final bool googleFitConnected;
+  final String avatarPath;
 
   const AthleteProfileData({
     required this.firstName,
@@ -20,7 +20,7 @@ class AthleteProfileData {
     required this.birthDate,
     required this.gender,
     required this.weightKg,
-    this.googleFitConnected = false,
+    this.avatarPath = '',
   });
 
   String get fullName {
