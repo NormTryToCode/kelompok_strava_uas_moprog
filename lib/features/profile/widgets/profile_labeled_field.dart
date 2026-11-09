@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class ProfileLabeledField extends StatelessWidget {
@@ -8,6 +9,9 @@ class ProfileLabeledField extends StatelessWidget {
   final String? valueText;
   final VoidCallback? onTap;
   final String placeholder;
+  final TextCapitalization textCapitalization;
+  final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const ProfileLabeledField({
     super.key,
@@ -16,6 +20,9 @@ class ProfileLabeledField extends StatelessWidget {
     this.valueText,
     this.onTap,
     this.placeholder = '',
+    this.textCapitalization = TextCapitalization.sentences,
+    this.keyboardType = TextInputType.text,
+    this.inputFormatters,
   });
 
   @override
@@ -70,6 +77,9 @@ class ProfileLabeledField extends StatelessWidget {
               CupertinoTextField(
                 controller: controller,
                 placeholder: placeholder,
+                textCapitalization: textCapitalization,
+                keyboardType: keyboardType,
+                inputFormatters: inputFormatters,
                 placeholderStyle: const TextStyle(
                   fontSize: 14,
                   color: Styles.inactive,
