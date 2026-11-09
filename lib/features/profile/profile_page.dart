@@ -31,7 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
     city: 'Jakarta',
     country: 'INDONESIA',
     primarySport: 'Berlari',
-    bio: 'I Like Run',
+    bio: 'I Like Runnnn',
     birthDate: '30/08/2007',
     gender: 'Pria',
     weightKg: '74,0',
@@ -64,7 +64,8 @@ class _ProfilePageState extends State<ProfilePage> {
         await _asyncPrefs.getString('gender') ?? _profileData.gender;
     final String weight =
         await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
-    final bool googleFit = await _asyncPrefs.getBool('switch') ?? false;
+    final String avatarPath =
+        await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
 
     if (!mounted) return;
     setState(() {
@@ -78,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
         birthDate: birthDate,
         gender: gender,
         weightKg: weight,
-        googleFitConnected: googleFit,
+        avatarPath: avatarPath,
       );
     });
   }
@@ -93,132 +94,132 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Styles.background,
           body: SafeArea(
             child: (_activeScreen == 1)
-                ? EditProfileView(
-                    initialData: _profileData,
-                    onCancel: () {
-                      setState(() {
-                        _activeScreen = 0;
-                      });
-                    },
-                    onSaveProfile: (AthleteProfileData updatedData) {
-                      setState(() {
-                        _profileData = updatedData;
-                        _activeScreen = 0;
-                      });
-                    },
-                  )
-                : (_activeScreen == 2)
-                    ? TrophyCaseView(
-                        currentActivities: _runSessions,
-                        onBack: () {
-                          setState(() {
-                            _activeScreen = 0;
-                          });
-                        },
-                      )
-                    : (_activeScreen == 3)
-                        ? FeedbackView(
-                            onSubmitFeedback: () {
-                              setState(() {
-                                _activeScreen = 0;
-                              });
-                            },
-                          )
-                        : SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ProfileHeaderWidget(
-                                  profileData: _profileData,
-                                  activityCount: _runSessions,
-                                  onEditProfile: () {
-                                    setState(() {
-                                      _activeScreen = 1;
-                                    });
-                                  },
-                                  onShareProfile: () {
-                                    setState(() {
-                                      _sharedBanner = !_sharedBanner;
-                                    });
-                                  },
-                                ),
-                                if (_sharedBanner)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Tautan profil ${_profileData.fullName} berhasil disalin!",
-                                      style: const TextStyle(
-                                        color: Styles.active,
-                                      ),
-                                    ),
-                                  ),
-                                ProfileTabBar(
-                                  activeTab: _activeTab,
-                                  onTapKemajuan: () {
-                                    setState(() {
-                                      _activeTab = 0;
-                                    });
-                                  },
-                                  onTapAktivitas: () {
-                                    setState(() {
-                                      _activeTab = 1;
-                                    });
-                                  },
-                                  onTapLainnya: () {
-                                    setState(() {
-                                      _activeTab = 2;
-                                    });
-                                  },
-                                ),
-                                if (_activeTab == 0)
-                                  KemajuanTab(
-                                    runSessions: _runSessions,
-                                    onDecrement: () {
-                                      setState(() {
-                                        if (_runSessions > 0) {
-                                          _runSessions--;
-                                        }
-                                      });
-                                    },
-                                    onReset: () {
-                                      setState(() {
-                                        _runSessions = 0;
-                                      });
-                                    },
-                                    onIncrement: (_runSessions < 10)
-                                        ? () {
-                                            setState(() {
-                                              _runSessions = _runSessions + 1;
-                                            });
-                                          }
-                                        : null,
-                                    onOpenFeedback: () {
-                                      setState(() {
-                                        _activeScreen = 3;
-                                      });
-                                    },
-                                  ),
-                                if (_activeTab == 1)
-                                  AktivitasTab(
-                                    activityCount: _runSessions,
-                                    onAddFirstActivity: () {
-                                      setState(() {
-                                        _runSessions++;
-                                      });
-                                    },
-                                  ),
-                                if (_activeTab == 2)
-                                  LainnyaTab(
-                                    onOpenTrophyCase: () {
-                                      setState(() {
-                                        _activeScreen = 2;
-                                      });
-                                    },
-                                  ),
-                              ],
+              ? EditProfileView(
+                initialData: _profileData,
+                onCancel: () {
+                  setState(() {
+                    _activeScreen = 0;
+                  });
+                },
+                onSaveProfile: (AthleteProfileData updatedData) {
+                  setState(() {
+                    _profileData = updatedData;
+                    _activeScreen = 0;
+                  });
+                },
+              )
+            : (_activeScreen == 2)
+              ? TrophyCaseView(
+                  currentActivities: _runSessions,
+                  onBack: () {
+                    setState(() {
+                      _activeScreen = 0;
+                    });
+                  },
+                )
+              : (_activeScreen == 3)
+                  ? FeedbackView(
+                      onSubmitFeedback: () {
+                        setState(() {
+                          _activeScreen = 0;
+                        });
+                      },
+                    )
+                  : SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ProfileHeaderWidget(
+                          profileData: _profileData,
+                          activityCount: _runSessions,
+                          onEditProfile: () {
+                            setState(() {
+                              _activeScreen = 1;
+                            });
+                          },
+                          onShareProfile: () {
+                            setState(() {
+                              _sharedBanner = !_sharedBanner;
+                            });
+                          },
+                        ),
+                        if (_sharedBanner)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Tautan profil ${_profileData.fullName} berhasil disalin!",
+                              style: const TextStyle(
+                                color: Styles.active,
+                              ),
                             ),
                           ),
+                        ProfileTabBar(
+                          activeTab: _activeTab,
+                          onTapKemajuan: () {
+                            setState(() {
+                              _activeTab = 0;
+                            });
+                          },
+                          onTapAktivitas: () {
+                            setState(() {
+                              _activeTab = 1;
+                            });
+                          },
+                          onTapLainnya: () {
+                            setState(() {
+                              _activeTab = 2;
+                            });
+                          },
+                        ),
+                        if (_activeTab == 0)
+                          KemajuanTab(
+                            runSessions: _runSessions,
+                            onDecrement: () {
+                              setState(() {
+                                if (_runSessions > 0) {
+                                  _runSessions--;
+                                }
+                              });
+                            },
+                            onReset: () {
+                              setState(() {
+                                _runSessions = 0;
+                              });
+                            },
+                            onIncrement: (_runSessions < 10)
+                                ? () {
+                                    setState(() {
+                                      _runSessions = _runSessions + 1;
+                                    });
+                                  }
+                                : null,
+                            onOpenFeedback: () {
+                              setState(() {
+                                _activeScreen = 3;
+                              });
+                            },
+                          ),
+                        if (_activeTab == 1)
+                          AktivitasTab(
+                            activityCount: _runSessions,
+                            onAddFirstActivity: () {
+                              setState(() {
+                                _runSessions++;
+                              });
+                            },
+                          ),
+                        if (_activeTab == 2)
+                          LainnyaTab(
+                            onOpenTrophyCase: () {
+                              setState(() {
+                                _activeScreen = 2;
+                              });
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
           ),
         ),
       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../models/athlete_profile_data.dart';
-import 'custom_image_network.dart';
+import 'athlete_avatar_widget.dart';
 
 class ProfileHeaderWidget extends StatelessWidget {
   final AthleteProfileData profileData;
@@ -17,7 +17,7 @@ class ProfileHeaderWidget extends StatelessWidget {
     required this.onShareProfile,
   });
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -56,13 +56,11 @@ class ProfileHeaderWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                width: 68,
-                height: 68,
-                child: CustomImageNetwork(
-                  imageUrl:
-                      'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
-                  height: 68,
+              GestureDetector(
+                onTap: onEditProfile,
+                child: AthleteAvatarWidget(
+                  avatarPath: profileData.avatarPath,
+                  size: 68,
                 ),
               ),
               const SizedBox(width: 14),
