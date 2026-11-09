@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 
 class LoginWidget extends StatelessWidget {
   const LoginWidget({super.key});
@@ -63,7 +64,13 @@ class LoginWidget extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainShell(),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Styles.badge,
                   foregroundColor: Colors.white,
