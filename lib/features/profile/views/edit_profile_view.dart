@@ -1,12 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_profile_data.dart';
-import '../widgets/custom_image_network.dart';
+import '../widgets/athlete_avatar_widget.dart';
 import '../widgets/profile_labeled_field.dart';
 import '../widgets/profile_option_dialog.dart';
-import '../widgets/top_buttons.dart';
+import '../widgets/profile_photo_dialog.dart';
+import '../widgets/unsaved_changes_dialog.dart';
 
 class EditProfileView extends StatefulWidget {
   final AthleteProfileData initialData;
@@ -35,10 +37,10 @@ class _EditProfileViewState extends State<EditProfileView> {
   late String _selectedSport;
   late String _selectedGender;
   late DateTime _selectedBirthDate;
-  bool _googleFitSwitch = false;
-  String _statusMessage = '';
+  late String _avatarPath;
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
+  final ImagePicker _imagePicker = ImagePicker();
 
   static const List<String> _sportOptions = [
     'Berlari',
@@ -67,7 +69,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     _weightController.text = data.weightKg;
     _selectedSport = data.primarySport;
     _selectedGender = data.gender;
-    _googleFitSwitch = data.googleFitConnected;
+    _avatarPath = data.avatarPath;
     _selectedBirthDate = _parseDateString(data.birthDate);
   }
 
@@ -89,41 +91,18 @@ class _EditProfileViewState extends State<EditProfileView> {
     return '$day/$month/$year';
   }
 
-  void load() async {
-    final String firstName =
-        await _asyncPrefs.getString('first_name') ?? widget.initialData.firstName;
-    final String lastName =
-        await _asyncPrefs.getString('last_name') ?? widget.initialData.lastName;
-    final String city =
-        await _asyncPrefs.getString('city') ?? widget.initialData.city;
-    final String country =
-        await _asyncPrefs.getString('country') ?? widget.initialData.country;
-    final String sport =
-        await _asyncPrefs.getString('sport') ?? widget.initialData.primarySport;
-    final String savedBio =
-        await _asyncPrefs.getString('text') ?? widget.initialData.bio;
-    final String birthDate =
-        await _asyncPrefs.getString('birth_date') ?? widget.initialData.birthDate;
-    final String gender =
-        await _asyncPrefs.getString('gender') ?? widget.initialData.gender;
-    final String weight =
-        await _asyncPrefs.getString('weight_kg') ?? widget.initialData.weightKg;
-    final bool savedSwitch = await _asyncPrefs.getBool('switch') ?? false;
-
-    if (!mounted) return;
-    setState(() {
-      _firstNameController.text = firstName;
-      _lastNameController.text = lastName;
-      _cityController.text = city;
-      _countryController.text = country;
-      _selectedSport = sport;
-      _bioController.text = savedBio;
-      _selectedBirthDate = _parseDateString(birthDate);
-      _selectedGender = gender;
-      _weightController.text = weight;
-      _googleFitSwitch = savedSwitch;
-      _statusMessage = 'Data profil berhasil dimuat dari Shared Preferences.';
-    });
+  bool get _hasUnsavedChanges {
+    final initial = widget.initialData;
+    return _firstNameController.text != initial.firstName ||
+        _lastNameController.text != initial.lastName ||
+        _cityController.text != initial.city ||
+        _countryController.text != initial.country ||
+        _bioController.text != initial.bio ||
+        _weightController.text != initial.weightKg ||
+        _selectedSport != initial.primarySport ||
+        _selectedGender != initial.gender ||
+        _formatDate(_selectedBirthDate) != initial.birthDate ||
+        _avatarPath != initial.avatarPath;
   }
 
   Future<AthleteProfileData> _saveToPreferences() async {
@@ -137,7 +116,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       birthDate: _formatDate(_selectedBirthDate),
       gender: _selectedGender,
       weightKg: _weightController.text,
-      googleFitConnected: _googleFitSwitch,
+      avatarPath: _avatarPath,
     );
 
     await _asyncPrefs.setString('first_name', updatedData.firstName);
@@ -149,25 +128,72 @@ class _EditProfileViewState extends State<EditProfileView> {
     await _asyncPrefs.setString('birth_date', updatedData.birthDate);
     await _asyncPrefs.setString('gender', updatedData.gender);
     await _asyncPrefs.setString('weight_kg', updatedData.weightKg);
-    await _asyncPrefs.setBool('switch', updatedData.googleFitConnected);
+    await _asyncPrefs.setString('avatar_path', updatedData.avatarPath);
 
     return updatedData;
   }
 
-  void save() async {
-    await _saveToPreferences();
+  Future<void> _handleSaveWithLoading() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const SavingProfileDialog();
+      },
+    );
+
+    final updatedData = await _saveToPreferences();
+    await Future.delayed(const Duration(milliseconds: 800));
+
     if (!mounted) return;
-    setState(() {
-      _statusMessage = 'Seluruh perubahan profil berhasil disimpan!';
-    });
+    Navigator.of(context).pop();
+    widget.onSaveProfile(updatedData);
   }
 
-  void reset() {
-    setState(() {
-      _bioController.text = '';
-      _googleFitSwitch = false;
-      _statusMessage = 'Kolom Bio & status Google Fit telah di-reset.';
-    });
+  void _handleBackNavigation() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (!_hasUnsavedChanges) {
+      widget.onCancel();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return UnsavedChangesDialog(
+          onSave: _handleSaveWithLoading,
+          onDiscard: widget.onCancel,
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: source,
+        imageQuality: 85,
+      );
+      if (pickedFile != null && mounted) {
+        setState(() {
+          _avatarPath = pickedFile.path;
+        });
+      }
+    } catch (_) {}
+  }
+
+  void _showPhotoPickerDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ProfilePhotoDialog(
+          onTakePhoto: () => _pickImage(ImageSource.camera),
+          onPickFromGallery: () => _pickImage(ImageSource.gallery),
+        );
+      },
+    );
   }
 
   void _showSportDialog() {
@@ -210,7 +236,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedBirthDate,
-      firstDate: DateTime(1950),
+      firstDate: DateTime(1930),
       lastDate: DateTime(2026, 12, 31),
       helpText: 'Pilih tanggal',
       cancelText: 'Batalkan',
@@ -251,7 +277,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: widget.onCancel,
+                      onTap: _handleBackNavigation,
                       child: const Icon(
                         Icons.arrow_back,
                         color: Styles.tabActive,
@@ -269,11 +295,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                   ],
                 ),
                 GestureDetector(
-                  onTap: () async {
-                    final updatedData = await _saveToPreferences();
-                    if (!mounted) return;
-                    widget.onSaveProfile(updatedData);
-                  },
+                  onTap: _handleSaveWithLoading,
                   child: const Text(
                     "SELESAI",
                     style: TextStyle(
@@ -285,31 +307,17 @@ class _EditProfileViewState extends State<EditProfileView> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            const Center(
-              child: SizedBox(
-                width: 72,
-                height: 72,
-                child: CustomImageNetwork(
-                  imageUrl:
-                      'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
-                  height: 72,
+            const SizedBox(height: 24),
+            Center(
+              child: GestureDetector(
+                onTap: _showPhotoPickerDialog,
+                child: AthleteAvatarWidget(
+                  avatarPath: _avatarPath,
+                  size: 76,
                 ),
               ),
             ),
-            TopButtons(
-              onLoadPressed: load,
-              onSavePressed: save,
-              onResetPressed: reset,
-            ),
-            if (_statusMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  _statusMessage,
-                  style: const TextStyle(fontSize: 12, color: Styles.active),
-                ),
-              ),
+            const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -319,6 +327,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     label: 'Nama depan',
                     controller: _firstNameController,
                     placeholder: 'Nama depan',
+                    textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
                 SizedBox(
@@ -327,6 +336,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     label: 'Nama belakang',
                     controller: _lastNameController,
                     placeholder: 'Nama belakang',
+                    textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
               ],
@@ -341,6 +351,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     label: 'Kota',
                     controller: _cityController,
                     placeholder: 'Kota',
+                    textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
                 SizedBox(
@@ -348,7 +359,8 @@ class _EditProfileViewState extends State<EditProfileView> {
                   child: ProfileLabeledField(
                     label: 'Negara',
                     controller: _countryController,
-                    placeholder: 'Negara',
+                    placeholder: 'INDONESIA',
+                    textCapitalization: TextCapitalization.characters,
                   ),
                 ),
               ],
@@ -364,6 +376,7 @@ class _EditProfileViewState extends State<EditProfileView> {
               label: 'Bio',
               controller: _bioController,
               placeholder: 'Tulis bio singkat Anda...',
+              textCapitalization: TextCapitalization.sentences,
             ),
             const SizedBox(height: 20),
             const Text(
@@ -383,41 +396,6 @@ class _EditProfileViewState extends State<EditProfileView> {
               ),
             ),
             const SizedBox(height: 12),
-            Container(
-              decoration: BoxDecoration(
-                color: Styles.background,
-                border: Border.all(color: Styles.inactive, width: 1.2),
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 8.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.favorite_border, color: Styles.accent),
-                      SizedBox(width: 10),
-                      Text(
-                        'Hubungkan ke Google Fit',
-                        style: TextStyle(fontSize: 13, color: Styles.accent),
-                      ),
-                    ],
-                  ),
-                  CupertinoSwitch(
-                    value: _googleFitSwitch,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _googleFitSwitch = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
             ProfileLabeledField(
               label: 'Tanggal Lahir',
               valueText: _formatDate(_selectedBirthDate),
@@ -434,6 +412,12 @@ class _EditProfileViewState extends State<EditProfileView> {
               label: 'Berat (kg)',
               controller: _weightController,
               placeholder: '74,0',
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+              ],
             ),
           ],
         ),
