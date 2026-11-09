@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 
 void main() {
@@ -6,7 +7,7 @@ void main() {
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainShell(),
+      home: LoginPage(),
     ),
   );
 }
