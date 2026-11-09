@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'models/athlete_profile_data.dart';
 import 'tabs/aktivitas_tab.dart';
 import 'tabs/kemajuan_tab.dart';
 import 'tabs/lainnya_tab.dart';
@@ -22,23 +23,64 @@ class _ProfilePageState extends State<ProfilePage> {
   int _activeScreen = 0;
   int _activeTab = 0;
   int _runSessions = 0;
-  int _weightKg = 61;
-  String _sportCategory = "Berlari";
-  String _athleteBio = "";
   bool _sharedBanner = false;
+
+  AthleteProfileData _profileData = const AthleteProfileData(
+    firstName: 'Michael',
+    lastName: 'Respati Sanjaya Ho',
+    city: 'Jakarta',
+    country: 'INDONESIA',
+    primarySport: 'Berlari',
+    bio: 'I Like Runnnn',
+    birthDate: '30/08/2007',
+    gender: 'Pria',
+    weightKg: '74,0',
+  );
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
 
   @override
   void initState() {
     super.initState();
-    _loadSavedProfileBio();
+    _loadSavedProfileData();
   }
 
-  void _loadSavedProfileBio() async {
-    String savedBio = await _asyncPrefs.getString('text') ?? '';
+  void _loadSavedProfileData() async {
+    final String firstName =
+        await _asyncPrefs.getString('first_name') ?? _profileData.firstName;
+    final String lastName =
+        await _asyncPrefs.getString('last_name') ?? _profileData.lastName;
+    final String city =
+        await _asyncPrefs.getString('city') ?? _profileData.city;
+    final String country =
+        await _asyncPrefs.getString('country') ?? _profileData.country;
+    final String sport =
+        await _asyncPrefs.getString('sport') ?? _profileData.primarySport;
+    final String savedBio =
+        await _asyncPrefs.getString('text') ?? _profileData.bio;
+    final String birthDate =
+        await _asyncPrefs.getString('birth_date') ?? _profileData.birthDate;
+    final String gender =
+        await _asyncPrefs.getString('gender') ?? _profileData.gender;
+    final String weight =
+        await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
+    final String avatarPath =
+        await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
+
+    if (!mounted) return;
     setState(() {
-      _athleteBio = savedBio;
+      _profileData = AthleteProfileData(
+        firstName: firstName,
+        lastName: lastName,
+        city: city,
+        country: country,
+        primarySport: sport,
+        bio: savedBio,
+        birthDate: birthDate,
+        gender: gender,
+        weightKg: weight,
+        avatarPath: avatarPath,
+      );
     });
   }
 
@@ -52,133 +94,112 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Styles.background,
           body: SafeArea(
             child: (_activeScreen == 1)
-                ? EditProfileView(
-                    sportCategory: _sportCategory,
-                    weightKg: _weightKg,
-                    initialBio: _athleteBio,
-                    onToggleSport: () {
-                      setState(() {
-                        _sportCategory = (_sportCategory == "Berlari")
-                            ? "Bersepeda"
-                            : "Berlari";
-                      });
-                    },
-                    onDecreaseWeight: () {
-                      setState(() {
-                        if (_weightKg > 30) {
-                          _weightKg--;
-                        }
-                      });
-                    },
-                    onIncreaseWeight: () {
-                      setState(() {
-                        _weightKg++;
-                      });
-                    },
-                    onBioSaved: (String updatedBio) {
-                      setState(() {
-                        _athleteBio = updatedBio;
-                      });
-                    },
-                    onSaveProfile: () {
-                      setState(() {
-                        _activeScreen = 0;
-                      });
-                    },
-                  )
-                : (_activeScreen == 2)
-                  ? TrophyCaseView(
-                    currentActivities: _runSessions,
-                    onBack: () {
-                      setState(() {
-                        _activeScreen = 0;
-                      });
-                    },
-                  )
-                : (_activeScreen == 3)
+              ? EditProfileView(
+                initialData: _profileData,
+                onCancel: () {
+                  setState(() {
+                    _activeScreen = 0;
+                  });
+                },
+                onSaveProfile: (AthleteProfileData updatedData) {
+                  setState(() {
+                    _profileData = updatedData;
+                    _activeScreen = 0;
+                  });
+                },
+              )
+            : (_activeScreen == 2)
+              ? TrophyCaseView(
+                  currentActivities: _runSessions,
+                  onBack: () {
+                    setState(() {
+                      _activeScreen = 0;
+                    });
+                  },
+                )
+              : (_activeScreen == 3)
                   ? FeedbackView(
-                    onSubmitFeedback: () {
-                      setState(() {
-                        _activeScreen = 0;
-                      });
-                    },
-                  )
-                : SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ProfileHeaderWidget(
-                        fullName: "Michael Respati Sanjaya Ho",
-                        sportCategory: _sportCategory,
-                        bioText: _athleteBio,
-                        activityCount: _runSessions,
-                        weightKg: _weightKg,
-                        onEditProfile: () {
-                          setState(() {
-                            _activeScreen = 1;
-                          });
-                        },
-                        onShareProfile: () {
-                          setState(() {
-                            _sharedBanner = !_sharedBanner;
-                          });
-                        },
-                      ),
-                      if (_sharedBanner)
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            "Tautan profil Michael berhasil disalin!",
-                            style: TextStyle(color: Styles.active),
+                      onSubmitFeedback: () {
+                        setState(() {
+                          _activeScreen = 0;
+                        });
+                      },
+                    )
+                  : SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ProfileHeaderWidget(
+                          profileData: _profileData,
+                          activityCount: _runSessions,
+                          onEditProfile: () {
+                            setState(() {
+                              _activeScreen = 1;
+                            });
+                          },
+                          onShareProfile: () {
+                            setState(() {
+                              _sharedBanner = !_sharedBanner;
+                            });
+                          },
+                        ),
+                        if (_sharedBanner)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Tautan profil ${_profileData.fullName} berhasil disalin!",
+                              style: const TextStyle(
+                                color: Styles.active,
+                              ),
+                            ),
                           ),
+                        ProfileTabBar(
+                          activeTab: _activeTab,
+                          onTapKemajuan: () {
+                            setState(() {
+                              _activeTab = 0;
+                            });
+                          },
+                          onTapAktivitas: () {
+                            setState(() {
+                              _activeTab = 1;
+                            });
+                          },
+                          onTapLainnya: () {
+                            setState(() {
+                              _activeTab = 2;
+                            });
+                          },
                         ),
-                      ProfileTabBar(
-                        activeTab: _activeTab,
-                        onTapKemajuan: () {
-                          setState(() {
-                            _activeTab = 0;
-                          });
-                        },
-                        onTapAktivitas: () {
-                          setState(() {
-                            _activeTab = 1;
-                          });
-                        },
-                        onTapLainnya: () {
-                          setState(() {
-                            _activeTab = 2;
-                          });
-                        },
-                      ),
-                      if (_activeTab == 0)
-                        KemajuanTab(
-                          runSessions: _runSessions,
-                          onDecrement: () {
-                            setState(() {
-                              if (_runSessions > 0) {
-                                _runSessions--;
-                              }
-                            });
-                          },
-                          onReset: () {
-                            setState(() {
-                              _runSessions = 0;
-                            });
-                          },
-                          onIncrement: (_runSessions < 10)
-                            ? () {
+                        if (_activeTab == 0)
+                          KemajuanTab(
+                            runSessions: _runSessions,
+                            onDecrement: () {
                               setState(() {
-                                _runSessions = _runSessions + 1;
+                                if (_runSessions > 0) {
+                                  _runSessions--;
+                                }
                               });
-                            }
-                            : null,
-                          onOpenFeedback: () {
-                            setState(() {
-                              _activeScreen = 3;
-                            });
-                          },
-                        ),
+                            },
+                            onReset: () {
+                              setState(() {
+                                _runSessions = 0;
+                              });
+                            },
+                            onIncrement: (_runSessions < 10)
+                                ? () {
+                                    setState(() {
+                                      _runSessions = _runSessions + 1;
+                                    });
+                                  }
+                                : null,
+                            onOpenFeedback: () {
+                              setState(() {
+                                _activeScreen = 3;
+                              });
+                            },
+                          ),
                         if (_activeTab == 1)
                           AktivitasTab(
                             activityCount: _runSessions,
