@@ -8,9 +8,22 @@ class BadgeWidget extends StatefulWidget {
   State<BadgeWidget> createState() => _BadgeWidgetState();
 }
 
+class BadgeItem {
+  final String title;
+  final String image;
+
+  const BadgeItem({required this.title, required this.image});
+}
+
 class _BadgeWidgetState extends State<BadgeWidget> {
   final _controller = PageController(viewportFraction: 0.75);
-  final _titles = ['LOW', 'MIDDLE', 'HIGH'];
+  final _badges = const [
+    BadgeItem(title: 'Basic Runner', image: 'images/basic_runner.png'),
+    BadgeItem(title: 'Rookie Runner', image: 'images/rookie_runner.png'),
+    BadgeItem(title: 'Master Runner', image: 'images/master_runner.png'),
+    BadgeItem(title: 'Grand Master Runner', image: 'images/grand_master_runner.png'),
+    BadgeItem(title: 'Super Speed', image: 'images/super_speed.png'),
+  ];
 
   @override
   void dispose() {
@@ -21,13 +34,19 @@ class _BadgeWidgetState extends State<BadgeWidget> {
   Widget _arrow(Alignment align, IconData icon, VoidCallback onTap) {
     return Align(
       alignment: align,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 36,
-          height: 56,
-          color: Colors.green.withOpacity(0.6),
-          child: Icon(icon, color: Colors.white, size: 32),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Styles.accent,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: Colors.white, size: 32),
+          ),
         ),
       ),
     );
@@ -35,44 +54,44 @@ class _BadgeWidgetState extends State<BadgeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: Styles.badge,
+    return SizedBox(
       child: SizedBox(
-        height: 260,
+        height: 240,
         child: Stack(
           children: [
             PageView.builder(
               controller: _controller,
-              itemCount: _titles.length,
-              itemBuilder: (context, i) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      _titles[i],
-                      style: const TextStyle(color: Colors.blue, fontSize: 16),
-                    ),
-                    const Spacer(),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                        ),
-                        onPressed: () {},
-                        child: const Text('SELECT'),
+              itemCount: _badges.length,
+              itemBuilder: (context, i) {
+                final badge = _badges[i];
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        badge.title,
+                        style: const TextStyle(color: Colors.blue, fontSize: 16),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                      Expanded(child: Image.asset(badge.image)),
+                      SizedBox(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () {},
+                          child: const Text('Inspect'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             _arrow(Alignment.centerLeft, Icons.chevron_left, () {
               _controller.previousPage(
