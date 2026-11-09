@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../models/athlete_profile_data.dart';
 import 'custom_image_network.dart';
 
 class ProfileHeaderWidget extends StatelessWidget {
-  final String fullName;
-  final String sportCategory;
-  final String bioText;
+  final AthleteProfileData profileData;
   final int activityCount;
-  final int weightKg;
   final VoidCallback onEditProfile;
   final VoidCallback onShareProfile;
 
   const ProfileHeaderWidget({
     super.key,
-    required this.fullName,
-    required this.sportCategory,
-    required this.bioText,
+    required this.profileData,
     required this.activityCount,
-    required this.weightKg,
     required this.onEditProfile,
     required this.onShareProfile,
   });
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -33,9 +28,9 @@ class ProfileHeaderWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                sportCategory.toUpperCase(),
+                "${profileData.city}, ${profileData.country}  •  ${profileData.primarySport.toUpperCase()}",
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: Styles.accent,
                 ),
@@ -46,60 +41,64 @@ class ProfileHeaderWidget extends StatelessWidget {
                   const SizedBox(width: 16),
                   const Icon(Icons.search, color: Styles.tabActive),
                   const SizedBox(width: 16),
-                  IconButton.filled(
-                    onPressed: onEditProfile,
-                    icon: const Icon(Icons.settings, color: Styles.tabActive),
+                  GestureDetector(
+                    onTap: onEditProfile,
+                    child: const Icon(
+                      Icons.settings_outlined,
+                      color: Styles.tabActive,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(
-                width: 64,
-                height: 64,
+                width: 68,
+                height: 68,
                 child: CustomImageNetwork(
                   imageUrl:
                       'https://cdn-icons-png.flaticon.com/512/4140/4140048.png',
-                  height: 64,
+                  height: 68,
                 ),
               ),
               const SizedBox(width: 14),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    fullName,
-                    style: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      profileData.fullName,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Styles.tabActive,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "$activityCount aktivitas  •  $sportCategory ($weightKg kg)",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Styles.tabInactive,
+                    const SizedBox(height: 4),
+                    Text(
+                      "$activityCount aktivitas  •  ${profileData.gender} (${profileData.weightKg} kg)",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Styles.tabInactive,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
-          if (bioText.isNotEmpty)
+          if (profileData.bio.trim().isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 12.0),
               child: Text(
-                bioText,
+                profileData.bio,
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
-                  color: Styles.tabInactive,
+                  fontSize: 15,
+                  color: Styles.tabActive,
                 ),
               ),
             ),
@@ -111,7 +110,7 @@ class ProfileHeaderWidget extends StatelessWidget {
               color: Styles.tabActive,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
