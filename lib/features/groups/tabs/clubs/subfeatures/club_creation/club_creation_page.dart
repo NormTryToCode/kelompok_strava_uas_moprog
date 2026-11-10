@@ -9,7 +9,8 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_3_club_details.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_4_club_privacy.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_5_club_location.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_progress_bar.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_indicator.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
 class ClubCreationPage extends StatefulWidget {
   const ClubCreationPage({super.key});
@@ -17,6 +18,7 @@ class ClubCreationPage extends StatefulWidget {
   static const totalSteps = 5;
   static const maxTypes = 3;
 
+  /// Mengembalikan [Club] yang baru dibuat, atau null kalau dibatalkan.
   static Future<Club?> open(BuildContext context) {
     return Navigator.of(context, rootNavigator: true).push<Club>(
       MaterialPageRoute<Club>(builder: (_) => const ClubCreationPage()),
@@ -32,40 +34,10 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
   int _step = 1;
   bool _saving = false;
 
-  String get _title {
-    switch (_step) {
-      case 1:
-        return 'Sport';
-      case 2:
-        return 'Club Type';
-      case 3:
-        return 'Club Info';
-      case 4:
-        return 'Privacy';
-      case 5:
-        return 'Location';
-      default:
-        return '';
-    }
-  }
-
-  String get _hint {
-    switch (_step) {
-      case 2:
-      case 3:
-        return 'You can edit this anytime';
-      case 4:
-        return '';
-      default:
-        return 'You can always change this later';
-    }
-  }
-
   String get _nextLabel {
     if (_saving) return 'Creating...';
-    if (_step == 2 && _draft.types.isEmpty) return 'Pick at least 1';
-    if (_step == ClubCreationPage.totalSteps) return 'Create Club';
-    return 'Next';
+    if (_step == ClubCreationPage.totalSteps) return 'Create club';
+    return 'Continue';
   }
 
   bool get _canProceed {
@@ -184,22 +156,31 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
       body: SafeArea(
         child: Column(
           children: [
-            _Header(
-              title: _title,
-              onBack: _onBack,
+            _TopBar(
+              step: _step,
+              totalSteps: ClubCreationPage.totalSteps,
               onClose: () => Navigator.of(context).pop(),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-              child: StepProgressBar(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+              child: StepIndicator(
                 totalSteps: ClubCreationPage.totalSteps,
                 currentStep: _step,
               ),
             ),
-            Expanded(child: _buildStep()),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: KeyedSubtree(
+                  key: ValueKey(_step),
+                  child: _buildStep(),
+                ),
+              ),
+            ),
             _BottomBar(
-              hint: _hint,
-              label: _nextLabel,
+              backLabel: _step == 1 ? 'Cancel' : 'Back',
+              nextLabel: _nextLabel,
+              onBack: _saving ? null : _onBack,
               onNext: _canProceed && !_saving ? _onNext : null,
             ),
           ],
@@ -209,51 +190,44 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
   }
 }
 
-class _Header extends StatelessWidget {
-  final String title;
-  final VoidCallback onBack;
+class _TopBar extends StatelessWidget {
+  final int step;
+  final int totalSteps;
   final VoidCallback onClose;
 
-  const _Header({
-    required this.title,
-    required this.onBack,
+  const _TopBar({
+    required this.step,
+    required this.totalSteps,
     required this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 20, 0),
+      padding: const EdgeInsets.fromLTRB(8, 8, 20, 12),
       child: Row(
         children: [
           IconButton(
-            onPressed: onBack,
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: onClose,
+            icon: const Icon(Icons.close, color: Colors.white),
           ),
-          const SizedBox(width: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
+          const SizedBox(width: 4),
+          const Expanded(
+            child: Text(
+              'New club',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
             ),
           ),
-          const Spacer(),
-          GestureDetector(
-            onTap: onClose,
-            behavior: HitTestBehavior.opaque,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text(
-                'CLOSE',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                  color: Colors.white,
-                ),
-              ),
+          Text(
+            'Step $step of $totalSteps',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Styles.tabInactive,
             ),
           ),
         ],
@@ -263,48 +237,35 @@ class _Header extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  final String hint;
-  final String label;
+  final String backLabel;
+  final String nextLabel;
+  final VoidCallback? onBack;
   final VoidCallback? onNext;
 
   const _BottomBar({
-    required this.hint,
-    required this.label,
+    required this.backLabel,
+    required this.nextLabel,
+    required this.onBack,
     required this.onNext,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: Palette.cardBorder)),
+      ),
+      child: Row(
         children: [
-          if (hint.isNotEmpty) ...[
-            Text(
-              hint,
-              style: const TextStyle(fontSize: 15, color: Styles.tabInactive),
-            ),
-            const SizedBox(height: 12),
-          ],
-          SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: FilledButton(
-              onPressed: onNext,
-              style: FilledButton.styleFrom(
-                backgroundColor: Styles.accent,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Styles.accent.withAlpha(90),
-                disabledForegroundColor: Colors.white.withAlpha(110),
-                shape: const StadiumBorder(),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              child: Text(label),
-            ),
+          Expanded(
+            flex: 2,
+            child: GhostButton(label: backLabel, onPressed: onBack),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 3,
+            child: PrimaryButton(label: nextLabel, onPressed: onNext),
           ),
         ],
       ),
