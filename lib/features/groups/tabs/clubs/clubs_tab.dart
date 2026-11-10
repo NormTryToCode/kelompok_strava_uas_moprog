@@ -74,7 +74,7 @@ class _ClubsTabState extends State<ClubsTab> {
     return ListView.separated(
       padding: const EdgeInsets.only(top: 8),
       itemCount: _clubs.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (_, i) => ClubCardItem(
         club: _clubs[i],
         onTap: () => ClubDetailPage.open(context, _clubs[i]),
