@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 
 class LoginWidget extends StatelessWidget {
@@ -78,6 +79,27 @@ class LoginWidget extends StatelessWidget {
                 child: const Text("Login"),
               ),
             ),
+              
+            const SizedBox(height: 16),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RegisterPage(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Styles.badge,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text("Register"),
+              ),
+            ),
+
           ],
         ),
       ),
