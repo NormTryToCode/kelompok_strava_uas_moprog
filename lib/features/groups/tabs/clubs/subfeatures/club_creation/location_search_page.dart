@@ -146,7 +146,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
         return ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: _results.length,
-          separatorBuilder: (_, __) => const Divider(
+          separatorBuilder: (_, _) => const Divider(
             height: 1,
             indent: 74,
             color: Palette.cardBorder,
@@ -191,7 +191,7 @@ class _SearchField extends StatelessWidget {
         prefixIcon: const Icon(Icons.search, color: Styles.tabInactive),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
-          builder: (_, value, __) => value.text.isEmpty
+          builder: (_, value, _) => value.text.isEmpty
               ? const SizedBox.shrink()
               : IconButton(
                   onPressed: onClear,
