@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/radio_dot.dart';
 
 Future<T?> showOptionSheet<T>(
   BuildContext context, {
@@ -14,7 +13,7 @@ Future<T?> showOptionSheet<T>(
     backgroundColor: Styles.surface,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     builder: (sheetContext) {
       final maxHeight = MediaQuery.of(sheetContext).size.height * 0.7;
@@ -26,13 +25,24 @@ Future<T?> showOptionSheet<T>(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Styles.inactive,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 19,
+                    fontWeight: FontWeight.w800,
                     color: Colors.white,
                   ),
                 ),
@@ -43,25 +53,32 @@ Future<T?> showOptionSheet<T>(
                   itemCount: options.length,
                   itemBuilder: (_, i) {
                     final option = options[i];
+                    final isSelected = option == selected;
+
                     return InkWell(
                       onTap: () => Navigator.of(sheetContext).pop(option),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 14,
+                          vertical: 15,
                         ),
                         child: Row(
                           children: [
                             Expanded(
                               child: Text(
                                 labelOf(option),
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  fontSize: 16.5,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  color: isSelected ? Palette.teal : Colors.white,
                                 ),
                               ),
                             ),
-                            RadioDot(selected: option == selected),
+                            if (isSelected)
+                              const Icon(Icons.check_circle,
+                                  size: 22, color: Palette.teal),
                           ],
                         ),
                       ),
