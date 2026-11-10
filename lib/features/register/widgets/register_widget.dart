@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 
-class LoginWidget extends StatelessWidget {
-  const LoginWidget({super.key});
+class RegisterWidget extends StatelessWidget {
+  const RegisterWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
