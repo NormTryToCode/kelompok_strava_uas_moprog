@@ -4,6 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.da
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_form_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_input_decoration.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/segmented_toggle.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
 class PaceEditor extends StatelessWidget {
   final EventFormController controller;
@@ -37,23 +38,11 @@ class PaceEditor extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        SizedBox(
-          width: double.infinity,
+        GhostButton(
+          label: canAdd ? 'Add pace group' : 'Maximum reached',
+          icon: canAdd ? Icons.add : null,
           height: 50,
-          child: OutlinedButton(
-            onPressed: canAdd ? controller.addPaceRange : null,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white,
-              disabledForegroundColor: Styles.tabInactive.withAlpha(120),
-              side: BorderSide(
-                color: canAdd ? Styles.inactive : Styles.inactive.withAlpha(90),
-                width: 1.5,
-              ),
-              shape: const StadiumBorder(),
-              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-            ),
-            child: Text(canAdd ? 'Add pace group' : 'Maximum reached'),
-          ),
+          onPressed: canAdd ? controller.addPaceRange : null,
         ),
       ],
     );

@@ -5,8 +5,8 @@ Widget _darkPickerTheme(BuildContext context, Widget? child) {
   return Theme(
     data: ThemeData.dark(useMaterial3: true).copyWith(
       colorScheme: const ColorScheme.dark(
-        primary: Styles.accent,
-        onPrimary: Colors.white,
+        primary: Palette.teal,
+        onPrimary: Styles.background,
         surface: Styles.surface,
         onSurface: Colors.white,
       ),

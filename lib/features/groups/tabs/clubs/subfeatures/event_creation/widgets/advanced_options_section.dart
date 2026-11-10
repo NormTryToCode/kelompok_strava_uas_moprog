@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_form_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_field_label.dart';
@@ -7,6 +6,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_input_decoration.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_picker_field.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/option_sheet.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
 class AdvancedOptionsSection extends StatelessWidget {
   final EventFormController controller;
@@ -31,6 +31,7 @@ class AdvancedOptionsSection extends StatelessWidget {
         return EventFormSection(
           title: 'Advanced options',
           subtitle: 'Route, distance, and surface',
+          icon: Icons.alt_route,
           forceExpanded: distanceError != null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,25 +136,6 @@ class _OutlinedAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = onPressed != null;
-
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.white,
-          disabledForegroundColor: Styles.tabInactive.withAlpha(120),
-          side: BorderSide(
-            color: enabled ? Styles.inactive : Styles.inactive.withAlpha(90),
-            width: 1.5,
-          ),
-          shape: const StadiumBorder(),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-        ),
-        child: Text(label),
-      ),
-    );
+    return GhostButton(label: label, onPressed: onPressed, height: 50);
   }
 }

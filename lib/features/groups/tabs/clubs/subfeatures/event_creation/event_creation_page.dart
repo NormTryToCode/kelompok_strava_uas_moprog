@@ -9,8 +9,10 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_basic_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_description_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_details_section.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_form_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_location_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_schedule_fields.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
 class EventCreationPage extends StatefulWidget {
   final Club club;
@@ -101,41 +103,60 @@ class _EventCreationPageState extends State<EventCreationPage> {
       backgroundColor: Styles.background,
       body: Column(
         children: [
-          _Header(onBack: () => Navigator.of(context).pop()),
+          _Header(
+            clubName: widget.club.name,
+            onBack: () => Navigator.of(context).pop(),
+          ),
           Expanded(
             child: SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   KeyedSubtree(
                     key: _basicKey,
-                    child: EventBasicFields(controller: _form),
+                    child: EventFormCard(
+                      icon: Icons.edit_outlined,
+                      title: 'Basics',
+                      child: EventBasicFields(controller: _form),
+                    ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 14),
                   KeyedSubtree(
                     key: _scheduleKey,
-                    child: EventScheduleFields(controller: _form),
+                    child: EventFormCard(
+                      icon: Icons.calendar_month_outlined,
+                      title: 'Schedule',
+                      child: EventScheduleFields(controller: _form),
+                    ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 14),
                   KeyedSubtree(
                     key: _locationKey,
-                    child: EventLocationFields(controller: _form),
+                    child: EventFormCard(
+                      icon: Icons.place_outlined,
+                      title: 'Place',
+                      child: EventLocationFields(controller: _form),
+                    ),
                   ),
-                  const SizedBox(height: 28),
-                  EventDescriptionFields(controller: _form),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 14),
+                  EventFormCard(
+                    icon: Icons.notes_outlined,
+                    title: 'About',
+                    child: EventDescriptionFields(controller: _form),
+                  ),
+                  const SizedBox(height: 14),
                   KeyedSubtree(
                     key: _detailsKey,
                     child: EventDetailsSection(controller: _form),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 14),
                   KeyedSubtree(
                     key: _advancedKey,
                     child: AdvancedOptionsSection(controller: _form),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 14),
                   KeyedSubtree(
                     key: _attendanceKey,
                     child: AttendanceSection(controller: _form),
@@ -145,7 +166,7 @@ class _EventCreationPageState extends State<EventCreationPage> {
             ),
           ),
           _BottomBar(
-            label: _saving ? 'Creating...' : 'Create',
+            label: _saving ? 'Creating...' : 'Create event',
             onPressed: _saving ? null : _onCreate,
           ),
         ],
@@ -155,31 +176,54 @@ class _EventCreationPageState extends State<EventCreationPage> {
 }
 
 class _Header extends StatelessWidget {
+  final String clubName;
   final VoidCallback onBack;
 
-  const _Header({required this.onBack});
+  const _Header({required this.clubName, required this.onBack});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Styles.surface,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF123B3A), Styles.background],
+        ),
+      ),
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 20, 12),
+          padding: const EdgeInsets.fromLTRB(8, 8, 20, 14),
           child: Row(
             children: [
               IconButton(
                 onPressed: onBack,
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
               ),
-              const SizedBox(width: 16),
-              const Text(
-                'Create Event',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+              const SizedBox(width: 6),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'New event',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      'for $clubName',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Styles.tabInactive,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -199,30 +243,15 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Styles.surface,
+      decoration: const BoxDecoration(
+        color: Styles.background,
+        border: Border(top: BorderSide(color: Palette.cardBorder)),
+      ),
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: FilledButton(
-              onPressed: onPressed,
-              style: FilledButton.styleFrom(
-                backgroundColor: Styles.accent,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Styles.accent.withAlpha(90),
-                disabledForegroundColor: Colors.white.withAlpha(110),
-                shape: const StadiumBorder(),
-                textStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              child: Text(label),
-            ),
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+          child: PrimaryButton(label: label, onPressed: onPressed),
         ),
       ),
     );
