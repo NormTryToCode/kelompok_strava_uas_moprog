@@ -25,14 +25,22 @@ class EventToggleTile extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 17, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
               if (subtitle != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
                     subtitle!,
-                    style: const TextStyle(fontSize: 14, color: Styles.tabInactive),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      height: 1.3,
+                      color: Styles.tabInactive,
+                    ),
                   ),
                 ),
             ],
@@ -45,7 +53,7 @@ class EventToggleTile extends StatelessWidget {
           thumbColor: WidgetStateProperty.all(Colors.white),
           trackColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
-                ? Styles.accent
+                ? Palette.teal
                 : Styles.inactive,
           ),
           trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
