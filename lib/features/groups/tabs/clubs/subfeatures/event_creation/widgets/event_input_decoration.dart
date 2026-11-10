@@ -5,7 +5,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 const eventErrorColor = Color(0xFFFF6B6B);
 
 OutlineInputBorder _border(Color color, double width) => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(Radii.field),
       borderSide: BorderSide(color: color, width: width),
     );
 
@@ -23,12 +23,12 @@ InputDecoration eventInputDecoration({
     errorStyle: const TextStyle(fontSize: 13, color: eventErrorColor),
     counterText: '',
     filled: true,
-    fillColor: Styles.surface,
+    fillColor: Palette.fieldFill,
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    enabledBorder: _border(Styles.inactive, 1.5),
-    focusedBorder: _border(Styles.accent, 2),
-    errorBorder: _border(eventErrorColor, 1.5),
-    focusedErrorBorder: _border(eventErrorColor, 2),
+    enabledBorder: _border(Palette.cardBorder, 1.2),
+    focusedBorder: _border(Palette.teal, 1.8),
+    errorBorder: _border(eventErrorColor, 1.4),
+    focusedErrorBorder: _border(eventErrorColor, 1.8),
   );
 }
 

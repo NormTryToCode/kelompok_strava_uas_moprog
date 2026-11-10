@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/radio_dot.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_form_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_field_label.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_form_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_input_decoration.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_toggle_tile.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/pace_editor.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/selectable_card.dart';
 
 class EventDetailsSection extends StatelessWidget {
   final EventFormController controller;
@@ -25,27 +26,30 @@ class EventDetailsSection extends StatelessWidget {
         return EventFormSection(
           title: 'Event details',
           subtitle: 'Choose the event type and pace groups',
+          icon: Icons.bolt_outlined,
           forceExpanded: kindError != null || paceError != null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const EventFieldLabel('Event type', tag: FieldTag.required),
-              const SizedBox(height: 4),
-              for (final kind in EventKind.option)
-                _KindTile(
+              const SizedBox(height: 10),
+              for (final kind in EventKind.option) ...[
+                _KindCard(
                   kind: kind,
                   selected: controller.kind?.id == kind.id,
                   onTap: () => controller.update(() => controller.kind = kind),
                 ),
+                const SizedBox(height: 10),
+              ],
               if (kindError != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 2, left: 4),
+                  padding: const EdgeInsets.only(left: 4, bottom: 4),
                   child: Text(
                     kindError,
                     style: const TextStyle(fontSize: 13, color: eventErrorColor),
                   ),
                 ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 6),
               EventToggleTile(
                 title: 'Pace groups',
                 subtitle: 'Set speed ranges for each group',
@@ -72,12 +76,12 @@ class EventDetailsSection extends StatelessWidget {
   }
 }
 
-class _KindTile extends StatelessWidget {
+class _KindCard extends StatelessWidget {
   final EventKind kind;
   final bool selected;
   final VoidCallback onTap;
 
-  const _KindTile({
+  const _KindCard({
     required this.kind,
     required this.selected,
     required this.onTap,
@@ -85,33 +89,44 @@ class _KindTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return SelectableCard(
+      selected: selected,
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            Icon(kind.icon, size: 30, color: Colors.white),
-            const SizedBox(width: 16),
-            Expanded(
+      child: Row(
+        children: [
+          IconBubble(
+            kind.icon,
+            size: 42,
+            color: selected ? Palette.teal : Styles.tabInactive,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     kind.name,
-                    style: const TextStyle(fontSize: 17, color: Colors.white),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     kind.description,
-                    style: const TextStyle(fontSize: 14, color: Styles.tabInactive),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Styles.tabInactive,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 12),
-            RadioDot(selected: selected),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

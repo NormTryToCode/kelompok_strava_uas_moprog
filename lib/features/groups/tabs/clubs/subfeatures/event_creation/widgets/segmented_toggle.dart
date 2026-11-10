@@ -19,11 +19,12 @@ class SegmentedToggle<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 48,
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Styles.inactive, width: 1.5),
+        color: Palette.fieldFill,
+        borderRadius: BorderRadius.circular(Radii.field),
+        border: Border.all(color: Palette.cardBorder),
       ),
-      clipBehavior: Clip.antiAlias,
       child: Row(
         children: [
           for (final option in options)
@@ -31,26 +32,30 @@ class SegmentedToggle<T> extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => onChanged(option),
                 behavior: HitTestBehavior.opaque,
-                child: Container(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
                   alignment: Alignment.center,
-                  color: option == selected ? Styles.inactive : Colors.transparent,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (option == selected) ...[
-                        const Icon(Icons.check, size: 18, color: Colors.white),
-                        const SizedBox(width: 8),
-                      ],
-                      Text(
-                        labelOf(option),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight:
-                              option == selected ? FontWeight.w700 : FontWeight.w400,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                  decoration: BoxDecoration(
+                    color: option == selected
+                        ? Palette.selectedFill
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(Radii.chip - 2),
+                    border: Border.all(
+                      color: option == selected
+                          ? Palette.teal
+                          : Colors.transparent,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Text(
+                    labelOf(option),
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w700,
+                      color: option == selected
+                          ? Colors.white
+                          : Styles.tabInactive,
+                    ),
                   ),
                 ),
               ),

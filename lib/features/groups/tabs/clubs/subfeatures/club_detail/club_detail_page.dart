@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_creation_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_action_buttons.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_channels_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_detail_header.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_events_section.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_info_row.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_post_bar.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_creation_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 
 class ClubDetailPage extends StatelessWidget {
   final Club club;
@@ -40,67 +39,45 @@ class ClubDetailPage extends StatelessWidget {
     void comingSoon() => _comingSoon(context);
 
     return Scaffold(
-      backgroundColor: Styles.surface,
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
+      backgroundColor: Styles.background,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: comingSoon,
+        backgroundColor: Styles.accent,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.button),
+        ),
+        icon: const Icon(Icons.edit_outlined),
+        label: const Text(
+          'New post',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ClubDetailHeader(
+              club: club,
+              onBack: () => Navigator.of(context).pop(),
+              onSettings: comingSoon,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 96),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClubDetailHeader(
-                    onBack: () => Navigator.of(context).pop(),
-                    onSettings: comingSoon,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          club.name,
-                          style: const TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ClubInfoRow(club: club),
-                        if (club.types.isNotEmpty) ...[
-                          const SizedBox(height: 10),
-                          Text(
-                            club.typeLabel,
-                            style: const TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ],
-                        if (club.description.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            club.description,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Styles.tabInactive,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
+                  const SectionTitle('Quick actions'),
+                  const SizedBox(height: 12),
                   ClubActionButtons(onTap: comingSoon),
                   const SizedBox(height: 28),
                   ClubChannelsSection(onTap: comingSoon),
+                  const SizedBox(height: 28),
                   ClubEventsSection(onCreateEvent: () => _createEvent(context)),
-                  const SizedBox(height: 24),
                 ],
               ),
             ),
-          ),
-          ClubPostBar(onTap: comingSoon),
-        ],
+          ],
+        ),
       ),
     );
   }

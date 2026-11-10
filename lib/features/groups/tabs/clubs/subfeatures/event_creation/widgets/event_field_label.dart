@@ -22,7 +22,7 @@ class EventFieldLabel extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 17,
+            fontSize: 14.5,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
@@ -33,23 +33,39 @@ class EventFieldLabel extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: Styles.accent,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               badge!,
               style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
                 color: Colors.white,
               ),
             ),
           ),
         ],
         const Spacer(),
-        if (tag != FieldTag.none)
-          Text(
-            tag == FieldTag.required ? 'Required' : 'Optional',
-            style: const TextStyle(fontSize: 14, color: Styles.tabInactive),
+        if (tag == FieldTag.required)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: Styles.accent.withAlpha(34),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Text(
+              'Required',
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: Styles.accent,
+              ),
+            ),
+          ),
+        if (tag == FieldTag.optional)
+          const Text(
+            'Optional',
+            style: TextStyle(fontSize: 12, color: Styles.tabInactive),
           ),
       ],
     );

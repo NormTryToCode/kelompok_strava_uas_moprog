@@ -21,6 +21,7 @@ class AttendanceSection extends StatelessWidget {
         return EventFormSection(
           title: 'Who can join',
           subtitle: 'Choose who can attend and set a size limit',
+          icon: Icons.group_outlined,
           forceExpanded: capacityError != null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

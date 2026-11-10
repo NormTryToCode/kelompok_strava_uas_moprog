@@ -3,6 +3,8 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/event_repository.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/event_card_item.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 
 class _UpcomingEvent {
   final Event event;
@@ -57,6 +59,15 @@ class _EventsTabState extends State<EventsTab> {
     );
   }
 
+  List<MapEntry<String, List<_UpcomingEvent>>> _groupByMonth() {
+    final groups = <String, List<_UpcomingEvent>>{};
+    for (final item in _upcoming) {
+      final key = '${monthName(item.date.month)} ${item.date.year}';
+      groups.putIfAbsent(key, () => []).add(item);
+    }
+    return groups.entries.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_loading) return const SizedBox.shrink();
@@ -65,34 +76,66 @@ class _EventsTabState extends State<EventsTab> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 32),
-          child: Text(
-            'No upcoming events yet.\nCreate one from your club page.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, color: Styles.tabInactive),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconBubble(Icons.event_busy_outlined, size: 60),
+              SizedBox(height: 16),
+              Text(
+                'No upcoming events yet',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Create one from your club page and it will show up here.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: Styles.tabInactive),
+              ),
+            ],
           ),
         ),
       );
     }
 
+    final groups = _groupByMonth();
+
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       children: [
-        const Text(
-          'Upcoming Events',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
+        for (final group in groups) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
+            child: Row(
+              children: [
+                Text(
+                  group.key,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  group.value.length == 1
+                      ? '1 event'
+                      : '${group.value.length} events',
+                  style: const TextStyle(fontSize: 13, color: Styles.tabInactive),
+                ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 16),
-        for (final item in _upcoming) ...[
-          EventCardItem(
-            event: item.event,
-            date: item.date,
-            onTap: _comingSoon,
-          ),
-          const SizedBox(height: 12),
+          for (var i = 0; i < group.value.length; i++)
+            EventCardItem(
+              event: group.value[i].event,
+              date: group.value[i].date,
+              isLast: i == group.value.length - 1,
+              onTap: _comingSoon,
+            ),
         ],
       ],
     );

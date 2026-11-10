@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/widgets/follow_button.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/widgets/person_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/tabs/contacts_tab.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/tabs/qr_code_tab.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/tabs/suggested_tab.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/widgets/invite_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
 import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
 
@@ -15,55 +16,33 @@ class FriendsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final follow = controller ?? FollowController.instance;
-    final list = people ?? buildDummyPeople();
-
-    return Column(
-      children: [
-        const SearchField(hintText: 'Search Strava'),
-        const _SectionLabel('PEOPLE YOU MAY KNOW'),
-        Expanded(
-          child: ListenableBuilder(
-            listenable: follow,
-            builder: (context, _) => ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (_, i) {
-                final person = list[i];
-                return PersonTile(
-                  person: person,
-                  trailing: FollowButton(
-                    isFollowing: follow.isFollowing(person.id),
-                    onPressed: () => follow.toggle(person.id),
-                  ),
-                );
-              },
+    return DefaultTabController(
+      length: 3,
+      child: Column(
+        children: [
+          const SearchField(hintText: 'Search Strava'),
+          const TabBar(
+            indicatorColor: Styles.accent,
+            labelColor: Styles.tabActive,
+            unselectedLabelColor: Colors.white54,
+            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+            tabs: [
+              Tab(icon: Icon(Icons.people_outline), text: 'Suggested'),
+              Tab(icon: Icon(Icons.contacts_outlined), text: 'Contacts'),
+              Tab(icon: Icon(Icons.qr_code_scanner), text: 'QR Code'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                SuggestedTab(controller: controller, people: people),
+                const ContactsTab(),
+                const QrCodeTab(),
+              ],
             ),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-
-  const _SectionLabel(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: Styles.surface,
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Styles.tabActive,
-          fontSize: 13,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
-        ),
+          const InviteButton(),
+        ],
       ),
     );
   }
