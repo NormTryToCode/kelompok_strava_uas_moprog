@@ -18,7 +18,6 @@ class ClubCreationPage extends StatefulWidget {
   static const totalSteps = 5;
   static const maxTypes = 3;
 
-  /// Mengembalikan [Club] yang baru dibuat, atau null kalau dibatalkan.
   static Future<Club?> open(BuildContext context) {
     return Navigator.of(context, rootNavigator: true).push<Club>(
       MaterialPageRoute<Club>(builder: (_) => const ClubCreationPage()),

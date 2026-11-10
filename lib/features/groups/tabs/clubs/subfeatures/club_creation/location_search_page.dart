@@ -5,6 +5,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/utils/location_search.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/location_result_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 
 enum _Status { idle, loading, success, error }
 
@@ -86,21 +87,18 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
+              padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
               child: Row(
                 children: [
-                  Expanded(child: _SearchField(
-                    controller: _controller,
-                    onChanged: _onChanged,
-                    onClear: _clear,
-                  )),
-                  const SizedBox(width: 4),
-                  TextButton(
+                  IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    style: TextButton.styleFrom(foregroundColor: Styles.accent),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  ),
+                  Expanded(
+                    child: _SearchField(
+                      controller: _controller,
+                      onChanged: _onChanged,
+                      onClear: _clear,
                     ),
                   ),
                 ],
@@ -123,24 +121,36 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
   Widget _buildBody() {
     switch (_status) {
       case _Status.idle:
-        return const _Message(text: 'Type a city, region, or country');
+        return const _Message(
+          icon: Icons.travel_explore,
+          text: 'Search for a city, region, or country',
+        );
       case _Status.loading:
         return const Center(
-          child: CircularProgressIndicator(color: Styles.accent),
+          child: CircularProgressIndicator(color: Palette.teal),
         );
       case _Status.error:
         return _Message(
+          icon: Icons.wifi_off_rounded,
           text: 'Search isn\u2019t available right now.',
           actionLabel: 'Try again',
           onAction: () => _search(_controller.text.trim()),
         );
       case _Status.success:
         if (_results.isEmpty) {
-          return const _Message(text: 'No places found');
+          return const _Message(
+            icon: Icons.search_off,
+            text: 'No places found',
+          );
         }
-        return ListView.builder(
+        return ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: _results.length,
+          separatorBuilder: (_, __) => const Divider(
+            height: 1,
+            indent: 74,
+            color: Palette.cardBorder,
+          ),
           itemBuilder: (_, i) => LocationResultTile(
             location: _results[i],
             onTap: () => Navigator.of(context).pop(_results[i]),
@@ -164,7 +174,7 @@ class _SearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(Radii.field),
           borderSide: BorderSide(color: color, width: width),
         );
 
@@ -173,7 +183,7 @@ class _SearchField extends StatelessWidget {
       onChanged: onChanged,
       autofocus: true,
       textInputAction: TextInputAction.search,
-      cursorColor: Styles.accent,
+      cursorColor: Palette.teal,
       style: const TextStyle(fontSize: 16, color: Colors.white),
       decoration: InputDecoration(
         hintText: 'Search places',
@@ -181,27 +191,35 @@ class _SearchField extends StatelessWidget {
         prefixIcon: const Icon(Icons.search, color: Styles.tabInactive),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
-          builder: (_, value, _) => value.text.isEmpty
+          builder: (_, value, __) => value.text.isEmpty
               ? const SizedBox.shrink()
               : IconButton(
                   onPressed: onClear,
                   icon: const Icon(Icons.close, color: Colors.white),
                 ),
         ),
+        filled: true,
+        fillColor: Styles.surface,
         contentPadding: const EdgeInsets.symmetric(vertical: 14),
-        enabledBorder: border(Styles.inactive, 1.5),
-        focusedBorder: border(Styles.accent, 2),
+        enabledBorder: border(Palette.cardBorder, 1.2),
+        focusedBorder: border(Palette.teal, 1.8),
       ),
     );
   }
 }
 
 class _Message extends StatelessWidget {
+  final IconData icon;
   final String text;
   final String? actionLabel;
   final VoidCallback? onAction;
 
-  const _Message({required this.text, this.actionLabel, this.onAction});
+  const _Message({
+    required this.icon,
+    required this.text,
+    this.actionLabel,
+    this.onAction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -211,10 +229,12 @@ class _Message extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            IconBubble(icon, size: 56),
+            const SizedBox(height: 14),
             Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Styles.tabInactive),
+              style: const TextStyle(fontSize: 15, color: Styles.tabInactive),
             ),
             if (actionLabel != null)
               TextButton(
