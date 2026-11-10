@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
 
 class ClubChannelsSection extends StatelessWidget {
   final VoidCallback onTap;
@@ -8,49 +11,43 @@ class ClubChannelsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Explore Club Channels',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
-          const SizedBox(height: 12),
-          Material(
-            color: Styles.background,
-            clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-              side: const BorderSide(color: Styles.inactive, width: 1.5),
-            ),
-            child: InkWell(
-              onTap: onTap,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                child: Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionTitle('Channels'),
+        const SizedBox(height: 12),
+        SoftCard(
+          onTap: onTap,
+          padding: const EdgeInsets.all(14),
+          child: const Row(
+            children: [
+              IconBubble(Icons.campaign_outlined, size: 44),
+              SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.forum_outlined, size: 24, color: Colors.white),
-                    SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        'Announcements',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+                    Text(
+                      'Announcements',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
                       ),
                     ),
-                    Icon(Icons.chevron_right, color: Colors.white),
+                    SizedBox(height: 2),
+                    Text(
+                      'Updates from club admins',
+                      style: TextStyle(fontSize: 13, color: Styles.tabInactive),
+                    ),
                   ],
                 ),
               ),
-            ),
+              Icon(Icons.chevron_right, color: Styles.tabInactive),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

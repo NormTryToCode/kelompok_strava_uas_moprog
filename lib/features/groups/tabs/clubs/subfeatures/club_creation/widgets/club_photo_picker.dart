@@ -11,27 +11,27 @@ class ClubPhotoPicker extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: 148,
-        height: 148,
+        width: 124,
+        height: 124,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Styles.inactive,
-                borderRadius: BorderRadius.circular(28),
+                shape: BoxShape.circle,
+                color: Styles.surface,
+                border: Border.all(color: Palette.cardBorder, width: 1.5),
               ),
               alignment: Alignment.center,
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.add_photo_alternate_outlined,
-                      size: 36, color: Colors.white),
-                  SizedBox(height: 8),
+                  Icon(Icons.add_a_photo_outlined, size: 30, color: Palette.teal),
+                  SizedBox(height: 6),
                   Text(
                     'Add photo',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
@@ -40,18 +40,17 @@ class ClubPhotoPicker extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: -6,
-              bottom: -6,
+              right: 0,
+              bottom: 4,
               child: Container(
-                width: 40,
-                height: 40,
+                width: 34,
+                height: 34,
                 decoration: BoxDecoration(
-                  color: Styles.background,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Styles.inactive, width: 1.5),
+                  gradient: Palette.primaryGradient,
+                  border: Border.all(color: Styles.background, width: 3),
                 ),
-                child: const Icon(Icons.edit_outlined,
-                    size: 20, color: Colors.white),
+                child: const Icon(Icons.add, size: 18, color: Colors.white),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 
 class LocationResultTile extends StatelessWidget {
   final ClubLocation location;
@@ -20,7 +21,7 @@ class LocationResultTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
-            const Icon(Icons.place_outlined, size: 22, color: Styles.tabInactive),
+            const IconBubble(Icons.place_outlined, size: 40),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -28,15 +29,23 @@ class LocationResultTile extends StatelessWidget {
                 children: [
                   Text(
                     location.name,
-                    style: const TextStyle(fontSize: 17, color: Colors.white),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                   if (location.detail.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
                         location.detail,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           color: Styles.tabInactive,
                         ),
                       ),

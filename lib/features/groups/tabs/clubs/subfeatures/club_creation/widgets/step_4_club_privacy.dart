@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/privacy_option_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_heading.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/choice_card.dart';
 
 class Step4ClubPrivacy extends StatelessWidget {
   final ClubPrivacy selected;
@@ -15,56 +16,40 @@ class Step4ClubPrivacy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 28, 20, 0),
-          child: _Heading(),
+        const StepHeading(
+          eyebrow: 'Privacy',
+          title: 'Who can join?',
+          subtitle: 'Pick how people get into your club.',
         ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 32, 20, 8),
-          child: Text(
-            'WHO CAN JOIN',
-            style: TextStyle(
-              fontSize: 13,
-              letterSpacing: 1.2,
-              fontWeight: FontWeight.w600,
-              color: Styles.tabInactive,
-            ),
+        const SizedBox(height: 24),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < ClubPrivacy.option.length; i++) ...[
+                if (i > 0) const SizedBox(width: 12),
+                Expanded(
+                  child: ChoiceCard(
+                    icon: ClubPrivacy.option[i].id == ClubPrivacy.private.id
+                        ? Icons.lock_outline
+                        : Icons.public,
+                    title: ClubPrivacy.option[i].name,
+                    subtitle: ClubPrivacy.option[i].description,
+                    selected: ClubPrivacy.option[i].id == selected.id,
+                    onTap: () => onChanged(ClubPrivacy.option[i]),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-        for (final privacy in ClubPrivacy.option)
-          PrivacyOptionTile(
-            privacy: privacy,
-            selected: privacy.id == selected.id,
-            onTap: () => onChanged(privacy),
-          ),
-      ],
-    );
-  }
-}
-
-class _Heading extends StatelessWidget {
-  const _Heading();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Who can join?',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: 8),
-        Text(
-          'Pick how people get into your club.',
-          style: TextStyle(fontSize: 16, color: Styles.tabInactive),
+        const SizedBox(height: 16),
+        const Text(
+          'You can change this later in the club settings.',
+          style: TextStyle(fontSize: 13, color: Styles.tabInactive),
         ),
       ],
     );
