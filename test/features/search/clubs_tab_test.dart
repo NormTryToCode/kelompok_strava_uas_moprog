@@ -20,4 +20,14 @@ void main() {
 
     expect(find.text('No clubs found'), findsOneWidget);
   });
+
+  testWidgets('mengetuk klub membuka halaman detail', (tester) async {
+    await tester.pumpWidget(_wrap(const ClubsTab()));
+
+    await tester.tap(find.text('Jakarta Sunrise Runners'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Club'), findsOneWidget);
+    expect(find.text('Join Club'), findsOneWidget);
+  });
 }

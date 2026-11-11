@@ -4,6 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 
 class ClubsTab extends StatelessWidget {
   final List<Club>? clubs;
@@ -24,7 +25,15 @@ class ClubsTab extends StatelessWidget {
               ? const _EmptyState()
               : ListView.builder(
                   itemCount: list.length,
-                  itemBuilder: (_, i) => ClubTile(club: list[i]),
+                  itemBuilder: (context, i) {
+                    final club = list[i];
+                    return ClubTile(
+                      club: club,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)),
+                      ),
+                    );
+                  },
                 ),
         ),
       ],
