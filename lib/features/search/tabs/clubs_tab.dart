@@ -1,19 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 
 class ClubsTab extends StatelessWidget {
-  const ClubsTab({super.key});
+  final List<Club>? clubs;
+
+  const ClubsTab({super.key, this.clubs});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final list = clubs ?? buildDummyClubs();
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SearchField(hintText: 'Find clubs...'),
-        _FilterRow(),
-        Expanded(child: SizedBox.shrink()),
+        const SearchField(hintText: 'Find clubs...'),
+        const _FilterRow(),
+        Expanded(
+          child: list.isEmpty
+              ? const _EmptyState()
+              : ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (context, i) {
+                    final club = list[i];
+                    return ClubTile(
+                      club: club,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)),
+                      ),
+                    );
+                  },
+                ),
+        ),
       ],
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        'No clubs found',
+        style: TextStyle(color: Styles.tabActive, fontSize: 18),
+      ),
     );
   }
 }
