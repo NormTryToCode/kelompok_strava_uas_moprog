@@ -30,4 +30,52 @@ void main() {
     expect(find.text('Club'), findsOneWidget);
     expect(find.text('Join Club'), findsOneWidget);
   });
+
+  testWidgets('mengetik di kolom cari menyaring daftar klub', (tester) async {
+    await tester.pumpWidget(_wrap(const ClubsTab()));
+
+    await tester.enterText(find.byType(TextField), 'swim');
+    await tester.pump();
+
+    expect(find.text('Bali Open Water Swimmers'), findsOneWidget);
+    expect(find.text('Jakarta Sunrise Runners'), findsNothing);
+  });
+
+  testWidgets('kata kunci tanpa hasil menampilkan keadaan kosong',
+      (tester) async {
+    await tester.pumpWidget(_wrap(const ClubsTab()));
+
+    await tester.enterText(find.byType(TextField), 'zzz');
+    await tester.pump();
+
+    expect(find.text('No clubs found'), findsOneWidget);
+  });
+
+  testWidgets('filter jenis olahraga menyaring daftar dan mengubah label',
+      (tester) async {
+    await tester.pumpWidget(_wrap(const ClubsTab()));
+
+    await tester.tap(find.text('Sport type'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cycling'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nusantara Cycling Club'), findsOneWidget);
+    expect(find.text('Jakarta Sunrise Runners'), findsNothing);
+    expect(find.text('Cycling'), findsOneWidget);
+    expect(find.text('Sport type'), findsNothing);
+  });
+
+  testWidgets('filter lokasi menyaring daftar berdasarkan kota',
+      (tester) async {
+    await tester.pumpWidget(_wrap(const ClubsTab()));
+
+    await tester.tap(find.text('Location'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Bandung'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bandung Trail Society'), findsOneWidget);
+    expect(find.text('Jakarta Sunrise Runners'), findsNothing);
+  });
 }

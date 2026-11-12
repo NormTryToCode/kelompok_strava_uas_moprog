@@ -1,37 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/club_filter.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/widgets/clubs_result_bar.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/widgets/filter_option_sheet.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/widgets/filter_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 
-class ClubsTab extends StatelessWidget {
+class ClubsTab extends StatefulWidget {
   final List<Club>? clubs;
 
   const ClubsTab({super.key, this.clubs});
 
   @override
+  State<ClubsTab> createState() => _ClubsTabState();
+}
+
+class _ClubsTabState extends State<ClubsTab> {
+  final TextEditingController _searchController = TextEditingController();
+  late final List<Club> _allClubs = widget.clubs ?? buildDummyClubs();
+  ClubFilter _filter = const ClubFilter();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _pickCity() {
+    showFilterSheet<String>(
+      context: context,
+      title: 'Location',
+      allLabel: 'All locations',
+      options: citiesOf(_allClubs),
+      labelOf: (city) => city,
+      selected: _filter.city,
+      onSelected: (city) => setState(() => _filter = _filter.withCity(city)),
+    );
+  }
+
+  void _pickSport() {
+    showFilterSheet<SportType>(
+      context: context,
+      title: 'Sport type',
+      allLabel: 'All sports',
+      options: SportType.values,
+      labelOf: (sport) => sport.label,
+      selected: _filter.sport,
+      onSelected: (sport) =>
+          setState(() => _filter = _filter.withSport(sport)),
+    );
+  }
+
+  void _openDetail(Club club) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)),
+    );
+  }
+
+  void _clearFilters() {
+    _searchController.clear();
+    setState(() => _filter = const ClubFilter());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final list = clubs ?? buildDummyClubs();
+    final visible = _filter.apply(_allClubs);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SearchField(hintText: 'Find clubs...'),
-        const _FilterRow(),
+        SearchField(
+          hintText: 'Find clubs...',
+          controller: _searchController,
+          onChanged: (value) =>
+              setState(() => _filter = _filter.withQuery(value)),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Wrap(
+            spacing: 12,
+            children: [
+              FilterPill(
+                label: _filter.city ?? 'Location',
+                icon: Icons.location_on_outlined,
+                isActive: _filter.city != null,
+                onTap: _pickCity,
+              ),
+              FilterPill(
+                label: _filter.sport?.label ?? 'Sport type',
+                isActive: _filter.sport != null,
+                onTap: _pickSport,
+              ),
+            ],
+          ),
+        ),
+        ClubsResultBar(
+          count: visible.length,
+          isFiltered: _filter.isActive,
+          onClear: _clearFilters,
+        ),
         Expanded(
-          child: list.isEmpty
+          child: visible.isEmpty
               ? const _EmptyState()
               : ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (context, i) {
-                    final club = list[i];
+                  itemCount: visible.length,
+                  itemBuilder: (_, i) {
+                    final club = visible[i];
                     return ClubTile(
                       club: club,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)),
-                      ),
+                      onTap: () => _openDetail(club),
                     );
                   },
                 ),
@@ -50,46 +131,6 @@ class _EmptyState extends StatelessWidget {
       child: Text(
         'No clubs found',
         style: TextStyle(color: Styles.tabActive, fontSize: 18),
-      ),
-    );
-  }
-}
-
-class _FilterRow extends StatelessWidget {
-  const _FilterRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Wrap(
-        spacing: 12,
-        children: [
-          _FilterChip(icon: Icons.location_on_outlined, label: 'Location'),
-          _FilterChip(label: 'Sport type'),
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final IconData? icon;
-  final String label;
-
-  const _FilterChip({this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final iconData = icon;
-    return OutlinedButton.icon(
-      onPressed: () {},
-      icon: iconData == null ? const SizedBox.shrink() : Icon(iconData, size: 18),
-      label: Text(label),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: Styles.tabActive,
-        shape: const StadiumBorder(),
-        side: const BorderSide(color: Colors.white54),
       ),
     );
   }
