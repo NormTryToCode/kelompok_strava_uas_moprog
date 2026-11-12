@@ -5,6 +5,7 @@ import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club_filter.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/widgets/clubs_result_bar.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/filter_option_sheet.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/filter_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
@@ -60,6 +61,11 @@ class _ClubsTabState extends State<ClubsTab> {
     );
   }
 
+  void _clearFilters() {
+    _searchController.clear();
+    setState(() => _filter = const ClubFilter());
+  }
+
   @override
   Widget build(BuildContext context) {
     final visible = _filter.apply(_allClubs);
@@ -91,6 +97,11 @@ class _ClubsTabState extends State<ClubsTab> {
               ),
             ],
           ),
+        ),
+        ClubsResultBar(
+          count: visible.length,
+          isFiltered: _filter.isActive,
+          onClear: _clearFilters,
         ),
         Expanded(
           child: visible.isEmpty
