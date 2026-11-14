@@ -145,30 +145,31 @@ class _FollowersFollowingViewState extends State<FollowersFollowingView> {
                   color: Styles.tabActive,
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Styles.accent,
-                    foregroundColor: Styles.tabActive,
-                  ),
-                  onPressed: () {
-                    if (widget.onFindAthletes != null) {
-                      widget.onFindAthletes!();
-                    }
-                  },
-                  child: const Text(
-                    'Cari Atlet',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+              if (isFollowingTab) const SizedBox(height: 20),
+              if (isFollowingTab)
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Styles.accent,
+                      foregroundColor: Styles.tabActive,
+                    ),
+                    onPressed: () {
+                      if (widget.onFindAthletes != null) {
+                        widget.onFindAthletes!();
+                      }
+                    },
+                    child: const Text(
+                      'Cari Atlet',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Styles.tabActive,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
