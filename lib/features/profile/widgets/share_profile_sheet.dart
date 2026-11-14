@@ -12,9 +12,11 @@ class ProfileShareHelper {
 
     await Clipboard.setData(ClipboardData(text: profileUrl));
 
-    final ShareResult result = await Share.share(
-      shareText,
-      subject: 'Profil Strava $athleteName',
+    final ShareResult result = await SharePlus.instance.share(
+      ShareParams(
+        text: shareText,
+        subject: 'Profil Strava $athleteName',
+      ),
     );
 
     if (result.status == ShareResultStatus.success) {
