@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_profile_data.dart';
+import '../utils/profile_location_service.dart';
 import '../widgets/athlete_avatar_widget.dart';
 import '../widgets/profile_labeled_field.dart';
 import '../widgets/profile_option_dialog.dart';
@@ -39,8 +40,13 @@ class _EditProfileViewState extends State<EditProfileView> {
   late DateTime _selectedBirthDate;
   late String _avatarPath;
 
+  double _gpsLat = 0.0;
+  double _gpsLng = 0.0;
+  String _gpsStatusText = '';
+
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
   final ImagePicker _imagePicker = ImagePicker();
+  final ProfileLocationService _locationService = ProfileLocationService();
 
   static const List<String> _sportOptions = [
     'Berlari',
@@ -168,6 +174,23 @@ class _EditProfileViewState extends State<EditProfileView> {
         );
       },
     );
+  }
+
+  Future<void> _detectCurrentGpsLocation() async {
+    try {
+      await _locationService.getCurrentLocation();
+      if (!mounted) return;
+      setState(() {
+        _gpsLat = _locationService.lat;
+        _gpsLng = _locationService.lng;
+        _gpsStatusText = 'Lat: $_gpsLat, Lng: $_gpsLng';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _gpsStatusText = e.toString();
+      });
+    }
   }
 
   Future<void> _pickImage(ImageSource source) async {
@@ -363,6 +386,44 @@ class _EditProfileViewState extends State<EditProfileView> {
                     textCapitalization: TextCapitalization.characters,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: _detectCurrentGpsLocation,
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.navigation,
+                        size: 16,
+                        color: Styles.accent,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Cek Koordinat GPS Saat Ini',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.accent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_gpsStatusText.isNotEmpty)
+                  Flexible(
+                    child: Text(
+                      _gpsStatusText,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Styles.active,
+                      ),
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 12),
