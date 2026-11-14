@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:provider/provider.dart';
+import '../models/gear_bag.dart';
 
 class LainnyaTab extends StatefulWidget {
   final VoidCallback onOpenTrophyCase;
+  final VoidCallback onOpenGearCatalog;
+  final VoidCallback onOpenSegments;
+  final VoidCallback onOpenStatistics;
 
   const LainnyaTab({
     super.key,
     required this.onOpenTrophyCase,
+    required this.onOpenGearCatalog,
+    required this.onOpenSegments,
+    required this.onOpenStatistics,
   });
 
   @override
@@ -23,55 +31,100 @@ class _LainnyaTabState extends State<LainnyaTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          GestureDetector(
+            onTap: widget.onOpenStatistics,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 6.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.list_alt, color: Styles.tabActive),
-                  SizedBox(width: 14),
-                  Text(
-                    "Statistik",
-                    style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                  Row(
+                    children: [
+                      Icon(Icons.list_alt, color: Styles.tabActive),
+                      SizedBox(width: 14),
+                      Text(
+                        "Statistik",
+                        style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                      ),
+                    ],
                   ),
+                  Icon(Icons.chevron_right, color: Styles.tabInactive),
                 ],
               ),
-              Icon(Icons.chevron_right, color: Styles.tabInactive),
-            ],
+            ),
           ),
-          const SizedBox(height: 10),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          const SizedBox(height: 6),
+          GestureDetector(
+            onTap: widget.onOpenSegments,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 6.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.location_on_outlined, color: Styles.tabActive),
-                  SizedBox(width: 14),
-                  Text(
-                    "Segmen",
-                    style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on_outlined, color: Styles.tabActive),
+                      SizedBox(width: 14),
+                      Text(
+                        "Segmen",
+                        style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                      ),
+                    ],
                   ),
+                  Icon(Icons.chevron_right, color: Styles.tabInactive),
                 ],
               ),
-              Icon(Icons.chevron_right, color: Styles.tabInactive),
-            ],
+            ),
           ),
-          const SizedBox(height: 10),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          const SizedBox(height: 6),
+          GestureDetector(
+            onTap: widget.onOpenGearCatalog,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.pedal_bike, color: Styles.tabActive),
-                  SizedBox(width: 14),
-                  Text(
-                    "Perlengkapan",
-                    style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                  const Row(
+                    children: [
+                      Icon(Icons.pedal_bike, color: Styles.tabActive),
+                      SizedBox(width: 14),
+                      Text(
+                        "Perlengkapan",
+                        style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Consumer<GearBagModel>(
+                        builder: (context, bag, child) {
+                          if (bag.items.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Badge(
+                              backgroundColor: Styles.accent,
+                              label: Text(
+                                '${bag.items.length} aktif',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const Icon(
+                        Icons.chevron_right,
+                        color: Styles.tabInactive,
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Icon(Icons.chevron_right, color: Styles.tabInactive),
-            ],
+            ),
           ),
           const SizedBox(height: 12),
           const Text(
@@ -134,7 +187,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
                   Container(
                     color: Styles.surface,
                     padding: const EdgeInsets.all(8.0),
-                    child: const Icon(Icons.lock_outline, color: Styles.tabActive),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: Styles.tabActive,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
@@ -148,7 +204,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
                   Container(
                     color: Styles.surface,
                     padding: const EdgeInsets.all(8.0),
-                    child: const Icon(Icons.lock_outline, color: Styles.tabActive),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: Styles.tabActive,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
@@ -162,7 +221,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
                   Container(
                     color: Styles.surface,
                     padding: const EdgeInsets.all(8.0),
-                    child: const Icon(Icons.lock_outline, color: Styles.tabActive),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: Styles.tabActive,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
@@ -176,7 +238,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
                   Container(
                     color: Styles.surface,
                     padding: const EdgeInsets.all(8.0),
-                    child: const Icon(Icons.lock_outline, color: Styles.tabActive),
+                    child: const Icon(
+                      Icons.lock_outline,
+                      color: Styles.tabActive,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
