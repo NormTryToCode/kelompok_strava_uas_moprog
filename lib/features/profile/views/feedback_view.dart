@@ -2,9 +2,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:lorem_ipsum/lorem_ipsum.dart';
 import 'package:path_provider/path_provider.dart';
-import '../widgets/top_buttons.dart';
+import '../widgets/feedback_thank_you_dialog.dart';
 
 class FeedbackView extends StatefulWidget {
   final VoidCallback onSubmitFeedback;
@@ -19,10 +18,10 @@ class FeedbackView extends StatefulWidget {
 }
 
 class _FeedbackViewState extends State<FeedbackView> {
-  int selectedOption = 4;
-  TextEditingController controller = TextEditingController();
+  int _selectedOption = -1;
+  final TextEditingController _controller = TextEditingController();
 
-  static const options = [
+  static const List<String> _options = [
     'Sangat tidak puas',
     'Agak tidak puas',
     'Tidak puas maupun tidak kecewa',
@@ -43,138 +42,172 @@ class _FeedbackViewState extends State<FeedbackView> {
   @override
   void initState() {
     super.initState();
-    load();
+    _loadSavedDraft();
   }
 
-  void load() async {
+  void _loadSavedDraft() async {
     try {
       final file = await _localFile;
       if (await file.exists()) {
         final savedText = await file.readAsString();
+        if (!mounted) return;
         setState(() {
-          controller.text = savedText;
+          _controller.text = savedText;
         });
       }
-    } catch (e) {
-      setState(() {
-        controller.text = '';
-      });
+    } catch (_) {
     }
   }
 
-  void save() async {
-    final file = await _localFile;
-    await file.writeAsString(controller.text);
-  }
+  Future<void> _handleSendFeedback() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    try {
+      final file = await _localFile;
+      await file.writeAsString(_controller.text);
+    } catch (_) {
+    }
 
-  void generate() {
-    setState(() {
-      controller.text = loremIpsum(words: 60, paragraphs: 2);
-    });
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FeedbackThankYouDialog(
+          onConfirmOk: widget.onSubmitFeedback,
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  IconButton.filled(
-                    onPressed: widget.onSubmitFeedback,
-                    icon: const Icon(Icons.arrow_back, color: Styles.tabActive),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    "Bagikan Umpan Balik",
-                    style: TextStyle(fontSize: 19, color: Styles.tabActive),
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  save();
-                  widget.onSubmitFeedback();
-                },
-                child: const Text(
-                  "KIRIM",
-                  style: TextStyle(color: Styles.accent),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "Seberapa tidak puas atau puas Anda dengan fitur ini?",
-            style: TextStyle(fontSize: 16, color: Styles.tabActive),
-          ),
-          const SizedBox(height: 6),
-          ...List.generate(options.length, (index) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedOption = index;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+          vertical: 14.0,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      options[index],
-                      style: const TextStyle(
-                        fontSize: 14,
+                    GestureDetector(
+                      onTap: widget.onSubmitFeedback,
+                      child: const Icon(
+                        Icons.arrow_back,
                         color: Styles.tabActive,
                       ),
                     ),
-                    Icon(
-                      (selectedOption == index)
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_off,
-                      color: (selectedOption == index)
-                          ? Styles.accent
-                          : Styles.tabInactive,
+                    const SizedBox(width: 20),
+                    const Text(
+                      "Bagikan Umpan Balik",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Styles.tabActive,
+                      ),
                     ),
                   ],
                 ),
+                GestureDetector(
+                  onTap: _handleSendFeedback,
+                  child: Text(
+                    "KIRIM",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: (_selectedOption != -1 ||
+                              _controller.text.trim().isNotEmpty)
+                          ? Styles.accent
+                          : Styles.tabInactive,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            const Text(
+              "Seberapa tidak puas atau puas Anda dengan fitur ini?",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Styles.tabActive,
               ),
-            );
-          }),
-          const SizedBox(height: 8),
-          const Text(
-            "Komentar Tambahan (File Storage: text_storage.txt)",
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
             ),
-          ),
-          TopButtons(
-            onLoadPressed: load,
-            onSavePressed: save,
-            onResetPressed: generate,
-            thirdButtonText: 'Generate',
-          ),
-          Expanded(
-            child: CupertinoTextField(
-              maxLines: null,
-              expands: true,
-              autocorrect: false,
-              textAlignVertical: TextAlignVertical.top,
-              controller: controller,
-              placeholder: 'Apa yang membantu? Tidak membantu?',
-              placeholderStyle: const TextStyle(color: Styles.tabInactive),
-              style: const TextStyle(color: Styles.tabActive),
-              decoration: const BoxDecoration(color: Styles.surface),
+            const SizedBox(height: 24),
+            ...List.generate(_options.length, (index) {
+              final bool isSelected = (_selectedOption == index);
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedOption = index;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 14.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _options[index],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Styles.tabActive,
+                        ),
+                      ),
+                      Icon(
+                        isSelected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color: isSelected ? Styles.accent : Styles.tabActive,
+                        size: 24,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+            const SizedBox(height: 28),
+            const Text(
+              "Komentar Tambahan",
+              style: TextStyle(
+                fontSize: 16,
+                color: Styles.tabActive,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 120,
+              child: CupertinoTextField(
+                maxLines: null,
+                expands: true,
+                autocorrect: false,
+                textAlignVertical: TextAlignVertical.top,
+                controller: _controller,
+                onChanged: (_) {
+                  setState(() {});
+                },
+                placeholder: 'Apa yang membantu? Tidak membantu?',
+                placeholderStyle: const TextStyle(
+                  fontSize: 15,
+                  color: Styles.inactive,
+                ),
+                padding: EdgeInsets.zero,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Styles.tabActive,
+                ),
+                decoration: const BoxDecoration(
+                  color: Styles.background,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

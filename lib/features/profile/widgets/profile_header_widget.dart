@@ -8,6 +8,8 @@ class ProfileHeaderWidget extends StatelessWidget {
   final int activityCount;
   final VoidCallback onEditProfile;
   final VoidCallback onShareProfile;
+  final VoidCallback onTapFollowers;
+  final VoidCallback onTapFollowing;
 
   const ProfileHeaderWidget({
     super.key,
@@ -15,6 +17,8 @@ class ProfileHeaderWidget extends StatelessWidget {
     required this.activityCount,
     required this.onEditProfile,
     required this.onShareProfile,
+    required this.onTapFollowers,
+    required this.onTapFollowing,
   });
 
   @override
@@ -101,12 +105,36 @@ class ProfileHeaderWidget extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 10),
-          const Text(
-            "0 pengikut  •  0 mengikuti",
-            style: TextStyle(
-              fontSize: 14,
-              color: Styles.tabActive,
-            ),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onTapFollowers,
+                child: const Text(
+                  "0 pengikut",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Styles.tabActive,
+                  ),
+                ),
+              ),
+              const Text(
+                "  •  ",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Styles.tabActive,
+                ),
+              ),
+              GestureDetector(
+                onTap: onTapFollowing,
+                child: const Text(
+                  "0 mengikuti",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Styles.tabActive,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 14),
           Row(
