@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
-/// Halaman yang menampilkan tab "Mengikuti" dan "Para pengikut" sesuai Strava.
 class FollowersFollowingView extends StatefulWidget {
   final int initialTabIndex;
   final VoidCallback onBack;
@@ -156,7 +155,6 @@ class _FollowersFollowingViewState extends State<FollowersFollowingView> {
                     foregroundColor: Styles.tabActive,
                   ),
                   onPressed: () {
-                    // Tombol kosong sementara sebelum dihubungkan ke halaman Search (kaca pembesar) navbar
                     if (widget.onFindAthletes != null) {
                       widget.onFindAthletes!();
                     }
