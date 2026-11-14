@@ -27,6 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int _followInitialTab = 0;
   int _runSessions = 0;
   String _shareStatusMessage = '';
+  int _shareMessageToken = 0;
 
   AthleteProfileData _profileData = const AthleteProfileData(
     firstName: 'Michael',
@@ -87,23 +88,25 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _openShareProfileSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return ShareProfileBottomSheet(
-          athleteName: _profileData.fullName,
-          onAppSelected: (String message) {
-            if (!mounted) return;
-            setState(() {
-              _shareStatusMessage = message;
-            });
-          },
-        );
-      },
-    );
+  void _showTemporaryShareMessage(String message) async {
+    final int currentToken = ++_shareMessageToken;
+    setState(() {
+      _shareStatusMessage = message;
+    });
+
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted || currentToken != _shareMessageToken) return;
+
+    setState(() {
+      _shareStatusMessage = '';
+    });
+  }
+
+  void _handleShareProfile() async {
+    final String status =
+        await ProfileShareHelper.shareAthleteProfile(_profileData.fullName);
+    if (!mounted) return;
+    _showTemporaryShareMessage(status);
   }
 
   @override
@@ -131,139 +134,139 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               )
               : (_activeScreen == 2)
-                ? TrophyCaseView(
-                    currentActivities: _runSessions,
-                    onBack: () {
-                      setState(() {
-                        _activeScreen = 0;
-                      });
-                    },
-                  )
-                : (_activeScreen == 3)
-                  ? FeedbackView(
-                      onSubmitFeedback: () {
+                  ? TrophyCaseView(
+                      currentActivities: _runSessions,
+                      onBack: () {
                         setState(() {
                           _activeScreen = 0;
                         });
                       },
                     )
-                    : (_activeScreen == 4)
-                        ? FollowersFollowingView(
-                          initialTabIndex: _followInitialTab,
-                          onBack: () {
+                  : (_activeScreen == 3)
+                      ? FeedbackView(
+                          onSubmitFeedback: () {
                             setState(() {
                               _activeScreen = 0;
                             });
                           },
                         )
-                    : SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ProfileHeaderWidget(
-                            profileData: _profileData,
-                            activityCount: _runSessions,
-                            onEditProfile: () {
-                              setState(() {
-                                _activeScreen = 1;
-                              });
-                            },
-                            onShareProfile: _openShareProfileSheet,
-                            onTapFollowers: () {
-                              setState(() {
-                                _followInitialTab = 1;
-                                _activeScreen = 4;
-                              });
-                            },
-                            onTapFollowing: () {
-                              setState(() {
-                                _followInitialTab = 0;
-                                _activeScreen = 4;
-                              });
-                            },
-                          ),
-                          if (_shareStatusMessage.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 4.0,
-                              ),
-                              child: Text(
-                                _shareStatusMessage,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Styles.active,
+                      : (_activeScreen == 4)
+                          ? FollowersFollowingView(
+                              initialTabIndex: _followInitialTab,
+                              onBack: () {
+                                setState(() {
+                                  _activeScreen = 0;
+                                });
+                              },
+                            )
+                          : SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ProfileHeaderWidget(
+                                    profileData: _profileData,
+                                    activityCount: _runSessions,
+                                    onEditProfile: () {
+                                      setState(() {
+                                        _activeScreen = 1;
+                                      });
+                                    },
+                                    onShareProfile: _handleShareProfile,
+                                    onTapFollowers: () {
+                                      setState(() {
+                                        _followInitialTab = 1;
+                                        _activeScreen = 4;
+                                      });
+                                    },
+                                    onTapFollowing: () {
+                                      setState(() {
+                                        _followInitialTab = 0;
+                                        _activeScreen = 4;
+                                      });
+                                    },
+                                  ),
+                                  if (_shareStatusMessage.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0,
+                                        vertical: 4.0,
+                                      ),
+                                      child: Text(
+                                        _shareStatusMessage,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Styles.active,
+                                        ),
+                                      ),
+                                    ),
+                                    ProfileTabBar(
+                                      activeTab: _activeTab,
+                                      onTapKemajuan: () {
+                                        setState(() {
+                                          _activeTab = 0;
+                                        });
+                                      },
+                                      onTapAktivitas: () {
+                                        setState(() {
+                                          _activeTab = 1;
+                                        });
+                                      },
+                                      onTapLainnya: () {
+                                        setState(() {
+                                          _activeTab = 2;
+                                        });
+                                      },
+                                    ),
+                                    if (_activeTab == 0)
+                                      KemajuanTab(
+                                        runSessions: _runSessions,
+                                        onDecrement: () {
+                                          setState(() {
+                                            if (_runSessions > 0) {
+                                              _runSessions--;
+                                            }
+                                          });
+                                        },
+                                        onReset: () {
+                                          setState(() {
+                                            _runSessions = 0;
+                                          });
+                                        },
+                                        onIncrement: (_runSessions < 10)
+                                            ? () {
+                                                setState(() {
+                                                  _runSessions =
+                                                      _runSessions + 1;
+                                                });
+                                              }
+                                            : null,
+                                        onOpenFeedback: () {
+                                          setState(() {
+                                            _activeScreen = 3;
+                                          });
+                                        },
+                                      ),
+                                    if (_activeTab == 1)
+                                      AktivitasTab(
+                                        activityCount: _runSessions,
+                                        onAddFirstActivity: () {
+                                          setState(() {
+                                            _runSessions++;
+                                          });
+                                        },
+                                      ),
+                                    if (_activeTab == 2)
+                                      LainnyaTab(
+                                        onOpenTrophyCase: () {
+                                          setState(() {
+                                            _activeScreen = 2;
+                                          });
+                                        },
+                                      ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            ProfileTabBar(
-                              activeTab: _activeTab,
-                              onTapKemajuan: () {
-                                setState(() {
-                                  _activeTab = 0;
-                                });
-                              },
-                              onTapAktivitas: () {
-                                setState(() {
-                                  _activeTab = 1;
-                                });
-                              },
-                              onTapLainnya: () {
-                                setState(() {
-                                  _activeTab = 2;
-                                });
-                              },
-                            ),
-                            if (_activeTab == 0)
-                              KemajuanTab(
-                                runSessions: _runSessions,
-                                onDecrement: () {
-                                  setState(() {
-                                    if (_runSessions > 0) {
-                                      _runSessions--;
-                                    }
-                                  });
-                                },
-                                onReset: () {
-                                  setState(() {
-                                    _runSessions = 0;
-                                  });
-                                },
-                                onIncrement: (_runSessions < 10)
-                                  ? () {
-                                    setState(() {
-                                      _runSessions =
-                                        _runSessions + 1;
-                                    });
-                                  }
-                                  : null,
-                                onOpenFeedback: () {
-                                  setState(() {
-                                    _activeScreen = 3;
-                                  });
-                                },
-                              ),
-                            if (_activeTab == 1)
-                              AktivitasTab(
-                                activityCount: _runSessions,
-                                onAddFirstActivity: () {
-                                  setState(() {
-                                    _runSessions++;
-                                  });
-                                },
-                              ),
-                            if (_activeTab == 2)
-                              LainnyaTab(
-                                onOpenTrophyCase: () {
-                                  setState(() {
-                                    _activeScreen = 2;
-                                  });
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
           ),
         ),
       ),
