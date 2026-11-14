@@ -6,6 +6,7 @@ import 'athlete_avatar_widget.dart';
 class ProfileHeaderWidget extends StatelessWidget {
   final AthleteProfileData profileData;
   final int activityCount;
+  final int followingCount;
   final VoidCallback onEditProfile;
   final VoidCallback onShareProfile;
   final VoidCallback onTapFollowers;
@@ -15,6 +16,7 @@ class ProfileHeaderWidget extends StatelessWidget {
     super.key,
     required this.profileData,
     required this.activityCount,
+    this.followingCount = 0,
     required this.onEditProfile,
     required this.onShareProfile,
     required this.onTapFollowers,
@@ -126,9 +128,9 @@ class ProfileHeaderWidget extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: onTapFollowing,
-                child: const Text(
-                  "0 mengikuti",
-                  style: TextStyle(
+                child: Text(
+                  "$followingCount mengikuti",
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Styles.tabActive,
                   ),
