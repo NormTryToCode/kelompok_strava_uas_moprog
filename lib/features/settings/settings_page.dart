@@ -1,21 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/notification_preferences_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/settings_section_label.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/settings_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/widgets/unit_picker_sheet.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  final SettingsController? controller;
   final VoidCallback? onLogout;
 
-  const SettingsPage({super.key, this.onLogout});
+  const SettingsPage({super.key, this.controller, this.onLogout});
 
-  void _comingSoon(BuildContext context) {
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  late final SettingsController _settings =
+      widget.controller ?? SettingsController.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!_settings.isLoaded) _settings.load();
+  }
+
+  void _comingSoon() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Coming soon')),
     );
   }
 
-  Future<void> _confirmLogout(BuildContext context) async {
+  void _openNotificationPreferences() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => NotificationPreferencesPage(controller: _settings),
+      ),
+    );
+  }
+
+  void _goToLogin() {
+    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+      MaterialPageRoute<void>(builder: (_) => const LoginPage()),
+      (route) => false,
+    );
+  }
+
+  Future<void> _confirmLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -44,7 +78,14 @@ class SettingsPage extends StatelessWidget {
       ),
     );
 
-    if (confirmed == true) onLogout?.call();
+    if (confirmed != true || !mounted) return;
+
+    final handler = widget.onLogout;
+    if (handler != null) {
+      handler();
+      return;
+    }
+    _goToLogin();
   }
 
   @override
@@ -52,57 +93,62 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Styles.background,
       appBar: const AppHeader(title: 'Settings', showBackButton: true),
-      body: ListView(
-        children: [
-          const SettingsSectionLabel('ACCOUNT'),
-          SettingsTile(
-            icon: Icons.person_outline,
-            title: 'Profile',
-            onTap: () => _comingSoon(context),
-          ),
-          SettingsTile(
-            icon: Icons.lock_outline,
-            title: 'Privacy controls',
-            onTap: () => _comingSoon(context),
-          ),
-          SettingsTile(
-            icon: Icons.watch_outlined,
-            title: 'Connected devices',
-            onTap: () => _comingSoon(context),
-          ),
-          const SettingsSectionLabel('PREFERENCES'),
-          SettingsTile(
-            icon: Icons.straighten,
-            title: 'Units of measurement',
-            subtitle: 'Kilometers',
-            onTap: () => _comingSoon(context),
-          ),
-          SettingsTile(
-            icon: Icons.notifications_none,
-            title: 'Notification preferences',
-            onTap: () => _comingSoon(context),
-          ),
-          const SettingsSectionLabel('SUPPORT'),
-          SettingsTile(
-            icon: Icons.help_outline,
-            title: 'Help center',
-            onTap: () => _comingSoon(context),
-          ),
-          SettingsTile(
-            icon: Icons.info_outline,
-            title: 'About',
-            onTap: () => _comingSoon(context),
-          ),
-          const SizedBox(height: 16),
-          SettingsTile(
-            icon: Icons.logout,
-            title: 'Log out',
-            titleColor: Styles.accent,
-            showChevron: false,
-            onTap: () => _confirmLogout(context),
-          ),
-          const SizedBox(height: 24),
-        ],
+      body: ListenableBuilder(
+        listenable: _settings,
+        builder: (context, _) => ListView(
+          children: [
+            const SettingsSectionLabel('ACCOUNT'),
+            SettingsTile(
+              icon: Icons.person_outline,
+              title: 'Profile',
+              onTap: _comingSoon,
+            ),
+            SettingsTile(
+              icon: Icons.lock_outline,
+              title: 'Privacy controls',
+              onTap: _comingSoon,
+            ),
+            SettingsTile(
+              icon: Icons.watch_outlined,
+              title: 'Connected devices',
+              onTap: _comingSoon,
+            ),
+            const SettingsSectionLabel('PREFERENCES'),
+            SettingsTile(
+              icon: Icons.straighten,
+              title: 'Units of measurement',
+              subtitle: _settings.unit.label,
+              onTap: () => showUnitPicker(context, _settings),
+            ),
+            SettingsTile(
+              icon: Icons.notifications_none,
+              title: 'Notification preferences',
+              subtitle:
+                  '${_settings.enabledCount} of ${NotificationPref.values.length} on',
+              onTap: _openNotificationPreferences,
+            ),
+            const SettingsSectionLabel('SUPPORT'),
+            SettingsTile(
+              icon: Icons.help_outline,
+              title: 'Help center',
+              onTap: _comingSoon,
+            ),
+            SettingsTile(
+              icon: Icons.info_outline,
+              title: 'About',
+              onTap: _comingSoon,
+            ),
+            const SizedBox(height: 16),
+            SettingsTile(
+              icon: Icons.logout,
+              title: 'Log out',
+              titleColor: Styles.accent,
+              showChevron: false,
+              onTap: _confirmLogout,
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 
 void _tallScreen(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
@@ -8,47 +10,76 @@ void _tallScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Widget _page({VoidCallback? onLogout}) {
-  return MaterialApp(home: SettingsPage(onLogout: onLogout));
+SettingsController _controller() {
+  return SettingsController(store: MemorySettingsStore());
+}
+
+Widget _page({SettingsController? controller, VoidCallback? onLogout}) {
+  return MaterialApp(
+    home: SettingsPage(
+      controller: controller ?? _controller(),
+      onLogout: onLogout,
+    ),
+  );
 }
 
 void main() {
   testWidgets('menampilkan judul, bagian, dan menu', (tester) async {
     _tallScreen(tester);
     await tester.pumpWidget(_page());
+    await tester.pump();
 
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('ACCOUNT'), findsOneWidget);
-    expect(find.text('PREFERENCES'), findsOneWidget);
-    expect(find.text('SUPPORT'), findsOneWidget);
-    expect(find.text('Privacy controls'), findsOneWidget);
     expect(find.text('Units of measurement'), findsOneWidget);
     expect(find.text('Kilometers'), findsOneWidget);
+    expect(find.text('3 of 3 on'), findsOneWidget);
     expect(find.text('Log out'), findsOneWidget);
   });
 
-  testWidgets('mengetuk menu menampilkan pesan Coming soon', (tester) async {
+  testWidgets('satuan tersimpan ditampilkan sebagai subtitle', (tester) async {
     _tallScreen(tester);
-    await tester.pumpWidget(_page());
+    final store = MemorySettingsStore();
+    await store.writeString(SettingsController.unitKey, 'miles');
 
-    await tester.tap(find.text('Privacy controls'));
+    await tester.pumpWidget(
+      _page(controller: SettingsController(store: store)),
+    );
     await tester.pump();
 
-    expect(find.text('Coming soon'), findsOneWidget);
+    expect(find.text('Miles'), findsOneWidget);
   });
 
-  testWidgets('Log out menampilkan dialog konfirmasi', (tester) async {
+  testWidgets('memilih Miles mengubah subtitle', (tester) async {
     _tallScreen(tester);
-    await tester.pumpWidget(_page());
+    final controller = _controller();
 
-    await tester.tap(find.text('Log out'));
+    await tester.pumpWidget(_page(controller: controller));
+    await tester.pump();
+
+    await tester.tap(find.text('Units of measurement'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Miles (mi)'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Log out?'), findsOneWidget);
-    expect(find.text('Cancel'), findsOneWidget);
+    expect(controller.unit, DistanceUnit.miles);
+    expect(find.text('Miles'), findsOneWidget);
   });
 
-  testWidgets('Cancel menutup dialog tanpa memanggil onLogout', (tester) async {
+  testWidgets('menu Notification preferences membuka halaman preferensi',
+      (tester) async {
+    _tallScreen(tester);
+    await tester.pumpWidget(_page());
+    await tester.pump();
+
+    await tester.tap(find.text('Notification preferences'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('PUSH NOTIFICATIONS'), findsOneWidget);
+  });
+
+  testWidgets('Cancel menutup dialog tanpa memanggil onLogout',
+      (tester) async {
     _tallScreen(tester);
     var calls = 0;
 
@@ -74,7 +105,21 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Log out'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Log out?'), findsNothing);
     expect(calls, 1);
+  });
+
+  testWidgets('tanpa onLogout, konfirmasi kembali ke halaman login',
+      (tester) async {
+    _tallScreen(tester);
+
+    await tester.pumpWidget(_page());
+
+    await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Log out'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Welcome User'), findsOneWidget);
+    expect(find.text('Settings'), findsNothing);
   });
 }
