@@ -60,8 +60,8 @@ class HomePage extends StatelessWidget {
             children: [
               SizedBox(height: 4.1),
               HomeStreakWidget(),
-              BadgeWidget(),
               StreakChartWidget(),
+              BadgeWidget(),
             ],
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class StreakChartWidget extends StatefulWidget {
   const StreakChartWidget({super.key});
@@ -19,70 +20,84 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      height: 220,
-      child: BarChart(
-        BarChartData(
-          maxY: 8,
-          minY: 0,
-          borderData: FlBorderData(show: false),
-          gridData: FlGridData(show: false),
-          titlesData: FlTitlesData(
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            leftTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  final index = value.toInt();
-
-                  if (index < 0 || index >= days.length) {
-                    return const SizedBox();
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      days[index],
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          barGroups: List.generate(
-            weeklyData.length,
-            (index) => BarChartGroupData(
-              x: index,
-              barRods: [
-                BarChartRodData(
-                  toY: weeklyData[index],
-                  width: 16,
-                  borderRadius: BorderRadius.circular(6),
-                  color: Colors.greenAccent,
-                  backDrawRodData: BackgroundBarChartRodData(
-                    show: true,
-                    toY: 8,
-                    color: Colors.grey.withOpacity(0.15),
-                  ),
-                ),
-              ],
+    return Column(
+      children: [
+        const Center(
+          child: Text(
+            'Weekly Activity',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Styles.badge,
             ),
           ),
         ),
-      ),
+        Container(
+          padding: const EdgeInsets.all(15),
+          height: 220,
+          child: BarChart(
+            BarChartData(
+              maxY: 8,
+              minY: 0,
+              borderData: FlBorderData(show: false),
+              gridData: FlGridData(show: false),
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                leftTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final index = value.toInt();
+
+                      if (index < 0 || index >= days.length) {
+                        return const SizedBox();
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          days[index],
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Styles.badge,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              barGroups: List.generate(
+                weeklyData.length,
+                (index) => BarChartGroupData(
+                  x: index,
+                  barRods: [
+                    BarChartRodData(
+                      toY: weeklyData[index],
+                      width: 16,
+                      borderRadius: BorderRadius.circular(6),
+                      color: Styles.badge,
+                      backDrawRodData: BackgroundBarChartRodData(
+                        show: true,
+                        toY: 8,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
