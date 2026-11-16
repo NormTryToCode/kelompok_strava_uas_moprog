@@ -11,6 +11,7 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dar
 import 'package:kelompok_strava_uas_moprog/shared/widgets/upgrade_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -28,7 +29,7 @@ class HomePage extends StatelessWidget {
       appBar: AppHeader(
         leadingWidget: const UpgradePill(),
         actions: [
-          AddMenuButton(onSelected: (_) => _comingSoon(context)),
+          AddMenuButton(onSelected: (action) => openAddAction(context, action)),
           HeaderIconButton(
             icon: Icons.forum_outlined,
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FriendsPage())),
