@@ -13,6 +13,7 @@ class NotificationsPage extends ConsumerWidget {
     final list = ref.watch(notificationsProvider);
     final unread = ref.watch(unreadCountProvider);
     final notifier = ref.read(notificationsProvider.notifier);
+    final messenger = ScaffoldMessenger.of(context);
 
     return Scaffold(
       backgroundColor: Styles.background,
@@ -36,10 +37,40 @@ class NotificationsPage extends ConsumerWidget {
             )
           : ListView.builder(
               itemCount: list.length,
-              itemBuilder: (_, i) => NotificationTile(
-                item: list[i],
-                onTap: () => notifier.markAsRead(list[i].id),
-              ),
+              itemBuilder: (_, i) {
+                final item = list[i];
+                return Dismissible(
+                  key: ValueKey(item.id),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 24),
+                    color: Styles.accent,
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Styles.tabActive,
+                    ),
+                  ),
+                  onDismissed: (_) {
+                    notifier.remove(item.id);
+                    messenger
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        SnackBar(
+                          content: const Text('Notification removed'),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () => notifier.restore(item, i),
+                          ),
+                        ),
+                      );
+                  },
+                  child: NotificationTile(
+                    item: item,
+                    onTap: () => notifier.markAsRead(item.id),
+                  ),
+                );
+              },
             ),
     );
   }

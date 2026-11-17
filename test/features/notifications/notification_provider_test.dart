@@ -48,12 +48,17 @@ void main() {
 
   test('unreadCountProvider memberi tahu listener saat berubah', () {
     final container = _container();
+    final initial = container.read(unreadCountProvider);
     final values = <int>[];
-    container.listen<int>(unreadCountProvider, (_, next) => values.add(next));
+    container.listen<int>(
+      unreadCountProvider,
+      (_, next) => values.add(next),
+      fireImmediately: true,
+    );
 
     container.read(notificationsProvider.notifier).markAllAsRead();
 
-    expect(values, [0]);
+    expect(values, [initial, 0]);
   });
 
     test('remove menghapus satu notifikasi', () {
