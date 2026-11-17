@@ -16,6 +16,17 @@ class NotificationsNotifier extends Notifier<List<NotificationItem>> {
   void markAllAsRead() {
     state = [for (final item in state) item.copyWith(isRead: true)];
   }
+
+    void remove(String id) {
+    state = state.where((item) => item.id != id).toList();
+  }
+
+  void restore(NotificationItem item, int index) {
+    if (state.any((e) => e.id == item.id)) return;
+    final position =
+        index < 0 ? 0 : (index > state.length ? state.length : index);
+    state = [...state.sublist(0, position), item, ...state.sublist(position)];
+  }
 }
 
 final notificationsProvider =
