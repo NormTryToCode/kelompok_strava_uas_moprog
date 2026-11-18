@@ -54,7 +54,7 @@ class SportStatisticsData {
   int get yearlyTotalSessions =>
       (weeklySessions == 0) ? 0 : (weeklySessions * 4);
 
-  String get yearlyActivityCount => '${yearlyTotalSessions.withThousands}';
+  String get yearlyActivityCount => yearlyTotalSessions.withThousands;
 
   String get yearlyDurationText =>
       _formatDuration(yearlyTotalSessions * _minutesPerSession);
@@ -72,7 +72,7 @@ class SportStatisticsData {
   int get allTimeTotalSessions =>
       yearlyTotalSessions + (weeklySessions > 0 ? historicalBaseSessions : 0);
 
-  String get allTimeActivityCount => '${allTimeTotalSessions.withThousands}';
+  String get allTimeActivityCount => allTimeTotalSessions.withThousands;
 
   String get allTimeDistanceText {
     final int totalDist = allTimeTotalSessions * _distancePerSession;
