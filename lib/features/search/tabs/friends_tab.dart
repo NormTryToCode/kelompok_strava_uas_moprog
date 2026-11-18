@@ -14,17 +14,14 @@ import 'package:kelompok_strava_uas_moprog/features/search/widgets/invite_button
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/recent_searches_list.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_results_view.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
 
 class FriendsTab extends StatefulWidget {
-  final FollowController? controller;
   final SearchHistoryController? history;
   final List<Person>? people;
   final List<Club>? clubs;
 
   const FriendsTab({
     super.key,
-    this.controller,
     this.history,
     this.people,
     this.clubs,
@@ -37,8 +34,6 @@ class FriendsTab extends StatefulWidget {
 class _FriendsTabState extends State<FriendsTab> {
   final TextEditingController _text = TextEditingController();
   final FocusNode _focus = FocusNode();
-  late final FollowController _follow =
-      widget.controller ?? FollowController.instance;
   late final SearchHistoryController _history =
       widget.history ?? SearchHistoryController.instance;
   late final List<Person> _people = widget.people ?? buildDummyPeople();
@@ -95,7 +90,7 @@ class _FriendsTabState extends State<FriendsTab> {
           Expanded(
             child: TabBarView(
               children: [
-                SuggestedTab(controller: _follow, people: _people),
+                SuggestedTab(people: _people),
                 const ContactsTab(),
                 const QrCodeTab(),
               ],
@@ -111,7 +106,6 @@ class _FriendsTabState extends State<FriendsTab> {
     if (_query.trim().isNotEmpty) {
       return SearchResultsView(
         results: searchAll(_query, people: _people, clubs: _clubs),
-        follow: _follow,
         onClubTap: _openClub,
       );
     }

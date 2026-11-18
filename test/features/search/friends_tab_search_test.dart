@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_history_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/friends_tab.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
 
 Widget _wrap(SearchHistoryController history) {
-  return MaterialApp(
-    home: Scaffold(
-      body: FriendsTab(controller: FollowController(), history: history),
+  return ProviderScope(
+    child: MaterialApp(
+      home: Scaffold(
+        body: FriendsTab(history: history),
+      ),
     ),
   );
 }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 
 void main() {
   testWidgets('menampilkan tab Friends dan Clubs', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SearchPage()));
+    await tester.pumpWidget(
+      const ProviderScope(child: MaterialApp(home: SearchPage())),
+    );
 
     expect(find.text('Search'), findsOneWidget);
     expect(find.text('Friends'), findsOneWidget);
@@ -12,8 +15,11 @@ void main() {
     expect(find.text('Search Strava'), findsOneWidget);
   });
 
-  testWidgets('tab Clubs menampilkan kolom cari klub dan filter', (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: SearchPage()));
+  testWidgets('tab Clubs menampilkan kolom cari klub dan filter',
+      (tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: MaterialApp(home: SearchPage())),
+    );
 
     await tester.tap(find.text('Clubs'));
     await tester.pumpAndSettle();

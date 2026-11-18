@@ -1,41 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/follow_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/person_tile.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
 
-class SuggestedTab extends StatelessWidget {
-  final FollowController? controller;
+class SuggestedTab extends ConsumerWidget {
   final List<Person>? people;
 
-  const SuggestedTab({super.key, this.controller, this.people});
+  const SuggestedTab({super.key, this.people});
 
   @override
-  Widget build(BuildContext context) {
-    final follow = controller ?? FollowController.instance;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final following = ref.watch(followProvider);
     final list = people ?? buildDummyPeople();
 
     return Column(
       children: [
         const _SectionLabel('PEOPLE YOU MAY KNOW'),
         Expanded(
-          child: ListenableBuilder(
-            listenable: follow,
-            builder: (context, _) => ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (_, i) {
-                final person = list[i];
-                return PersonTile(
-                  person: person,
-                  trailing: FollowButton(
-                    isFollowing: follow.isFollowing(person.id),
-                    onPressed: () => follow.toggle(person.id),
-                  ),
-                );
-              },
-            ),
+          child: ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (_, i) {
+              final person = list[i];
+              return PersonTile(
+                person: person,
+                trailing: FollowButton(
+                  isFollowing: following.contains(person.id),
+                  onPressed: () =>
+                      ref.read(followProvider.notifier).toggle(person.id),
+                ),
+              );
+            },
           ),
         ),
       ],
