@@ -39,7 +39,19 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
             BarChartData(
               maxY: 8,
               minY: 0,
-              borderData: FlBorderData(show: false),
+              barTouchData: BarTouchData(
+                touchTooltipData: BarTouchTooltipData(
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    return BarTooltipItem(
+                      '${rod.toY.toInt()} km',
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              ),
+            ),              borderData: FlBorderData(show: false),
               gridData: FlGridData(show: false),
               titlesData: FlTitlesData(
                 topTitles: const AxisTitles(
