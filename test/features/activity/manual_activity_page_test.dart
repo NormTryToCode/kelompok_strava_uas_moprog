@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kelompok_strava_uas_moprog/features/activity/activity_controller.dart';
+import 'package:kelompok_strava_uas_moprog/features/activity/activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/activity_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/manual_activity_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activity.dart';
@@ -11,15 +12,23 @@ void _tallScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-ActivityController _controller() {
-  return ActivityController(store: MemoryActivityStore());
+ProviderContainer _container() {
+  final container = ProviderContainer(
+    overrides: [
+      activityStoreProvider.overrideWithValue(MemoryActivityStore()),
+    ],
+  );
+  addTearDown(container.dispose);
+  return container;
 }
 
-Widget _page(ActivityController controller) {
-  return MaterialApp(
-    home: ManualActivityPage(
-      controller: controller,
-      initialDate: DateTime(2026, 11, 10),
+Widget _page(ProviderContainer container) {
+  return UncontrolledProviderScope(
+    container: container,
+    child: MaterialApp(
+      home: ManualActivityPage(
+        initialDate: DateTime(2026, 11, 10),
+      ),
     ),
   );
 }
@@ -40,7 +49,7 @@ void main() {
   testWidgets('menampilkan judul, kolom, jenis aktivitas, dan tanggal',
       (tester) async {
     _tallScreen(tester);
-    await tester.pumpWidget(_page(_controller()));
+    await tester.pumpWidget(_page(_container()));
 
     expect(find.text('Manual Activity'), findsOneWidget);
     expect(find.text('Title'), findsOneWidget);
@@ -54,37 +63,37 @@ void main() {
   testWidgets('menyimpan dengan form kosong menampilkan pesan error',
       (tester) async {
     _tallScreen(tester);
-    final controller = _controller();
+    final container = _container();
 
-    await tester.pumpWidget(_page(controller));
+    await tester.pumpWidget(_page(container));
     await tester.tap(find.text('Save'));
     await tester.pump();
 
     expect(find.text('Enter a title'), findsOneWidget);
     expect(find.text('Use minutes or h:mm, e.g. 45 or 1:30'), findsOneWidget);
     expect(find.text('Enter a distance greater than 0'), findsOneWidget);
-    expect(controller.count, 0);
+    expect(container.read(activityProvider).count, 0);
   });
 
   testWidgets('durasi nol ditolak', (tester) async {
     _tallScreen(tester);
-    final controller = _controller();
+    final container = _container();
 
-    await tester.pumpWidget(_page(controller));
+    await tester.pumpWidget(_page(container));
     await _fill(tester, title: 'Run', duration: '0', distance: '5');
     await tester.tap(find.text('Save'));
     await tester.pump();
 
     expect(find.text('Use minutes or h:mm, e.g. 45 or 1:30'), findsOneWidget);
-    expect(controller.count, 0);
+    expect(container.read(activityProvider).count, 0);
   });
 
   testWidgets('form valid menyimpan aktivitas dengan data yang benar',
       (tester) async {
     _tallScreen(tester);
-    final controller = _controller();
+    final container = _container();
 
-    await tester.pumpWidget(_page(controller));
+    await tester.pumpWidget(_page(container));
     await _fill(
       tester,
       title: 'Morning ride',
@@ -96,7 +105,7 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
-    final saved = controller.items.single;
+    final saved = container.read(activityProvider).items.single;
 
     expect(saved.title, 'Morning ride');
     expect(saved.type, ActivityType.ride);
