@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +11,7 @@ import '../widgets/profile_labeled_field.dart';
 import '../widgets/profile_option_dialog.dart';
 import '../widgets/profile_photo_dialog.dart';
 import '../widgets/unsaved_changes_dialog.dart';
+import 'profile_photo_crop_screen.dart';
 
 class EditProfileView extends StatefulWidget {
   final AthleteProfileData initialData;
@@ -193,15 +195,27 @@ class _EditProfileViewState extends State<EditProfileView> {
     }
   }
 
+/// Mengambil foto dari Kamera/Galeri, lalu mengarahkan ke layar Crop & Zoom.
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? pickedFile = await _imagePicker.pickImage(
         source: source,
-        imageQuality: 85,
+        imageQuality: 90,
       );
-      if (pickedFile != null && mounted) {
+      if (pickedFile == null || !mounted) return;
+
+      final String? croppedPath = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => ProfilePhotoCropScreen(
+            imageFile: File(pickedFile.path),
+          ),
+        ),
+      );
+
+      if (croppedPath != null && mounted) {
         setState(() {
-          _avatarPath = pickedFile.path;
+          _avatarPath = croppedPath;
         });
       }
     } catch (_) {}
