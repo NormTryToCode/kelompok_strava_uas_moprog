@@ -1,9 +1,9 @@
 class StatItem {
   final double todayKm;
   final double totalCalories;
-  final int heartRate;        // BPM is usually a whole number
-  final double averagePace;   // e.g., 5.5 (minutes per km)
-  final int activeMinutes;    // Moving time in minutes
+  final int heartRate;        
+  final double averagePace;   
+  final int activeMinutes;    
 
   const StatItem({
     required this.todayKm,
