@@ -195,7 +195,6 @@ class _EditProfileViewState extends State<EditProfileView> {
     }
   }
 
-/// Mengambil foto dari Kamera/Galeri, lalu mengarahkan ke layar Crop & Zoom.
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? pickedFile = await _imagePicker.pickImage(

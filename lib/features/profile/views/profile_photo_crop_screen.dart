@@ -20,8 +20,6 @@ enum _CropDragMode {
   right,
 }
 
-/// Halaman editor Foto Profil dengan kotak crop bebas geser, edge-push panning
-/// saat mentok tepi layar, serta auto zoom-in / zoom-out yang responsif.
 class ProfilePhotoCropScreen extends StatefulWidget {
   final File imageFile;
 
@@ -79,7 +77,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     super.dispose();
   }
 
-  /// Memperbarui posisi gambar dan kotak crop secara mulus selama animasi zoom berjalan.
   void _onSnapAnimationTick() {
     final double t = Curves.easeOutCubic.transform(_snapController.value);
     setState(() {
@@ -88,7 +85,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     });
   }
 
-  /// Memuat file gambar ke memori sebagai ui.Image untuk render dan crop resolusi penuh.
   Future<void> _loadImage() async {
     try {
       final Uint8List bytes = await widget.imageFile.readAsBytes();
@@ -110,7 +106,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     }
   }
 
-  /// Menghitung posisi awal gambar dan ukuran bingkai dasar kotak crop di tengah layar.
   void _syncLayoutBounds(Size viewportSize) {
     if (_decodedImage == null) return;
     if (_lastViewportSize == viewportSize && _cropRect != null) return;
@@ -140,8 +135,7 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     _lastViewportSize = viewportSize;
 
     final double minImgSide =
-        dst.width < dst.height ? dst.width : dst.height;
-    // Ukuran dasar 72% memberi ruang tarik keluar yang lega untuk zoom out
+      dst.width < dst.height ? dst.width : dst.height;
     final double baseSize = minImgSide * 0.72;
     final double cropLeft = imgLeft + (dst.width - baseSize) / 2;
     final double cropTop = imgTop + (dst.height - baseSize) / 2;
@@ -150,7 +144,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     _cropRect = _baseCropRect;
   }
 
-  /// Menentukan bagian kotak yang disentuh pengguna (sudut, sisi garis, atau area dalam kotak).
   void _handlePanStart(DragStartDetails details) {
     final Rect? r = _cropRect;
     if (r == null || _isCropping) return;
@@ -196,7 +189,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     });
   }
 
-  /// Menggeser gambar di belakang layar hanya jika kotak didorong mentok ke tepi layar.
   void _panImageWhenPushedAtEdge({
     required double rawNewLeft,
     required double rawNewTop,
@@ -208,27 +200,27 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
 
     if (rawNewLeft > screenBounds.right - clampedCrop.width) {
       final double overflowRight =
-          rawNewLeft - (screenBounds.right - clampedCrop.width);
+        rawNewLeft - (screenBounds.right - clampedCrop.width);
       final double availableRight =
-          math.max(0.0, _imageRect.right - clampedCrop.right);
+        math.max(0.0, _imageRect.right - clampedCrop.right);
       shiftX = -math.min(overflowRight, availableRight);
     } else if (rawNewLeft < screenBounds.left) {
       final double overflowLeft = screenBounds.left - rawNewLeft;
       final double availableLeft =
-          math.max(0.0, clampedCrop.left - _imageRect.left);
+        math.max(0.0, clampedCrop.left - _imageRect.left);
       shiftX = math.min(overflowLeft, availableLeft);
     }
 
     if (rawNewTop > screenBounds.bottom - clampedCrop.height) {
       final double overflowBottom =
-          rawNewTop - (screenBounds.bottom - clampedCrop.height);
+        rawNewTop - (screenBounds.bottom - clampedCrop.height);
       final double availableBottom =
-          math.max(0.0, _imageRect.bottom - clampedCrop.bottom);
+        math.max(0.0, _imageRect.bottom - clampedCrop.bottom);
       shiftY = -math.min(overflowBottom, availableBottom);
     } else if (rawNewTop < screenBounds.top) {
       final double overflowTop = screenBounds.top - rawNewTop;
       final double availableTop =
-          math.max(0.0, clampedCrop.top - _imageRect.top);
+        math.max(0.0, clampedCrop.top - _imageRect.top);
       shiftY = math.min(overflowTop, availableTop);
     }
 
@@ -237,7 +229,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     }
   }
 
-  /// Menggeser atau mengubah ukuran kotak crop mengikuti gerakan jari pengguna.
   void _handlePanUpdate(DragUpdateDetails details) {
     final Rect? r = _cropRect;
     if (r == null || _dragMode == _CropDragMode.none || _isCropping) return;
@@ -252,11 +243,11 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
 
     final Offset p = details.localPosition;
     final double minAllowedSide =
-        allowedBounds.width < allowedBounds.height
-            ? allowedBounds.width
-            : allowedBounds.height;
+      allowedBounds.width < allowedBounds.height
+        ? allowedBounds.width
+        : allowedBounds.height;
     final double effectiveMinSize =
-        minAllowedSide < _minCropSize ? minAllowedSide : _minCropSize;
+      minAllowedSide < _minCropSize ? minAllowedSide : _minCropSize;
 
     Rect nextRect = r;
 
@@ -302,7 +293,7 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxH = r.bottom - allowedBounds.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = r.right - p.dx;
         final double dy = r.bottom - p.dy;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -314,7 +305,7 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxH = r.bottom - allowedBounds.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = p.dx - r.left;
         final double dy = r.bottom - p.dy;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -326,7 +317,7 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxH = allowedBounds.bottom - r.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = r.right - p.dx;
         final double dy = p.dy - r.top;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -336,9 +327,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       case _CropDragMode.right:
         final double maxW = allowedBounds.right - r.left;
         final double maxSize =
-            maxW < allowedBounds.height ? maxW : allowedBounds.height;
+          maxW < allowedBounds.height ? maxW : allowedBounds.height;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (p.dx - r.left).clamp(safeMin, maxSize);
         final double newTop = (r.center.dy - size / 2).clamp(
           allowedBounds.top,
@@ -350,9 +341,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       case _CropDragMode.left:
         final double maxW = r.right - allowedBounds.left;
         final double maxSize =
-            maxW < allowedBounds.height ? maxW : allowedBounds.height;
+          maxW < allowedBounds.height ? maxW : allowedBounds.height;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (r.right - p.dx).clamp(safeMin, maxSize);
         final double newTop = (r.center.dy - size / 2).clamp(
           allowedBounds.top,
@@ -364,9 +355,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       case _CropDragMode.bottom:
         final double maxH = allowedBounds.bottom - r.top;
         final double maxSize =
-            maxH < allowedBounds.width ? maxH : allowedBounds.width;
+          maxH < allowedBounds.width ? maxH : allowedBounds.width;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (p.dy - r.top).clamp(safeMin, maxSize);
         final double newLeft = (r.center.dx - size / 2).clamp(
           allowedBounds.left,
@@ -378,9 +369,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       case _CropDragMode.top:
         final double maxH = r.bottom - allowedBounds.top;
         final double maxSize =
-            maxH < allowedBounds.width ? maxH : allowedBounds.width;
+          maxH < allowedBounds.width ? maxH : allowedBounds.width;
         final double safeMin =
-            effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (r.bottom - p.dy).clamp(safeMin, maxSize);
         final double newLeft = (r.center.dx - size / 2).clamp(
           allowedBounds.left,
@@ -398,8 +389,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     });
   }
 
-  /// Jika pengguna hanya menggeser kotak, biarkan posisi kotak tetap stabil.
-  /// Jika pengguna memperkecil/memperbesar ukuran kotak, jalankan auto zoom-in / zoom-out.
   void _handlePanEnd(DragEndDetails details) {
     final _CropDragMode finishedMode = _dragMode;
     final Rect? currentCrop = _cropRect;
@@ -408,15 +397,12 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       _dragMode = _CropDragMode.none;
     });
 
-    // Mode geser (move) tidak mengubah posisi/zoom gambar secara tiba-tiba
     if (finishedMode == _CropDragMode.none ||
         finishedMode == _CropDragMode.move) {
       return;
     }
 
     if (currentCrop == null || _baseCropRect == Rect.zero) return;
-
-    // Abaikan perubahan ukuran yang terlalu kecil (sentuhan tidak sengaja)
     if ((currentCrop.width - _dragStartCropRect.width).abs() <
         _resizeThreshold) {
       return;
@@ -424,34 +410,31 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
 
     final double minAllowedScale = _initialImageRect.width / _imageRect.width;
     final double maxAllowedScale =
-        (_initialImageRect.width * _maxZoomFactor) / _imageRect.width;
+      (_initialImageRect.width * _maxZoomFactor) / _imageRect.width;
 
     final bool isShrinkingBox = currentCrop.width < _baseCropRect.width;
     final bool isImageCurrentlyZoomedIn =
-        _imageRect.width > _initialImageRect.width + 1.0;
+      _imageRect.width > _initialImageRect.width + 1.0;
 
-    // Jika gambar sudah pada zoom 1.0x dan user memperbesar kotak, pertahankan kotak besar tanpa snap
     if (!isShrinkingBox && !isImageCurrentlyZoomedIn) {
       return;
     }
 
     double scale = 1.0;
     if (isShrinkingBox) {
-      // Kotak dikecilkan -> zoom in presisi sesuai rasio pengecilan kotak
       scale = (_baseCropRect.width / currentCrop.width)
-          .clamp(1.0, maxAllowedScale);
+        .clamp(1.0, maxAllowedScale);
     } else {
-      // Kotak diperbesar saat kondisi ter-zoom -> zoom out cepat menuju ukuran penuh (1.0x)
       final double maxViewportSide = math.min(
-            _lastViewportSize.width,
-            _lastViewportSize.height,
-          ) -
-          (_screenOuterMargin * 2);
+        _lastViewportSize.width,
+        _lastViewportSize.height,
+      ) -
+      (_screenOuterMargin * 2);
       final double outwardSpan =
-          math.max(24.0, maxViewportSide - _baseCropRect.width);
+        math.max(24.0, maxViewportSide - _baseCropRect.width);
       final double rawProgress =
-          ((currentCrop.width - _baseCropRect.width) / outwardSpan)
-              .clamp(0.0, 1.0);
+        ((currentCrop.width - _baseCropRect.width) / outwardSpan)
+          .clamp(0.0, 1.0);
       final double fastOutProgress = (rawProgress * 1.4).clamp(0.0, 1.0);
       scale = ui.lerpDouble(1.0, minAllowedScale, fastOutProgress)!;
     }
@@ -459,9 +442,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     if ((scale - 1.0).abs() < 0.01) return;
 
     final double nextLeft = _baseCropRect.center.dx +
-        (_imageRect.left - currentCrop.center.dx) * scale;
+      (_imageRect.left - currentCrop.center.dx) * scale;
     final double nextTop = _baseCropRect.center.dy +
-        (_imageRect.top - currentCrop.center.dy) * scale;
+      (_imageRect.top - currentCrop.center.dy) * scale;
     final double nextWidth = _imageRect.width * scale;
     final double nextHeight = _imageRect.height * scale;
 
@@ -472,7 +455,6 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       nextHeight,
     );
 
-    // Pastikan gambar tetap menutupi seluruh area _baseCropRect tanpa celah kosong
     if (targetImageRect.left > _baseCropRect.left) {
       targetImageRect = targetImageRect.shift(
         Offset(_baseCropRect.left - targetImageRect.left, 0),
@@ -501,16 +483,13 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     _snapController.forward(from: 0.0);
   }
 
-  /// Memotong area terpilih di dalam kotak crop dari gambar asli dan menyimpannya ke file PNG.
   Future<void> _cropAndSaveImage() async {
     if (_isCropping || _decodedImage == null || _cropRect == null) return;
-
     if (_snapController.isAnimating) {
       _snapController.stop();
       _imageRect = _animEndImageRect;
       _cropRect = _baseCropRect;
     }
-
     setState(() {
       _isCropping = true;
     });
@@ -519,20 +498,17 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       final ui.Image sourceImage = _decodedImage!;
       final Rect crop = _cropRect!;
       final Rect imgRect = _imageRect;
-
       const int outputDimension = 600;
-
       final double scaleX = sourceImage.width / imgRect.width;
       final double scaleY = sourceImage.height / imgRect.height;
-
       final double srcLeft = ((crop.left - imgRect.left) * scaleX)
-          .clamp(0.0, sourceImage.width.toDouble());
+        .clamp(0.0, sourceImage.width.toDouble());
       final double srcTop = ((crop.top - imgRect.top) * scaleY)
-          .clamp(0.0, sourceImage.height.toDouble());
+        .clamp(0.0, sourceImage.height.toDouble());
       final double srcWidth = (crop.width * scaleX)
-          .clamp(1.0, sourceImage.width.toDouble() - srcLeft);
+        .clamp(1.0, sourceImage.width.toDouble() - srcLeft);
       final double srcHeight = (crop.height * scaleY)
-          .clamp(1.0, sourceImage.height.toDouble() - srcTop);
+        .clamp(1.0, sourceImage.height.toDouble() - srcTop);
 
       final Rect sourceRect = Rect.fromLTWH(
         srcLeft,
@@ -575,7 +551,7 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
 
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String fileName =
-          'profile_avatar_${DateTime.now().millisecondsSinceEpoch}.png';
+        'profile_avatar_${DateTime.now().millisecondsSinceEpoch}.png';
       final File croppedFile = File('${appDir.path}/$fileName');
 
       await croppedFile.writeAsBytes(
@@ -622,8 +598,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
                     children: [
                       GestureDetector(
                         onTap: _isCropping
-                            ? null
-                            : () => Navigator.of(context).pop(),
+                          ? null
+                          : () => Navigator.of(context).pop(),
                         child: const Icon(
                           Icons.arrow_back,
                           color: Styles.tabActive,
@@ -641,25 +617,25 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
                     ],
                   ),
                   _isCropping
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Styles.accent,
-                          ),
-                        )
-                      : GestureDetector(
-                          onTap: _cropAndSaveImage,
-                          child: const Text(
-                            'BERIKUTNYA',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Styles.tabActive,
-                            ),
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Styles.accent,
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: _cropAndSaveImage,
+                        child: const Text(
+                          'BERIKUTNYA',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Styles.tabActive,
                           ),
                         ),
+                      ),
                 ],
               ),
             ),
@@ -667,42 +643,42 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
               child: Container(
                 color: Colors.black,
                 child: _decodedImage == null
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: Styles.accent,
-                        ),
-                      )
-                    : LayoutBuilder(
-                        builder: (
-                          BuildContext context,
-                          BoxConstraints constraints,
-                        ) {
-                          final Size viewportSize = Size(
-                            constraints.maxWidth,
-                            constraints.maxHeight,
-                          );
-                          _syncLayoutBounds(viewportSize);
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Styles.accent,
+                      ),
+                    )
+                  : LayoutBuilder(
+                      builder: (
+                        BuildContext context,
+                        BoxConstraints constraints,
+                      ) {
+                        final Size viewportSize = Size(
+                          constraints.maxWidth,
+                          constraints.maxHeight,
+                        );
+                        _syncLayoutBounds(viewportSize);
 
-                          return GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onPanStart: _handlePanStart,
-                            onPanUpdate: _handlePanUpdate,
-                            onPanEnd: _handlePanEnd,
-                            child: Stack(
-                              children: [
-                                Positioned.fromRect(
-                                  rect: _imageRect,
-                                  child: RawImage(
-                                    image: _decodedImage,
-                                    fit: BoxFit.fill,
-                                  ),
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onPanStart: _handlePanStart,
+                          onPanUpdate: _handlePanUpdate,
+                          onPanEnd: _handlePanEnd,
+                          child: Stack(
+                            children: [
+                              Positioned.fromRect(
+                                rect: _imageRect,
+                                child: RawImage(
+                                  image: _decodedImage,
+                                  fit: BoxFit.fill,
                                 ),
-                                if (_cropRect != null)
-                                  PhotoCropOverlay(
-                                    cropRect: _cropRect!,
-                                    isDragging:
-                                        _dragMode != _CropDragMode.none,
-                                  ),
+                              ),
+                              if (_cropRect != null)
+                                PhotoCropOverlay(
+                                  cropRect: _cropRect!,
+                                  isDragging:
+                                    _dragMode != _CropDragMode.none,
+                                ),
                               ],
                             ),
                           );
