@@ -16,6 +16,7 @@ import 'views/followers_following_view.dart';
 import 'views/gear_bag_view.dart';
 import 'views/gear_catalog_view.dart';
 import 'views/segment_location_view.dart';
+import 'views/statistics_view.dart';
 import 'views/trophy_case_view.dart';
 import 'widgets/profile_header_widget.dart';
 import 'widgets/profile_tab_bar.dart';
@@ -42,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
     city: 'Jakarta',
     country: 'INDONESIA',
     primarySport: 'Berlari',
-    bio: 'I Like Runnn',
+    bio: 'I LIKE RUNNN',
     birthDate: '30/08/2007',
     gender: 'Pria',
     weightKg: '74,0',
@@ -116,6 +117,11 @@ class _ProfilePageState extends State<ProfilePage> {
     _showTemporaryShareMessage(status);
   }
 
+  double get _parsedWeightKg {
+    final normalized = _profileData.weightKg.replaceAll(',', '.');
+    return double.tryParse(normalized) ?? 74.0;
+  }
+
   Widget _buildActiveScreenContent() {
     if (_activeScreen == 1) {
       return EditProfileView(
@@ -187,6 +193,22 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     if (_activeScreen == 7) {
       return SegmentLocationView(
+        onBack: () {
+          setState(() {
+            _activeScreen = 0;
+          });
+        },
+      );
+    }
+    if (_activeScreen == 8) {
+      return StatisticsView(
+        initialRunSessions: _runSessions,
+        athleteWeightKg: _parsedWeightKg,
+        onRunSessionsChanged: (int updatedRuns) {
+          setState(() {
+            _runSessions = updatedRuns;
+          });
+        },
         onBack: () {
           setState(() {
             _activeScreen = 0;
@@ -314,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   onOpenStatistics: () {
                     setState(() {
-                      _activeTab = 0;
+                      _activeScreen = 8;
                     });
                   },
                 ),
