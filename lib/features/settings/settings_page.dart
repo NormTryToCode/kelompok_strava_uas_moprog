@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/notification_preferences_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/settings/settings_controller.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/settings_section_label.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/settings_tile.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/unit_picker_sheet.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
-class SettingsPage extends StatefulWidget {
-  final SettingsController? controller;
+class SettingsPage extends ConsumerStatefulWidget {
   final VoidCallback? onLogout;
 
-  const SettingsPage({super.key, this.controller, this.onLogout});
+  const SettingsPage({super.key, this.onLogout});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  ConsumerState<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  late final SettingsController _settings =
-      widget.controller ?? SettingsController.instance;
-
+class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    if (!_settings.isLoaded) _settings.load();
+    Future.microtask(() {
+      if (!mounted) return;
+      if (!ref.read(settingsProvider).isLoaded) {
+        ref.read(settingsProvider.notifier).load();
+      }
+    });
   }
 
   void _comingSoon() {
@@ -37,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
   void _openNotificationPreferences() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => NotificationPreferencesPage(controller: _settings),
+        builder: (_) => const NotificationPreferencesPage(),
       ),
     );
   }
@@ -90,65 +92,63 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = ref.watch(settingsProvider);
     return Scaffold(
       backgroundColor: Styles.background,
       appBar: const AppHeader(title: 'Settings', showBackButton: true),
-      body: ListenableBuilder(
-        listenable: _settings,
-        builder: (context, _) => ListView(
-          children: [
-            const SettingsSectionLabel('ACCOUNT'),
-            SettingsTile(
-              icon: Icons.person_outline,
-              title: 'Profile',
-              onTap: _comingSoon,
-            ),
-            SettingsTile(
-              icon: Icons.lock_outline,
-              title: 'Privacy controls',
-              onTap: _comingSoon,
-            ),
-            SettingsTile(
-              icon: Icons.watch_outlined,
-              title: 'Connected devices',
-              onTap: _comingSoon,
-            ),
-            const SettingsSectionLabel('PREFERENCES'),
-            SettingsTile(
-              icon: Icons.straighten,
-              title: 'Units of measurement',
-              subtitle: _settings.unit.label,
-              onTap: () => showUnitPicker(context, _settings),
-            ),
-            SettingsTile(
-              icon: Icons.notifications_none,
-              title: 'Notification preferences',
-              subtitle:
-                  '${_settings.enabledCount} of ${NotificationPref.values.length} on',
-              onTap: _openNotificationPreferences,
-            ),
-            const SettingsSectionLabel('SUPPORT'),
-            SettingsTile(
-              icon: Icons.help_outline,
-              title: 'Help center',
-              onTap: _comingSoon,
-            ),
-            SettingsTile(
-              icon: Icons.info_outline,
-              title: 'About',
-              onTap: _comingSoon,
-            ),
-            const SizedBox(height: 16),
-            SettingsTile(
-              icon: Icons.logout,
-              title: 'Log out',
-              titleColor: Styles.accent,
-              showChevron: false,
-              onTap: _confirmLogout,
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
+      body: ListView(
+        children: [
+          const SettingsSectionLabel('ACCOUNT'),
+          SettingsTile(
+            icon: Icons.person_outline,
+            title: 'Profile',
+            onTap: _comingSoon,
+          ),
+          SettingsTile(
+            icon: Icons.lock_outline,
+            title: 'Privacy controls',
+            onTap: _comingSoon,
+          ),
+          SettingsTile(
+            icon: Icons.watch_outlined,
+            title: 'Connected devices',
+            onTap: _comingSoon,
+          ),
+          const SettingsSectionLabel('PREFERENCES'),
+          SettingsTile(
+            icon: Icons.straighten,
+            title: 'Units of measurement',
+            subtitle: settings.unit.label,
+            onTap: () => showUnitPicker(context, ref),
+          ),
+          SettingsTile(
+            icon: Icons.notifications_none,
+            title: 'Notification preferences',
+            subtitle:
+                '${settings.enabledCount} of ${NotificationPref.values.length} on',
+            onTap: _openNotificationPreferences,
+          ),
+          const SettingsSectionLabel('SUPPORT'),
+          SettingsTile(
+            icon: Icons.help_outline,
+            title: 'Help center',
+            onTap: _comingSoon,
+          ),
+          SettingsTile(
+            icon: Icons.info_outline,
+            title: 'About',
+            onTap: _comingSoon,
+          ),
+          const SizedBox(height: 16),
+          SettingsTile(
+            icon: Icons.logout,
+            title: 'Log out',
+            titleColor: Styles.accent,
+            showChevron: false,
+            onTap: _confirmLogout,
+          ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }
