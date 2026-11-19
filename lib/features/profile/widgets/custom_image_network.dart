@@ -4,11 +4,15 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 class CustomImageNetwork extends StatelessWidget {
   final String imageUrl;
   final double? height;
+  final double? width;
+  final BoxFit? fit;
 
-  const CustomImageNetwork ({
+  const CustomImageNetwork({
     super.key,
     required this.imageUrl,
     this.height,
+    this.width,
+    this.fit,
   });
 
   @override
@@ -16,6 +20,8 @@ class CustomImageNetwork extends StatelessWidget {
     return Image.network(
       imageUrl,
       height: height,
+      width: width,
+      fit: fit,
       loadingBuilder: (
         BuildContext context,
         Widget child,
@@ -26,9 +32,9 @@ class CustomImageNetwork extends StatelessWidget {
           child: CircularProgressIndicator(
             color: Styles.accent,
             value: loadingProgress.expectedTotalBytes != null
-              ? loadingProgress.cumulativeBytesLoaded /
-                loadingProgress.expectedTotalBytes !
-              : null,
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                : null,
           ),
         );
       },
