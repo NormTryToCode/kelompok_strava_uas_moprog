@@ -7,11 +7,13 @@ import '../widgets/trophy_check_box.dart';
 class TrophyDetailScreen extends StatefulWidget {
   final TrophyBadge badge;
   final int currentActivities;
+  final ValueChanged<String>? onToggleClaim;
 
   const TrophyDetailScreen({
     super.key,
     required this.badge,
     this.currentActivities = 0,
+    this.onToggleClaim,
   });
 
   @override
@@ -19,6 +21,13 @@ class TrophyDetailScreen extends StatefulWidget {
 }
 
 class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
+  void _syncToggleState() {
+    setState(() {});
+    if (widget.onToggleClaim != null) {
+      widget.onToggleClaim!(widget.badge.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isUnlocked = widget.badge.isChecked ||
@@ -48,8 +57,8 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                       width: 140,
                       height: 140,
                       decoration: isUnlocked
-                          ? Styles.gradientOrangeBright
-                          : const BoxDecoration(color: Styles.surface),
+                        ? Styles.gradientOrangeBright
+                        : const BoxDecoration(color: Styles.surface),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -59,19 +68,19 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: isUnlocked
-                                  ? Styles.background
-                                  : Styles.inactive,
+                                ? Styles.background
+                                : Styles.inactive,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Icon(
                             isUnlocked
-                                ? Icons.emoji_events
-                                : Icons.lock_outline,
+                              ? Icons.emoji_events
+                              : Icons.lock_outline,
                             size: 48,
                             color: isUnlocked
-                                ? Styles.background
-                                : Styles.tabActive,
+                              ? Styles.background
+                              : Styles.tabActive,
                           ),
                         ],
                       ),
@@ -88,8 +97,8 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                     const SizedBox(height: 8),
                     Text(
                       isUnlocked
-                          ? 'STATUS: TERBUKA (TERCAPAI)'
-                          : 'STATUS: TERKUNCI (${widget.currentActivities}/${widget.badge.requiredActivities} Aktivitas)',
+                        ? 'STATUS: TERBUKA (TERCAPAI)'
+                        : 'STATUS: TERKUNCI (${widget.currentActivities}/${widget.badge.requiredActivities} Aktivitas)',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -117,7 +126,10 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                                 'Tandai Klaim Trofi Manual: ',
                                 style: TextStyle(color: Styles.tabActive),
                               ),
-                              TrophyCheckBox(badge: widget.badge),
+                              TrophyCheckBox(
+                                badge: widget.badge,
+                                onChanged: _syncToggleState,
+                              ),
                             ],
                           ),
                         ],
@@ -126,14 +138,13 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          widget.badge.toggleIsChecked();
-                        });
+                        widget.badge.toggleIsChecked();
+                        _syncToggleState();
                       },
                       child: Text(
                         widget.badge.isChecked
-                            ? 'Batalkan Klaim Trofi'
-                            : 'Simulasi Buka Trofi Ini',
+                          ? 'Batalkan Klaim Trofi'
+                          : 'Simulasi Buka Trofi Ini',
                         style: const TextStyle(color: Styles.accent),
                       ),
                     ),

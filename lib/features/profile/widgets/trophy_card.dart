@@ -7,12 +7,14 @@ class TrophyCard extends StatelessWidget {
   final TrophyBadge badge;
   final int currentActivities;
   final VoidCallback? onStatusChanged;
+  final ValueChanged<String>? onToggleClaim;
 
   const TrophyCard({
     super.key,
     required this.badge,
     this.currentActivities = 0,
     this.onStatusChanged,
+    this.onToggleClaim,
   });
 
   @override
@@ -21,6 +23,7 @@ class TrophyCard extends StatelessWidget {
         badge.isChecked || (currentActivities >= badge.requiredActivities);
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () async {
         await Navigator.push(
           context,
@@ -28,6 +31,7 @@ class TrophyCard extends StatelessWidget {
             builder: (context) => TrophyDetailScreen(
               badge: badge,
               currentActivities: currentActivities,
+              onToggleClaim: onToggleClaim,
             ),
           ),
         );
@@ -44,8 +48,8 @@ class TrophyCard extends StatelessWidget {
               width: 84,
               height: 84,
               decoration: isUnlocked
-                  ? Styles.gradientOrangeBright
-                  : const BoxDecoration(color: Styles.surface),
+                ? Styles.gradientOrangeBright
+                : const BoxDecoration(color: Styles.surface),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -55,8 +59,8 @@ class TrophyCard extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: isUnlocked
-                          ? Styles.background
-                          : Styles.inactive,
+                        ? Styles.background
+                        : Styles.inactive,
                     ),
                   ),
                   const SizedBox(height: 2),

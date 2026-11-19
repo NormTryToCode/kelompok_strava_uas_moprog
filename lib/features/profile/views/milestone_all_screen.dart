@@ -7,11 +7,13 @@ import '../widgets/trophy_card.dart';
 class MilestoneAllScreen extends StatefulWidget {
   final List<TrophyBadge> badges;
   final int currentActivities;
+  final ValueChanged<String>? onToggleClaim;
 
   const MilestoneAllScreen({
     super.key,
     required this.badges,
     this.currentActivities = 0,
+    this.onToggleClaim,
   });
 
   @override
@@ -50,6 +52,7 @@ class _MilestoneAllScreenState extends State<MilestoneAllScreen> {
                 return TrophyCard(
                   badge: widget.badges[index],
                   currentActivities: widget.currentActivities,
+                  onToggleClaim: widget.onToggleClaim,
                   onStatusChanged: () {
                     setState(() {});
                   },

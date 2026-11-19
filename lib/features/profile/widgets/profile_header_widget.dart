@@ -7,6 +7,7 @@ class ProfileHeaderWidget extends StatelessWidget {
   final AthleteProfileData profileData;
   final int activityCount;
   final int followingCount;
+  final VoidCallback onTapAvatar;
   final VoidCallback onEditProfile;
   final VoidCallback onShareProfile;
   final VoidCallback onTapFollowers;
@@ -17,6 +18,7 @@ class ProfileHeaderWidget extends StatelessWidget {
     required this.profileData,
     required this.activityCount,
     this.followingCount = 0,
+    required this.onTapAvatar,
     required this.onEditProfile,
     required this.onShareProfile,
     required this.onTapFollowers,
@@ -63,7 +65,7 @@ class ProfileHeaderWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: onEditProfile,
+                onTap: onTapAvatar,
                 child: AthleteAvatarWidget(
                   avatarPath: profileData.avatarPath,
                   size: 68,

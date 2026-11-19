@@ -8,11 +8,15 @@ import 'milestone_all_screen.dart';
 class TrophyCaseView extends StatefulWidget {
   final VoidCallback onBack;
   final int currentActivities;
+  final Set<String> claimedTrophyIds;
+  final ValueChanged<String>? onToggleClaim;
 
   const TrophyCaseView({
     super.key,
     required this.onBack,
     this.currentActivities = 0,
+    this.claimedTrophyIds = const {},
+    this.onToggleClaim,
   });
 
   @override
@@ -66,6 +70,9 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                 );
               } else if (snapshot.hasData) {
                 final allBadges = snapshot.data!;
+                for (final badge in allBadges) {
+                  badge.isChecked = widget.claimedTrophyIds.contains(badge.id);
+                }
                 final previewBadges = allBadges.take(6).toList();
 
                 return Column(
@@ -95,6 +102,7 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                                   builder: (context) => MilestoneAllScreen(
                                     badges: allBadges,
                                     currentActivities: widget.currentActivities,
+                                    onToggleClaim: widget.onToggleClaim,
                                   ),
                                 ),
                               );
@@ -129,6 +137,7 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                           return TrophyCard(
                             badge: previewBadges[index],
                             currentActivities: widget.currentActivities,
+                            onToggleClaim: widget.onToggleClaim,
                             onStatusChanged: () {
                               setState(() {});
                             },

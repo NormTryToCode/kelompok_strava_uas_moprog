@@ -4,10 +4,12 @@ import '../models/trophy_badge.dart';
 
 class TrophyCheckBox extends StatefulWidget {
   final TrophyBadge badge;
+  final VoidCallback? onChanged;
 
   const TrophyCheckBox({
     super.key,
     required this.badge,
+    this.onChanged,
   });
 
   @override
@@ -18,10 +20,14 @@ class _TrophyCheckBoxState extends State<TrophyCheckBox> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () {
         setState(() {
           widget.badge.toggleIsChecked();
         });
+        if (widget.onChanged != null) {
+          widget.onChanged!();
+        }
       },
       child: Container(
         alignment: Alignment.topLeft,

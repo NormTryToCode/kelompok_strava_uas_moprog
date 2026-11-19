@@ -18,6 +18,7 @@ import 'views/gear_catalog_view.dart';
 import 'views/segment_location_view.dart';
 import 'views/statistics_view.dart';
 import 'views/trophy_case_view.dart';
+import 'widgets/profile_avatar_preview_dialog.dart';
 import 'widgets/profile_header_widget.dart';
 import 'widgets/profile_tab_bar.dart';
 import 'widgets/share_profile_sheet.dart';
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int _activeTab = 0;
   int _followInitialTab = 0;
   int _runSessions = 0;
+  Set<String> _claimedTrophyIds = {};
   String _shareStatusMessage = '';
   int _shareMessageToken = 0;
 
@@ -43,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
     city: 'Jakarta',
     country: 'INDONESIA',
     primarySport: 'Berlari',
-    bio: 'I LIKE RUNNN',
+    bio: 'I Like Runnn',
     birthDate: '30/08/2007',
     gender: 'Pria',
     weightKg: '74,0',
@@ -59,25 +61,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _loadSavedProfileData() async {
     final String firstName =
-        await _asyncPrefs.getString('first_name') ?? _profileData.firstName;
+      await _asyncPrefs.getString('first_name') ?? _profileData.firstName;
     final String lastName =
-        await _asyncPrefs.getString('last_name') ?? _profileData.lastName;
+      await _asyncPrefs.getString('last_name') ?? _profileData.lastName;
     final String city =
-        await _asyncPrefs.getString('city') ?? _profileData.city;
+      await _asyncPrefs.getString('city') ?? _profileData.city;
     final String country =
-        await _asyncPrefs.getString('country') ?? _profileData.country;
+      await _asyncPrefs.getString('country') ?? _profileData.country;
     final String sport =
-        await _asyncPrefs.getString('sport') ?? _profileData.primarySport;
+      await _asyncPrefs.getString('sport') ?? _profileData.primarySport;
     final String savedBio =
-        await _asyncPrefs.getString('text') ?? _profileData.bio;
+      await _asyncPrefs.getString('text') ?? _profileData.bio;
     final String birthDate =
-        await _asyncPrefs.getString('birth_date') ?? _profileData.birthDate;
+      await _asyncPrefs.getString('birth_date') ?? _profileData.birthDate;
     final String gender =
-        await _asyncPrefs.getString('gender') ?? _profileData.gender;
+      await _asyncPrefs.getString('gender') ?? _profileData.gender;
     final String weight =
-        await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
+      await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
     final String avatarPath =
-        await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
+      await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
+    final List<String> savedClaimed =
+      await _asyncPrefs.getStringList('claimed_trophies') ?? [];
 
     if (!mounted) return;
     setState(() {
@@ -93,7 +97,32 @@ class _ProfilePageState extends State<ProfilePage> {
         weightKg: weight,
         avatarPath: avatarPath,
       );
+      _claimedTrophyIds = savedClaimed.toSet();
     });
+  }
+
+  void _toggleClaimedTrophy(String badgeId) async {
+    setState(() {
+      if (_claimedTrophyIds.contains(badgeId)) {
+        _claimedTrophyIds.remove(badgeId);
+      } else {
+        _claimedTrophyIds.add(badgeId);
+      }
+    });
+    await _asyncPrefs.setStringList(
+      'claimed_trophies',
+      _claimedTrophyIds.toList(),
+    );
+  }
+
+  void _openAvatarPreviewDialog() {
+    showDialog(
+      context: context,
+      barrierColor: const Color.fromARGB(200, 15, 20, 30),
+      builder: (BuildContext context) {
+        return ProfileAvatarPreviewDialog(profileData: _profileData);
+      },
+    );
   }
 
   void _showTemporaryShareMessage(String message) async {
@@ -142,6 +171,8 @@ class _ProfilePageState extends State<ProfilePage> {
     if (_activeScreen == 2) {
       return TrophyCaseView(
         currentActivities: _runSessions,
+        claimedTrophyIds: _claimedTrophyIds,
+        onToggleClaim: _toggleClaimedTrophy,
         onBack: () {
           setState(() {
             _activeScreen = 0;
@@ -229,6 +260,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 profileData: _profileData,
                 activityCount: _runSessions,
                 followingCount: FollowController.instance.followingCount,
+                onTapAvatar: _openAvatarPreviewDialog,
                 onEditProfile: () {
                   setState(() {
                     _activeScreen = 1;
@@ -296,12 +328,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     });
                   },
                   onIncrement: (_runSessions < 10)
-                      ? () {
-                          setState(() {
-                            _runSessions = _runSessions + 1;
-                          });
-                        }
-                      : null,
+                    ? () {
+                      setState(() {
+                        _runSessions = _runSessions + 1;
+                      });
+                    }
+                    : null,
                   onOpenFeedback: () {
                     setState(() {
                       _activeScreen = 3;
@@ -319,6 +351,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               if (_activeTab == 2)
                 LainnyaTab(
+                  currentActivities: _runSessions,
+                  claimedTrophyIds: _claimedTrophyIds,
                   onOpenTrophyCase: () {
                     setState(() {
                       _activeScreen = 2;
