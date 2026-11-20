@@ -7,4 +7,6 @@ abstract class ClubRepository {
   Future<List<Club>> getClubs();
 
   Future<void> addClub(Club club);
+
+  Future<void> updateClub(Club club);
 }
