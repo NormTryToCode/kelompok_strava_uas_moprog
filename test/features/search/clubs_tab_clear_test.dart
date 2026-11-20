@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/clubs_tab.dart';
 
 Widget _wrap() {
-  return const MaterialApp(home: Scaffold(body: ClubsTab()));
+  return const MaterialApp(home: Scaffold(body: SearchClubsTab()));
 }
 
 void main() {

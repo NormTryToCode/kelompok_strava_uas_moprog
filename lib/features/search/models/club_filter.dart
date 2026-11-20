@@ -27,7 +27,7 @@ class ClubFilter {
     return ClubFilter(query: query, city: city, sport: value);
   }
 
-  List<Club> apply(List<Club> clubs) {
+  List<SearchClub> apply(List<SearchClub> clubs) {
     final needle = query.trim().toLowerCase();
     return clubs.where((club) {
       if (city != null && club.city != city) return false;
@@ -39,7 +39,7 @@ class ClubFilter {
   }
 }
 
-List<String> citiesOf(List<Club> clubs) {
+List<String> citiesOf(List<SearchClub> clubs) {
   final cities = clubs.map((club) => club.city).toSet().toList()..sort();
   return cities;
 }

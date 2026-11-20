@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
 
-const _verified = Club(
+const _verified = SearchClub(
   id: 'c1',
   name: 'Nusantara Cycling Club',
   sport: SportType.cycling,
@@ -12,7 +12,7 @@ const _verified = Club(
   isVerified: true,
 );
 
-const _plain = Club(
+const _plain = SearchClub(
   id: 'c2',
   name: 'Bandung Trail Society',
   sport: SportType.running,
