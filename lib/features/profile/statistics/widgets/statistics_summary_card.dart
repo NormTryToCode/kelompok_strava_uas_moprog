@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/extensions/int_extensions.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:provider/provider.dart';
-import '../../models/gear_bag.dart';
+import '../../gear/providers/athlete_gear_provider.dart';
 import '../models/sport_statistics_data.dart';
 
 class StatisticsSummaryCard extends StatelessWidget {
@@ -42,7 +42,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      ' Analitik ${stats.sportLabel}',
+                      'Analitik ${stats.sportLabel}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -59,8 +59,10 @@ class StatisticsSummaryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Consumer<GearBagModel>(
-                  builder: (context, bag, child) {
+                Consumer(
+                  builder: (context, ref, child) {
+                    final int activeGearCount =
+                        ref.watch(activeGearCountProvider);
                     return Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10.0,
@@ -72,7 +74,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                         border: Border.all(color: Styles.accent),
                       ),
                       child: Text(
-                        '${bag.items.length} Gear Aktif',
+                        '$activeGearCount Gear Aktif',
                         style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
