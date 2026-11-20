@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'models/athlete_profile_data.dart';
-import 'models/gear_bag.dart';
-import 'models/gear_catalog.dart';
-import 'tabs/aktivitas_tab.dart';
-import 'tabs/kemajuan_tab.dart';
-import 'tabs/lainnya_tab.dart';
-import 'views/edit_profile_view.dart';
-import 'views/feedback_view.dart';
-import 'views/followers_following_view.dart';
-import 'views/gear_bag_view.dart';
-import 'views/gear_management_view.dart';
-import 'views/segment_location_view.dart';
-import 'views/statistics_view.dart';
-import 'views/trophy_case_view.dart';
-import 'widgets/profile_avatar_preview_dialog.dart';
-import 'widgets/profile_header_widget.dart';
-import 'widgets/profile_tab_bar.dart';
-import 'widgets/share_profile_sheet.dart';
+import 'edit_profile/models/athlete_profile_data.dart';
+import 'overview/tabs/aktivitas_tab.dart';
+import 'overview/tabs/kemajuan_tab.dart';
+import 'overview/tabs/lainnya_tab.dart';
+import 'edit_profile/screens/edit_profile_screen.dart';
+import 'social_feedback/screens/feedback_screen.dart';
+import 'social_feedback/screens/followers_following_screen.dart';
+import 'gear/screens/gear_management_screen.dart';
+import 'social_feedback/screens/segment_location_screen.dart';
+import 'statistics/screens/statistics_screen.dart';
+import 'trophies/screens/trophy_case_screen.dart';
+import 'overview/widgets/profile_avatar_preview_dialog.dart';
+import 'overview/widgets/profile_header_widget.dart';
+import 'overview/widgets/profile_tab_bar.dart';
+import 'overview/widgets/share_profile_sheet.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -209,15 +205,6 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       );
     }
-    if (_activeScreen == 6) {
-      return GearBagView(
-        onBack: () {
-          setState(() {
-            _activeScreen = 5;
-          });
-        },
-      );
-    }
     if (_activeScreen == 7) {
       return SegmentLocationView(
         onBack: () {
@@ -380,18 +367,6 @@ class _ProfilePageState extends State<ProfilePage> {
 @override
   Widget build(BuildContext context) {
     return ProviderScope(
-      child: MultiProvider(
-        providers: [
-          Provider(create: (context) => GearCatalogModel()),
-          ChangeNotifierProxyProvider<GearCatalogModel, GearBagModel>(
-            create: (context) => GearBagModel(),
-            update: (context, catalog, bag) {
-              if (bag == null) throw ArgumentError.notNull('bag');
-              bag.catalog = catalog;
-              return bag;
-            },
-          ),
-        ],
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Animate(
@@ -404,7 +379,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
