@@ -412,7 +412,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                 const SizedBox(height: 14),
                 if (_category == GearCategory.bike) ...[
                   ProfileLabeledField(
-                    label: 'Berat (kg) *Wajib',
+                    label: 'Berat (kg)',
                     controller: _weightController,
                     placeholder: 'Contoh: 12,5',
                     keyboardType: const TextInputType.numberWithOptions(
@@ -428,18 +428,18 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                     _category == GearCategory.swim) ...[
                   ProfileLabeledField(
                     label: _category == GearCategory.shoes
-                      ? 'Beri tahu saya saat mencapai (Opsional)'
-                      : 'Target Jarak Maksimal (Opsional)',
+                      ? 'Beri tahu saya saat mencapai'
+                      : 'Target Jarak Maksimal',
                     valueText: _maxDistanceKm != null
                       ? '$_maxDistanceKm km'
-                      : 'Opsional (Ketuk untuk memilih km)',
+                      : 'Ketuk untuk memilih km',
                     onTap: _selectMaxDistance,
                   ),
                   const SizedBox(height: 14),
                 ],
                 if (_category == GearCategory.wearable) ...[
                   ProfileLabeledField(
-                    label: 'Daya Tahan Baterai (jam) - Opsional',
+                    label: 'Daya Tahan Baterai (jam)',
                     controller: _batteryController,
                     placeholder: 'Contoh: 36',
                     keyboardType: TextInputType.number,
@@ -450,7 +450,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                   const SizedBox(height: 14),
                 ],
                 ProfileLabeledField(
-                  label: 'Catatan (Opsional)',
+                  label: 'Catatan',
                   controller: _notesController,
                   placeholder: 'Tambahkan catatan khusus perlengkapan ini...',
                   textCapitalization: TextCapitalization.sentences,

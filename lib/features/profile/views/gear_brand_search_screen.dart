@@ -22,6 +22,13 @@ class GearBrandSearchScreen extends ConsumerStatefulWidget {
 class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  late String _selectedBrand;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedBrand = widget.initialBrand;
+  }
 
   @override
   void dispose() {
@@ -41,10 +48,158 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
     Navigator.of(context).pop(trimmed);
   }
 
+  Future<void> _deleteCustomBrand(String brandName) async {
+    await ref
+      .read(customBrandsProvider.notifier)
+      .removeCustomBrand(widget.category, brandName);
+
+    if (!mounted) return;
+    if (_selectedBrand.trim().toLowerCase() == brandName.toLowerCase()) {
+      setState(() {
+        _selectedBrand = '';
+      });
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Styles.surface,
+        content: Text(
+          'Merek "$brandName" berhasil dihapus.',
+          style: const TextStyle(color: Styles.tabActive),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showEditCustomBrandDialog(String oldBrand) async {
+    final TextEditingController editController =
+      TextEditingController(text: oldBrand);
+
+    final String? updatedName = await showDialog<String>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Styles.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Radii.field),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Edit Nama Merek',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Styles.tabActive,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Perbaiki ejaan merek yang ditambahkan sebelumnya.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Styles.tabInactive,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: editController,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.words,
+                  style: const TextStyle(
+                    color: Styles.tabActive,
+                    fontSize: 15,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Masukkan nama merek yang benar',
+                    hintStyle: const TextStyle(color: Styles.tabInactive),
+                    filled: true,
+                    fillColor: Palette.fieldFill,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderSide: const BorderSide(color: Palette.cardBorder),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderSide: const BorderSide(color: Styles.accent),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text(
+                        'Batalkan',
+                        style: TextStyle(color: Styles.tabInactive),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext)
+                          .pop(editController.text.trim());
+                      },
+                      child: const Text(
+                        'Simpan',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Styles.accent,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    editController.dispose();
+
+    if (updatedName == null ||
+        updatedName.isEmpty ||
+        updatedName == oldBrand) {
+      return;
+    }
+
+    await ref
+      .read(customBrandsProvider.notifier)
+      .updateCustomBrand(widget.category, oldBrand, updatedName);
+
+    if (!mounted) return;
+    if (_selectedBrand.trim().toLowerCase() == oldBrand.toLowerCase()) {
+      setState(() {
+        _selectedBrand = updatedName;
+      });
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Styles.surface,
+        content: Text(
+          'Merek diubah menjadi "$updatedName".',
+          style: const TextStyle(color: Styles.tabActive),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final customBrandsMap = ref.watch(customBrandsProvider);
     final customList = customBrandsMap[widget.category.name] ?? const [];
+    final Set<String> presetLowerSet = widget.category.presetBrands
+      .map((e) => e.toLowerCase())
+      .toSet();
 
     final Set<String> mergedSet = {
       ...widget.category.presetBrands,
@@ -59,120 +214,130 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
       : allBrands
         .where(
           (brand) =>
-            brand.toLowerCase().contains(trimmedQuery.toLowerCase()),
+              brand.toLowerCase().contains(trimmedQuery.toLowerCase()),
         )
         .toList();
-    
+
     final bool hasExactMatch = trimmedQuery.isNotEmpty &&
       allBrands.any(
         (brand) => brand.toLowerCase() == trimmedQuery.toLowerCase(),
       );
 
-    return Scaffold(
-      backgroundColor: Styles.background,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, String? result) {
+        if (didPop) return;
+        Navigator.of(context).pop(_selectedBrand);
+      },
+      child: Scaffold(
         backgroundColor: Styles.background,
-        foregroundColor: Styles.tabActive,
-        title: Text(
-          'Merek ${widget.category.label}',
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Styles.tabActive,
+        appBar: AppBar(
+          backgroundColor: Styles.background,
+          foregroundColor: Styles.tabActive,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(_selectedBrand),
+          ),
+          title: Text(
+            'Merek ${widget.category.label}',
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Styles.tabActive,
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: TextField(
-                controller: _searchController,
-                autofocus: true,
-                style: const TextStyle(color: Styles.tabActive, fontSize: 15),
-                textCapitalization: TextCapitalization.words,
-                onChanged: (value) {
-                  setState(() {
-                    _query = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Cari merek atau ketik merek baru...',
-                  hintStyle: const TextStyle(color: Styles.tabInactive),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: Styles.tabInactive,
-                  ),
-                  suffixIcon: _query.isNotEmpty
-                    ? IconButton(
-                      icon: const Icon(
-                        Icons.clear,
-                        color: Styles.tabInactive,
-                      ),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {
-                          _query = '';
-                        });
-                      },
-                    )
-                  : null,
-                filled: true,
-                  fillColor: Palette.fieldFill,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(Radii.chip),
-                    borderSide: const BorderSide(color: Palette.cardBorder),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(Radii.chip),
-                    borderSide: const BorderSide(color: Styles.accent),
-                  ),
-                ),
-              ),
-            ),
-            if (trimmedQuery.isNotEmpty && !hasExactMatch)
+        body: SafeArea(
+          child: Column(
+            children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Material(
-                  color: Palette.selectedFill,
-                  borderRadius: BorderRadius.circular(Radii.chip),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(Radii.chip),
-                    onTap: () => _selectCustomBrand(trimmedQuery),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 14,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Radii.chip),
-                        border: Border.all(color: Styles.accent),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.add_circle_outline,
-                            color: Styles.accent,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Tambahkan merek "$trimmedQuery"',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Styles.tabActive,
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  style: const TextStyle(color: Styles.tabActive, fontSize: 15),
+                  textCapitalization: TextCapitalization.words,
+                  onChanged: (value) {
+                    setState(() {
+                      _query = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Cari merek atau ketik merek baru...',
+                    hintStyle: const TextStyle(color: Styles.tabInactive),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Styles.tabInactive,
+                    ),
+                    suffixIcon: _query.isNotEmpty
+                      ? IconButton(
+                        icon: const Icon(
+                          Icons.clear,
+                          color: Styles.tabInactive,
+                        ),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _query = '';
+                          });
+                        },
+                      )
+                      : null,
+                    filled: true,
+                    fillColor: Palette.fieldFill,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderSide: const BorderSide(color: Palette.cardBorder),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderSide: const BorderSide(color: Styles.accent),
                     ),
                   ),
                 ),
               ),
+              if (trimmedQuery.isNotEmpty && !hasExactMatch)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                  child: Material(
+                    color: Palette.selectedFill,
+                    borderRadius: BorderRadius.circular(Radii.chip),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                      onTap: () => _selectCustomBrand(trimmedQuery),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(Radii.chip),
+                          border: Border.all(color: Styles.accent),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.add_circle_outline,
+                              color: Styles.accent,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Tambahkan merek "$trimmedQuery"',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Styles.tabActive,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               Expanded(
                 child: filteredBrands.isEmpty
                   ? Center(
@@ -189,43 +354,80 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                     ),
                   )
                   : ListView.separated(
-                    itemCount: filteredBrands.length,
-                    separatorBuilder: (_, _) => const Divider(
-                      height: 1,
-                      color: Styles.inactive,
-                    ),
-                    itemBuilder: (context, index) {
-                      final brand = filteredBrands[index];
-                      final bool isSelected = brand.toLowerCase() ==
-                        widget.initialBrand.trim().toLowerCase();
-                      return ListTile(
-                        onTap: () => Navigator.of(context).pop(brand),
-                        title: Text(
-                          brand,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                            color: isSelected
-                              ? Styles.accent
-                              : Styles.tabActive,
+                      itemCount: filteredBrands.length,
+                      separatorBuilder: (_, _) => const Divider(
+                        height: 1,
+                        color: Styles.inactive,
+                      ),
+                      itemBuilder: (context, index) {
+                        final brand = filteredBrands[index];
+                        final bool isCustom =
+                          !presetLowerSet.contains(brand.toLowerCase());
+                        final bool isSelected = brand.toLowerCase() ==
+                          _selectedBrand.trim().toLowerCase();
+
+                        return ListTile(
+                          onTap: () => Navigator.of(context).pop(brand),
+                          title: Text(
+                            brand,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                              color: isSelected
+                                ? Styles.accent
+                                : Styles.tabActive,
+                            ),
                           ),
-                        ),
-                        trailing: isSelected
-                          ? const Icon(Icons.check, color: Styles.accent)
-                          : null,
-                      );
-                    },
-                  ),
-            ),
-          ],
+                          subtitle: isCustom
+                            ? const Text(
+                                'Merek kustom',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Styles.accent,
+                                ),
+                              )
+                            : null,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isCustom) ...[
+                                IconButton(
+                                  tooltip: 'Edit ejaan merek',
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                    color: Styles.tabInactive,
+                                  ),
+                                  onPressed: () =>
+                                    _showEditCustomBrandDialog(brand),
+                                ),
+                                IconButton(
+                                  tooltip: 'Hapus merek kustom',
+                                  icon: const Icon(
+                                    Icons.delete_outline,
+                                    size: 20,
+                                    color: Colors.redAccent,
+                                  ),
+                                  onPressed: () => _deleteCustomBrand(brand),
+                                ),
+                              ],
+                              if (isSelected)
+                                const Icon(
+                                  Icons.check,
+                                  color: Styles.accent,
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
-    
-
-

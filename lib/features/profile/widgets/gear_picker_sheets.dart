@@ -394,7 +394,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Target Batas Penggantian (Opsional)',
+            'Target Batas Penggantian',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -421,7 +421,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Tidak diatur (Opsional)',
+                      'Tidak diatur',
                       style: TextStyle(
                         fontSize: 15,
                         fontStyle: FontStyle.italic,
