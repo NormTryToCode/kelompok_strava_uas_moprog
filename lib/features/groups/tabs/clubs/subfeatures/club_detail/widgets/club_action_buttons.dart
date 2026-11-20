@@ -4,21 +4,30 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dar
 
 class ClubActionButtons extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback? onEditDetailsTap;
+  final VoidCallback? onEventsTap;
+  final VoidCallback? onPostsTap;
 
-  const ClubActionButtons({super.key, required this.onTap});
+  const ClubActionButtons({
+    super.key,
+    required this.onTap,
+    this.onEditDetailsTap,
+    this.onEventsTap,
+    this.onPostsTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final items = [
-      (Icons.person_add_alt, 'Invite'),
-      (Icons.edit_outlined, 'Edit details'),
-      (Icons.share_outlined, 'Share'),
-      (Icons.insights_outlined, 'Insights'),
-      (Icons.event_available_outlined, 'Events'),
-      (Icons.info_outline, 'Overview'),
-      (Icons.monitor_heart_outlined, 'Activities'),
-      (Icons.leaderboard_outlined, 'Stats'),
-      (Icons.article_outlined, 'Posts'),
+      (Icons.person_add_alt, 'Invite', onTap),
+      (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
+      (Icons.share_outlined, 'Share', onTap),
+      (Icons.insights_outlined, 'Insights', onTap),
+      (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
+      (Icons.info_outline, 'Overview', onTap),
+      (Icons.monitor_heart_outlined, 'Activities', onTap),
+      (Icons.leaderboard_outlined, 'Stats', onTap),
+      (Icons.article_outlined, 'Posts', onPostsTap ?? onTap),
     ];
 
     return GridView.count(
@@ -34,7 +43,7 @@ class ClubActionButtons extends StatelessWidget {
           SoftCard(
             padding: const EdgeInsets.all(8),
             radius: 18,
-            onTap: onTap,
+            onTap: item.$3,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

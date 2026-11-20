@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_channels/club_channels_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_action_buttons.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_channels_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_detail_header.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_events_section.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_posts_section.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_edit/edit_club_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_posts/create_post_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_creation_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/club_events_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 
-class ClubDetailPage extends StatelessWidget {
+class ClubDetailPage extends ConsumerStatefulWidget {
   final Club club;
 
   const ClubDetailPage({super.key, required this.club});
@@ -19,29 +26,68 @@ class ClubDetailPage extends StatelessWidget {
     );
   }
 
-  void _comingSoon(BuildContext context) {
+  @override
+  ConsumerState<ClubDetailPage> createState() => _ClubDetailPageState();
+}
+
+class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
+  final _postsSectionKey = GlobalKey();
+
+  void _comingSoon() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Coming soon')),
     );
   }
 
-  Future<void> _createEvent(BuildContext context) async {
+  Future<void> _editClub(Club club) async {
+    final updated = await EditClubPage.open(context, club);
+    if (updated == null || !mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Club details updated')),
+    );
+  }
+
+  Future<void> _createEvent(Club club) async {
     final event = await EventCreationPage.open(context, club);
-    if (event == null || !context.mounted) return;
+    if (event == null || !mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${event.name} created')),
     );
   }
 
+  Future<void> _createPost(Club club) async {
+    final post = await CreatePostPage.open(context, club);
+    if (post == null || !mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Post published')),
+    );
+  }
+
+  void _scrollToPosts() {
+    final target = _postsSectionKey.currentContext;
+    if (target == null) return;
+    Scrollable.ensureVisible(
+      target,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    void comingSoon() => _comingSoon(context);
+    final clubs = ref.watch(clubsProvider).valueOrNull ?? const <Club>[];
+    final club = clubs.firstWhere(
+      (c) => c.id == widget.club.id,
+      orElse: () => widget.club,
+    );
 
     return Scaffold(
       backgroundColor: Styles.background,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: comingSoon,
+        onPressed: () => _createPost(club),
         backgroundColor: Styles.accent,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
@@ -59,7 +105,7 @@ class ClubDetailPage extends StatelessWidget {
             ClubDetailHeader(
               club: club,
               onBack: () => Navigator.of(context).pop(),
-              onSettings: comingSoon,
+              onSettings: _comingSoon,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 96),
@@ -68,11 +114,28 @@ class ClubDetailPage extends StatelessWidget {
                 children: [
                   const SectionTitle('Quick actions'),
                   const SizedBox(height: 12),
-                  ClubActionButtons(onTap: comingSoon),
+                  ClubActionButtons(
+                    onTap: _comingSoon,
+                    onEditDetailsTap: () => _editClub(club),
+                    onEventsTap: () => ClubEventsPage.open(context, club),
+                    onPostsTap: _scrollToPosts,
+                  ),
                   const SizedBox(height: 28),
-                  ClubChannelsSection(onTap: comingSoon),
+                  ClubChannelsSection(
+                    clubId: club.id,
+                    onTap: () => ClubChannelsPage.open(context, club),
+                  ),
                   const SizedBox(height: 28),
-                  ClubEventsSection(onCreateEvent: () => _createEvent(context)),
+                  ClubEventsSection(
+                    clubId: club.id,
+                    onCreateEvent: () => _createEvent(club),
+                    onViewAll: () => ClubEventsPage.open(context, club),
+                  ),
+                  const SizedBox(height: 28),
+                  KeyedSubtree(
+                    key: _postsSectionKey,
+                    child: ClubPostsSection(club: club),
+                  ),
                 ],
               ),
             ),

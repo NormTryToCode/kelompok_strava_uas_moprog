@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:kelompok_strava_uas_moprog/features/welcome/home_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
-
-  // runApp(const MyApp());
+  
   runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: WelcomePage(),
+    const ProviderScope(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoginPage(),
+      ),
     ),
   );
 }

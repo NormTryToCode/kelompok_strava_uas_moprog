@@ -22,10 +22,10 @@ class JsonClubRepository implements ClubRepository {
       final data = jsonDecode(await file.readAsString());
       final list = data is Map ? data['clubs'] : null;
       if (list is! List) return [];
-      return list
-          .whereType<Map<String, dynamic>>()
-          .map(Club.fromJson)
-          .toList();
+      return [
+        for (final item in list)
+          if (item is Map<String, dynamic>) Club.fromJson(item),
+      ];
     } on FormatException {
       return [];
     }
@@ -34,7 +34,17 @@ class JsonClubRepository implements ClubRepository {
   @override
   Future<void> addClub(Club club) async {
     final clubs = await getClubs();
-    await _write([club, ...clubs]); 
+    await _write([club, ...clubs]);
+  }
+
+  @override
+  Future<void> updateClub(Club club) async {
+    final clubs = await getClubs();
+    final updated = [
+      for (final item in clubs)
+        if (item.id == club.id) club else item,
+    ];
+    await _write(updated);
   }
 
   Future<void> _write(List<Club> clubs) async {

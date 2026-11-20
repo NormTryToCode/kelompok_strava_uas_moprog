@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:provider/provider.dart';
-import '../models/gear_bag.dart';
+import '../providers/athlete_gear_provider.dart';
 
 class _TrophyPreviewItem {
   final String id;
@@ -71,7 +71,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
 
   bool _isPreviewUnlocked(_TrophyPreviewItem item) {
     return widget.currentActivities >= item.requiredActivities ||
-        widget.claimedTrophyIds.contains(item.id);
+      widget.claimedTrophyIds.contains(item.id);
   }
 
   @override
@@ -99,9 +99,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
             icon: Icons.pedal_bike,
             title: 'Perlengkapan',
             onTap: widget.onOpenGearCatalog,
-            trailingWidget: Consumer<GearBagModel>(
-              builder: (context, bag, child) {
-                if (bag.items.isEmpty) {
+            trailingWidget: Consumer(
+              builder: (context, ref, child) {
+                final int activeCount = ref.watch(activeGearCountProvider);
+                if (activeCount == 0) {
                   return const SizedBox.shrink();
                 }
                 return Padding(
@@ -109,7 +110,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
                   child: Badge(
                     backgroundColor: Styles.accent,
                     label: Text(
-                      '${bag.items.length} aktif',
+                      '$activeCount aktif',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
@@ -217,16 +218,16 @@ class _LainnyaTabState extends State<LainnyaTab> {
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           decoration: isUnlocked
                             ? BoxDecoration(
-                              gradient: Palette.primaryGradient,
-                              borderRadius:
-                                BorderRadius.circular(Radii.chip),
+                                gradient: Palette.primaryGradient,
+                                borderRadius:
+                                  BorderRadius.circular(Radii.chip),
                               )
                             : BoxDecoration(
-                              color: Styles.surface,
-                              borderRadius:
-                                BorderRadius.circular(Radii.chip),
-                              border: Border.all(
-                                color: Palette.cardBorder,
+                                color: Styles.surface,
+                                borderRadius:
+                                  BorderRadius.circular(Radii.chip),
+                                border: Border.all(
+                                  color: Palette.cardBorder,
                                 ),
                               ),
                           child: Column(

@@ -82,7 +82,6 @@ class UnsavedChangesDialog extends StatelessWidget {
   }
 }
 
-/// Dialog indikator loading "Menyimpan..." saat proses penyimpanan profil berlangsung.
 class SavingProfileDialog extends StatelessWidget {
   const SavingProfileDialog({super.key});
 

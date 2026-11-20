@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/club_creation_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/club_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/club_card_item.dart';
@@ -10,55 +11,30 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.d
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
 
-class ClubsTab extends StatefulWidget {
+class ClubsTab extends ConsumerWidget {
   const ClubsTab({super.key});
 
-  @override
-  State<ClubsTab> createState() => _ClubsTabState();
-}
-
-class _ClubsTabState extends State<ClubsTab> {
-  List<Club> _clubs = const [];
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadClubs();
-  }
-
-  Future<void> _loadClubs() async {
-    List<Club> clubs;
-    try {
-      clubs = await ClubRepository.instance.getClubs();
-    } catch (_) {
-      clubs = const [];
-    }
-    if (!mounted) return;
-    setState(() {
-      _clubs = clubs;
-      _loading = false;
-    });
-  }
-
-  Future<void> _onCreateClub() async {
+  Future<void> _onCreateClub(BuildContext context) async {
     final created = await ClubCreationPage.open(context);
-    if (created == null || !mounted) return;
+    if (created == null || !context.mounted) return;
 
-    setState(() => _clubs = [created, ..._clubs]);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${created.name} created')),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final clubsAsync = ref.watch(clubsProvider);
+    final clubs = clubsAsync.valueOrNull ?? const <Club>[];
+    final loading = clubsAsync.isLoading && !clubsAsync.hasValue;
+
     return CustomScrollView(
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           sliver: SliverToBoxAdapter(
-            child: CreateClubBar(onCreate: _onCreateClub),
+            child: CreateClubBar(onCreate: () => _onCreateClub(context)),
           ),
         ),
         SliverPadding(
@@ -66,16 +42,16 @@ class _ClubsTabState extends State<ClubsTab> {
           sliver: SliverToBoxAdapter(
             child: SectionTitle(
               'Your clubs',
-              trailing: _clubs.isEmpty ? null : _CountPill(count: _clubs.length),
+              trailing: clubs.isEmpty ? null : _CountPill(count: clubs.length),
             ),
           ),
         ),
-        if (!_loading && _clubs.isEmpty)
+        if (!loading && clubs.isEmpty)
           const SliverPadding(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
             sliver: SliverToBoxAdapter(child: _EmptyClubs()),
           ),
-        if (_clubs.isNotEmpty)
+        if (clubs.isNotEmpty)
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             sliver: SliverGrid(
@@ -83,14 +59,14 @@ class _ClubsTabState extends State<ClubsTab> {
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                mainAxisExtent: 196,
+                mainAxisExtent: 204,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) => ClubCardItem(
-                  club: _clubs[index],
-                  onTap: () => ClubDetailPage.open(context, _clubs[index]),
+                  club: clubs[index],
+                  onTap: () => ClubDetailPage.open(context, clubs[index]),
                 ),
-                childCount: _clubs.length,
+                childCount: clubs.length,
               ),
             ),
           ),
