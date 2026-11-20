@@ -6,6 +6,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_detail_header.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/widgets/club_events_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_creation_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_channels/club_channels_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 
 class ClubDetailPage extends StatelessWidget {
@@ -70,7 +71,10 @@ class ClubDetailPage extends StatelessWidget {
                   const SizedBox(height: 12),
                   ClubActionButtons(onTap: comingSoon),
                   const SizedBox(height: 28),
-                  ClubChannelsSection(onTap: comingSoon),
+                  ClubChannelsSection(
+                    clubId: club.id,
+                    onTap: () => ClubChannelsPage.open(context, club),
+                  ),
                   const SizedBox(height: 28),
                   ClubEventsSection(onCreateEvent: () => _createEvent(context)),
                 ],

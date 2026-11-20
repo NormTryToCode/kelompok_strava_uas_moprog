@@ -83,7 +83,7 @@ class _ClubsTabState extends State<ClubsTab> {
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                mainAxisExtent: 196,
+                mainAxisExtent: 235,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) => ClubCardItem(
