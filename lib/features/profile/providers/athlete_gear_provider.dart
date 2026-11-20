@@ -158,4 +158,58 @@ class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
     state = updated;
     await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
   }
+
+  Future<void> updateCustomBrand(
+    GearCategory category,
+    String oldName,
+    String newName,
+  ) async {
+    final trimmedNew = newName.trim();
+    if (trimmedNew.isEmpty) return;
+
+    final existing = List<String>.from(state[category.name] ?? const []);
+    final int index = existing.indexWhere(
+      (b) => b.toLowerCase() == oldName.toLowerCase(),
+    );
+    if (index == -1) return;
+
+    final bool duplicateInCustom = existing.any(
+      (b) =>
+        b.toLowerCase() != oldName.toLowerCase() &&
+        b.toLowerCase() == trimmedNew.toLowerCase(),
+    );
+    final bool duplicateInPreset = category.presetBrands.any(
+      (b) => b.toLowerCase() == trimmedNew.toLowerCase(),
+    );
+
+    if (duplicateInCustom || duplicateInPreset) {
+      existing.removeAt(index);
+    } else {
+      existing[index] = trimmedNew;
+    }
+
+    final CustomBrandsMap updated = {
+      ...state,
+      category.name: existing,
+    };
+    state = updated;
+    await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
+  }
+
+  Future<void> removeCustomBrand(
+    GearCategory category,
+    String brandName,
+  ) async {
+    final existing = List<String>.from(state[category.name] ?? const []);
+    existing.removeWhere(
+      (b) => b.toLowerCase() == brandName.toLowerCase(),
+    );
+
+    final CustomBrandsMap updated = {
+      ...state,
+      category.name: existing,
+    };
+    state = updated;
+    await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
+  }
 }
