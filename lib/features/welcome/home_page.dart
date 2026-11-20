@@ -36,19 +36,20 @@ class WelcomePage extends StatelessWidget {
                     'Track Every Run',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 36,
+                      fontSize: 40,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   const Text(
-                    'Record your routes, pace, and progress in real time.',
+                    'Record your routes, pace, and progress in real time with our app.',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     height: 52,
