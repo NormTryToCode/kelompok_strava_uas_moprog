@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,7 @@ import 'views/edit_profile_view.dart';
 import 'views/feedback_view.dart';
 import 'views/followers_following_view.dart';
 import 'views/gear_bag_view.dart';
-import 'views/gear_catalog_view.dart';
+import 'views/gear_management_view.dart';
 import 'views/segment_location_view.dart';
 import 'views/statistics_view.dart';
 import 'views/trophy_case_view.dart';
@@ -200,15 +201,10 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
     if (_activeScreen == 5) {
-      return GearCatalogView(
+      return GearManagementView(
         onBack: () {
           setState(() {
             _activeScreen = 0;
-          });
-        },
-        onOpenBag: () {
-          setState(() {
-            _activeScreen = 6;
           });
         },
       );
@@ -381,28 +377,30 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(create: (context) => GearCatalogModel()),
-        ChangeNotifierProxyProvider<GearCatalogModel, GearBagModel>(
-          create: (context) => GearBagModel(),
-          update: (context, catalog, bag) {
-            if (bag == null) throw ArgumentError.notNull('bag');
-            bag.catalog = catalog;
-            return bag;
-          },
-        ),
-      ],
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Animate(
-          effects: const [FadeEffect()],
-          child: Scaffold(
-            backgroundColor: Styles.background,
-            body: SafeArea(
-              child: _buildActiveScreenContent(),
+    return ProviderScope(
+      child: MultiProvider(
+        providers: [
+          Provider(create: (context) => GearCatalogModel()),
+          ChangeNotifierProxyProvider<GearCatalogModel, GearBagModel>(
+            create: (context) => GearBagModel(),
+            update: (context, catalog, bag) {
+              if (bag == null) throw ArgumentError.notNull('bag');
+              bag.catalog = catalog;
+              return bag;
+            },
+          ),
+        ],
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Animate(
+            effects: const [FadeEffect()],
+            child: Scaffold(
+              backgroundColor: Styles.background,
+              body: SafeArea(
+                child: _buildActiveScreenContent(),
+              ),
             ),
           ),
         ),
