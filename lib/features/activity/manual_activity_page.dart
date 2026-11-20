@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/activity/activity_list_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activity.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/utils/activity_format.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 
 class ManualActivityPage extends ConsumerStatefulWidget {
   final DateTime? initialDate;
@@ -86,7 +88,20 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.background,
-      appBar: const AppHeader(title: 'Manual Activity', showBackButton: true),
+      appBar: AppHeader(
+        title: 'Manual Activity',
+        showBackButton: true,
+        actions: [
+          HeaderIconButton(
+            icon: Icons.history,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const ActivityListPage(),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
