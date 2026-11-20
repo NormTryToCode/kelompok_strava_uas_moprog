@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/event_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/widgets/club_event_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/widgets/event_detail_sheet.dart';
