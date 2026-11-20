@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
-
-void main() => runApp(const VideoPlayerApp());
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 
 class VideoPlayerApp extends StatelessWidget {
   const VideoPlayerApp({super.key});
@@ -23,53 +22,31 @@ class VideoPlayerScreen extends StatefulWidget {
 }
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
-  late VideoPlayerController _controller;
-  late Future<void> _initializeVideoPlayerFuture;
+  late final Player _player = Player();
+  late final VideoController _controller = VideoController(_player);
 
   @override
   void initState() {
     super.initState();
 
-    _controller = VideoPlayerController.asset(
-      'asset/videos/welcome_running.mp4',
-    );
-
-    _controller.setLooping(true);
-
-    _initializeVideoPlayerFuture = _controller.initialize().then((_) {
-      if (!mounted) return;
-      setState(() {});
-      _controller.play();
-    });
+    _player.setPlaylistMode(PlaylistMode.loop);
+    _player.open(Media('asset:///asset/videos/welcome_running_fixed.mp4'));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _player.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: _initializeVideoPlayerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error loading video: ${snapshot.error}'),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Center(
-              child: AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
-              ),
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+      body: Center(
+        child: Video(
+          controller: _controller,
+          controls: NoVideoControls,
+        ),
       ),
     );
   }
