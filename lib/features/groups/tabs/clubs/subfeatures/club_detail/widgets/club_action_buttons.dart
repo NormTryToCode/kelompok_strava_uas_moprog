@@ -5,12 +5,14 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dar
 class ClubActionButtons extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onEditDetailsTap;
+  final VoidCallback? onEventsTap;
   final VoidCallback? onPostsTap;
 
   const ClubActionButtons({
     super.key,
     required this.onTap,
     this.onEditDetailsTap,
+    this.onEventsTap,
     this.onPostsTap,
   });
 
@@ -21,7 +23,7 @@ class ClubActionButtons extends StatelessWidget {
       (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
       (Icons.share_outlined, 'Share', onTap),
       (Icons.insights_outlined, 'Insights', onTap),
-      (Icons.event_available_outlined, 'Events', onTap),
+      (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
       (Icons.info_outline, 'Overview', onTap),
       (Icons.monitor_heart_outlined, 'Activities', onTap),
       (Icons.leaderboard_outlined, 'Stats', onTap),

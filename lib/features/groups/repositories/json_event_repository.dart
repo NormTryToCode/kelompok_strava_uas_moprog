@@ -22,10 +22,10 @@ class JsonEventRepository implements EventRepository {
       final data = jsonDecode(await file.readAsString());
       final list = data is Map ? data['events'] : null;
       if (list is! List) return [];
-      return list
-          .whereType<Map<String, dynamic>>()
-          .map(Event.fromJson)
-          .toList();
+      return [
+        for (final item in list)
+          if (item is Map<String, dynamic>) Event.fromJson(item),
+      ];
     } on FormatException {
       return [];
     }
@@ -35,6 +35,23 @@ class JsonEventRepository implements EventRepository {
   Future<void> addEvent(Event event) async {
     final events = await getEvents();
     await _write([event, ...events]);
+  }
+
+  @override
+  Future<void> updateEvent(Event event) async {
+    final events = await getEvents();
+    final updated = [
+      for (final item in events)
+        if (item.id == event.id) event else item,
+    ];
+    await _write(updated);
+  }
+
+  @override
+  Future<void> deleteEvent(String eventId) async {
+    final events = await getEvents();
+    final updated = events.where((e) => e.id != eventId).toList();
+    await _write(updated);
   }
 
   Future<void> _write(List<Event> events) async {
