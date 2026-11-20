@@ -9,7 +9,7 @@ class WelcomePage extends StatelessWidget {
         body: SafeArea(
           child: Center(
             child: VideoPlayerApp(),
-            ),
+          ),
       ),
     );
   }
