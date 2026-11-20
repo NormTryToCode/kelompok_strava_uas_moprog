@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/location_search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_2_club_type.dart';
@@ -12,7 +13,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_indicator.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
-class ClubCreationPage extends StatefulWidget {
+class ClubCreationPage extends ConsumerStatefulWidget {
   const ClubCreationPage({super.key});
 
   static const totalSteps = 5;
@@ -25,10 +26,10 @@ class ClubCreationPage extends StatefulWidget {
   }
 
   @override
-  State<ClubCreationPage> createState() => _ClubCreationPageState();
+  ConsumerState<ClubCreationPage> createState() => _ClubCreationPageState();
 }
 
-class _ClubCreationPageState extends State<ClubCreationPage> {
+class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
   ClubCreationModel _draft = const ClubCreationModel();
   int _step = 1;
   bool _saving = false;
@@ -128,7 +129,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
 
     try {
       final club = Club.fromCreation(_draft);
-      await ClubRepository.instance.addClub(club);
+      await ref.read(clubsProvider.notifier).addClub(club);
       if (!mounted) return;
       Navigator.of(context).pop(club);
     } catch (_) {
