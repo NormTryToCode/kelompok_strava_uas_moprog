@@ -12,31 +12,30 @@ class GroupsTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Styles.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Palette.cardBorder),
+      decoration: const BoxDecoration(
+        color: Styles.background,
+        border: Border(
+          bottom: BorderSide(color: Palette.cardBorder, width: 1),
+        ),
       ),
-      child: TabBar(
+      child: const TabBar(
         dividerColor: Colors.transparent,
         indicatorSize: TabBarIndicatorSize.tab,
+        indicatorWeight: 2.5,
+        indicatorColor: Styles.accent,
         labelColor: Colors.white,
         unselectedLabelColor: Styles.tabInactive,
         labelStyle: _labelStyle,
-        unselectedLabelStyle: _labelStyle,
-        overlayColor: WidgetStateProperty.all(Colors.transparent),
-        splashFactory: NoSplash.splashFactory,
-        indicator: BoxDecoration(
-          color: Palette.selectedFill,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Palette.teal, width: 1.4),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
         ),
-        tabs: const [
-          Tab(height: 40, text: 'Challenges'),
-          Tab(height: 40, text: 'Clubs'),
-          Tab(height: 40, text: 'Events'),
+        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+        splashFactory: NoSplash.splashFactory,
+        tabs: [
+          Tab(height: 44, text: 'Challenges'),
+          Tab(height: 44, text: 'Clubs'),
+          Tab(height: 44, text: 'Events'),
         ],
       ),
     );
