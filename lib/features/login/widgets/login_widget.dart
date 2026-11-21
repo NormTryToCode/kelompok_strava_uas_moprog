@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/widgets/remember_me_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 
@@ -13,6 +14,8 @@ class LoginWidget extends StatelessWidget {
 
     final double cardWidth =
         screenWidth * 0.9 > 400 ? 400 : screenWidth * 0.9;
+
+    bool rememberMe = false;
 
     return Center(
       child: Container(
@@ -38,6 +41,7 @@ class LoginWidget extends StatelessWidget {
             ),
 
             const SizedBox(height: 2),
+
             const Text(
               "The best running app there is!",
               style: TextStyle(
@@ -68,9 +72,12 @@ class LoginWidget extends StatelessWidget {
                 fillColor: Colors.white,
               ),
             ),
+            
+            const SizedBox(height: 2),
 
-            const SizedBox(height: 24),
+            RememberMeWidget(),
 
+            const SizedBox(height: 4),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
