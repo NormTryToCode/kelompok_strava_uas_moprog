@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
 import 'edit_profile/models/athlete_profile_data.dart';
 import 'overview/tabs/aktivitas_tab.dart';
 import 'overview/tabs/kemajuan_tab.dart';
@@ -231,9 +231,9 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-    return ListenableBuilder(
-      listenable: FollowController.instance,
-      builder: (context, _) {
+   return Consumer(
+      builder: (context, ref, _) {
+        final followingCount = ref.watch(followingCountProvider);
         return SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -242,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ProfileHeaderWidget(
                 profileData: _profileData,
                 activityCount: _runSessions,
-                followingCount: FollowController.instance.followingCount,
+                followingCount: followingCount,
                 onTapAvatar: _openAvatarPreviewDialog,
                 onEditProfile: () {
                   setState(() {
@@ -366,19 +366,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
 @override
   Widget build(BuildContext context) {
-    return ProviderScope(
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Animate(
-            effects: const [FadeEffect()],
-            child: Scaffold(
-              backgroundColor: Styles.background,
-              body: SafeArea(
-                child: _buildActiveScreenContent(),
-              ),
-            ),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Animate(
+        effects: const [FadeEffect()],
+        child: Scaffold(
+          backgroundColor: Styles.background,
+          body: SafeArea(
+            child: _buildActiveScreenContent(),
           ),
         ),
-      );
+      ),
+    );
   }
 }

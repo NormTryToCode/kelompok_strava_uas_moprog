@@ -46,7 +46,7 @@ void main() {
     expect(container.read(unreadCountProvider), 0);
   });
 
-  test('unreadCountProvider memberi tahu listener saat berubah', () {
+  test('unreadCountProvider memberi tahu listener saat berubah', () async {
     final container = _container();
     final initial = container.read(unreadCountProvider);
     final values = <int>[];
@@ -57,11 +57,12 @@ void main() {
     );
 
     container.read(notificationsProvider.notifier).markAllAsRead();
+    await container.pump();
 
     expect(values, [initial, 0]);
   });
 
-    test('remove menghapus satu notifikasi', () {
+  test('remove menghapus satu notifikasi', () {
     final container = _container();
     final notifier = container.read(notificationsProvider.notifier);
     final before = container.read(notificationsProvider).length;

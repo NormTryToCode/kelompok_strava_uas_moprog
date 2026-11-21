@@ -17,12 +17,6 @@ import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.d
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  void _comingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Coming soon')),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
