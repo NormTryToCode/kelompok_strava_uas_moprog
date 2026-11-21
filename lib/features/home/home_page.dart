@@ -13,6 +13,7 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/upgrade_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,12 +23,15 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Styles.background,
       appBar: AppHeader(
-        leadingWidget: const UpgradePill(),
+        titleWidget: const StrideWordmark(),
         actions: [
           AddMenuButton(onSelected: (action) => openAddAction(context, action)),
           HeaderIconButton(
             icon: Icons.forum_outlined,
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FriendsPage())),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FriendsPage()),
+            ),
           ),
           HeaderIconButton(
             icon: Icons.search,
