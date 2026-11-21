@@ -6,6 +6,7 @@ class ClubActionButtons extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onEditDetailsTap;
   final VoidCallback? onEventsTap;
+  final VoidCallback? onOverviewTap;
   final VoidCallback? onPostsTap;
 
   const ClubActionButtons({
@@ -13,6 +14,7 @@ class ClubActionButtons extends StatelessWidget {
     required this.onTap,
     this.onEditDetailsTap,
     this.onEventsTap,
+    this.onOverviewTap,
     this.onPostsTap,
   });
 
@@ -24,7 +26,7 @@ class ClubActionButtons extends StatelessWidget {
       (Icons.share_outlined, 'Share', onTap),
       (Icons.insights_outlined, 'Insights', onTap),
       (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
-      (Icons.info_outline, 'Overview', onTap),
+      (Icons.info_outline, 'Overview', onOverviewTap ?? onTap),
       (Icons.monitor_heart_outlined, 'Activities', onTap),
       (Icons.leaderboard_outlined, 'Stats', onTap),
       (Icons.article_outlined, 'Posts', onPostsTap ?? onTap),

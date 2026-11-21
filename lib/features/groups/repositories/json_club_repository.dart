@@ -57,4 +57,11 @@ class JsonClubRepository implements ClubRepository {
     await temp.writeAsString(content, flush: true);
     await temp.rename(file.path);
   }
+
+  @override
+  Future<void> deleteClub(String clubId) async {
+    final clubs = await getClubs();
+    final updated = clubs.where((item) => item.id != clubId).toList();
+    await _write(updated);
+  }
 }
