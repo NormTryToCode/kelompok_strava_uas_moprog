@@ -28,6 +28,12 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
         if (club.id == updated.id) updated else club,
     ]);
   }
+
+  Future<void> deleteClub(String clubId) async {
+    await _repository.deleteClub(clubId);
+    final current = state.valueOrNull ?? const <Club>[];
+    state = AsyncData(current.where((c) => c.id != clubId).toList());
+  }
 }
 
 final clubsProvider = AsyncNotifierProvider<ClubsNotifier, List<Club>>(

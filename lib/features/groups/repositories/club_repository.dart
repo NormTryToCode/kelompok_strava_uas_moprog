@@ -9,4 +9,6 @@ abstract class ClubRepository {
   Future<void> addClub(Club club);
 
   Future<void> updateClub(Club club);
+
+  Future<void> deleteClub(String clubId);
 }

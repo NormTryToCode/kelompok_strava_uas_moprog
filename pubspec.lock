@@ -800,14 +800,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  safe_local_storage:
-    dependency: transitive
-    description:
-      name: safe_local_storage
-      sha256: "76288b689a3e1fddccb377177feed85d73fdfc64c9c3c52991e2d9aba35c4857"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.7"
   riverpod:
     dependency: transitive
     description:
@@ -816,6 +808,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  safe_local_storage:
+    dependency: transitive
+    description:
+      name: safe_local_storage
+      sha256: "76288b689a3e1fddccb377177feed85d73fdfc64c9c3c52991e2d9aba35c4857"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   share_plus:
     dependency: "direct main"
     description:
