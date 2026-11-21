@@ -29,7 +29,7 @@ class LoginWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              "Welcome User",
+              "Lets Start Running!",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -37,8 +37,17 @@ class LoginWidget extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 2),
+            const Text(
+              "The best running app there is!",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: Colors.white70,
+              ),
+            ),
 
+            const SizedBox(height: 16),
             const TextField(
               decoration: InputDecoration(
                 hintText: "Masukin Nama",
