@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ShareTarget {
   final String label;
@@ -91,25 +92,43 @@ class ClubShareService {
     return file.path;
   }
 
-  Future<bool> share({
+  Future<bool> shareToTarget({
+    required ShareTarget target,
     required String text,
     String? imagePath,
-    ShareTarget? target,
   }) async {
     if (!Platform.isAndroid) return false;
 
     try {
-      final useImage = target == null || target.supportsImage;
-      final ok = await _channel.invokeMethod<bool>('share', {
+      final ok = await _channel.invokeMethod<bool>('shareToApp', {
         'text': text,
-        'imagePath': useImage ? imagePath : null,
-        'packageName': target?.packageName,
-        'activityName': target?.activityName,
+        'imagePath': target.supportsImage ? imagePath : null,
+        'packageName': target.packageName,
+        'activityName': target.activityName,
       });
       return ok ?? false;
     } on PlatformException {
       return false;
     } on MissingPluginException {
+      return false;
+    }
+  }
+
+  Future<bool> shareViaSystemSheet({
+    required String text,
+    required String subject,
+    String? imagePath,
+  }) async {
+    try {
+      final result = await SharePlus.instance.share(
+        ShareParams(
+          text: text,
+          subject: subject,
+          files: imagePath != null ? [XFile(imagePath)] : null,
+        ),
+      );
+      return result.status != ShareResultStatus.unavailable;
+    } catch (_) {
       return false;
     }
   }

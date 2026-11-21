@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
@@ -93,10 +93,11 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
       '— ${post.authorName} (${widget.club.name})',
     ].join('\n');
 
-    await Clipboard.setData(ClipboardData(text: summary));
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Post copied to clipboard')),
+    await SharePlus.instance.share(
+      ShareParams(
+        text: summary,
+        subject: post.title.isNotEmpty ? post.title : widget.club.name,
+      ),
     );
   }
 

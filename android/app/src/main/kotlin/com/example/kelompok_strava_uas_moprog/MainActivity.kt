@@ -24,13 +24,17 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "getShareTargets" -> result.success(getInstalledShareTargets())
-                    "share" -> {
+                    "shareToApp" -> {
                         val text = call.argument<String>("text") ?: ""
                         val imagePath = call.argument<String>("imagePath")
                         val packageName = call.argument<String>("packageName")
                         val activityName = call.argument<String>("activityName")
-                        val shared = launchShareIntent(text, imagePath, packageName, activityName)
-                        result.success(shared)
+                        val ok = if (packageName.isNullOrEmpty()) {
+                            false
+                        } else {
+                            launchDirectShare(text, imagePath, packageName, activityName)
+                        }
+                        result.success(ok)
                     }
                     else -> result.notImplemented()
                 }
@@ -86,10 +90,10 @@ class MainActivity : FlutterActivity() {
         return stream.toByteArray()
     }
 
-    private fun launchShareIntent(
+    private fun launchDirectShare(
         text: String,
         imagePath: String?,
-        packageName: String?,
+        packageName: String,
         activityName: String?
     ): Boolean {
         return try {
@@ -110,21 +114,13 @@ class MainActivity : FlutterActivity() {
                     putExtra(Intent.EXTRA_TEXT, text)
                 }
 
-                if (!packageName.isNullOrEmpty()) {
-                    if (!activityName.isNullOrEmpty()) {
-                        setClassName(packageName, activityName)
-                    } else {
-                        setPackage(packageName)
-                    }
+                if (!activityName.isNullOrEmpty()) {
+                    setClassName(packageName, activityName)
+                } else {
+                    setPackage(packageName)
                 }
             }
-
-            val launchIntent = if (packageName.isNullOrEmpty()) {
-                Intent.createChooser(intent, "Share Club")
-            } else {
-                intent
-            }
-            startActivity(launchIntent)
+            startActivity(intent)
             true
         } catch (_: Exception) {
             false

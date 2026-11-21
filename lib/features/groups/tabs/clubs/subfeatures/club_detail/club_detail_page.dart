@@ -14,6 +14,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_creation_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/club_events_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/club_overview_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_share/share_club_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 
 class ClubDetailPage extends ConsumerStatefulWidget {
@@ -128,6 +129,7 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                   ClubActionButtons(
                     onTap: _comingSoon,
                     onEditDetailsTap: () => _editClub(club),
+                    onShareTap: () => ShareClubPage.open(context, club),
                     onEventsTap: () => ClubEventsPage.open(context, club),
                     onOverviewTap: () => _openOverview(club),
                     onPostsTap: _scrollToPosts,
