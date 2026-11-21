@@ -14,22 +14,21 @@ class PrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.icon,
-    this.height = 54,
+    this.height = 50,
     this.expand = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
-    final radius = BorderRadius.circular(Radii.button);
+    final radius = BorderRadius.circular(12);
     final foreground = enabled ? Colors.white : Colors.white.withAlpha(110);
 
     return Material(
       color: Colors.transparent,
       child: Ink(
         decoration: BoxDecoration(
-          gradient: enabled ? Palette.primaryGradient : null,
-          color: enabled ? null : Styles.inactive,
+          color: enabled ? Styles.accent : Styles.inactive,
           borderRadius: radius,
         ),
         child: InkWell(
@@ -38,20 +37,20 @@ class PrimaryButton extends StatelessWidget {
           child: SizedBox(
             height: height,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: expand ? 0 : 22),
+              padding: EdgeInsets.symmetric(horizontal: expand ? 0 : 20),
               child: Center(
                 widthFactor: expand ? null : 1,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (icon != null) ...[
-                      Icon(icon, size: 20, color: foreground),
+                      Icon(icon, size: 19, color: foreground),
                       const SizedBox(width: 8),
                     ],
                     Text(
                       label,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15.5,
                         fontWeight: FontWeight.w700,
                         color: foreground,
                       ),
@@ -78,23 +77,25 @@ class GhostButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.icon,
-    this.height = 54,
+    this.height = 50,
   });
 
   @override
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
-    final radius = BorderRadius.circular(Radii.button);
-    final foreground = enabled ? Colors.white : Styles.tabInactive.withAlpha(110);
+    final radius = BorderRadius.circular(12);
+    final foreground =
+        enabled ? Colors.white : Styles.tabInactive.withAlpha(110);
 
     return Material(
       color: Colors.transparent,
       child: Ink(
         decoration: BoxDecoration(
+          color: Styles.surface,
           borderRadius: radius,
           border: Border.all(
-            color: enabled ? Styles.inactive : Styles.inactive.withAlpha(90),
-            width: 1.5,
+            color: enabled ? Palette.cardBorder : Palette.cardBorder.withAlpha(90),
+            width: 1,
           ),
         ),
         child: InkWell(
@@ -107,13 +108,13 @@ class GhostButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 20, color: foreground),
+                    Icon(icon, size: 19, color: foreground),
                     const SizedBox(width: 8),
                   ],
                   Text(
                     label,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 15.5,
                       fontWeight: FontWeight.w700,
                       color: foreground,
                     ),

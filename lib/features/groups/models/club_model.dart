@@ -1,4 +1,4 @@
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 
 class Club {
   final String id;
@@ -9,6 +9,9 @@ class Club {
   final ClubPrivacy privacy;
   final bool isGlobal;
   final ClubLocation? location;
+  final String? avatarPath;
+  final String? coverPath;
+  final String? vanityUrl;
   final int memberCount;
   final DateTime createdAt;
 
@@ -23,6 +26,9 @@ class Club {
     required this.location,
     required this.memberCount,
     required this.createdAt,
+    this.avatarPath,
+    this.coverPath,
+    this.vanityUrl,
   });
 
   factory Club.fromCreation(ClubCreationModel draft) {
@@ -46,6 +52,48 @@ class Club {
 
   String get typeLabel => types.map((t) => t.name).join(' \u00b7 ');
 
+  String get locationLabel => isGlobal || location == null
+      ? 'Global'
+      : location!.detail.isEmpty
+          ? location!.name
+          : '${location!.name}, ${location!.detail}';
+
+  Club copyWith({
+    String? id,
+    String? name,
+    String? description,
+    ClubSport? sport,
+    List<ClubType>? types,
+    ClubPrivacy? privacy,
+    bool? isGlobal,
+    ClubLocation? location,
+    bool clearLocation = false,
+    String? avatarPath,
+    bool clearAvatar = false,
+    String? coverPath,
+    bool clearCover = false,
+    String? vanityUrl,
+    bool clearVanityUrl = false,
+    int? memberCount,
+    DateTime? createdAt,
+  }) {
+    return Club(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      sport: sport ?? this.sport,
+      types: types ?? this.types,
+      privacy: privacy ?? this.privacy,
+      isGlobal: isGlobal ?? this.isGlobal,
+      location: clearLocation ? null : (location ?? this.location),
+      avatarPath: clearAvatar ? null : (avatarPath ?? this.avatarPath),
+      coverPath: clearCover ? null : (coverPath ?? this.coverPath),
+      vanityUrl: clearVanityUrl ? null : (vanityUrl ?? this.vanityUrl),
+      memberCount: memberCount ?? this.memberCount,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final place = location;
     return {
@@ -64,6 +112,9 @@ class Club {
               'latitude': place.latitude,
               'longitude': place.longitude,
             },
+      'avatarPath': avatarPath,
+      'coverPath': coverPath,
+      'vanityUrl': vanityUrl,
       'memberCount': memberCount,
       'createdAt': createdAt.toIso8601String(),
     };
@@ -96,6 +147,9 @@ class Club {
               longitude: (place['longitude'] as num?)?.toDouble(),
             )
           : null,
+      avatarPath: json['avatarPath'] as String?,
+      coverPath: json['coverPath'] as String?,
+      vanityUrl: json['vanityUrl'] as String?,
       memberCount: (json['memberCount'] as num?)?.toInt() ?? 1,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),

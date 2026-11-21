@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 
 Future<T?> showOptionSheet<T>(
   BuildContext context, {
@@ -25,17 +26,7 @@ Future<T?> showOptionSheet<T>(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Styles.inactive,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
+              const SheetHandle(),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Text(
@@ -72,13 +63,18 @@ Future<T?> showOptionSheet<T>(
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w400,
-                                  color: isSelected ? Palette.teal : Colors.white,
+                                  color: isSelected
+                                      ? Palette.teal
+                                      : Colors.white,
                                 ),
                               ),
                             ),
                             if (isSelected)
-                              const Icon(Icons.check_circle,
-                                  size: 22, color: Palette.teal),
+                              const Icon(
+                                Icons.check_circle,
+                                size: 22,
+                                color: Palette.teal,
+                              ),
                           ],
                         ),
                       ),

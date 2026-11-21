@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/repositories/event_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/event_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_form_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/advanced_options_section.dart';
@@ -14,7 +15,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/widgets/event_schedule_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
-class EventCreationPage extends StatefulWidget {
+class EventCreationPage extends ConsumerStatefulWidget {
   final Club club;
 
   const EventCreationPage({super.key, required this.club});
@@ -26,10 +27,10 @@ class EventCreationPage extends StatefulWidget {
   }
 
   @override
-  State<EventCreationPage> createState() => _EventCreationPageState();
+  ConsumerState<EventCreationPage> createState() => _EventCreationPageState();
 }
 
-class _EventCreationPageState extends State<EventCreationPage> {
+class _EventCreationPageState extends ConsumerState<EventCreationPage> {
   final _form = EventFormController();
   bool _saving = false;
 
@@ -85,7 +86,7 @@ class _EventCreationPageState extends State<EventCreationPage> {
 
     try {
       final event = _form.buildEvent(widget.club);
-      await EventRepository.instance.addEvent(event);
+      await ref.read(eventsProvider.notifier).addEvent(event);
       if (!mounted) return;
       Navigator.of(context).pop(event);
     } catch (_) {
@@ -185,10 +186,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF123B3A), Styles.background],
+        color: Styles.background,
+        border: Border(
+          bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
         ),
       ),
       child: SafeArea(

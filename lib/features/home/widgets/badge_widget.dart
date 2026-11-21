@@ -18,11 +18,11 @@ class BadgeItem {
 class _BadgeWidgetState extends State<BadgeWidget> {
   final _controller = PageController(viewportFraction: 0.75);
   final _badges = const [
-    BadgeItem(title: 'Basic Runner', image: 'images/basic_runner.png'),
-    BadgeItem(title: 'Rookie Runner', image: 'images/rookie_runner.png'),
-    BadgeItem(title: 'Master Runner', image: 'images/master_runner.png'),
-    BadgeItem(title: 'Grand Master Runner', image: 'images/grand_master_runner.png'),
-    BadgeItem(title: 'Super Speed', image: 'images/super_speed.png'),
+    BadgeItem(title: 'Basic Runner', image: 'asset/images/basic_runner.png'),
+    BadgeItem(title: 'Rookie Runner', image: 'asset/images/rookie_runner.png'),
+    BadgeItem(title: 'Master Runner', image: 'asset/images/master_runner.png'),
+    BadgeItem(title: 'Grand Master Runner', image: 'asset/images/grand_master_runner.png'),
+    BadgeItem(title: 'Super Speed', image: 'asset/images/super_speed.png'),
   ];
 
   @override
