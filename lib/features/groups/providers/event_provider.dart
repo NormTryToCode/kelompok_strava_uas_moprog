@@ -3,7 +3,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.da
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/event_repository.dart';
 
 final eventRepositoryProvider = Provider<EventRepository>((ref) {
-  return EventRepository.instance;
+  return EventRepository();
 });
 
 class EventsNotifier extends AsyncNotifier<List<Event>> {

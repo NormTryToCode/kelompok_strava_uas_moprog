@@ -54,24 +54,25 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun getInstalledShareTargets(): List> {
+    private fun getInstalledShareTargets(): List<Any> {
         val imagePackages = queryHandlers("image/*")
-            .map { it.activityInfo.packageName }
+            .mapNotNull { it.activityInfo?.packageName }
             .toSet()
 
         val combined = LinkedHashMap<String, ResolveInfo>()
         for (info in queryHandlers("image/*") + queryHandlers("text/plain")) {
-            val pkg = info.activityInfo.packageName
+            val pkg = info.activityInfo?.packageName ?: continue
             if (pkg == applicationContext.packageName) continue
             combined.putIfAbsent(pkg, info)
         }
 
         return combined.values.map { info ->
-            val pkg = info.activityInfo.packageName
-            mapOf(
+            val pkg = info.activityInfo?.packageName ?: ""
+            val activity = info.activityInfo?.name ?: ""
+            mapOf<String, Any>(
                 "label" to info.loadLabel(packageManager).toString(),
                 "packageName" to pkg,
-                "activityName" to info.activityInfo.name,
+                "activityName" to activity,
                 "supportsImage" to imagePackages.contains(pkg),
                 "icon" to drawableToPngBytes(info.loadIcon(packageManager))
             )
