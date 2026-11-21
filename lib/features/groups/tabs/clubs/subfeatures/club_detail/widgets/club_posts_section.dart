@@ -5,6 +5,8 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dar
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/post_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_posts/post_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_posts/widgets/post_card_item.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/confirm_delete_dialog.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
@@ -19,41 +21,13 @@ class ClubPostsSection extends ConsumerWidget {
     WidgetRef ref,
     String postId,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: Styles.surface,
-        title: const Text(
-          'Delete post?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-        content: const Text(
-          'This post and all its comments will be permanently removed.',
-          style: TextStyle(color: Styles.tabInactive),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Styles.tabInactive),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                color: Styles.accent,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDeleteDialog(
+      context,
+      title: 'Delete post?',
+      message: 'This post and all its comments will be permanently removed.',
     );
 
-    if (confirmed != true) return;
+    if (!confirmed) return;
     await ref.read(clubPostsProvider(club.id).notifier).deletePost(postId);
   }
 
@@ -67,26 +41,7 @@ class ClubPostsSection extends ConsumerWidget {
       children: [
         SectionTitle(
           'Club posts',
-          trailing: count == 0
-              ? null
-              : Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Palette.teal.withAlpha(34),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '$count',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      color: Palette.teal,
-                    ),
-                  ),
-                ),
+          trailing: count == 0 ? null : CountPill(count: count),
         ),
         const SizedBox(height: 12),
         postsAsync.when(

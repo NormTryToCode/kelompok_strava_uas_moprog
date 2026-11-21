@@ -1,4 +1,4 @@
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 
 class Club {
   final String id;
@@ -56,7 +56,7 @@ class Club {
       ? 'Global'
       : location!.detail.isEmpty
           ? location!.name
-          : '${location!.name},${location!.detail}';
+          : '${location!.name}, ${location!.detail}';
 
   Club copyWith({
     String? id,

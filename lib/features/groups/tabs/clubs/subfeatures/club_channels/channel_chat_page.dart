@@ -4,6 +4,8 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/channel_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/channel_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/confirm_delete_dialog.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/info_chip.dart';
 
@@ -65,52 +67,18 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
   }
 
   Future<void> _confirmDelete(ClubChannel channel) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: Styles.surface,
-        title: const Text(
-          'Delete channel?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-        content: Text(
-          'All messages in "${channel.name}" will be removed.',
-          style: const TextStyle(color: Styles.tabInactive),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Styles.tabInactive),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                color: Styles.accent,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDeleteDialog(
+      context,
+      title: 'Delete channel?',
+      message: 'All messages in "${channel.name}" will be removed.',
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
     await ref
         .read(clubChannelsProvider(widget.club.id).notifier)
         .deleteChannel(channel.id);
     if (!mounted) return;
     Navigator.of(context).pop();
-  }
-
-  String _formatTime(DateTime dateTime) {
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
   }
 
   @override
@@ -214,7 +182,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
                           final msg = channel.messages[index];
                           return _MessageBubble(
                             message: msg,
-                            timeLabel: _formatTime(msg.sentAt),
+                            timeLabel: formatClock24(msg.sentAt),
                           );
                         },
                       ),

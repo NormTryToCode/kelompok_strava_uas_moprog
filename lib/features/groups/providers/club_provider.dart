@@ -3,7 +3,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dar
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
 
 final clubRepositoryProvider = Provider<ClubRepository>((ref) {
-  return ClubRepository.instance;
+  return ClubRepository();
 });
 
 class ClubsNotifier extends AsyncNotifier<List<Club>> {

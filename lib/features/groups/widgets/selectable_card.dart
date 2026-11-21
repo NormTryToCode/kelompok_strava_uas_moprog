@@ -28,10 +28,10 @@ class SelectableCard extends StatelessWidget {
         children: [
           SoftCard(
             onTap: tappable ? onTap : null,
-            color: selected ? Palette.selectedFill : Styles.surface,
-            borderColor: selected ? Palette.teal : Palette.cardBorder,
-            borderWidth: selected ? 1.8 : 1,
-            radius: 18,
+            color: selected ? Styles.accent.withAlpha(24) : Styles.surface,
+            borderColor: selected ? Styles.accent : Palette.cardBorder,
+            borderWidth: selected ? 1.5 : 1,
+            radius: 14,
             padding: padding,
             child: child,
           ),
@@ -39,7 +39,7 @@ class SelectableCard extends StatelessWidget {
             const Positioned(
               top: 8,
               right: 8,
-              child: Icon(Icons.check_circle, size: 20, color: Palette.teal),
+              child: Icon(Icons.check_circle, size: 18, color: Styles.accent),
             ),
         ],
       ),

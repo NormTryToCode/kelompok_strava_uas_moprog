@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 
 class LocationSearchException implements Exception {
   final String message;

@@ -21,7 +21,6 @@ class ClubDetailHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
-    final colors = Palette.coverColors(club.id);
     final coverPath = club.coverPath;
     final hasCover = coverPath != null && coverPath.isNotEmpty;
 
@@ -44,16 +43,18 @@ class ClubDetailHeader extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: hasCover
                   ? [
-                      Styles.background.withAlpha(110),
-                      Styles.background.withAlpha(190),
+                      Styles.background.withAlpha(120),
+                      Styles.background.withAlpha(205),
                       Styles.background,
                     ]
-                  : [
-                      colors.first.withAlpha(210),
-                      colors.last.withAlpha(110),
+                  : const [
+                      Styles.surface,
                       Styles.background,
                     ],
-              stops: const [0, 0.62, 1],
+              stops: hasCover ? const [0, 0.65, 1] : const [0, 1],
+            ),
+            border: const Border(
+              bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
             ),
           ),
           child: Column(

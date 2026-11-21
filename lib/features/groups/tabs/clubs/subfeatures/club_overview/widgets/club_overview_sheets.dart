@@ -3,6 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 
 Future<void> showClubMembersSheet(BuildContext context, Club club) {
   return showModalBottomSheet<void>(
@@ -19,7 +20,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _SheetHandle(),
+              const SheetHandle(margin: EdgeInsets.zero),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -159,7 +160,7 @@ Future<void> showCommunityStandardsSheet(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _SheetHandle(),
+              const SheetHandle(margin: EdgeInsets.zero),
               const SizedBox(height: 16),
               const Text(
                 'Community Standards',
@@ -254,7 +255,7 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const _SheetHandle(),
+                  const SheetHandle(margin: EdgeInsets.zero),
                   const SizedBox(height: 16),
                   Text(
                     'Report "${club.name}"',
@@ -338,22 +339,4 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
       );
     },
   );
-}
-
-class _SheetHandle extends StatelessWidget {
-  const _SheetHandle();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 40,
-        height: 4,
-        decoration: BoxDecoration(
-          color: Styles.inactive,
-          borderRadius: BorderRadius.circular(2),
-        ),
-      ),
-    );
-  }
 }

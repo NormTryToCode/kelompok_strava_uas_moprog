@@ -22,11 +22,6 @@ class ClubChannelsHeaderCard extends StatelessWidget {
 
     return SoftCard(
       padding: const EdgeInsets.all(16),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF123B3A), Styles.surface],
-      ),
       child: Row(
         children: [
           ClubAvatar(club: club, size: 58),
@@ -57,7 +52,7 @@ class ClubChannelsHeaderCard extends StatelessWidget {
                     InfoChip(
                       icon: Icons.forum_outlined,
                       label: channelLabel,
-                      color: Palette.teal,
+                      color: Styles.accent,
                     ),
                   ],
                 ),

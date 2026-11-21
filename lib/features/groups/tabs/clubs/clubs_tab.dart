@@ -7,6 +7,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/club_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/club_card_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/create_club_bar.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
@@ -42,7 +43,7 @@ class ClubsTab extends ConsumerWidget {
           sliver: SliverToBoxAdapter(
             child: SectionTitle(
               'Your clubs',
-              trailing: clubs.isEmpty ? null : _CountPill(count: clubs.length),
+              trailing: clubs.isEmpty ? null : CountPill(count: clubs.length),
             ),
           ),
         ),
@@ -71,31 +72,6 @@ class ClubsTab extends ConsumerWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-class _CountPill extends StatelessWidget {
-  final int count;
-
-  const _CountPill({required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: Palette.teal.withAlpha(34),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        '$count',
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w800,
-          color: Palette.teal,
-        ),
-      ),
     );
   }
 }

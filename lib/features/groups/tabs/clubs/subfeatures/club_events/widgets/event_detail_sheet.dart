@@ -5,8 +5,10 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.da
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/event_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/confirm_delete_dialog.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/info_chip.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 
 Future<void> showEventDetailSheet(
   BuildContext context, {
@@ -45,41 +47,13 @@ class _EventDetailSheetBody extends ConsumerWidget {
     WidgetRef ref,
     Event event,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: Styles.surface,
-        title: const Text(
-          'Delete event?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-        content: Text(
-          '"${event.name}" will be removed from the club schedule.',
-          style: const TextStyle(color: Styles.tabInactive),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Styles.tabInactive),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                color: Styles.accent,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDeleteDialog(
+      context,
+      title: 'Delete event?',
+      message: '"${event.name}" will be removed from the club schedule.',
     );
 
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !context.mounted) return;
     await ref.read(eventsProvider.notifier).deleteEvent(event.id);
     if (!context.mounted) return;
     Navigator.of(context).pop();
@@ -111,16 +85,7 @@ class _EventDetailSheetBody extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Styles.inactive,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+            const SheetHandle(margin: EdgeInsets.zero),
             const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
