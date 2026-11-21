@@ -13,6 +13,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_posts/create_post_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/event_creation/event_creation_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/club_events_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/club_overview_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 
 class ClubDetailPage extends ConsumerStatefulWidget {
@@ -66,6 +67,16 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
     );
   }
 
+  Future<void> _openOverview(Club club) async {
+    final deleted = await ClubOverviewPage.open(context, club);
+    if (deleted != true || !mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${club.name} deleted')),
+    );
+    Navigator.of(context).pop();
+  } 
+
   void _scrollToPosts() {
     final target = _postsSectionKey.currentContext;
     if (target == null) return;
@@ -118,6 +129,7 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                     onTap: _comingSoon,
                     onEditDetailsTap: () => _editClub(club),
                     onEventsTap: () => ClubEventsPage.open(context, club),
+                    onOverviewTap: () => _openOverview(club),
                     onPostsTap: _scrollToPosts,
                   ),
                   const SizedBox(height: 28),
