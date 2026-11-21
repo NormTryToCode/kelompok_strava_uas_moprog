@@ -252,10 +252,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF123B3A), Styles.background],
+        color: Styles.background,
+        border: Border(
+          bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
         ),
       ),
       child: SafeArea(

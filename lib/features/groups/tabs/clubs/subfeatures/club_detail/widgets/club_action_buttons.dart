@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class ClubActionButtons extends StatelessWidget {
   final VoidCallback onTap;
@@ -26,47 +25,60 @@ class ClubActionButtons extends StatelessWidget {
       (Icons.person_add_alt, 'Invite', onTap),
       (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
       (Icons.share_outlined, 'Share', onShareTap ?? onTap),
-      (Icons.insights_outlined, 'Insights', onTap),
       (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
       (Icons.info_outline, 'Overview', onOverviewTap ?? onTap),
+      (Icons.article_outlined, 'Posts', onPostsTap ?? onTap),
+      (Icons.insights_outlined, 'Insights', onTap),
       (Icons.monitor_heart_outlined, 'Activities', onTap),
       (Icons.leaderboard_outlined, 'Stats', onTap),
-      (Icons.article_outlined, 'Posts', onPostsTap ?? onTap),
     ];
 
-    return GridView.count(
-      crossAxisCount: 3,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 1.15,
-      children: [
-        for (final item in items)
-          SoftCard(
-            padding: const EdgeInsets.all(8),
-            radius: 18,
-            onTap: item.$3,
+    return SizedBox(
+      height: 82,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
+        itemBuilder: (_, index) {
+          final item = items[index];
+          return SizedBox(
+            width: 68,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                IconBubble(item.$1, size: 40),
+                Material(
+                  color: Styles.surface,
+                  shape: const CircleBorder(
+                    side: BorderSide(color: Palette.cardBorder),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: item.$3,
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Icon(item.$1, size: 22, color: Colors.white),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   item.$2,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Styles.tabInactive,
                   ),
                 ),
               ],
             ),
-          ),
-      ],
+          );
+        },
+      ),
     );
   }
 }

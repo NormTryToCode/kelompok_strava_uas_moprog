@@ -33,12 +33,6 @@ class ChannelPreviewCard extends StatelessWidget {
 
     return SoftCard(
       padding: const EdgeInsets.all(16),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF102A34), Styles.surface],
-      ),
-      borderColor: Palette.teal.withAlpha(90),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

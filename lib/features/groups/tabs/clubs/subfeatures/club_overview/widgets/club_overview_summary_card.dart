@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/club_avatar.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/info_chip.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
@@ -18,11 +18,6 @@ class ClubOverviewSummaryCard extends StatelessWidget {
 
     return SoftCard(
       padding: const EdgeInsets.all(16),
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Color(0xFF123B3A), Styles.surface],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -53,7 +48,7 @@ class ClubOverviewSummaryCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: Palette.teal,
+                          color: Styles.accent,
                         ),
                       ),
                     ],
@@ -94,7 +89,7 @@ class ClubOverviewSummaryCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                const Icon(Icons.link, size: 15, color: Palette.teal),
+                const Icon(Icons.link, size: 15, color: Styles.accent),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -104,7 +99,7 @@ class ClubOverviewSummaryCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Palette.teal,
+                      color: Styles.accent,
                     ),
                   ),
                 ),

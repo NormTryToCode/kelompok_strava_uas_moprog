@@ -34,11 +34,11 @@ class Styles {
 class Palette {
   Palette._();
 
-  static const teal = Color(0xFF2DD4BF);
+  static const teal = Color(0xFFF59E0B);
 
-  static const cardBorder = Color(0xFF1C2A3D);
-  static const fieldFill = Color(0xFF0B1320);
-  static const selectedFill = Color(0xFF0F2A2D);
+  static const cardBorder = Color(0xFF1E293B);
+  static const fieldFill = Color(0xFF0B121E);
+  static const selectedFill = Color(0xFF261B0E);
 
   static const primaryGradient = LinearGradient(
     begin: Alignment.centerLeft,
