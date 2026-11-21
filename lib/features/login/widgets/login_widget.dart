@@ -75,7 +75,7 @@ class LoginWidget extends StatelessWidget {
             
             const SizedBox(height: 2),
 
-            RememberMeWidget(),
+            RememberMeWidget(checkBoxDescription: "Remember Me"),
 
             const SizedBox(height: 4),
             SizedBox(
