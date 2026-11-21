@@ -1,0 +1,121 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
+
+enum DistanceUnit {
+  kilometers('Kilometers', 'km'),
+  miles('Miles', 'mi');
+
+  final String label;
+  final String abbreviation;
+
+  const DistanceUnit(this.label, this.abbreviation);
+}
+
+enum NotificationPref {
+  followers('New followers', 'notify_followers'),
+  challenges('Challenge updates', 'notify_challenges'),
+  clubEvents('Club events', 'notify_club_events');
+
+  final String label;
+  final String storageKey;
+
+  const NotificationPref(this.label, this.storageKey);
+}
+
+class SettingsState {
+  final DistanceUnit unit;
+  final Map<NotificationPref, bool> notifications;
+  final bool isLoaded;
+
+  const SettingsState({
+    this.unit = DistanceUnit.kilometers,
+    this.notifications = const {
+      NotificationPref.followers: true,
+      NotificationPref.challenges: true,
+      NotificationPref.clubEvents: true,
+    },
+    this.isLoaded = false,
+  });
+
+  bool isEnabled(NotificationPref pref) => notifications[pref] ?? true;
+
+  int get enabledCount => NotificationPref.values.where(isEnabled).length;
+
+  SettingsState copyWith({
+    DistanceUnit? unit,
+    Map<NotificationPref, bool>? notifications,
+    bool? isLoaded,
+  }) {
+    return SettingsState(
+      unit: unit ?? this.unit,
+      notifications: notifications ?? this.notifications,
+      isLoaded: isLoaded ?? this.isLoaded,
+    );
+  }
+}
+
+final settingsStoreProvider = Provider<SettingsStore>((ref) {
+  return PrefsSettingsStore();
+});
+
+class SettingsNotifier extends Notifier<SettingsState> {
+  static const String unitKey = 'distance_unit';
+
+  SettingsStore get _store => ref.read(settingsStoreProvider);
+
+  @override
+  SettingsState build() => const SettingsState();
+
+  Future<void> load() async {
+    var unit = DistanceUnit.kilometers;
+    final notifications = <NotificationPref, bool>{
+      for (final pref in NotificationPref.values) pref: true,
+    };
+    try {
+      final storedUnit = await _store.readString(unitKey);
+      unit = DistanceUnit.values.firstWhere(
+        (candidate) => candidate.name == storedUnit,
+        orElse: () => DistanceUnit.kilometers,
+      );
+      for (final pref in NotificationPref.values) {
+        notifications[pref] = await _store.readBool(pref.storageKey) ?? true;
+      }
+    } catch (_) {
+      unit = DistanceUnit.kilometers;
+      for (final pref in NotificationPref.values) {
+        notifications[pref] = true;
+      }
+    }
+    state = SettingsState(
+      unit: unit,
+      notifications: Map.unmodifiable(notifications),
+      isLoaded: true,
+    );
+  }
+
+  Future<void> setUnit(DistanceUnit value) async {
+    if (value == state.unit) return;
+    state = state.copyWith(unit: value);
+    try {
+      await _store.writeString(unitKey, value.name);
+    } catch (_) {
+      return;
+    }
+  }
+
+  Future<void> setNotification(NotificationPref pref, bool enabled) async {
+    if (state.isEnabled(pref) == enabled) return;
+    final updated = Map<NotificationPref, bool>.from(state.notifications)
+      ..[pref] = enabled;
+    state = state.copyWith(notifications: Map.unmodifiable(updated));
+    try {
+      await _store.writeBool(pref.storageKey, enabled);
+    } catch (_) {
+      return;
+    }
+  }
+}
+
+final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(
+  SettingsNotifier.new,
+);

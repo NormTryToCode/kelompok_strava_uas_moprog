@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/settings/settings_controller.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 
 class UnitPickerSheet extends StatelessWidget {
   final DistanceUnit selected;
@@ -52,17 +53,14 @@ class UnitPickerSheet extends StatelessWidget {
   }
 }
 
-Future<void> showUnitPicker(
-  BuildContext context,
-  SettingsController controller,
-) {
+Future<void> showUnitPicker(BuildContext context, WidgetRef ref) {
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Styles.surface,
     builder: (sheetContext) => UnitPickerSheet(
-      selected: controller.unit,
+      selected: ref.read(settingsProvider).unit,
       onSelected: (unit) {
-        controller.setUnit(unit);
+        ref.read(settingsProvider.notifier).setUnit(unit);
         Navigator.of(sheetContext).pop();
       },
     ),

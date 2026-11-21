@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kelompok_strava_uas_moprog/features/settings/settings_controller.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/unit_picker_sheet.dart';
 
@@ -32,15 +33,23 @@ void main() {
 
   testWidgets('showUnitPicker mengubah satuan dan menutup lembar',
       (tester) async {
-    final controller = SettingsController(store: MemorySettingsStore());
+    final container = ProviderContainer(
+      overrides: [
+        settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+      ],
+    );
+    addTearDown(container.dispose);
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => TextButton(
-              onPressed: () => showUnitPicker(context, controller),
-              child: const Text('open'),
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          home: Scaffold(
+            body: Consumer(
+              builder: (context, ref, _) => TextButton(
+                onPressed: () => showUnitPicker(context, ref),
+                child: const Text('open'),
+              ),
             ),
           ),
         ),
@@ -52,7 +61,7 @@ void main() {
     await tester.tap(find.text('Miles (mi)'));
     await tester.pumpAndSettle();
 
-    expect(controller.unit, DistanceUnit.miles);
+    expect(container.read(settingsProvider).unit, DistanceUnit.miles);
     expect(find.text('Units of measurement'), findsNothing);
   });
 }

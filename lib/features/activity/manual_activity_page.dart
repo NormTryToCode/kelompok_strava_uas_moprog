@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/activity/activity_controller.dart';
+import 'package:kelompok_strava_uas_moprog/features/activity/activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activity.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/utils/activity_format.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
-class ManualActivityPage extends StatefulWidget {
-  final ActivityController? controller;
+class ManualActivityPage extends ConsumerStatefulWidget {
   final DateTime? initialDate;
 
-  const ManualActivityPage({super.key, this.controller, this.initialDate});
+  const ManualActivityPage({super.key, this.initialDate});
 
   @override
-  State<ManualActivityPage> createState() => _ManualActivityPageState();
+  ConsumerState<ManualActivityPage> createState() => _ManualActivityPageState();
 }
 
-class _ManualActivityPageState extends State<ManualActivityPage> {
+class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _title = TextEditingController();
   final TextEditingController _duration = TextEditingController();
   final TextEditingController _distance = TextEditingController();
   final TextEditingController _notes = TextEditingController();
-  late final ActivityController _activities =
-      widget.controller ?? ActivityController.instance;
   late DateTime _date = widget.initialDate ?? DateTime.now();
   ActivityType _type = ActivityType.run;
 
@@ -75,7 +73,7 @@ class _ManualActivityPageState extends State<ManualActivityPage> {
       notes: _notes.text.trim(),
     );
 
-    await _activities.add(activity);
+    await ref.read(activityProvider.notifier).add(activity);
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(

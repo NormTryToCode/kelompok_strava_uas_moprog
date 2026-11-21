@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kelompok_strava_uas_moprog/features/settings/settings_controller.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 
 void _tallScreen(WidgetTester tester) {
@@ -10,16 +11,26 @@ void _tallScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-SettingsController _controller() {
-  return SettingsController(store: MemorySettingsStore());
+ProviderContainer _container({SettingsStore? store}) {
+  final container = ProviderContainer(
+    overrides: [
+      settingsStoreProvider.overrideWithValue(store ?? MemorySettingsStore()),
+    ],
+  );
+  addTearDown(container.dispose);
+  return container;
 }
 
-Widget _page({SettingsController? controller, VoidCallback? onLogout}) {
-  return MaterialApp(
-    home: SettingsPage(
-      controller: controller ?? _controller(),
-      onLogout: onLogout,
-    ),
+Widget _page({ProviderContainer? container, VoidCallback? onLogout}) {
+  final app = MaterialApp(home: SettingsPage(onLogout: onLogout));
+  if (container != null) {
+    return UncontrolledProviderScope(container: container, child: app);
+  }
+  return ProviderScope(
+    overrides: [
+      settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+    ],
+    child: app,
   );
 }
 
@@ -27,7 +38,7 @@ void main() {
   testWidgets('menampilkan judul, bagian, dan menu', (tester) async {
     _tallScreen(tester);
     await tester.pumpWidget(_page());
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('ACCOUNT'), findsOneWidget);
@@ -40,29 +51,28 @@ void main() {
   testWidgets('satuan tersimpan ditampilkan sebagai subtitle', (tester) async {
     _tallScreen(tester);
     final store = MemorySettingsStore();
-    await store.writeString(SettingsController.unitKey, 'miles');
+    await store.writeString(SettingsNotifier.unitKey, 'miles');
+    final container = _container(store: store);
 
-    await tester.pumpWidget(
-      _page(controller: SettingsController(store: store)),
-    );
-    await tester.pump();
+    await tester.pumpWidget(_page(container: container));
+    await tester.pumpAndSettle();
 
     expect(find.text('Miles'), findsOneWidget);
   });
 
   testWidgets('memilih Miles mengubah subtitle', (tester) async {
     _tallScreen(tester);
-    final controller = _controller();
+    final container = _container();
 
-    await tester.pumpWidget(_page(controller: controller));
-    await tester.pump();
+    await tester.pumpWidget(_page(container: container));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Units of measurement'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Miles (mi)'));
     await tester.pumpAndSettle();
 
-    expect(controller.unit, DistanceUnit.miles);
+    expect(container.read(settingsProvider).unit, DistanceUnit.miles);
     expect(find.text('Miles'), findsOneWidget);
   });
 
@@ -70,7 +80,7 @@ void main() {
       (tester) async {
     _tallScreen(tester);
     await tester.pumpWidget(_page());
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Notification preferences'));
     await tester.pumpAndSettle();
@@ -84,6 +94,7 @@ void main() {
     var calls = 0;
 
     await tester.pumpWidget(_page(onLogout: () => calls++));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
@@ -99,6 +110,7 @@ void main() {
     var calls = 0;
 
     await tester.pumpWidget(_page(onLogout: () => calls++));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
@@ -113,6 +125,7 @@ void main() {
     _tallScreen(tester);
 
     await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
