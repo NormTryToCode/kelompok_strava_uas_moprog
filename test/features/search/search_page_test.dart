@@ -12,7 +12,7 @@ void main() {
     expect(find.text('Search'), findsOneWidget);
     expect(find.text('Friends'), findsOneWidget);
     expect(find.text('Clubs'), findsOneWidget);
-    expect(find.text('Search Strava'), findsOneWidget);
+    expect(find.text('Search Stride'), findsOneWidget);
   });
 
   testWidgets('tab Clubs menampilkan kolom cari klub dan filter',

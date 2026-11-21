@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
@@ -126,7 +127,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
     return Column(
       children: [
         SearchField(
-          hintText: 'Search Strava',
+          hintText: 'Search ${AppBrand.name}',
           controller: _text,
           focusNode: _focus,
           onChanged: (value) => setState(() => _query = value),

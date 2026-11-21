@@ -46,7 +46,7 @@ void main() {
     await tester.pumpWidget(_app());
 
     expect(find.text('Notifications'), findsOneWidget);
-    expect(find.text('Next step: connect a device'), findsOneWidget);
+    expect(find.text('Connecting a device to Stride'), findsOneWidget);
   });
 
   testWidgets('menampilkan tampilan kosong', (tester) async {
