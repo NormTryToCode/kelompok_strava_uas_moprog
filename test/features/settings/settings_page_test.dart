@@ -72,7 +72,7 @@ void main() {
     await tester.tap(find.text('Miles (mi)'));
     await tester.pumpAndSettle();
 
-    expect(container.read(settingsProvider).unit, DistanceUnit.miles);
+    expect(container.read(settingsProvider).unit, SettingsDistanceUnit.miles);
     expect(find.text('Miles'), findsOneWidget);
   });
 

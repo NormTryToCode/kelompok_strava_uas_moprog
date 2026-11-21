@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 
-enum DistanceUnit {
+enum SettingsDistanceUnit {
   kilometers('Kilometers', 'km'),
   miles('Miles', 'mi');
 
   final String label;
   final String abbreviation;
 
-  const DistanceUnit(this.label, this.abbreviation);
+  const SettingsDistanceUnit(this.label, this.abbreviation);
 }
 
 enum NotificationPref {
@@ -23,12 +23,12 @@ enum NotificationPref {
 }
 
 class SettingsState {
-  final DistanceUnit unit;
+  final SettingsDistanceUnit unit;
   final Map<NotificationPref, bool> notifications;
   final bool isLoaded;
 
   const SettingsState({
-    this.unit = DistanceUnit.kilometers,
+    this.unit = SettingsDistanceUnit.kilometers,
     this.notifications = const {
       NotificationPref.followers: true,
       NotificationPref.challenges: true,
@@ -42,7 +42,7 @@ class SettingsState {
   int get enabledCount => NotificationPref.values.where(isEnabled).length;
 
   SettingsState copyWith({
-    DistanceUnit? unit,
+    SettingsDistanceUnit? unit,
     Map<NotificationPref, bool>? notifications,
     bool? isLoaded,
   }) {
@@ -67,21 +67,21 @@ class SettingsNotifier extends Notifier<SettingsState> {
   SettingsState build() => const SettingsState();
 
   Future<void> load() async {
-    var unit = DistanceUnit.kilometers;
+    var unit = SettingsDistanceUnit.kilometers;
     final notifications = <NotificationPref, bool>{
       for (final pref in NotificationPref.values) pref: true,
     };
     try {
       final storedUnit = await _store.readString(unitKey);
-      unit = DistanceUnit.values.firstWhere(
+      unit = SettingsDistanceUnit.values.firstWhere(
         (candidate) => candidate.name == storedUnit,
-        orElse: () => DistanceUnit.kilometers,
+        orElse: () => SettingsDistanceUnit.kilometers,
       );
       for (final pref in NotificationPref.values) {
         notifications[pref] = await _store.readBool(pref.storageKey) ?? true;
       }
     } catch (_) {
-      unit = DistanceUnit.kilometers;
+      unit = SettingsDistanceUnit.kilometers;
       for (final pref in NotificationPref.values) {
         notifications[pref] = true;
       }
@@ -93,7 +93,7 @@ class SettingsNotifier extends Notifier<SettingsState> {
     );
   }
 
-  Future<void> setUnit(DistanceUnit value) async {
+  Future<void> setUnit(SettingsDistanceUnit value) async {
     if (value == state.unit) return;
     state = state.copyWith(unit: value);
     try {

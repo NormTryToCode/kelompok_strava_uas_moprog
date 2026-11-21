@@ -32,33 +32,13 @@ class ProfileHeaderWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "${profileData.city}, ${profileData.country}  •  ${profileData.primarySport.toUpperCase()}",
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: Styles.accent,
-                ),
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.add, color: Styles.tabActive),
-                  const SizedBox(width: 16),
-                  const Icon(Icons.search, color: Styles.tabActive),
-                  const SizedBox(width: 16),
-                  GestureDetector(
-                    onTap: onEditProfile,
-                    child: const Icon(
-                      Icons.settings_outlined,
-                      color: Styles.tabActive,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          Text(
+            "${profileData.city}, ${profileData.country}  •  ${profileData.primarySport.toUpperCase()}",
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: Styles.accent,
+            ),
           ),
           const SizedBox(height: 12),
           Row(

@@ -34,7 +34,7 @@ void main() {
     final container = _container(MemorySettingsStore());
     final state = container.read(settingsProvider);
 
-    expect(state.unit, DistanceUnit.kilometers);
+    expect(state.unit, SettingsDistanceUnit.kilometers);
     expect(state.isLoaded, isFalse);
     expect(state.enabledCount, NotificationPref.values.length);
   });
@@ -49,7 +49,7 @@ void main() {
 
     final state = container.read(settingsProvider);
     expect(state.isLoaded, isTrue);
-    expect(state.unit, DistanceUnit.miles);
+    expect(state.unit, SettingsDistanceUnit.miles);
     expect(state.isEnabled(NotificationPref.followers), isFalse);
     expect(state.enabledCount, 2);
   });
@@ -61,13 +61,13 @@ void main() {
     final container = _container(store);
     await container.read(settingsProvider.notifier).load();
 
-    expect(container.read(settingsProvider).unit, DistanceUnit.kilometers);
+    expect(container.read(settingsProvider).unit, SettingsDistanceUnit.kilometers);
   });
 
   test('perubahan tersimpan dan bertahan di container baru', () async {
     final store = MemorySettingsStore();
     final first = _container(store);
-    await first.read(settingsProvider.notifier).setUnit(DistanceUnit.miles);
+    await first.read(settingsProvider.notifier).setUnit(SettingsDistanceUnit.miles);
     await first
         .read(settingsProvider.notifier)
         .setNotification(NotificationPref.challenges, false);
@@ -76,7 +76,7 @@ void main() {
     await second.read(settingsProvider.notifier).load();
 
     final state = second.read(settingsProvider);
-    expect(state.unit, DistanceUnit.miles);
+    expect(state.unit, SettingsDistanceUnit.miles);
     expect(state.isEnabled(NotificationPref.challenges), isFalse);
   });
 
@@ -86,12 +86,12 @@ void main() {
     var calls = 0;
     container.listen<SettingsState>(settingsProvider, (_, __) => calls++);
 
-    await notifier.setUnit(DistanceUnit.kilometers);
+    await notifier.setUnit(SettingsDistanceUnit.kilometers);
     await notifier.setNotification(NotificationPref.followers, true);
     await container.pump();
     expect(calls, 0);
 
-    await notifier.setUnit(DistanceUnit.miles);
+    await notifier.setUnit(SettingsDistanceUnit.miles);
     await container.pump();
     expect(calls, 1);
   });
@@ -102,9 +102,9 @@ void main() {
 
     await notifier.load();
     expect(container.read(settingsProvider).isLoaded, isTrue);
-    expect(container.read(settingsProvider).unit, DistanceUnit.kilometers);
+    expect(container.read(settingsProvider).unit, SettingsDistanceUnit.kilometers);
 
-    await notifier.setUnit(DistanceUnit.miles);
-    expect(container.read(settingsProvider).unit, DistanceUnit.miles);
+    await notifier.setUnit(SettingsDistanceUnit.miles);
+    expect(container.read(settingsProvider).unit, SettingsDistanceUnit.miles);
   });
 }

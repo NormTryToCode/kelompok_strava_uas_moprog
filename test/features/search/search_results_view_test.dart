@@ -14,7 +14,7 @@ const _person = Person(
   tag: 'Local Legend near you',
 );
 
-const _club = Club(
+const _club = SearchClub(
   id: 'c1',
   name: 'Bandung Trail Society',
   sport: SportType.running,
@@ -24,7 +24,7 @@ const _club = Club(
 
 Widget _wrap(
   SearchResults results, {
-  ValueChanged<Club>? onClubTap,
+  ValueChanged<SearchClub>? onClubTap,
   ProviderContainer? container,
 }) {
   final app = MaterialApp(
@@ -89,7 +89,7 @@ void main() {
   });
 
   testWidgets('mengetuk klub memanggil onClubTap', (tester) async {
-    Club? tapped;
+    SearchClub? tapped;
 
     await tester.pumpWidget(
       _wrap(

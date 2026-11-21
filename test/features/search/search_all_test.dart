@@ -19,14 +19,14 @@ const _people = [
 ];
 
 const _clubs = [
-  Club(
+  SearchClub(
     id: 'c1',
     name: 'Bandung Trail Society',
     sport: SportType.running,
     memberCount: 100,
     city: 'Bandung',
   ),
-  Club(
+  SearchClub(
     id: 'c2',
     name: 'Surabaya Pedal Crew',
     sport: SportType.cycling,

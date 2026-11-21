@@ -10,7 +10,7 @@ import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart
 
 class SearchResultsView extends ConsumerWidget {
   final SearchResults results;
-  final ValueChanged<Club> onClubTap;
+  final ValueChanged<SearchClub> onClubTap;
 
   const SearchResultsView({
     super.key,

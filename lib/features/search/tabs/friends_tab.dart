@@ -18,7 +18,7 @@ import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_result
 
 class FriendsTab extends ConsumerStatefulWidget {
   final List<Person>? people;
-  final List<Club>? clubs;
+  final List<SearchClub>? clubs;
 
   const FriendsTab({
     super.key,
@@ -34,7 +34,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   final TextEditingController _text = TextEditingController();
   final FocusNode _focus = FocusNode();
   late final List<Person> _people = widget.people ?? buildDummyPeople();
-  late final List<Club> _clubs = widget.clubs ?? buildDummyClubs();
+  late final List<SearchClub> _clubs = widget.clubs ?? buildDummyClubs();
   String _query = '';
 
   @override
@@ -62,9 +62,9 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
     ref.read(searchHistoryProvider.notifier).add(value);
   }
 
-  void _openClub(Club club) {
+  void _openClub(SearchClub club) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)),
+      MaterialPageRoute(builder: (_) => SearchClubDetailPage(club: club)),
     );
   }
 

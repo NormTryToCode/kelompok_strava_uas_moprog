@@ -4,8 +4,8 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 
 class UnitPickerSheet extends StatelessWidget {
-  final DistanceUnit selected;
-  final ValueChanged<DistanceUnit> onSelected;
+  final SettingsDistanceUnit selected;
+  final ValueChanged<SettingsDistanceUnit> onSelected;
 
   const UnitPickerSheet({
     super.key,
@@ -31,7 +31,7 @@ class UnitPickerSheet extends StatelessWidget {
               ),
             ),
           ),
-          for (final unit in DistanceUnit.values)
+          for (final unit in SettingsDistanceUnit.values)
             ListTile(
               onTap: () => onSelected(unit),
               title: Text(

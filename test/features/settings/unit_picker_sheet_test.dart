@@ -12,7 +12,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: UnitPickerSheet(
-            selected: DistanceUnit.miles,
+            selected: SettingsDistanceUnit.miles,
             onSelected: (_) {},
           ),
         ),
@@ -61,7 +61,7 @@ void main() {
     await tester.tap(find.text('Miles (mi)'));
     await tester.pumpAndSettle();
 
-    expect(container.read(settingsProvider).unit, DistanceUnit.miles);
+    expect(container.read(settingsProvider).unit, SettingsDistanceUnit.miles);
     expect(find.text('Units of measurement'), findsNothing);
   });
 }

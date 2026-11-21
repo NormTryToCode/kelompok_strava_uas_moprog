@@ -10,18 +10,18 @@ import 'package:kelompok_strava_uas_moprog/features/search/widgets/filter_option
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/filter_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_field.dart';
 
-class ClubsTab extends StatefulWidget {
-  final List<Club>? clubs;
+class SearchClubsTab extends StatefulWidget {
+  final List<SearchClub>? clubs;
 
-  const ClubsTab({super.key, this.clubs});
+  const SearchClubsTab({super.key, this.clubs});
 
   @override
-  State<ClubsTab> createState() => _ClubsTabState();
+  State<SearchClubsTab> createState() => _SearchClubsTabState();
 }
 
-class _ClubsTabState extends State<ClubsTab> {
+class _SearchClubsTabState extends State<SearchClubsTab> {
   final TextEditingController _searchController = TextEditingController();
-  late final List<Club> _allClubs = widget.clubs ?? buildDummyClubs();
+  late final List<SearchClub> _allClubs = widget.clubs ?? buildDummyClubs();
   ClubFilter _filter = const ClubFilter();
 
   @override
@@ -55,9 +55,9 @@ class _ClubsTabState extends State<ClubsTab> {
     );
   }
 
-  void _openDetail(Club club) {
+  void _openDetail(SearchClub club) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => ClubDetailPage(club: club)),
+      MaterialPageRoute(builder: (_) => SearchClubDetailPage(club: club)),
     );
   }
 

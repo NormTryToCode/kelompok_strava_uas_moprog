@@ -3,28 +3,28 @@ import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club_filter.dart';
 
 const _clubs = [
-  Club(
+  SearchClub(
     id: 'a',
     name: 'Jakarta Sunrise Runners',
     sport: SportType.running,
     memberCount: 100,
     city: 'Jakarta',
   ),
-  Club(
+  SearchClub(
     id: 'b',
     name: 'Nusantara Cycling Club',
     sport: SportType.cycling,
     memberCount: 90,
     city: 'Jakarta',
   ),
-  Club(
+  SearchClub(
     id: 'c',
     name: 'Bandung Trail Society',
     sport: SportType.running,
     memberCount: 80,
     city: 'Bandung',
   ),
-  Club(
+  SearchClub(
     id: 'd',
     name: 'Bali Open Water Swimmers',
     sport: SportType.swimming,
@@ -33,7 +33,7 @@ const _clubs = [
   ),
 ];
 
-List<String> _ids(List<Club> clubs) => clubs.map((c) => c.id).toList();
+List<String> _ids(List<SearchClub> clubs) => clubs.map((c) => c.id).toList();
 
 void main() {
   test('filter kosong mengembalikan semua klub dan tidak aktif', () {
