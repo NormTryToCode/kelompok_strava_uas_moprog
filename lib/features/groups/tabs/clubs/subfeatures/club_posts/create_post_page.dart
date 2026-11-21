@@ -11,6 +11,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/club_avatar.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/choice_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
 
 class CreatePostPage extends ConsumerStatefulWidget {
@@ -108,16 +109,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Styles.inactive,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+                const SheetHandle(margin: EdgeInsets.zero),
                 const SizedBox(height: 16),
                 const Text(
                   'Posting as',
@@ -144,8 +136,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                                 ? widget.club.name
                                 : 'You',
                             subtitle: PostAuthorRole.values[i].subtitle,
-                            selected:
-                                PostAuthorRole.values[i] == _authorRole,
+                            selected: PostAuthorRole.values[i] == _authorRole,
                             onTap: () => Navigator.of(sheetContext)
                                 .pop(PostAuthorRole.values[i]),
                           ),

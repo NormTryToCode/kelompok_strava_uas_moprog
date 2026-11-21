@@ -2,23 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/sport_grid_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 
 Future<ClubSport?> showSportPickerSheet(
   BuildContext context, {
   required ClubSport? selected,
+  bool includeAllSports = false,
 }) {
-  final sports =
-      ClubSport.option.where((s) => s.id != ClubSport.allSports.id).toList();
+  final sports = includeAllSports
+      ? ClubSport.option
+      : ClubSport.option.where((s) => s.id != ClubSport.allSports.id).toList();
 
   return showModalBottomSheet<ClubSport>(
     context: context,
     backgroundColor: Styles.surface,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (sheetContext) {
-      final height = MediaQuery.of(sheetContext).size.height * 0.8;
+      final height = MediaQuery.of(sheetContext).size.height * 0.78;
 
       return SizedBox(
         height: height,
@@ -26,17 +29,7 @@ Future<ClubSport?> showSportPickerSheet(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Styles.inactive,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
+              const SheetHandle(),
               const Padding(
                 padding: EdgeInsets.fromLTRB(20, 16, 20, 12),
                 child: Text(
@@ -54,9 +47,9 @@ Future<ClubSport?> showSportPickerSheet(
                   itemCount: sports.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    mainAxisExtent: 76,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    mainAxisExtent: 72,
                   ),
                   itemBuilder: (_, i) => SportGridTile(
                     sport: sports[i],

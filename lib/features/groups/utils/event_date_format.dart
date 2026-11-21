@@ -33,6 +33,12 @@ String formatTime(TimeOfDay time) {
   return '$hour:$minute $period';
 }
 
+String formatClock24(DateTime dateTime) {
+  final hour = dateTime.hour.toString().padLeft(2, '0');
+  final minute = dateTime.minute.toString().padLeft(2, '0');
+  return '$hour:$minute';
+}
+
 String ordinal(int n) {
   if (n % 100 >= 11 && n % 100 <= 13) return '${n}th';
   switch (n % 10) {

@@ -7,6 +7,8 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/widgets/club_overview_sheets.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/widgets/club_overview_summary_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/confirm_delete_dialog.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
@@ -32,41 +34,13 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
   Future<void> _onDeleteClub(Club club) async {
     if (_deleting) return;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: Styles.surface,
-        title: const Text(
-          'Delete club?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-        content: Text(
-          '"${club.name}" will be permanently removed from your clubs.',
-          style: const TextStyle(color: Styles.tabInactive),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Styles.tabInactive),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                color: Styles.accent,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDeleteDialog(
+      context,
+      title: 'Delete club?',
+      message: '"${club.name}" will be permanently removed from your clubs.',
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
     setState(() => _deleting = true);
 
     try {
@@ -90,7 +64,9 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Report submitted. Thank you for keeping the community safe.'),
+        content: Text(
+          'Report submitted. Thank you for keeping the community safe.',
+        ),
       ),
     );
   }
@@ -121,21 +97,7 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
           const SizedBox(height: 24),
           SectionTitle(
             'Members',
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: Palette.teal.withAlpha(34),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '${club.memberCount}',
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  color: Palette.teal,
-                ),
-              ),
-            ),
+            trailing: CountPill(count: club.memberCount),
           ),
           const SizedBox(height: 12),
           ClubMembersCard(

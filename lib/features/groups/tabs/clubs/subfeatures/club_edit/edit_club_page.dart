@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/location_search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_edit/widgets/club_edit_pickers.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_edit/widgets/club_media_editor.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/choice_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sport_picker_sheet.dart';
 
 class EditClubPage extends ConsumerStatefulWidget {
   final Club club;
@@ -108,7 +109,11 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
   }
 
   Future<void> _pickSport() async {
-    final picked = await showClubSportPickerSheet(context, selected: _sport);
+    final picked = await showSportPickerSheet(
+      context,
+      selected: _sport,
+      includeAllSports: true,
+    );
     if (picked != null && mounted) {
       setState(() => _sport = picked);
     }
@@ -340,7 +345,9 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                     maxLength: 32,
                     cursorColor: Palette.teal,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_-]')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[a-zA-Z0-9_-]'),
+                      ),
                     ],
                     style: const TextStyle(fontSize: 15.5, color: Colors.white),
                     decoration: _inputDecoration(

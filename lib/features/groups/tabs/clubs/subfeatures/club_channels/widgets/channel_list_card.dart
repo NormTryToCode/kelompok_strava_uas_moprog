@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/channel_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
 
@@ -13,12 +14,6 @@ class ChannelListCard extends StatelessWidget {
     required this.channel,
     required this.onTap,
   });
-
-  String _formatTime(DateTime dateTime) {
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +73,7 @@ class ChannelListCard extends StatelessWidget {
             children: [
               if (last != null)
                 Text(
-                  _formatTime(last.sentAt),
+                  formatClock24(last.sentAt),
                   style: const TextStyle(
                     fontSize: 12,
                     color: Styles.tabInactive,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
@@ -7,8 +6,10 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/post_model.dar
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/post_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_posts/widgets/post_card_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_posts/widgets/post_comment_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/confirm_delete_dialog.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostDetailPage extends ConsumerStatefulWidget {
   final Club club;
@@ -102,41 +103,13 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
   }
 
   Future<void> _confirmDeletePost() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: Styles.surface,
-        title: const Text(
-          'Delete post?',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
-        ),
-        content: const Text(
-          'This post and all its comments will be permanently removed.',
-          style: TextStyle(color: Styles.tabInactive),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Styles.tabInactive),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(
-                color: Styles.accent,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDeleteDialog(
+      context,
+      title: 'Delete post?',
+      message: 'This post and all its comments will be permanently removed.',
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
     await ref
         .read(clubPostsProvider(widget.club.id).notifier)
         .deletePost(widget.postId);
