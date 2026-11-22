@@ -14,7 +14,7 @@ class EventMapPreview extends StatelessWidget {
     super.key,
     required this.latitude,
     required this.longitude,
-    this.height = 176,
+    this.height = 190,
     this.zoom = 15,
     this.borderRadius,
   });
@@ -26,46 +26,53 @@ class EventMapPreview extends StatelessWidget {
     Widget map = SizedBox(
       height: height,
       width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
+      child: FlutterMap(
+        options: MapOptions(
+          initialCenter: point,
+          initialZoom: zoom,
+          backgroundColor: Styles.surface,
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.none,
+          ),
+        ),
         children: [
-          FlutterMap(
-            options: MapOptions(
-              initialCenter: point,
-              initialZoom: zoom,
-              interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.none,
-              ),
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
-                maxNativeZoom: 19,
-              ),
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    point: point,
-                    width: 44,
-                    height: 44,
-                    alignment: Alignment.topCenter,
-                    child: const Icon(
-                      Icons.location_on,
-                      size: 40,
-                      color: Styles.accent,
+          TileLayer(
+            urlTemplate:
+                'https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+            userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
+            maxNativeZoom: 19,
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: point,
+                width: 48,
+                height: 48,
+                child: Center(
+                  child: Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Palette.teal.withAlpha(42),
+                      border: Border.all(
+                        color: Palette.teal.withAlpha(180),
+                        width: 1.5,
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Palette.teal,
+                      ),
                     ),
                   ),
-                ],
+                ),
               ),
             ],
-          ),
-          IgnorePointer(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Styles.background.withAlpha(45),
-              ),
-            ),
           ),
         ],
       ),
