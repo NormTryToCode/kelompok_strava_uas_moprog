@@ -11,6 +11,16 @@ class DatabaseService {
     return snap.docs.map((d) => {...d.data(), 'id': d.id}).toList();
   }
 
+  Future<List<Map<String, dynamic>>> getWhere(
+  String collection,
+  String field,
+  Object value,
+  ) async {
+    final snap =
+        await _db.collection(collection).where(field, isEqualTo: value).get();
+    return snap.docs.map((d) => {...d.data(), 'id': d.id}).toList();
+  }
+
   Future<void> save(String collection, String id, Map<String, dynamic> data) =>
       _db.collection(collection).doc(id).set(data);
 
