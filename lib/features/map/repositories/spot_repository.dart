@@ -11,7 +11,7 @@ abstract class SpotRepository {
 class AssetSpotRepository implements SpotRepository {
   @override
   Future<List<PlaceSpot>> getSpots() async {
-    final raw = await rootBundle.loadString('assets/spots.json');
+    final raw = await rootBundle.loadString('asset/spots.json');
     final list = jsonDecode(raw) as List<dynamic>;
     return list
         .map((e) => PlaceSpot.fromJson(e as Map<String, dynamic>))
