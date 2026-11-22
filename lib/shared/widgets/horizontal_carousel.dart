@@ -15,6 +15,43 @@ class HorizontalCarousel<T> extends StatefulWidget {
     this.viewportFraction = 0.75,
   });
 
+  factory HorizontalCarousel.cards({
+    Key? key,
+    required List<T> items,
+    required Widget Function(BuildContext context, T item) cardBuilder,
+    double height = 240,
+    double viewportFraction = 0.75,
+    bool bordered = false,
+  }) {
+    return HorizontalCarousel<T>(
+      key: key,
+      items: items,
+      height: height,
+      viewportFraction: viewportFraction,
+      itemBuilder: (context, item) {
+        final content = cardBuilder(context, item);
+        return bordered
+            ? CarouselCard.bordered(child: content)
+            : CarouselCard(child: content);
+      },
+    );
+  }
+
+  factory HorizontalCarousel.banner({
+    Key? key,
+    required List<T> items,
+    required Widget Function(BuildContext context, T item) itemBuilder,
+    double height = 180,
+  }) {
+    return HorizontalCarousel<T>(
+      key: key,
+      items: items,
+      itemBuilder: itemBuilder,
+      height: height,
+      viewportFraction: 0.92,
+    );
+  }
+
   @override
   State<HorizontalCarousel<T>> createState() => _HorizontalCarouselState<T>();
 }
@@ -64,7 +101,8 @@ class _HorizontalCarouselState<T> extends State<HorizontalCarousel<T>> {
           PageView.builder(
             controller: _controller,
             itemCount: widget.items.length,
-            itemBuilder: (context, i) => widget.itemBuilder(context, widget.items[i]),
+            itemBuilder: (context, i) =>
+                widget.itemBuilder(context, widget.items[i]),
           ),
           if (widget.items.length > 1) ...[
             _arrow(Alignment.centerLeft, Icons.chevron_left, () {
@@ -88,8 +126,27 @@ class _HorizontalCarouselState<T> extends State<HorizontalCarousel<T>> {
 
 class CarouselCard extends StatelessWidget {
   final Widget child;
+  final Color color;
+  final BoxBorder? border;
 
-  const CarouselCard({super.key, required this.child});
+  const CarouselCard({
+    super.key,
+    required this.child,
+    this.color = Colors.white,
+    this.border,
+  });
+
+  factory CarouselCard.bordered({
+    Key? key,
+    required Widget child,
+  }) {
+    return CarouselCard(
+      key: key,
+      color: Styles.surface,
+      border: Border.all(color: Palette.cardBorder),
+      child: child,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,8 +154,9 @@ class CarouselCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+        border: border,
       ),
       child: child,
     );
