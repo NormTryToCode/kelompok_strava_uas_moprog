@@ -67,7 +67,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               const SizedBox(height: 4),
 
               const Text(
-                "Track every mile. Beat your personal best.",
+                "Track every mile, beat your personal best.",
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -95,7 +95,6 @@ class _LoginWidgetState extends State<LoginWidget> {
 
               const SizedBox(height: 14),
 
-              // Password Input with Visibility Toggle
               TextField(
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
@@ -175,8 +174,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Styles.badge,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    elevation: 2,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -216,6 +214,45 @@ class _LoginWidgetState extends State<LoginWidget> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
+
+            const Divider(
+              color: Colors.white,
+              thickness: 1,
+            ),
+
+            const SizedBox(height: 16),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                },
+                icon: const Text(
+                  "G",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFFDB4437),
+                  ),
+                ),
+                label: const Text(
+                  "Login with Google",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black87,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
             ],
           ),
         ),
