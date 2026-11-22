@@ -6,6 +6,7 @@ abstract class FriendRepository {
   Future<List<Friend>> getFriends();
   Future<void> addFriend(Friend friend);
   Future<void> removeFriend(String id);
+  static FriendRepository instance = PrefsFriendRepository();
 }
 
 class PrefsFriendRepository implements FriendRepository {
