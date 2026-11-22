@@ -34,7 +34,7 @@ class EventDetailPage extends ConsumerWidget {
     ];
   }
 
-  String _clubInitials(String name) {
+  String _initials(String name) {
     final parts = name.trim().split(RegExp(r'\s+'));
     if (parts.isEmpty || parts.first.isEmpty) return '?';
     if (parts.length == 1) return parts.first[0].toUpperCase();
@@ -42,7 +42,8 @@ class EventDetailPage extends ConsumerWidget {
   }
 
   String _formatDistance(Event event) {
-    final d = event.distance!;
+    final d = event.distance;
+    if (d == null) return 'Open';
     final text = d == d.roundToDouble() ? d.toStringAsFixed(0) : d.toString();
     return '$text ${event.distanceUnit.label}';
   }
@@ -52,7 +53,7 @@ class EventDetailPage extends ConsumerWidget {
         '${formatDate(event.startsAt)} at ${formatClock24(event.startsAt)}';
     final text = [
       '${event.name} (${event.sport?.name ?? event.kind.name})',
-      '$date · ${event.placeLabel}',
+      '$date \u00b7 ${event.placeLabel}',
       'Hosted by ${event.clubName}',
     ].join('\n');
 
@@ -94,281 +95,314 @@ class EventDetailPage extends ConsumerWidget {
     final lng = event.location?.longitude;
     final hasCoords = !event.isVirtual && lat != null && lng != null;
     final participants = _resolveParticipants(event);
-    final topPad = MediaQuery.of(context).padding.top;
 
-    final scheduleLine =
-        '${weekdayName(event.startsAt.weekday)}, ${monthName(event.startsAt.month)} ${event.startsAt.day} at ${formatClock24(event.startsAt)}';
-    final goingSummary = event.isAttending
-        ? (participants.isEmpty
-            ? 'You are going'
-            : 'You and ${participants.length} others going')
-        : '${event.attendeeCount} ${event.attendeeCount == 1 ? 'person' : 'others'} are going';
+    final fullSchedule =
+        '${weekdayName(event.startsAt.weekday)}, ${formatDate(event.startsAt)} \u00b7 ${formatClock24(event.startsAt)}';
 
     return Scaffold(
       backgroundColor: Styles.background,
+      appBar: AppBar(
+        backgroundColor: Styles.background,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        title: const Text(
+          'Event Details',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            color: Styles.surface,
+            icon: const Icon(Icons.more_horiz, color: Colors.white),
+            onSelected: (value) {
+              if (value == 'share') {
+                _shareEvent(event);
+              } else if (value == 'delete') {
+                _confirmDelete(context, ref, event);
+              }
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(
+                value: 'share',
+                child: Text(
+                  'Share event',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              if (!event.id.startsWith('seed_event_'))
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Text(
+                    'Delete event',
+                    style: TextStyle(color: Styles.accent),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
+              children: [
+                // Editorial Hero Card
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Styles.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Palette.teal.withAlpha(90),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (hasCoords)
-                        EventMapPreview(
-                          latitude: lat,
-                          longitude: lng,
-                          height: 190 + topPad,
-                          zoom: 15,
-                        )
-                      else
-                        Container(
-                          height: 120 + topPad,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Styles.surface,
-                            border: Border(
-                              bottom: BorderSide(color: Palette.cardBorder),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Palette.selectedFill,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Palette.teal.withAlpha(130),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  event.sport?.icon ?? event.kind.icon,
+                                  size: 14,
+                                  color: Palette.teal,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  (event.sport?.name ?? 'Open Sport')
+                                      .toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.7,
+                                    color: Palette.teal,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          alignment: Alignment.bottomCenter,
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                event.isVirtual
-                                    ? Icons.public
-                                    : (event.sport?.icon ?? event.kind.icon),
-                                color: Styles.accent,
-                                size: 22,
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Palette.fieldFill,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Palette.cardBorder),
+                            ),
+                            child: Text(
+                              event.kind.name.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.6,
+                                color: Styles.tabInactive,
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                event.isVirtual
-                                    ? 'Virtual Event'
-                                    : event.placeLabel,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: Styles.tabInactive,
-                                ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        event.name,
+                        style: const TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.schedule,
+                            size: 16,
+                            color: Palette.teal,
+                          ),
+                          const SizedBox(width: 7),
+                          Expanded(
+                            child: Text(
+                              fullSchedule,
+                              style: const TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
                               ),
-                            ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (event.recurrence != null) ...[
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 23),
+                          child: Text(
+                            event.recurrence!.summary(event.startsAt),
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: Styles.tabInactive,
+                            ),
                           ),
                         ),
-                      Positioned(
-                        top: topPad + 10,
-                        left: 14,
-                        right: 14,
+                      ],
+                      const SizedBox(height: 16),
+                      const Divider(height: 1, color: Palette.cardBorder),
+                      const SizedBox(height: 14),
+                      IntrinsicHeight(
                         child: Row(
                           children: [
-                            _CircleOverlayButton(
-                              icon: Icons.arrow_back,
-                              onTap: () => Navigator.of(context).pop(),
+                            Expanded(
+                              child: _MetricCell(
+                                label: 'DISTANCE',
+                                value: _formatDistance(event),
+                              ),
                             ),
-                            const Spacer(),
-                            PopupMenuButton<String>(
-                              color: Styles.surface,
-                              onSelected: (value) {
-                                if (value == 'share') {
-                                  _shareEvent(event);
-                                } else if (value == 'delete') {
-                                  _confirmDelete(context, ref, event);
-                                }
-                              },
-                              itemBuilder: (_) => [
-                                const PopupMenuItem(
-                                  value: 'share',
-                                  child: Text(
-                                    'Share event',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                                if (!event.id.startsWith('seed_event_'))
-                                  const PopupMenuItem(
-                                    value: 'delete',
-                                    child: Text(
-                                      'Delete event',
-                                      style: TextStyle(color: Styles.accent),
-                                    ),
-                                  ),
-                              ],
-                              child: const _CircleOverlayButton(
-                                icon: Icons.more_horiz,
+                            const VerticalDivider(
+                              width: 1,
+                              color: Palette.cardBorder,
+                            ),
+                            Expanded(
+                              child: _MetricCell(
+                                label: 'SURFACE',
+                                value: event.surface?.name ??
+                                    (event.isVirtual ? 'Virtual' : 'Mixed'),
+                              ),
+                            ),
+                            const VerticalDivider(
+                              width: 1,
+                              color: Palette.cardBorder,
+                            ),
+                            Expanded(
+                              child: _MetricCell(
+                                label: 'GOING',
+                                value: '${event.attendeeCount}',
+                                highlight: true,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 40,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '"${event.name}" added to your calendar',
+                                  ),
+                                ),
+                              );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Palette.teal,
+                            backgroundColor: Palette.selectedFill,
+                            side: BorderSide(
+                              color: Palette.teal.withAlpha(110),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.calendar_month_outlined,
+                            size: 17,
+                          ),
+                          label: const Text(
+                            'Add to Calendar',
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+
+                // About / Description
+                if (event.description.isNotEmpty) ...[
+                  const SizedBox(height: 22),
+                  const _SectionLabel('ABOUT THIS EVENT'),
+                  const SizedBox(height: 8),
+                  SoftCard(
+                    padding: const EdgeInsets.all(15),
+                    child: Text(
+                      event.description,
+                      style: const TextStyle(
+                        fontSize: 14.5,
+                        height: 1.5,
+                        color: Styles.tabInactive,
+                      ),
+                    ),
+                  ),
+                ],
+
+                // Location & Single Dark Map Card
+                const SizedBox(height: 22),
+                const _SectionLabel('LOCATION'),
+                const SizedBox(height: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Styles.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Palette.cardBorder),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (hasCoords)
+                        EventMapPreview(
+                          latitude: lat,
+                          longitude: lng,
+                          height: 196,
+                          zoom: 15,
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Row(
                           children: [
-                            _DateSquareBadge(date: event.startsAt),
-                            const Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                if (participants.isNotEmpty)
-                                  _AvatarStack(people: participants),
-                                const SizedBox(height: 6),
-                                Text(
-                                  goingSummary,
-                                  style: const TextStyle(
-                                    fontSize: 12.5,
-                                    color: Styles.tabInactive,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-                        Text(
-                          event.name,
-                          style: const TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w800,
-                            height: 1.2,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '${formatDate(event.startsAt)} at ${formatClock24(event.startsAt)}',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Styles.tabInactive,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _MetaColumn(
-                                label: 'Sport',
-                                icon: event.sport?.icon ?? event.kind.icon,
-                                value: event.sport?.name ?? 'Open Sport',
-                              ),
-                            ),
-                            Expanded(
-                              child: _MetaColumn(
-                                label: 'Format',
-                                value: event.kind.name,
-                              ),
-                            ),
-                            if (event.distance != null)
-                              Expanded(
-                                child: _MetaColumn(
-                                  label: 'Distance',
-                                  value: _formatDistance(event),
+                            Container(
+                              width: 38,
+                              height: 38,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Palette.selectedFill,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Palette.teal.withAlpha(110),
                                 ),
                               ),
-                          ],
-                        ),
-                        const SizedBox(height: 26),
-                        const Text(
-                          'Details',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(top: 2),
                               child: Icon(
-                                Icons.calendar_today_outlined,
+                                event.isVirtual
+                                    ? Icons.public
+                                    : Icons.location_on_outlined,
                                 size: 20,
-                                color: Colors.white,
+                                color: Palette.teal,
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    scheduleLine,
-                                    style: const TextStyle(
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  if (event.recurrence != null) ...[
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      event.recurrence!.summary(event.startsAt),
-                                      style: const TextStyle(
-                                        fontSize: 13.5,
-                                        color: Styles.tabInactive,
-                                      ),
-                                    ),
-                                  ],
-                                  const SizedBox(height: 10),
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      ScaffoldMessenger.of(context)
-                                        ..hideCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              '"${event.name}" added to your calendar',
-                                            ),
-                                          ),
-                                        );
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: Styles.accent,
-                                      side: BorderSide(
-                                        color: Styles.accent.withAlpha(140),
-                                      ),
-                                      shape: const StadiumBorder(),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      minimumSize: Size.zero,
-                                      tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: const Text(
-                                      'Add to Calendar',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              event.isVirtual
-                                  ? Icons.public
-                                  : Icons.location_on_outlined,
-                              size: 21,
-                              color: Colors.white,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -378,8 +412,8 @@ class EventDetailPage extends ConsumerWidget {
                                   Text(
                                     event.placeLabel,
                                     style: const TextStyle(
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -390,7 +424,16 @@ class EventDetailPage extends ConsumerWidget {
                                     Text(
                                       event.location!.detail,
                                       style: const TextStyle(
-                                        fontSize: 13.5,
+                                        fontSize: 13,
+                                        color: Styles.tabInactive,
+                                      ),
+                                    ),
+                                  ] else if (event.isVirtual) ...[
+                                    const SizedBox(height: 2),
+                                    const Text(
+                                      'Join from anywhere online',
+                                      style: TextStyle(
+                                        fontSize: 13,
                                         color: Styles.tabInactive,
                                       ),
                                     ),
@@ -400,187 +443,170 @@ class EventDetailPage extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        if (hasCoords) ...[
-                          const SizedBox(height: 14),
-                          EventMapPreview(
-                            latitude: lat,
-                            longitude: lng,
-                            height: 156,
-                            zoom: 15,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ],
-                        if (event.description.isNotEmpty) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            event.description,
-                            style: const TextStyle(
-                              fontSize: 14.5,
-                              height: 1.45,
-                              color: Styles.tabInactive,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Hosted By
+                const SizedBox(height: 22),
+                const _SectionLabel('HOSTED BY'),
+                const SizedBox(height: 8),
+                SoftCard(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Palette.selectedFill,
+                              borderRadius: BorderRadius.circular(11),
+                              border: Border.all(
+                                color: Palette.teal.withAlpha(140),
+                              ),
+                            ),
+                            child: Text(
+                              _initials(event.clubName),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                                color: Palette.teal,
+                              ),
                             ),
                           ),
-                        ],
-                        const SizedBox(height: 28),
-                        const Text(
-                          'Hosted By',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        SoftCard(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 44,
-                                    height: 44,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: Styles.accent.withAlpha(34),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Styles.accent.withAlpha(110),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      _clubInitials(event.clubName),
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w800,
-                                        color: Styles.accent,
-                                      ),
-                                    ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  event.clubName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          event.clubName,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w800,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        if (event.clubMemberCount != null) ...[
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            '${event.clubMemberCount!.withThousands} Athletes',
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                              color: Styles.tabInactive,
-                                            ),
-                                          ),
-                                        ],
-                                      ],
+                                ),
+                                if (event.clubMemberCount != null) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${event.clubMemberCount!.withThousands} Athletes',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Styles.tabInactive,
                                     ),
                                   ),
                                 ],
-                              ),
-                              if (event.clubDescription != null &&
-                                  event.clubDescription!.isNotEmpty) ...[
-                                const SizedBox(height: 12),
-                                Text(
-                                  event.clubDescription!,
-                                  style: const TextStyle(
-                                    fontSize: 13.5,
-                                    height: 1.45,
-                                    color: Styles.tabInactive,
-                                  ),
-                                ),
                               ],
-                              if (event.organizerName != null &&
-                                  event.organizerName!.isNotEmpty) ...[
-                                const SizedBox(height: 14),
-                                const Divider(
-                                  height: 1,
-                                  color: Palette.cardBorder,
-                                ),
-                                const SizedBox(height: 14),
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 20,
-                                      backgroundColor: Styles.background,
-                                      child: Text(
-                                        _clubInitials(event.organizerName!),
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            event.organizerName!,
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          const Text(
-                                            'Organizer',
-                                            style: TextStyle(
-                                              fontSize: 12.5,
-                                              color: Styles.tabInactive,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 28),
-                        Text(
-                          '${event.attendeeCount} Going',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
+                        ],
+                      ),
+                      if (event.clubDescription != null &&
+                          event.clubDescription!.isNotEmpty) ...[
                         const SizedBox(height: 12),
-                        if (event.isAttending)
-                          const _ParticipantRow(
-                            initials: 'Y',
-                            name: 'You',
-                            subtitle: 'Going to this event',
-                            highlight: true,
+                        Text(
+                          event.clubDescription!,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            height: 1.45,
+                            color: Styles.tabInactive,
                           ),
-                        for (final person in participants)
-                          _ParticipantRow(
-                            initials: person.initials,
-                            name: person.name,
-                            subtitle: person.location,
-                          ),
+                        ),
                       ],
-                    ),
+                      if (event.organizerName != null &&
+                          event.organizerName!.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        const Divider(height: 1, color: Palette.cardBorder),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Container(
+                              width: 34,
+                              height: 34,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Palette.fieldFill,
+                                border: Border.all(color: Palette.cardBorder),
+                              ),
+                              child: Text(
+                                _initials(event.organizerName!),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                event.organizerName!,
+                                style: const TextStyle(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            const Text(
+                              'ORGANIZER',
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.7,
+                                color: Palette.teal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                // Attendees
+                const SizedBox(height: 22),
+                _SectionLabel('ATTENDEES (${event.attendeeCount})'),
+                const SizedBox(height: 8),
+                SoftCard(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 12,
+                  ),
+                  child: Column(
+                    children: [
+                      if (event.isAttending)
+                        const _ParticipantRow(
+                          initials: 'Y',
+                          name: 'You',
+                          subtitle: 'Confirmed going',
+                          highlight: true,
+                        ),
+                      for (var i = 0; i < participants.length; i++) ...[
+                        if (i > 0 || event.isAttending)
+                          const Divider(
+                            height: 18,
+                            color: Palette.cardBorder,
+                          ),
+                        _ParticipantRow(
+                          initials: participants[i].initials,
+                          name: participants[i].name,
+                          subtitle: participants[i].location,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           Container(
@@ -605,11 +631,14 @@ class EventDetailPage extends ConsumerWidget {
                                       .read(eventsProvider.notifier)
                                       .toggleRsvp(event.id),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: Styles.accent,
+                                    foregroundColor: Palette.teal,
+                                    backgroundColor: Palette.selectedFill,
                                     side: const BorderSide(
-                                      color: Styles.accent,
+                                      color: Palette.teal,
                                     ),
-                                    shape: const StadiumBorder(),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
                                   icon: const Icon(Icons.check, size: 18),
                                   label: const Text(
@@ -627,10 +656,12 @@ class EventDetailPage extends ConsumerWidget {
                                   style: FilledButton.styleFrom(
                                     backgroundColor: Styles.accent,
                                     foregroundColor: Colors.white,
-                                    shape: const StadiumBorder(),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
                                   child: const Text(
-                                    'Join',
+                                    'Join Event',
                                     style: TextStyle(
                                       fontSize: 15.5,
                                       fontWeight: FontWeight.w700,
@@ -639,7 +670,7 @@ class EventDetailPage extends ConsumerWidget {
                                 ),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                     ],
                     Expanded(
                       flex: 2,
@@ -650,7 +681,9 @@ class EventDetailPage extends ConsumerWidget {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
                             side: const BorderSide(color: Palette.cardBorder),
-                            shape: const StadiumBorder(),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           icon: const Icon(Icons.share_outlined, size: 18),
                           label: const Text(
@@ -674,173 +707,67 @@ class EventDetailPage extends ConsumerWidget {
   }
 }
 
-class _CircleOverlayButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onTap;
+class _SectionLabel extends StatelessWidget {
+  final String text;
 
-  const _CircleOverlayButton({required this.icon, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final child = SizedBox(
-      width: 40,
-      height: 40,
-      child: Icon(icon, color: Colors.white, size: 21),
-    );
-
-    return Material(
-      color: Styles.background.withAlpha(190),
-      shape: const CircleBorder(),
-      clipBehavior: Clip.antiAlias,
-      child: onTap == null ? child : InkWell(onTap: onTap, child: child),
-    );
-  }
-}
-
-class _DateSquareBadge extends StatelessWidget {
-  final DateTime date;
-
-  const _DateSquareBadge({required this.date});
+  const _SectionLabel(this.text);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 58,
-      decoration: BoxDecoration(
-        color: Styles.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Palette.cardBorder),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            color: Styles.accent,
-            alignment: Alignment.center,
-            child: Text(
-              monthShort(date.month),
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 5, 4, 6),
-            child: Column(
-              children: [
-                Text(
-                  '${date.day}',
-                  style: const TextStyle(
-                    fontSize: 21,
-                    height: 1.05,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  weekdayShort(date.weekday),
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Styles.tabInactive,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 2),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 1.0,
+          color: Palette.teal,
+        ),
       ),
     );
   }
 }
 
-class _AvatarStack extends StatelessWidget {
-  final List<Person> people;
-
-  const _AvatarStack({required this.people});
-
-  @override
-  Widget build(BuildContext context) {
-    final shown = people.take(3).toList();
-    return SizedBox(
-      width: 28 + (shown.length - 1) * 18,
-      height: 28,
-      child: Stack(
-        children: [
-          for (var i = 0; i < shown.length; i++)
-            Positioned(
-              left: i * 18,
-              child: Container(
-                width: 28,
-                height: 28,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Styles.surface,
-                  border: Border.all(color: Styles.background, width: 1.5),
-                ),
-                child: Text(
-                  shown[i].initials,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MetaColumn extends StatelessWidget {
+class _MetricCell extends StatelessWidget {
   final String label;
   final String value;
-  final IconData? icon;
+  final bool highlight;
 
-  const _MetaColumn({
+  const _MetricCell({
     required this.label,
     required this.value,
-    this.icon,
+    this.highlight = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12.5, color: Styles.tabInactive),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 17, color: Colors.white),
-              const SizedBox(width: 6),
-            ],
-            Flexible(
-              child: Text(
-                value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.7,
+              color: Styles.tabInactive,
             ),
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 15.5,
+              fontWeight: FontWeight.w800,
+              color: highlight ? Palette.teal : Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -860,60 +787,55 @@ class _ParticipantRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: highlight
-                  ? Styles.accent.withAlpha(32)
-                  : Styles.surface,
-              border: Border.all(
-                color: highlight ? Styles.accent : Palette.cardBorder,
-              ),
-            ),
-            child: Text(
-              initials,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: highlight ? Styles.accent : Colors.white,
-              ),
+    return Row(
+      children: [
+        Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: highlight ? Palette.selectedFill : Palette.fieldFill,
+            border: Border.all(
+              color: highlight ? Palette.teal : Palette.cardBorder,
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Styles.tabInactive,
-                  ),
-                ),
-              ],
+          child: Text(
+            initials,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: highlight ? Palette.teal : Colors.white,
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  color: Styles.tabInactive,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
