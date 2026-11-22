@@ -26,6 +26,20 @@ class RegisterWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(
+                  color: Colors.white24,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.directions_run_rounded,
+                  size: 36,
+                  color: Colors.white,
+                ),
+              ),
+
+            const SizedBox(height: 16),
             const Text(
               "Register New User",
               style: TextStyle(
@@ -34,7 +48,6 @@ class RegisterWidget extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-
             const SizedBox(height: 24),
 
             const TextField(
