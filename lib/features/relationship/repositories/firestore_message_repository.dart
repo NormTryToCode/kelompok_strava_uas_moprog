@@ -4,6 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/me
 
 class FirestoreMessageRepository implements MessageRepository {
   final _db = DatabaseService.instance;
+  static MessageRepository instance = FirestoreMessageRepository();
 
   @override
   Future<List<Message>> getMessages(String friendId) async {

@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/firestore_friend_repository.dart';
 
 abstract class FriendRepository {
   Future<List<Friend>> getFriends();
   Future<void> addFriend(Friend friend);
   Future<void> removeFriend(String id);
-  static FriendRepository instance = PrefsFriendRepository();
+  static FriendRepository instance = FirestoreFriendRepository();
 }
 
 class PrefsFriendRepository implements FriendRepository {

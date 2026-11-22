@@ -4,6 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/fr
 
 class FirestoreFriendRepository implements FriendRepository {
   final _db = DatabaseService.instance;
+  static FriendRepository instance = FirestoreFriendRepository();
 
   @override
   Future<List<Friend>> getFriends() async =>
