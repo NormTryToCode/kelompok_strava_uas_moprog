@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 
 class ForgetPasswordWidget extends StatefulWidget {
   const ForgetPasswordWidget({super.key});
@@ -79,7 +80,6 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
 
               const SizedBox(height: 16),
 
-              // Title
               Text(
                 _isSent ? "Check Your Email" : "Forgot Password?",
                 style: const TextStyle(
@@ -92,10 +92,9 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
 
               const SizedBox(height: 6),
 
-              // Subtitle
               Text(
                 _isSent
-                    ? "We've sent a password reset link to\n${_emailController.text.trim()}"
+                    ? "We've sent a password reset link to\n${_emailController.text.trim()}, check your spam email if it does not appear"
                     : "Enter your registered email address and we'll send you a link to reset your password.",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -130,7 +129,6 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
 
                 const SizedBox(height: 20),
 
-                // Primary CTA: Send Reset Link
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -154,7 +152,6 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                   ),
                 ),
               ] else ...[
-                // Resend Option after sending
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -183,11 +180,14 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
               ],
 
               const SizedBox(height: 12),
-
-              // Back to Login Button
               TextButton.icon(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(
+                onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                    );
+                  },                
+                  icon: const Icon(
                   Icons.arrow_back_rounded,
                   size: 18,
                   color: Colors.white,
