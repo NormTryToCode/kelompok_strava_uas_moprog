@@ -224,6 +224,48 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 ),
               ),
 
+
+
+
+              const Divider(
+                color: Colors.white,
+                thickness: 1,
+              ),
+
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                  },
+                  icon: const Text(
+                    "G",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFFDB4437),
+                    ),
+                  ),
+                  label: const Text(
+                    "Register With Google",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+
+
             ],
           ),
         ),
