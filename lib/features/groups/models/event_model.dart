@@ -174,6 +174,10 @@ class Event {
   final int attendeeCount;
   final bool isAttending;
   final DateTime createdAt;
+  final int? clubMemberCount;
+  final String? clubDescription;
+  final String? organizerName;
+  final List<String> participantIds;
 
   const Event({
     required this.id,
@@ -199,6 +203,10 @@ class Event {
     required this.attendeeCount,
     required this.createdAt,
     this.isAttending = true,
+    this.clubMemberCount,
+    this.clubDescription,
+    this.organizerName,
+    this.participantIds = const [],
   });
 
   String get attendeeLabel =>
@@ -237,6 +245,10 @@ class Event {
       attendeeCount: attendeeCount ?? this.attendeeCount,
       isAttending: isAttending ?? this.isAttending,
       createdAt: createdAt,
+      clubMemberCount: clubMemberCount,
+      clubDescription: clubDescription,
+      organizerName: organizerName,
+      participantIds: participantIds,
     );
   }
 
@@ -289,6 +301,10 @@ class Event {
       'capacity': capacity,
       'attendeeCount': attendeeCount,
       'createdAt': createdAt.toIso8601String(),
+      'clubMemberCount': clubMemberCount,
+      'clubDescription': clubDescription,
+      'organizerName': organizerName,
+      'participantIds': participantIds,
     };
   }
 
@@ -364,6 +380,13 @@ class Event {
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
       isAttending: json['isAttending'] as bool? ?? true,
+      clubMemberCount: (json['clubMemberCount'] as num?)?.toInt(),
+      clubDescription: json['clubDescription'] as String?,
+      organizerName: json['organizerName'] as String?,
+      participantIds: (json['participantIds'] as List?)
+              ?.whereType<String>()
+              .toList() ??
+          const [],
     );
   }
 }
