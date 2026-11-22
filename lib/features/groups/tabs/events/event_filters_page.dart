@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/location_search_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/models/event_filter_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/event_filter_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
 
 class EventFiltersPage extends StatefulWidget {

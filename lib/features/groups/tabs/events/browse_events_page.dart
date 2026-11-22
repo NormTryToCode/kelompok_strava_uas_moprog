@@ -6,7 +6,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/providers/event_provi
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/widgets/club_event_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/event_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/event_filters_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/models/event_filter_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/event_filter_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/event_sport_search_sheet.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 
@@ -152,7 +152,7 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
               cursorColor: Styles.accent,
               style: const TextStyle(fontSize: 14.5, color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Search by sport (e.g. Cycling, Yoga, Surfing...)',
+                hintText: 'Search by sport',
                 hintStyle: const TextStyle(color: Styles.tabInactive),
                 prefixIcon: const Icon(
                   Icons.search,
