@@ -75,6 +75,7 @@ class LoginWidget extends StatelessWidget {
             const SizedBox(height: 2),
 
             CheckBoxWidget(checkBoxText: "Remember Me"),
+            CheckBoxWidget(checkBoxText: "I agree to the term&services"),
 
             const SizedBox(height: 4),
             SizedBox(
