@@ -40,14 +40,26 @@ class RegisterWidget extends StatelessWidget {
               ),
 
             const SizedBox(height: 16),
+
             const Text(
-              "Register New User",
+              "Register As New User",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
+
+            const Text(
+                "Start your first step with use",
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white70,
+                ),
+              ),
+
+ 
             const SizedBox(height: 24),
 
             const TextField(
