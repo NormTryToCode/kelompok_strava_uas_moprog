@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
-const String inviteLink = 'https://strava.app.link/EZFTnGxgX7b';
+const String inviteLink = AppBrand.inviteLink;
 
 class InviteButton extends StatelessWidget {
   const InviteButton({super.key});
@@ -27,7 +28,7 @@ class InviteButton extends StatelessWidget {
           style: FilledButton.styleFrom(
             backgroundColor: Styles.accent,
             foregroundColor: Styles.tabActive,
-            shape: const StadiumBorder(),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Radii.button)),
           ),
           child: const Text(
             'Invite Friends',

@@ -16,6 +16,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/club_overview_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_share/share_club_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_invite/invite_club_page.dart';
 
 class ClubDetailPage extends ConsumerStatefulWidget {
   final Club club;
@@ -128,6 +129,7 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                   const SizedBox(height: 12),
                   ClubActionButtons(
                     onTap: _comingSoon,
+                    onInviteTap: () => InviteClubPage.open(context, club),
                     onEditDetailsTap: () => _editClub(club),
                     onShareTap: () => ShareClubPage.open(context, club),
                     onEventsTap: () => ClubEventsPage.open(context, club),

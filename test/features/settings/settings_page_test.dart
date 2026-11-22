@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 
 void _tallScreen(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
@@ -8,51 +12,90 @@ void _tallScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Widget _page({VoidCallback? onLogout}) {
-  return MaterialApp(home: SettingsPage(onLogout: onLogout));
+ProviderContainer _container({SettingsStore? store}) {
+  final container = ProviderContainer(
+    overrides: [
+      settingsStoreProvider.overrideWithValue(store ?? MemorySettingsStore()),
+    ],
+  );
+  addTearDown(container.dispose);
+  return container;
+}
+
+Widget _page({ProviderContainer? container, VoidCallback? onLogout}) {
+  final app = MaterialApp(home: SettingsPage(onLogout: onLogout));
+  if (container != null) {
+    return UncontrolledProviderScope(container: container, child: app);
+  }
+  return ProviderScope(
+    overrides: [
+      settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+    ],
+    child: app,
+  );
 }
 
 void main() {
   testWidgets('menampilkan judul, bagian, dan menu', (tester) async {
     _tallScreen(tester);
     await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('ACCOUNT'), findsOneWidget);
-    expect(find.text('PREFERENCES'), findsOneWidget);
-    expect(find.text('SUPPORT'), findsOneWidget);
-    expect(find.text('Privacy controls'), findsOneWidget);
     expect(find.text('Units of measurement'), findsOneWidget);
     expect(find.text('Kilometers'), findsOneWidget);
+    expect(find.text('3 of 3 on'), findsOneWidget);
     expect(find.text('Log out'), findsOneWidget);
   });
 
-  testWidgets('mengetuk menu menampilkan pesan Coming soon', (tester) async {
+  testWidgets('satuan tersimpan ditampilkan sebagai subtitle', (tester) async {
     _tallScreen(tester);
-    await tester.pumpWidget(_page());
+    final store = MemorySettingsStore();
+    await store.writeString(SettingsNotifier.unitKey, 'miles');
+    final container = _container(store: store);
 
-    await tester.tap(find.text('Privacy controls'));
-    await tester.pump();
-
-    expect(find.text('Coming soon'), findsOneWidget);
-  });
-
-  testWidgets('Log out menampilkan dialog konfirmasi', (tester) async {
-    _tallScreen(tester);
-    await tester.pumpWidget(_page());
-
-    await tester.tap(find.text('Log out'));
+    await tester.pumpWidget(_page(container: container));
     await tester.pumpAndSettle();
 
-    expect(find.text('Log out?'), findsOneWidget);
-    expect(find.text('Cancel'), findsOneWidget);
+    expect(find.text('Miles'), findsOneWidget);
   });
 
-  testWidgets('Cancel menutup dialog tanpa memanggil onLogout', (tester) async {
+  testWidgets('memilih Miles mengubah subtitle', (tester) async {
+    _tallScreen(tester);
+    final container = _container();
+
+    await tester.pumpWidget(_page(container: container));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Units of measurement'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Miles (mi)'));
+    await tester.pumpAndSettle();
+
+    expect(container.read(settingsProvider).unit, SettingsDistanceUnit.miles);
+    expect(find.text('Miles'), findsOneWidget);
+  });
+
+  testWidgets('menu Notification preferences membuka halaman preferensi',
+      (tester) async {
+    _tallScreen(tester);
+    await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Notification preferences'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('PUSH NOTIFICATIONS'), findsOneWidget);
+  });
+
+  testWidgets('Cancel menutup dialog tanpa memanggil onLogout',
+      (tester) async {
     _tallScreen(tester);
     var calls = 0;
 
     await tester.pumpWidget(_page(onLogout: () => calls++));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
@@ -68,13 +111,29 @@ void main() {
     var calls = 0;
 
     await tester.pumpWidget(_page(onLogout: () => calls++));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextButton, 'Log out'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Log out?'), findsNothing);
     expect(calls, 1);
+  });
+
+  testWidgets('tanpa onLogout, konfirmasi kembali ke halaman login',
+      (tester) async {
+    _tallScreen(tester);
+
+    await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Log out'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoginPage), findsOneWidget);
+    expect(find.text('Settings'), findsNothing);
   });
 }

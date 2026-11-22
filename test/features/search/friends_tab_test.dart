@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/friends_tab.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
 
-Widget _wrap(FollowController controller) {
-  return MaterialApp(
-    home: Scaffold(body: FriendsTab(controller: controller)),
+Widget _wrap({ProviderContainer? container}) {
+  const app = MaterialApp(
+    home: Scaffold(body: FriendsTab()),
   );
+  if (container != null) {
+    return UncontrolledProviderScope(container: container, child: app);
+  }
+  return const ProviderScope(child: app);
 }
 
 void main() {
   testWidgets('menampilkan daftar orang dari data dummy', (tester) async {
-    await tester.pumpWidget(_wrap(FollowController()));
+    await tester.pumpWidget(_wrap());
 
     expect(find.text('PEOPLE YOU MAY KNOW'), findsOneWidget);
     expect(find.text('Dewi Anggraini'), findsOneWidget);
@@ -19,9 +24,10 @@ void main() {
 
   testWidgets('mengetuk Follow mengubah tombol menjadi Following',
       (tester) async {
-    final controller = FollowController();
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
 
-    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpWidget(_wrap(container: container));
 
     expect(find.text('Following'), findsNothing);
 
@@ -29,11 +35,11 @@ void main() {
     await tester.pump();
 
     expect(find.text('Following'), findsOneWidget);
-    expect(controller.followingCount, 1);
+    expect(container.read(followingCountProvider), 1);
   });
 
   testWidgets('menampilkan sub-tab dan tombol Invite Friends', (tester) async {
-    await tester.pumpWidget(_wrap(FollowController()));
+    await tester.pumpWidget(_wrap());
 
     expect(find.text('Suggested'), findsOneWidget);
     expect(find.text('Contacts'), findsOneWidget);
@@ -42,7 +48,7 @@ void main() {
   });
 
   testWidgets('berpindah ke sub-tab QR Code', (tester) async {
-    await tester.pumpWidget(_wrap(FollowController()));
+    await tester.pumpWidget(_wrap());
 
     await tester.tap(find.text('QR Code'));
     await tester.pumpAndSettle();

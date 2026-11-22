@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_firestore_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/event_repository.dart';
 
@@ -11,7 +12,9 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
 
   @override
   Future<List<Event>> build() async {
-    return _repository.getEvents();
+    final stored = await _repository.getEvents();
+    if (stored.isNotEmpty) return stored;
+    return GroupsFirestoreSeeder.seedEventsIfEmpty();
   }
 
   Future<void> addEvent(Event event) async {
@@ -42,6 +45,7 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
     }
 
     if (updatedEvent == null) return;
+
     await _repository.updateEvent(updatedEvent);
     state = AsyncData(nextList);
   }

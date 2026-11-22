@@ -30,7 +30,7 @@ class SearchPage extends StatelessWidget {
               child: TabBarView(
                 children: [
                   FriendsTab(),
-                  ClubsTab(),
+                  SearchClubsTab(),
                 ],
               ),
             ),

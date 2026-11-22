@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_all.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/follow_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/person_tile.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
 
-class SearchResultsView extends StatelessWidget {
+class SearchResultsView extends ConsumerWidget {
   final SearchResults results;
-  final FollowController follow;
-  final ValueChanged<Club> onClubTap;
+  final ValueChanged<SearchClub> onClubTap;
 
   const SearchResultsView({
     super.key,
     required this.results,
-    required this.follow,
     required this.onClubTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (results.isEmpty) {
       return const Center(
         child: Text(
@@ -30,28 +29,28 @@ class SearchResultsView extends StatelessWidget {
       );
     }
 
-    return ListenableBuilder(
-      listenable: follow,
-      builder: (context, _) => ListView(
-        children: [
-          if (results.people.isNotEmpty) ...[
-            const _ResultsLabel('PEOPLE'),
-            for (final person in results.people)
-              PersonTile(
-                person: person,
-                trailing: FollowButton(
-                  isFollowing: follow.isFollowing(person.id),
-                  onPressed: () => follow.toggle(person.id),
-                ),
+    final following = ref.watch(followProvider);
+
+    return ListView(
+      children: [
+        if (results.people.isNotEmpty) ...[
+          const _ResultsLabel('PEOPLE'),
+          for (final person in results.people)
+            PersonTile(
+              person: person,
+              trailing: FollowButton(
+                isFollowing: following.contains(person.id),
+                onPressed: () =>
+                    ref.read(followProvider.notifier).toggle(person.id),
               ),
-          ],
-          if (results.clubs.isNotEmpty) ...[
-            const _ResultsLabel('CLUBS'),
-            for (final club in results.clubs)
-              ClubTile(club: club, onTap: () => onClubTap(club)),
-          ],
+            ),
         ],
-      ),
+        if (results.clubs.isNotEmpty) ...[
+          const _ResultsLabel('CLUBS'),
+          for (final club in results.clubs)
+            ClubTile(club: club, onTap: () => onClubTap(club)),
+        ],
+      ],
     );
   }
 }

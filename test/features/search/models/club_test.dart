@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 void main() {
-  const club = Club(
+  const club = SearchClub(
     id: 'c',
     name: 'Jakarta Sunrise Runners',
     sport: SportType.running,

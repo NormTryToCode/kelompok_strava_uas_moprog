@@ -4,6 +4,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/user_location_marker.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/my_location_button.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/models/place_spot.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/repositories/spot_repository.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_marker.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_filter_bar.dart';
 import 'dart:async';
 
 class MapPage extends StatefulWidget {
@@ -18,6 +23,41 @@ class _MapPageState extends State<MapPage> {
   LatLng? _userPosition;
   StreamSubscription<Position>? _positionSub;
   bool _follow = true;
+
+  List<PlaceSpot> _spots = [];
+    SpotType? _filter; // null = semua
+
+  double? _distanceTo(PlaceSpot spot) {
+    final user = _userPosition;
+    if (user == null) return null;
+    return const Distance().as(LengthUnit.Meter, user, spot.position);
+  }
+
+  List<PlaceSpot> get _visibleSpots {
+    final spots =
+        _spots.where((s) => _filter == null || s.type == _filter).toList();
+    if (_userPosition != null) {
+      spots.sort((a, b) => _distanceTo(a)!.compareTo(_distanceTo(b)!));
+    }
+    return spots;
+  }
+
+  void _focusSpot(PlaceSpot spot) {
+    setState(() => _follow = false);
+    _mapController.move(spot.position, 16);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpots();
+  }
+
+  Future<void> _loadSpots() async {
+    final spots = await SpotRepository.instance.getSpots();
+    if (!mounted) return;
+    setState(() => _spots = spots);
+  }
 
   Future<bool> _ensurePermission() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
@@ -82,6 +122,7 @@ class _MapPageState extends State<MapPage> {
   }
   @override
   Widget build(BuildContext context) {
+    final spots = _visibleSpots;
     return Stack(
       children: [
         FlutterMap(
@@ -100,6 +141,17 @@ class _MapPageState extends State<MapPage> {
               userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
               maxNativeZoom: 19,
             ),
+            MarkerLayer(
+              markers: [
+                for (final s in spots)
+                  Marker(
+                    point: s.position,
+                    width: 36,
+                    height: 36,
+                    child: SpotMarker(type: s.type),
+                  ),
+              ],
+            ),
             if (_userPosition != null)
               MarkerLayer(
                 markers: [
@@ -113,9 +165,40 @@ class _MapPageState extends State<MapPage> {
               ),
           ],
         ),
+                Positioned(
+          top: 12,
+          left: 12,
+          right: 12,
+          child: SpotFilterBar(
+            selected: _filter,
+            onChanged: (type) => setState(() => _filter = type),
+          ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 16,
+          child: SizedBox(
+            height: 80,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: spots.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, i) => SizedBox(
+                width: 220,
+                child: SpotCard(
+                  spot: spots[i],
+                  distanceMeters: _distanceTo(spots[i]),
+                  onTap: () => _focusSpot(spots[i]),
+                ),
+              ),
+            ),
+          ),
+        ),
         Positioned(
           right: 16,
-          bottom: 16,
+          bottom: 108,
           child: MyLocationButton(following: _follow, onPressed: _recenter),
         ),
       ],

@@ -1,31 +1,19 @@
+import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/repositories/local_json_store.dart';
 
 class ClubRepository {
-  final _store = LocalJsonStore<Club>(
-    fileName: 'clubs.json',
-    rootKey: 'clubs',
-    fromJson: Club.fromJson,
-    toJson: (c) => c.toJson(),
-  );
+  final _db = DatabaseService.instance;
 
-  Future<List<Club>> getClubs() => _store.readAll();
-
-  Future<void> addClub(Club club) async {
-    final clubs = await _store.readAll();
-    await _store.writeAll([club, ...clubs]);
+  Future<List<Club>> getClubs() async {
+    final clubs = (await _db.getAll('clubs')).map(Club.fromJson).toList();
+    clubs.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return clubs;
   }
 
-  Future<void> updateClub(Club club) async {
-    final clubs = await _store.readAll();
-    await _store.writeAll([
-      for (final item in clubs)
-        if (item.id == club.id) club else item,
-    ]);
-  }
+  Future<void> addClub(Club club) => _db.save('clubs', club.id, club.toJson());
 
-  Future<void> deleteClub(String clubId) async {
-    final clubs = await _store.readAll();
-    await _store.writeAll(clubs.where((item) => item.id != clubId).toList());
-  }
+  Future<void> updateClub(Club club) =>
+      _db.save('clubs', club.id, club.toJson());
+
+  Future<void> deleteClub(String clubId) => _db.remove('clubs', clubId);
 }

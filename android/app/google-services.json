@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "971947737969",
+    "project_id": "stride-mobprog",
+    "storage_bucket": "stride-mobprog.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971947737969:android:976543c49f2f5912aeecd0",
+        "android_client_info": {
+          "package_name": "com.example.kelompok_strava_uas_moprog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzZHIIRV9dsAIOBAQlMq6vFr4st8AbiZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

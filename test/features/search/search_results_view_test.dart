@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_all.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/search_results_view.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
 
 const _person = Person(
   id: 'p1',
@@ -13,7 +14,7 @@ const _person = Person(
   tag: 'Local Legend near you',
 );
 
-const _club = Club(
+const _club = SearchClub(
   id: 'c1',
   name: 'Bandung Trail Society',
   sport: SportType.running,
@@ -22,28 +23,28 @@ const _club = Club(
 );
 
 Widget _wrap(
-  SearchResults results,
-  FollowController follow, {
-  ValueChanged<Club>? onClubTap,
+  SearchResults results, {
+  ValueChanged<SearchClub>? onClubTap,
+  ProviderContainer? container,
 }) {
-  return MaterialApp(
+  final app = MaterialApp(
     home: Scaffold(
       body: SearchResultsView(
         results: results,
-        follow: follow,
         onClubTap: onClubTap ?? (_) {},
       ),
     ),
   );
+  if (container != null) {
+    return UncontrolledProviderScope(container: container, child: app);
+  }
+  return ProviderScope(child: app);
 }
 
 void main() {
   testWidgets('menampilkan bagian PEOPLE dan CLUBS', (tester) async {
     await tester.pumpWidget(
-      _wrap(
-        const SearchResults(people: [_person], clubs: [_club]),
-        FollowController(),
-      ),
+      _wrap(const SearchResults(people: [_person], clubs: [_club])),
     );
 
     expect(find.text('PEOPLE'), findsOneWidget);
@@ -54,10 +55,7 @@ void main() {
 
   testWidgets('bagian tanpa hasil tidak ditampilkan', (tester) async {
     await tester.pumpWidget(
-      _wrap(
-        const SearchResults(people: [], clubs: [_club]),
-        FollowController(),
-      ),
+      _wrap(const SearchResults(people: [], clubs: [_club])),
     );
 
     expect(find.text('PEOPLE'), findsNothing);
@@ -66,33 +64,36 @@ void main() {
 
   testWidgets('tanpa hasil menampilkan pesan kosong', (tester) async {
     await tester.pumpWidget(
-      _wrap(const SearchResults(people: [], clubs: []), FollowController()),
+      _wrap(const SearchResults(people: [], clubs: [])),
     );
 
     expect(find.text('No results found'), findsOneWidget);
   });
 
   testWidgets('mengetuk Follow mengubah tombol dan status', (tester) async {
-    final follow = FollowController();
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
 
     await tester.pumpWidget(
-      _wrap(const SearchResults(people: [_person], clubs: []), follow),
+      _wrap(
+        const SearchResults(people: [_person], clubs: []),
+        container: container,
+      ),
     );
 
     await tester.tap(find.text('Follow'));
     await tester.pump();
 
     expect(find.text('Following'), findsOneWidget);
-    expect(follow.isFollowing('p1'), isTrue);
+    expect(container.read(isFollowingProvider('p1')), isTrue);
   });
 
   testWidgets('mengetuk klub memanggil onClubTap', (tester) async {
-    Club? tapped;
+    SearchClub? tapped;
 
     await tester.pumpWidget(
       _wrap(
         const SearchResults(people: [], clubs: [_club]),
-        FollowController(),
         onClubTap: (club) => tapped = club,
       ),
     );
