@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 
 ProviderContainer _container() {
   final container = ProviderContainer();
@@ -107,5 +109,56 @@ void main() {
     notifier.restore(existing, 0);
 
     expect(container.read(notificationsProvider).length, before);
+  });
+  test('notifyActivityLogged menambahkan notifikasi belum dibaca di paling atas', () {
+    final container = _container();
+    final before = container.read(unreadCountProvider);
+
+    container.read(notificationsProvider.notifier).notifyActivityLogged(
+          title: 'Morning Run',
+          distanceLabel: '5 km',
+        );
+
+    expect(container.read(unreadCountProvider), before + 1);
+    expect(
+      container.read(notificationsProvider).first.title,
+      'Activity logged: Morning Run',
+    );
+  });
+
+  test('notifyFollowing menambah notifikasi saat preferensi followers aktif', () {
+    final container = ProviderContainer(
+      overrides: [
+        settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final before = container.read(unreadCountProvider);
+    container
+        .read(notificationsProvider.notifier)
+        .notifyFollowing(personName: 'Dewi Anggraini');
+
+    expect(container.read(unreadCountProvider), before + 1);
+  });
+
+  test('notifyFollowing dilewati saat preferensi followers dimatikan', () async {
+    final container = ProviderContainer(
+      overrides: [
+        settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await container
+        .read(settingsProvider.notifier)
+        .setNotification(NotificationPref.followers, false);
+    final before = container.read(unreadCountProvider);
+
+    container
+        .read(notificationsProvider.notifier)
+        .notifyFollowing(personName: 'Dewi Anggraini');
+
+    expect(container.read(unreadCountProvider), before);
   });
 }
