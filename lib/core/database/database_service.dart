@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseService {
   DatabaseService._();
@@ -21,8 +22,20 @@ class DatabaseService {
     return snap.docs.map((d) => {...d.data(), 'id': d.id}).toList();
   }
 
-  Future<void> save(String collection, String id, Map<String, dynamic> data) =>
-      _db.collection(collection).doc(id).set(data);
+    Future<void> save(String collection, String id, Map<String, dynamic> data) async {
+      debugPrint('Firestore save -> $collection/$id');
+      try {
+        await _db
+            .collection(collection)
+            .doc(id)
+            .set(data)
+            .timeout(const Duration(seconds: 10));
+        debugPrint('Firestore save OK');
+      } catch (e) {
+        debugPrint('Firestore save FAILED: $e');
+        rethrow;
+      }
+    }
 
   Future<void> remove(String collection, String id) =>
       _db.collection(collection).doc(id).delete();
