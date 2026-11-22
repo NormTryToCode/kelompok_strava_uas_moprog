@@ -3,6 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/friend_repository.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/widgets/friend_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/pages/chat_page.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -117,10 +118,16 @@ class _FriendsPageState extends State<FriendsPage> {
               : ListView.builder(
                   itemCount: _friends.length,
                   itemBuilder: (context, i) => FriendCard(
-                    friend: _friends[i],
-                    onRemove: () => _remove(_friends[i]),
+                  friend: _friends[i],
+                  onRemove: () => _remove(_friends[i]),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChatPage(friend: _friends[i]),
+                    ),
                   ),
                 ),
+              )
     );
   }
 }

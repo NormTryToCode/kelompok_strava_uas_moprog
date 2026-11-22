@@ -5,8 +5,14 @@ import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.d
 class FriendCard extends StatelessWidget {
   final Friend friend;
   final VoidCallback onRemove;
+  final VoidCallback? onTap;
 
-  const FriendCard({super.key, required this.friend, required this.onRemove});
+  const FriendCard({
+    super.key,
+    required this.friend,
+    required this.onRemove,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,7 @@ class FriendCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: Styles.accent,
           child: Text(friend.name[0], style: const TextStyle(color: Colors.white)),
