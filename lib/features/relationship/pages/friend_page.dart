@@ -13,7 +13,7 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-  final FriendRepository _repo = PrefsFriendRepository();
+  final FriendRepository _repo = FriendRepository.instance;
   List<Friend> _friends = [];
   bool _loading = true;
 

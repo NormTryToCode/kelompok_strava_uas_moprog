@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/message.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/firestore_message_repository.dart';
 
 abstract class MessageRepository {
-  static MessageRepository instance = PrefsMessageRepository();
+  static MessageRepository instance = FirestoreMessageRepository();
 
   Future<List<Message>> getMessages(String friendId);
   Future<void> addMessage(Message message);
