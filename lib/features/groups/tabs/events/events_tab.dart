@@ -13,7 +13,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dar
 class EventsTab extends ConsumerWidget {
   const EventsTab({super.key});
 
-  static const _previewLimit = 5;
+  static const _previewLimit = 2;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,27 +74,32 @@ class EventsTab extends ConsumerWidget {
                   onTap: () => EventDetailPage.open(context, preview[i]),
                 ),
               ],
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
+            const SizedBox(height: 14),
             SizedBox(
               width: double.infinity,
-              height: 48,
+              height: 46,
               child: OutlinedButton.icon(
                 onPressed: () => BrowseEventsPage.open(context),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Styles.accent,
-                  backgroundColor: Palette.selectedFill,
-                  side: BorderSide(color: Palette.teal.withAlpha(150)),
+                  foregroundColor: Palette.textPrimary,
+                  backgroundColor: Palette.deepNavy,
+                  side: const BorderSide(color: Palette.deepTeal),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                icon: const Icon(Icons.explore_outlined, size: 20),
+                icon: const Icon(
+                  Icons.explore_outlined,
+                  size: 19,
+                  color: Palette.gold,
+                ),
                 label: Text(
                   upcoming.length > preview.length
                       ? 'Browse all ${upcoming.length} events'
                       : 'Browse Events',
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
