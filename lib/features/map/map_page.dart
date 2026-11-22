@@ -4,6 +4,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/user_location_marker.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/my_location_button.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/models/place_spot.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/repositories/spot_repository.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_marker.dart';
 import 'dart:async';
 
 class MapPage extends StatefulWidget {
@@ -18,6 +21,20 @@ class _MapPageState extends State<MapPage> {
   LatLng? _userPosition;
   StreamSubscription<Position>? _positionSub;
   bool _follow = true;
+
+  List<PlaceSpot> _spots = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSpots();
+  }
+
+  Future<void> _loadSpots() async {
+    final spots = await SpotRepository.instance.getSpots();
+    if (!mounted) return;
+    setState(() => _spots = spots);
+  }
 
   Future<bool> _ensurePermission() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
@@ -99,6 +116,17 @@ class _MapPageState extends State<MapPage> {
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.example.kelompok_strava_uas_moprog',
               maxNativeZoom: 19,
+            ),
+            MarkerLayer(
+              markers: [
+                for (final s in _spots)
+                  Marker(
+                    point: s.position,
+                    width: 36,
+                    height: 36,
+                    child: SpotMarker(type: s.type),
+                  ),
+              ],
             ),
             if (_userPosition != null)
               MarkerLayer(
