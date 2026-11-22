@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/extensions/int_extensions.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
@@ -18,14 +19,44 @@ class ClubEventCard extends StatelessWidget {
     this.isPast = false,
   });
 
+  String _formatDistance() {
+    final d = event.distance!;
+    final text = d == d.roundToDouble() ? d.toStringAsFixed(0) : d.toString();
+    return '$text${event.distanceUnit.label}';
+  }
+
+  String get _metaLine {
+    final parts = <String>[
+      if (event.distance != null) _formatDistance(),
+      event.kind.name,
+      event.placeLabel,
+    ];
+    return parts.join(' \u00b7 ');
+  }
+
+  String get _goingLine {
+    if (event.attendeeCount <= 0) return "Don't forget to RSVP";
+    if (event.attendeeCount == 1) return '1 is going';
+    return '${event.attendeeCount} are going';
+  }
+
+  String get _hostLine {
+    final members = event.clubMemberCount;
+    if (members == null) return event.clubName;
+    return '${event.clubName} \u00b7 ${members.withThousands} members';
+  }
+
+  String get _clubInitial {
+    final trimmed = event.clubName.trim();
+    return trimmed.isEmpty ? '?' : trimmed[0].toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final timeLabel = formatTime(TimeOfDay.fromDateTime(displayDate));
-
     return SoftCard(
       onTap: onTap,
       padding: const EdgeInsets.all(14),
-      radius: 20,
+      radius: 16,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -43,7 +74,7 @@ class ClubEventCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 16.5,
+                          fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                         ),
@@ -54,10 +85,10 @@ class ClubEventCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                          vertical: 3,
+                          vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Palette.teal.withAlpha(30),
+                          color: Styles.accent.withAlpha(32),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
@@ -65,7 +96,7 @@ class ClubEventCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: Palette.teal,
+                            color: Styles.accent,
                           ),
                         ),
                       ),
@@ -78,16 +109,38 @@ class ClubEventCard extends StatelessWidget {
                     Icon(
                       event.sport?.icon ?? event.kind.icon,
                       size: 14.5,
-                      color: isPast ? Styles.tabInactive : Palette.teal,
+                      color: Styles.tabInactive,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        '${event.kind.name} \u00b7 ${event.placeLabel}',
+                        _metaLine,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 13.5,
+                          fontSize: 13,
+                          color: Styles.tabInactive,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.people_outline,
+                      size: 14.5,
+                      color: Styles.tabInactive,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        _goingLine,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
                           color: Styles.tabInactive,
                         ),
                       ),
@@ -97,15 +150,27 @@ class ClubEventCard extends StatelessWidget {
                 const SizedBox(height: 5),
                 Row(
                   children: [
-                    Icon(
-                      event.recurrence == null ? Icons.schedule : Icons.repeat,
-                      size: 13.5,
-                      color: Styles.tabInactive,
+                    Container(
+                      width: 18,
+                      height: 18,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Styles.accent.withAlpha(34),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        _clubInitial,
+                        style: const TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          color: Styles.accent,
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        '$timeLabel \u00b7 ${event.clubName} \u00b7 ${event.rsvpLabel}',
+                        _hostLine,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -118,12 +183,6 @@ class ClubEventCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 4),
-          const Icon(
-            Icons.chevron_right,
-            size: 20,
-            color: Styles.tabInactive,
           ),
         ],
       ),
@@ -142,17 +201,14 @@ class _CalendarDateBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final headerColor = isPast ? Styles.inactive : Palette.teal;
-    final headerTextColor = isPast ? Styles.tabInactive : Styles.background;
+    final headerColor = isPast ? Styles.inactive : Styles.accent;
 
     return Container(
-      width: 58,
+      width: 56,
       decoration: BoxDecoration(
         color: Palette.fieldFill,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isPast ? Palette.cardBorder : Palette.teal.withAlpha(110),
-        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Palette.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -164,12 +220,11 @@ class _CalendarDateBadge extends StatelessWidget {
             color: headerColor,
             alignment: Alignment.center,
             child: Text(
-              monthShort(date.month).toUpperCase(),
+              monthShort(date.month),
               style: TextStyle(
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
-                letterSpacing: 0.7,
-                color: headerTextColor,
+                color: isPast ? Styles.tabInactive : Colors.white,
               ),
             ),
           ),
