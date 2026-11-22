@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/widgets/checkbox_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
@@ -263,7 +264,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MainShell(),
+                        builder: (context) => const ForgetPassword(),
                       ),
                     );
                   },
