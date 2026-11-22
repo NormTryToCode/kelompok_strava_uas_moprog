@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/widgets/checkbox_widget.dart';
@@ -75,8 +74,29 @@ class LoginWidget extends StatelessWidget {
             const SizedBox(height: 2),
 
             CheckBoxWidget(checkBoxText: "Remember Me"),
-            CheckBoxWidget(checkBoxText: "I agree to the term&services"),
-
+            CheckBoxWidget(
+              checkBoxText: "I agree to the ",
+              linkText: "Terms & Services",
+              onLinkTap: () {
+                showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text("Terms & Services"),
+                  content: const SingleChildScrollView(
+                  child: Text(
+                    "By using this app, you agree to our Terms & Services and Privacy Policy.",
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Close"),
+                  ),
+                ],
+                ),
+              );
+            },
+            ),
             const SizedBox(height: 4),
             SizedBox(
               width: double.infinity,
