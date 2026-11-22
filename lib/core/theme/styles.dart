@@ -36,13 +36,22 @@ class Styles {
 }
 
 class Palette {
-  Palette._();
+Palette._();
 
-  static const teal = Styles.deepTeal;
+  static const teal = Color(0xFF58B4B5); 
+  static const cardBorder = Color(0xFF223847);
+  static const fieldFill = Color(0xFF0E1821);
+  static const selectedFill = Color(0xFF143537); 
 
-  static const cardBorder = Color(0xFF1B3A39);
-  static const fieldFill = Color(0xFF0A141B);
-  static const selectedFill = Color(0xFF142D2B);
+  static const deepNavy = Color(0xFF15222E);
+  static const deepTeal = Color(0xFF1C5958); 
+  static const marigold = Color(0xFFF08A00); 
+  static const aqua = Color(0xFF58B4B5); 
+  static const gold = Color(0xFFF7C325); 
+
+  static const textPrimary = Color(0xFFF8FAFC);
+  static const textSecondary = Color(0xFF9FB0BE);
+  static const textMuted = Color(0xFF6B8090);
 
   static const primaryGradient = LinearGradient(
     begin: Alignment.centerLeft,
