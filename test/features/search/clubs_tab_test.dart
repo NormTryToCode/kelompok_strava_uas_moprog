@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/clubs_tab.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Widget _wrap(SearchClubsTab tab) {
-  return MaterialApp(home: Scaffold(body: tab));
+  return ProviderScope(
+    child: MaterialApp(home: Scaffold(body: tab)),
+  );
 }
 
 void main() {
