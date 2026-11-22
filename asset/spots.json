@@ -1,0 +1,6 @@
+[
+  {"id": "1", "name": "GBK Senayan", "type": "run", "lat": -6.2186, "lng": 106.8019},
+  {"id": "2", "name": "Monas", "type": "run", "lat": -6.1754, "lng": 106.8272},
+  {"id": "3", "name": "Taman Suropati", "type": "run", "lat": -6.1990, "lng": 106.8330},
+  {"id": "4", "name": "Jalur Sepeda Sudirman", "type": "bike", "lat": -6.2088, "lng": 106.8230}
+]
