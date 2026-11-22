@@ -38,40 +38,29 @@ class Styles {
 class Palette {
   Palette._();
 
-  static const teal = Styles.deepTeal;
+  static const gold = Color(0xFFF5B041);
+  static const goldSurface = Color(0xFF292011);
 
-  static const cardBorder = Color(0xFF1B3A39);
-  static const fieldFill = Color(0xFF0A141B);
-  static const selectedFill = Color(0xFF142D2B);
+  static const sky = Color(0xFF38BDF8);
+  static const skySurface = Color(0xFF0F2433);
 
-  static const primaryGradient = LinearGradient(
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-    colors: [Styles.champagne, Styles.accent],
-  );
+  static const emerald = Color(0xFF34D399);
+  static const emeraldSurface = Color(0xFF0E2922);
 
-  static const _covers = <List<Color>>[
-    [Color(0xFFEFD7AB), Color(0xFFC04E01)],
-    [Color(0xFF12403C), Color(0xFF060B14)],
-    [Color(0xFFD8DADB), Color(0xFF12403C)],
-    [Color(0xFF2B6F68), Color(0xFF0D262B)],
-    [Color(0xFFE29D52), Color(0xFF8F3801)],
-    [Color(0xFF47696B), Color(0xFF060B14)],
-  ];
+  static const coral = Color(0xFFFB7185);
+  static const coralSurface = Color(0xFF2C141C);
 
-  static List<Color> coverColors(String seed) {
-    final hash = seed.codeUnits
-        .fold<int>(0, (acc, unit) => (acc * 31 + unit) & 0x7fffffff);
-    return _covers[hash % _covers.length];
-  }
+  static const textPrimary = Color(0xFFF8FAFC);
+  static const textSecondary = Color(0xFF94A3B8);
+  static const textMuted = Color(0xFF64748B);
 
-  static LinearGradient coverFor(String seed) {
-    return LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: coverColors(seed),
-    );
-  }
+  static const surfaceElevated = Color(0xFF162235);
+  static const fieldFill = Color(0xFF0B121E);
+  static const selectedFill = goldSurface;
+  static const cardBorder = Color(0xFF1E293B);
+  static const cardBorderHighlight = Color(0xFF334155);
+
+  static const teal = gold;
 }
 
 class Radii {
