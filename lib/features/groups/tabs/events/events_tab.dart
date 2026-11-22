@@ -81,9 +81,12 @@ class EventsTab extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: () => BrowseEventsPage.open(context),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Styles.accent,
-                  side: BorderSide(color: Styles.accent.withAlpha(160)),
-                  shape: const StadiumBorder(),
+                  foregroundColor: Palette.teal,
+                  backgroundColor: Palette.selectedFill,
+                  side: BorderSide(color: Palette.teal.withAlpha(150)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 icon: const Icon(Icons.explore_outlined, size: 20),
                 label: Text(
