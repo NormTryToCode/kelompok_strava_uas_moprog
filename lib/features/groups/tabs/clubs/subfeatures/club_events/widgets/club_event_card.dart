@@ -18,6 +18,18 @@ class ClubEventCard extends StatelessWidget {
     this.isPast = false,
   });
 
+  Color get _kindColor {
+    if (isPast) return Palette.textMuted;
+    switch (event.kind.id) {
+      case 'workout':
+        return Palette.gold;
+      case 'competition':
+        return Palette.marigold;
+      default:
+        return Palette.aqua;
+    }
+  }
+
   String _formatDistance() {
     final d = event.distance!;
     final text = d == d.roundToDouble() ? d.toStringAsFixed(0) : d.toString();
@@ -48,15 +60,15 @@ class ClubEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accentGold = isPast ? Styles.tabInactive : Palette.teal;
+    final kindAccent = _kindColor;
 
     return Material(
-      color: Styles.surface,
+      color: Palette.deepNavy,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(
           color: !isPast && event.isAttending
-              ? Palette.teal.withAlpha(140)
+              ? Palette.aqua.withAlpha(150)
               : Palette.cardBorder,
         ),
       ),
@@ -67,15 +79,10 @@ class ClubEventCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: 3.5,
-                color: isPast
-                    ? Styles.inactive
-                    : (event.isAttending ? Styles.accent : Palette.teal),
-              ),
+              Container(width: 3.5, color: kindAccent),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 13, 14, 12),
+                  padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -84,10 +91,10 @@ class ClubEventCard extends StatelessWidget {
                           Icon(
                             event.sport?.icon ?? event.kind.icon,
                             size: 14,
-                            color: accentGold,
+                            color: kindAccent,
                           ),
                           const SizedBox(width: 6),
-                          Flexible(
+                          Expanded(
                             child: Text(
                               '${(event.sport?.name ?? event.kind.name).toUpperCase()} \u00b7 ${event.kind.name.toUpperCase()}',
                               maxLines: 1,
@@ -95,18 +102,28 @@ class ClubEventCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: 0.7,
-                                color: accentGold,
+                                letterSpacing: 0.6,
+                                color: kindAccent,
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            _dateStamp,
-                            style: const TextStyle(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w600,
-                              color: Styles.tabInactive,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Palette.selectedFill,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              _dateStamp,
+                              style: const TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600,
+                                color: Palette.textSecondary,
+                              ),
                             ),
                           ),
                         ],
@@ -118,15 +135,15 @@ class ClubEventCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               event.name,
-                              maxLines: 2,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 16.5,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w800,
                                 height: 1.2,
                                 color: isPast
-                                    ? Styles.tabInactive
-                                    : Colors.white,
+                                    ? Palette.textMuted
+                                    : Palette.textPrimary,
                               ),
                             ),
                           ),
@@ -134,14 +151,14 @@ class ClubEventCard extends StatelessWidget {
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
+                                horizontal: 7,
+                                vertical: 2.5,
                               ),
                               decoration: BoxDecoration(
-                                color: Palette.selectedFill,
+                                color: Palette.deepTeal.withAlpha(110),
                                 borderRadius: BorderRadius.circular(6),
                                 border: Border.all(
-                                  color: Palette.teal.withAlpha(130),
+                                  color: Palette.aqua.withAlpha(150),
                                 ),
                               ),
                               child: const Text(
@@ -150,14 +167,14 @@ class ClubEventCard extends StatelessWidget {
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.6,
-                                  color: Palette.teal,
+                                  color: Palette.aqua,
                                 ),
                               ),
                             ),
                           ],
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 5),
                       Row(
                         children: [
                           Icon(
@@ -165,7 +182,7 @@ class ClubEventCard extends StatelessWidget {
                                 ? Icons.public
                                 : Icons.place_outlined,
                             size: 14,
-                            color: Styles.tabInactive,
+                            color: Palette.textMuted,
                           ),
                           const SizedBox(width: 5),
                           Expanded(
@@ -177,13 +194,13 @@ class ClubEventCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: Styles.tabInactive,
+                                color: Palette.textSecondary,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 11),
+                      const SizedBox(height: 10),
                       const Divider(height: 1, color: Palette.cardBorder),
                       const SizedBox(height: 9),
                       Row(
@@ -193,10 +210,10 @@ class ClubEventCard extends StatelessWidget {
                             height: 20,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Palette.selectedFill,
+                              color: Palette.deepTeal.withAlpha(120),
                               borderRadius: BorderRadius.circular(5),
                               border: Border.all(
-                                color: Palette.teal.withAlpha(110),
+                                color: Palette.deepTeal,
                               ),
                             ),
                             child: Text(
@@ -204,7 +221,7 @@ class ClubEventCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,
-                                color: Palette.teal,
+                                color: Palette.gold,
                               ),
                             ),
                           ),
@@ -216,8 +233,8 @@ class ClubEventCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: Styles.tabInactive,
+                                fontWeight: FontWeight.w500,
+                                color: Palette.textSecondary,
                               ),
                             ),
                           ),
@@ -225,15 +242,19 @@ class ClubEventCard extends StatelessWidget {
                           Icon(
                             Icons.people_outline,
                             size: 14,
-                            color: accentGold,
+                            color: event.isAttending
+                                ? Palette.aqua
+                                : Palette.textMuted,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             _goingLabel,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: event.isAttending
+                                  ? Palette.aqua
+                                  : Palette.textPrimary,
                             ),
                           ),
                         ],

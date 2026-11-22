@@ -1,56 +1,37 @@
+import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/post_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/repositories/local_json_store.dart';
 
 class PostRepository {
-  final _store = LocalJsonStore<ClubPost>(
-    fileName: 'posts.json',
-    rootKey: 'posts',
-    fromJson: ClubPost.fromJson,
-    toJson: (p) => p.toJson(),
-  );
+  static const _collection = 'posts';
+  final _db = DatabaseService.instance;
 
   Future<ClubPost> _updatePost(
     String postId,
     ClubPost Function(ClubPost current) transform,
   ) async {
-    final all = await _store.readAll();
-    ClubPost? updatedPost;
-
-    final updatedList = <ClubPost>[];
-    for (final post in all) {
-      if (post.id == postId) {
-        updatedPost = transform(post);
-        updatedList.add(updatedPost);
-      } else {
-        updatedList.add(post);
-      }
-    }
-
-    if (updatedPost == null) {
+    final rows = await _db.getWhere(_collection, 'id', postId);
+    if (rows.isEmpty) {
       throw StateError('Post not found: $postId');
     }
 
-    await _store.writeAll(updatedList);
-    return updatedPost;
+    final updated = transform(ClubPost.fromJson(rows.first));
+    await _db.save(_collection, updated.id, updated.toJson());
+    return updated;
   }
 
   Future<List<ClubPost>> getPostsByClub(String clubId) async {
-    final all = await _store.readAll();
-    final clubPosts = all.where((p) => p.clubId == clubId).toList()
+    final rows = await _db.getWhere(_collection, 'clubId', clubId);
+    final clubPosts = rows.map(ClubPost.fromJson).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return clubPosts;
   }
 
   Future<ClubPost> createPost(ClubPost post) async {
-    final all = await _store.readAll();
-    await _store.writeAll([post, ...all]);
+    await _db.save(_collection, post.id, post.toJson());
     return post;
   }
 
-  Future<void> deletePost(String postId) async {
-    final all = await _store.readAll();
-    await _store.writeAll(all.where((p) => p.id != postId).toList());
-  }
+  Future<void> deletePost(String postId) => _db.remove(_collection, postId);
 
   Future<ClubPost> toggleKudos(String postId) {
     return _updatePost(postId, (post) {

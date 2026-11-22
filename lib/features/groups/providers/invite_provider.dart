@@ -8,8 +8,8 @@ final clubInviteRepositoryProvider = Provider<ClubInviteRepository>((ref) {
   return ClubInviteRepository();
 });
 
-final invitableFriendsProvider = FutureProvider<List<Friend>>((ref) {
-  return PrefsFriendRepository().getFriends();
+final invitableFriendsProvider = FutureProvider.autoDispose<List<Friend>>((ref) {
+  return FriendRepository.instance.getFriends();
 });
 
 class ClubInvitesNotifier
