@@ -3,6 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class ClubActionButtons extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback? onInviteTap;
   final VoidCallback? onEditDetailsTap;
   final VoidCallback? onShareTap;
   final VoidCallback? onEventsTap;
@@ -12,6 +13,7 @@ class ClubActionButtons extends StatelessWidget {
   const ClubActionButtons({
     super.key,
     required this.onTap,
+    this.onInviteTap,
     this.onEditDetailsTap,
     this.onShareTap,
     this.onEventsTap,
@@ -22,7 +24,7 @@ class ClubActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      (Icons.person_add_alt, 'Invite', onTap),
+      (Icons.person_add_alt, 'Invite', onInviteTap ?? onTap),
       (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
       (Icons.share_outlined, 'Share', onShareTap ?? onTap),
       (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
