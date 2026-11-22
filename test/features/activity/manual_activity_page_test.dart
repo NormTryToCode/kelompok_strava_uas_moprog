@@ -5,6 +5,9 @@ import 'package:kelompok_strava_uas_moprog/features/activity/activity_provider.d
 import 'package:kelompok_strava_uas_moprog/features/activity/activity_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/manual_activity_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activity.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 
 void _tallScreen(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
@@ -16,6 +19,7 @@ ProviderContainer _container() {
   final container = ProviderContainer(
     overrides: [
       activityStoreProvider.overrideWithValue(MemoryActivityStore()),
+      settingsStoreProvider.overrideWithValue(MemorySettingsStore())
     ],
   );
   addTearDown(container.dispose);
@@ -113,5 +117,27 @@ void main() {
     expect(saved.distanceKm, 25.5);
     expect(saved.date, DateTime(2026, 11, 10));
     expect(find.text('Activity saved'), findsOneWidget);
+  });
+  testWidgets('menyimpan aktivitas valid juga menambah notifikasi belum dibaca',
+      (tester) async {
+    _tallScreen(tester);
+    final container = _container();
+    final unreadBefore = container.read(unreadCountProvider);
+
+    await tester.pumpWidget(_page(container));
+    await _fill(
+      tester,
+      title: 'Evening Run',
+      duration: '30',
+      distance: '5',
+    );
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(container.read(unreadCountProvider), unreadBefore + 1);
+    expect(
+      container.read(notificationsProvider).first.title,
+      'Activity logged: Evening Run',
+    );
   });
 }

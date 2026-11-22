@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 
 void _tallScreen(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
@@ -132,7 +133,7 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Log out'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome User'), findsOneWidget);
+    expect(find.byType(LoginPage), findsOneWidget);
     expect(find.text('Settings'), findsNothing);
   });
 }

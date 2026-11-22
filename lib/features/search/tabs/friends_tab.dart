@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_all.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_clubs_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_history_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/contacts_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/qr_code_tab.dart';
@@ -35,7 +35,6 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   final TextEditingController _text = TextEditingController();
   final FocusNode _focus = FocusNode();
   late final List<Person> _people = widget.people ?? buildDummyPeople();
-  late final List<SearchClub> _clubs = widget.clubs ?? buildDummyClubs();
   String _query = '';
 
   @override
@@ -100,10 +99,10 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
     );
   }
 
-  Widget _body(List<String> history) {
+  Widget _body(List<String> history, List<SearchClub> clubs) {
     if (_query.trim().isNotEmpty) {
       return SearchResultsView(
-        results: searchAll(_query, people: _people, clubs: _clubs),
+        results: searchAll(_query, people: _people, clubs: clubs),
         onClubTap: _openClub,
       );
     }
@@ -124,6 +123,8 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   @override
   Widget build(BuildContext context) {
     final history = ref.watch(searchHistoryProvider);
+    final watchedClubs = ref.watch(searchClubsProvider);
+    final clubs = widget.clubs ?? watchedClubs;
     return Column(
       children: [
         SearchField(
@@ -134,7 +135,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
           onSubmitted: (value) =>
               ref.read(searchHistoryProvider.notifier).add(value),
         ),
-        Expanded(child: _body(history)),
+        Expanded(child: _body(history, clubs)),
       ],
     );
   }
