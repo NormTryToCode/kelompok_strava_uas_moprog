@@ -7,6 +7,8 @@ import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activ
 import 'package:kelompok_strava_uas_moprog/features/activity/utils/activity_format.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 
 class ManualActivityPage extends ConsumerStatefulWidget {
   final DateTime? initialDate;
@@ -76,6 +78,11 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
     );
 
     await ref.read(activityProvider.notifier).add(activity);
+    final unit = ref.read(settingsProvider).unit;
+    ref.read(notificationsProvider.notifier).notifyActivityLogged(
+          title: activity.title,
+          distanceLabel: formatDistanceWithUnit(activity.distanceKm, unit),
+        );
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
