@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/home_streak_widget.dart';
-import 'package:kelompok_strava_uas_moprog/features/home/widgets/badge_widget.dart';
-import 'package:kelompok_strava_uas_moprog/features/home/widgets/streak_chart_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/horizontal_carousel.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
@@ -22,7 +21,7 @@ class HomePage extends StatelessWidget {
     {'title': 'Rookie Runner', 'image': 'asset/images/rookie_runner.png'},
     {'title': 'Master Runner', 'image': 'asset/images/master_runner.png'},
     {'title': 'Grand Master Runner', 'image': 'asset/images/grand_master_runner.png'},
-    {'title': 'Super Speed', 'image': 'asset/images/super_speed.png'},
+    {'title': 'Elite Global Runeer', 'image': 'asset/images/elite_global_runner.png'},
   ];
 
   @override
@@ -57,16 +56,33 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.only(bottom: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 32,
             children: [
-              SizedBox(height: 4.1),
-              HomeStreakWidget(),
-              StreakChartWidget(),
+              const SizedBox(height: 4),
+              const HomeStreakWidget(),
+              const SizedBox(height: 2),
+              HorizontalCarousel.cards(
+                items: _badges,
+                bordered: true,
+                cardBuilder: (context, badge) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Image.asset(badge['image']!, fit: BoxFit.contain),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      badge['title']!,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
