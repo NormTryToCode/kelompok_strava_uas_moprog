@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
@@ -15,6 +14,7 @@ import 'overview/widgets/profile_avatar_preview_dialog.dart';
 import 'overview/widgets/profile_header_widget.dart';
 import 'overview/widgets/profile_tab_bar.dart';
 import 'shared/services/profile_share_service.dart';
+import 'shared/utils/profile_page_route.dart';
 import 'shared/utils/profile_snackbar_helper.dart';
 import 'social_feedback/screens/feedback_screen.dart';
 import 'social_feedback/screens/followers_following_screen.dart';
@@ -32,9 +32,12 @@ class ProfilePage extends ConsumerWidget {
   ) {
     showDialog(
       context: context,
-      barrierColor: const Color.fromARGB(200, 15, 20, 30),
+      barrierColor: const Color.fromARGB(210, 7, 6, 12),
       builder: (BuildContext context) {
-        return ProfileAvatarPreviewDialog(profileData: profileData);
+        return Theme(
+          data: buildProfileDarkTheme(),
+          child: ProfileAvatarPreviewDialog(profileData: profileData),
+        );
       },
     );
   }
@@ -106,33 +109,35 @@ class ProfilePage extends ConsumerWidget {
             onTapAktivitas: () => navNotifier.selectTab(1),
             onTapLainnya: () => navNotifier.selectTab(2),
           ),
-          if (navState.activeTab == 0)
-            KemajuanTab(
-              runSessions: runSessions,
-              onDecrement: () => statsNotifier.decrementRun(),
-              onReset: () => statsNotifier.resetRun(),
-              onIncrement: (runSessions < 10)
-                ? () => statsNotifier.incrementRun(maxLimit: 10)
-                : null,
-              onOpenFeedback: () =>
-                navNotifier.openScreen(ProfileSubScreen.feedback),
-            ),
-          if (navState.activeTab == 1)
-            AktivitasTab(
-              activityCount: runSessions,
-              onAddFirstActivity: () => statsNotifier.incrementRun(),
-            ),
-          if (navState.activeTab == 2)
-            LainnyaTab(
-              onOpenTrophyCase: () =>
-                navNotifier.openScreen(ProfileSubScreen.trophyCase),
-              onOpenGearCatalog: () =>
-                navNotifier.openScreen(ProfileSubScreen.gearManagement),
-              onOpenSegments: () =>
-                navNotifier.openScreen(ProfileSubScreen.segments),
-              onOpenStatistics: () =>
-                navNotifier.openScreen(ProfileSubScreen.statistics),
-            ),
+          IndexedStack(
+            index: navState.activeTab,
+            children: [
+              KemajuanTab(
+                runSessions: runSessions,
+                onDecrement: () => statsNotifier.decrementRun(),
+                onReset: () => statsNotifier.resetRun(),
+                onIncrement: (runSessions < 10)
+                  ? () => statsNotifier.incrementRun(maxLimit: 10)
+                  : null,
+                onOpenFeedback: () =>
+                  navNotifier.openScreen(ProfileSubScreen.feedback),
+              ),
+              AktivitasTab(
+                activityCount: runSessions,
+                onAddFirstActivity: () => statsNotifier.incrementRun(),
+              ),
+              LainnyaTab(
+                onOpenTrophyCase: () =>
+                  navNotifier.openScreen(ProfileSubScreen.trophyCase),
+                onOpenGearCatalog: () =>
+                  navNotifier.openScreen(ProfileSubScreen.gearManagement),
+                onOpenSegments: () =>
+                  navNotifier.openScreen(ProfileSubScreen.segments),
+                onOpenStatistics: () =>
+                  navNotifier.openScreen(ProfileSubScreen.statistics),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -140,10 +145,10 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Animate(
-        effects: const [FadeEffect()],
+    return Theme(
+      data: buildProfileDarkTheme(),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           backgroundColor: Styles.canvas,
           body: SafeArea(

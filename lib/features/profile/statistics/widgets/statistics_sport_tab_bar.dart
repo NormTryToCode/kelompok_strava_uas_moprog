@@ -12,9 +12,15 @@ class StatisticsSportTabBar extends StatelessWidget {
   });
 
   static const List<IconData> _sportIcons = [
-    Icons.directions_bike,
-    Icons.directions_run,
-    Icons.pool,
+    Icons.directions_bike_rounded,
+    Icons.directions_run_rounded,
+    Icons.pool_rounded,
+  ];
+
+  static const List<String> _sportLabels = [
+    'Sepeda',
+    'Lari',
+    'Renang',
   ];
 
   @override
@@ -28,27 +34,39 @@ class StatisticsSportTabBar extends StatelessWidget {
               final bool isSelected = (activeSportIndex == index);
               return Expanded(
                 child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTap: () => onSelectSport(index),
-                  child: Container(
-                    color: Colors.transparent,
+                  child: Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Column(
                       children: [
                         Icon(
                           _sportIcons[index],
-                          size: 28,
+                          size: 25,
                           color: isSelected
-                              ? Styles.primaryLight
-                              : Styles.surfaceHighlight,
+                            ? Styles.primaryLight
+                            : Styles.textSecondary,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 4),
+                        Text(
+                          _sportLabels[index],
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                            color: isSelected
+                              ? Styles.textPrimary
+                              : Styles.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         Container(
-                          width: 32,
+                          width: 44,
                           height: 3.5,
                           decoration: BoxDecoration(
-                            color: isSelected
-                                ? Styles.accent
-                                : Colors.transparent,
+                            gradient: isSelected ? Styles.primaryGradient : null,
+                            color: isSelected ? null : Colors.transparent,
                             borderRadius: BorderRadius.circular(2.0),
                           ),
                         ),
@@ -59,10 +77,9 @@ class StatisticsSportTabBar extends StatelessWidget {
               );
             }),
           ),
-          Container(height: 1, color: Styles.surfaceHighlight),
+          Container(height: 1, color: Styles.border),
         ],
       ),
     );
   }
 }
-
