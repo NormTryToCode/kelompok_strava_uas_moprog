@@ -6,13 +6,13 @@ List<Person> buildDummyPeople() {
       id: 'p1',
       name: 'Dewi Anggraini',
       location: 'Bandung, West Java',
-      tag: 'Strava fan favorite',
+      tag: 'Stride fan favorite'
     ),
     Person(
       id: 'p2',
       name: 'Rizky Pratama',
       location: 'Surabaya, East Java',
-      tag: 'Strava fan favorite',
+      tag: 'Stride fan favorite'
     ),
     Person(
       id: 'p3',

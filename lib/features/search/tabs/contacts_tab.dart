@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_contacts.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/contact_entry.dart';
 
@@ -94,7 +95,7 @@ class _PermissionPrompt extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              'See which of your contacts are on Strava and invite the rest.',
+              'See which of your contacts are on ${AppBrand.name} and invite the rest.',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white70, fontSize: 15),
             ),

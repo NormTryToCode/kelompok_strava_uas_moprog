@@ -12,7 +12,7 @@ enum SportType {
   const SportType(this.label, this.memberNoun);
 }
 
-class Club {
+class SearchClub {
   final String id;
   final String name;
   final SportType sport;
@@ -20,7 +20,7 @@ class Club {
   final String city;
   final bool isVerified;
 
-  const Club({
+  const SearchClub({
     required this.id,
     required this.name,
     required this.sport,
@@ -40,8 +40,8 @@ class Club {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  Club copyWith({int? memberCount}) {
-    return Club(
+  SearchClub copyWith({int? memberCount}) {
+    return SearchClub(
       id: id,
       name: name,
       sport: sport,

@@ -3,16 +3,16 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
-class ClubDetailPage extends StatefulWidget {
-  final Club club;
+class SearchClubDetailPage extends StatefulWidget {
+  final SearchClub club;
 
-  const ClubDetailPage({super.key, required this.club});
+  const SearchClubDetailPage({super.key, required this.club});
 
   @override
-  State<ClubDetailPage> createState() => _ClubDetailPageState();
+  State<SearchClubDetailPage> createState() => _SearchClubDetailPageState();
 }
 
-class _ClubDetailPageState extends State<ClubDetailPage> {
+class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
   bool _joined = false;
 
   @override

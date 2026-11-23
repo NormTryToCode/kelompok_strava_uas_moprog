@@ -3,7 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 class ClubTile extends StatelessWidget {
-  final Club club;
+  final SearchClub club;
   final VoidCallback? onTap;
 
   const ClubTile({super.key, required this.club, this.onTap});

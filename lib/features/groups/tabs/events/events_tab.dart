@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/event_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/widgets/club_event_card.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_events/widgets/event_detail_sheet.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/browse_events_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/event_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
@@ -12,6 +13,8 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dar
 class EventsTab extends ConsumerWidget {
   const EventsTab({super.key});
 
+  static const _previewLimit = 2;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final eventsAsync = ref.watch(eventsProvider);
@@ -19,7 +22,7 @@ class EventsTab extends ConsumerWidget {
 
     return eventsAsync.when(
       loading: () => const Center(
-        child: CircularProgressIndicator(color: Palette.teal),
+        child: CircularProgressIndicator(color: Styles.accent),
       ),
       error: (_, _) => Center(
         child: Padding(
@@ -36,7 +39,7 @@ class EventsTab extends ConsumerWidget {
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () => ref.invalidate(eventsProvider),
-                style: TextButton.styleFrom(foregroundColor: Palette.teal),
+                style: TextButton.styleFrom(foregroundColor: Styles.accent),
                 child: const Text('Try again'),
               ),
             ],
@@ -49,62 +52,59 @@ class EventsTab extends ConsumerWidget {
             .toList()
           ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
 
-        final past = allEvents.where((e) => e.startsAt.isBefore(now)).toList()
-          ..sort((a, b) => b.startsAt.compareTo(a.startsAt));
-
-        if (upcoming.isEmpty && past.isEmpty) {
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            children: const [_EmptyEventsCard()],
-          );
-        }
+        final preview = upcoming.take(_previewLimit).toList();
 
         return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
           children: [
-            if (upcoming.isNotEmpty) ...[
-              SectionTitle(
-                'Upcoming events',
-                trailing: CountPill(count: upcoming.length),
-              ),
-              const SizedBox(height: 12),
-              for (var i = 0; i < upcoming.length; i++) ...[
+            SectionTitle(
+              'Upcoming events',
+              trailing:
+                  upcoming.isEmpty ? null : CountPill(count: upcoming.length),
+            ),
+            const SizedBox(height: 12),
+            if (preview.isEmpty)
+              const _EmptyEventsCard()
+            else
+              for (var i = 0; i < preview.length; i++) ...[
                 if (i > 0) const SizedBox(height: 10),
                 ClubEventCard(
-                  event: upcoming[i],
-                  displayDate: upcoming[i].startsAt,
-                  onTap: () => showEventDetailSheet(
-                    context,
-                    event: upcoming[i],
-                    displayDate: upcoming[i].startsAt,
-                    isPast: false,
-                  ),
+                  event: preview[i],
+                  displayDate: preview[i].startsAt,
+                  onTap: () => EventDetailPage.open(context, preview[i]),
                 ),
               ],
-            ],
-            if (upcoming.isNotEmpty && past.isNotEmpty)
-              const SizedBox(height: 24),
-            if (past.isNotEmpty) ...[
-              SectionTitle(
-                'Past events',
-                trailing: CountPill(count: past.length),
+            const SizedBox(height: 14),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: OutlinedButton.icon(
+                onPressed: () => BrowseEventsPage.open(context),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Palette.textPrimary,
+                  backgroundColor: Palette.deepNavy,
+                  side: const BorderSide(color: Palette.deepTeal),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.explore_outlined,
+                  size: 19,
+                  color: Palette.gold,
+                ),
+                label: Text(
+                  upcoming.length > preview.length
+                      ? 'Browse all ${upcoming.length} events'
+                      : 'Browse Events',
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-              const SizedBox(height: 12),
-              for (var i = 0; i < past.length; i++) ...[
-                if (i > 0) const SizedBox(height: 10),
-                ClubEventCard(
-                  event: past[i],
-                  displayDate: past[i].startsAt,
-                  isPast: true,
-                  onTap: () => showEventDetailSheet(
-                    context,
-                    event: past[i],
-                    displayDate: past[i].startsAt,
-                    isPast: true,
-                  ),
-                ),
-              ],
-            ],
+            ),
           ],
         );
       },
@@ -133,7 +133,7 @@ class _EmptyEventsCard extends StatelessWidget {
           ),
           SizedBox(height: 4),
           Text(
-            'Create an event from any club to see it here.',
+            'Create an event from any club or browse upcoming events.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Styles.tabInactive),
           ),

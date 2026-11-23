@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/search_history_controller.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_history_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/friends_tab.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
 
-Widget _wrap(SearchHistoryController history) {
-  return MaterialApp(
-    home: Scaffold(
-      body: FriendsTab(controller: FollowController(), history: history),
-    ),
+ProviderContainer _container({List<String>? initial}) {
+  final container = ProviderContainer(
+    overrides: [
+      if (initial != null)
+        searchHistoryProvider.overrideWith(
+          () => SearchHistoryNotifier(initial: initial),
+        ),
+    ],
   );
+  addTearDown(container.dispose);
+  return container;
+}
+
+Widget _wrap({ProviderContainer? container}) {
+  const app = MaterialApp(
+    home: Scaffold(body: FriendsTab()),
+  );
+  if (container != null) {
+    return UncontrolledProviderScope(container: container, child: app);
+  }
+  return const ProviderScope(child: app);
 }
 
 void main() {
   testWidgets('mengetik kueri menampilkan hasil orang', (tester) async {
-    await tester.pumpWidget(_wrap(SearchHistoryController()));
+    await tester.pumpWidget(_wrap());
 
     await tester.enterText(find.byType(TextField), 'dewi');
     await tester.pump();
@@ -26,7 +41,7 @@ void main() {
 
   testWidgets('kueri yang cocok klub menampilkan bagian CLUBS',
       (tester) async {
-    await tester.pumpWidget(_wrap(SearchHistoryController()));
+    await tester.pumpWidget(_wrap());
 
     await tester.enterText(find.byType(TextField), 'swim');
     await tester.pump();
@@ -37,7 +52,7 @@ void main() {
 
   testWidgets('kueri tanpa kecocokan menampilkan pesan kosong',
       (tester) async {
-    await tester.pumpWidget(_wrap(SearchHistoryController()));
+    await tester.pumpWidget(_wrap());
 
     await tester.enterText(find.byType(TextField), 'zzz');
     await tester.pump();
@@ -46,22 +61,22 @@ void main() {
   });
 
   testWidgets('menekan tombol cari menyimpan kueri ke riwayat', (tester) async {
-    final history = SearchHistoryController();
+    final container = _container();
 
-    await tester.pumpWidget(_wrap(history));
+    await tester.pumpWidget(_wrap(container: container));
 
     await tester.enterText(find.byType(TextField), 'dewi');
     await tester.testTextInput.receiveAction(TextInputAction.search);
     await tester.pump();
 
-    expect(history.items, ['dewi']);
+    expect(container.read(searchHistoryProvider), ['dewi']);
   });
 
   testWidgets('kolom fokus dan kosong menampilkan riwayat pencarian',
       (tester) async {
-    await tester.pumpWidget(
-      _wrap(SearchHistoryController(initial: ['dewi'])),
-    );
+    final container = _container(initial: ['dewi']);
+
+    await tester.pumpWidget(_wrap(container: container));
 
     expect(find.text('RECENT SEARCHES'), findsNothing);
 
@@ -75,9 +90,9 @@ void main() {
 
   testWidgets('mengetuk item riwayat mengisi kolom dan menampilkan hasil',
       (tester) async {
-    await tester.pumpWidget(
-      _wrap(SearchHistoryController(initial: ['dewi'])),
-    );
+    final container = _container(initial: ['dewi']);
+
+    await tester.pumpWidget(_wrap(container: container));
 
     await tester.tap(find.byType(TextField));
     await tester.pump();
@@ -92,34 +107,34 @@ void main() {
   });
 
   testWidgets('menghapus satu riwayat lewat ikon tutup', (tester) async {
-    final history = SearchHistoryController(initial: ['dewi']);
+    final container = _container(initial: ['dewi']);
 
-    await tester.pumpWidget(_wrap(history));
+    await tester.pumpWidget(_wrap(container: container));
 
     await tester.tap(find.byType(TextField));
     await tester.pump();
     await tester.tap(find.byTooltip('Remove dewi'));
     await tester.pump();
 
-    expect(history.isEmpty, isTrue);
+    expect(container.read(searchHistoryProvider), isEmpty);
     expect(find.text('RECENT SEARCHES'), findsNothing);
   });
 
   testWidgets('Clear all mengosongkan riwayat', (tester) async {
-    final history = SearchHistoryController(initial: ['a', 'b']);
+    final container = _container(initial: ['a', 'b']);
 
-    await tester.pumpWidget(_wrap(history));
+    await tester.pumpWidget(_wrap(container: container));
 
     await tester.tap(find.byType(TextField));
     await tester.pump();
     await tester.tap(find.text('Clear all'));
     await tester.pump();
 
-    expect(history.isEmpty, isTrue);
+    expect(container.read(searchHistoryProvider), isEmpty);
   });
 
   testWidgets('mengetuk klub di hasil membuka halaman detail', (tester) async {
-    await tester.pumpWidget(_wrap(SearchHistoryController()));
+    await tester.pumpWidget(_wrap());
 
     await tester.enterText(find.byType(TextField), 'swim');
     await tester.pump();
