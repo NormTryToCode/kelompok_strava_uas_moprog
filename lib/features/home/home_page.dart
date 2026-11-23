@@ -9,7 +9,6 @@ import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_
 import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
-import 'package:kelompok_strava_uas_moprog/shared/widgets/upgrade_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
@@ -17,6 +16,14 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  static const List<Map<String, String>> _badges = [
+    {'title': 'Basic Runner', 'image': 'asset/images/basic_runner.png'},
+    {'title': 'Rookie Runner', 'image': 'asset/images/rookie_runner.png'},
+    {'title': 'Master Runner', 'image': 'asset/images/master_runner.png'},
+    {'title': 'Grand Master Runner', 'image': 'asset/images/grand_master_runner.png'},
+    {'title': 'Super Speed', 'image': 'asset/images/super_speed.png'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +67,6 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 4.1),
               HomeStreakWidget(),
               StreakChartWidget(),
-              BadgeWidget(),
             ],
           ),
         ),
