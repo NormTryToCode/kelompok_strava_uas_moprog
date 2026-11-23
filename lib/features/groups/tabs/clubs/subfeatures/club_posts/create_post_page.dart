@@ -31,10 +31,8 @@ class CreatePostPage extends ConsumerStatefulWidget {
   }) {
     return Navigator.of(context, rootNavigator: true).push<ClubPost>(
       MaterialPageRoute<ClubPost>(
-        builder: (_) => CreatePostPage(
-          club: club,
-          pickPhotoOnOpen: pickPhotoOnOpen,
-        ),
+        builder: (_) =>
+            CreatePostPage(club: club, pickPhotoOnOpen: pickPhotoOnOpen),
       ),
     );
   }
@@ -58,7 +56,8 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
       _authorRole == PostAuthorRole.club ? widget.club.name : 'You';
 
   bool get _canPublish {
-    final hasText = _titleController.text.trim().isNotEmpty ||
+    final hasText =
+        _titleController.text.trim().isNotEmpty ||
         _bodyController.text.trim().isNotEmpty;
     return (hasText || _imagePath != null) && !_saving;
   }
@@ -124,21 +123,24 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      for (var i = 0;
-                          i < PostAuthorRole.values.length;
-                          i++) ...[
+                      for (
+                        var i = 0;
+                        i < PostAuthorRole.values.length;
+                        i++
+                      ) ...[
                         if (i > 0) const SizedBox(width: 12),
                         Expanded(
                           child: ChoiceCard(
                             icon: PostAuthorRole.values[i].icon,
-                            title: PostAuthorRole.values[i] ==
-                                    PostAuthorRole.club
+                            title:
+                                PostAuthorRole.values[i] == PostAuthorRole.club
                                 ? widget.club.name
                                 : 'You',
                             subtitle: PostAuthorRole.values[i].subtitle,
                             selected: PostAuthorRole.values[i] == _authorRole,
-                            onTap: () => Navigator.of(sheetContext)
-                                .pop(PostAuthorRole.values[i]),
+                            onTap: () =>
+                                Navigator.of(sheetContext)
+                                    .pop(PostAuthorRole.values[i]),
                           ),
                         ),
                       ],
@@ -188,19 +190,22 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
 
   InputDecoration _inputDecoration({required String hint}) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Radii.field),
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: BorderRadius.circular(Radii.field),
+      borderSide: BorderSide(color: color, width: width),
+    );
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Styles.tabInactive),
+      hintStyle: const TextStyle(color: Styles.surfaceHighlight),
       filled: true,
-      fillColor: Palette.fieldFill,
-      counterStyle: const TextStyle(color: Styles.tabInactive, fontSize: 12),
+      fillColor: Styles.fieldFill,
+      counterStyle: const TextStyle(
+        color: Styles.surfaceHighlight,
+        fontSize: 12,
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      enabledBorder: border(Palette.cardBorder, 1.2),
-      focusedBorder: border(Palette.teal, 1.8),
+      enabledBorder: border(Styles.cardBorder, 1.2),
+      focusedBorder: border(Styles.teal, 1.8),
     );
   }
 
@@ -209,7 +214,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     final imagePath = _imagePath;
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: Column(
         children: [
           _Header(
@@ -241,13 +246,15 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Palette.selectedFill,
-                              border:
-                                  Border.all(color: Palette.teal, width: 1.5),
+                              color: Styles.selectedFill,
+                              border: Border.all(
+                                color: Styles.teal,
+                                width: 1.5,
+                              ),
                             ),
                             child: const Icon(
                               Icons.person_outline,
-                              color: Palette.teal,
+                              color: Styles.teal,
                               size: 22,
                             ),
                           ),
@@ -260,7 +267,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                                 'Posting as',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -309,7 +316,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                     controller: _titleController,
                     maxLength: 100,
                     textCapitalization: TextCapitalization.sentences,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -325,7 +332,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                     minLines: 5,
                     maxLines: 10,
                     textCapitalization: TextCapitalization.sentences,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     style: const TextStyle(
                       fontSize: 15.5,
                       height: 1.45,
@@ -399,7 +406,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                                 'Let members reply to this post',
                                 style: TextStyle(
                                   fontSize: 12.5,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                             ],
@@ -412,11 +419,12 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                           thumbColor: WidgetStateProperty.all(Colors.white),
                           trackColor: WidgetStateProperty.resolveWith(
                             (states) => states.contains(WidgetState.selected)
-                                ? Palette.teal
-                                : Styles.inactive,
+                                ? Styles.teal
+                                : Styles.surfaceHighlight,
                           ),
-                          trackOutlineColor:
-                              WidgetStateProperty.all(Colors.transparent),
+                          trackOutlineColor: WidgetStateProperty.all(
+                            Colors.transparent,
+                          ),
                         ),
                       ],
                     ),
@@ -427,8 +435,8 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
           ),
           Container(
             decoration: const BoxDecoration(
-              color: Styles.background,
-              border: Border(top: BorderSide(color: Palette.cardBorder)),
+              color: Styles.canvas,
+              border: Border(top: BorderSide(color: Styles.cardBorder)),
             ),
             child: SafeArea(
               top: false,
@@ -437,10 +445,10 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                 child: Row(
                   children: [
                     Material(
-                      color: Palette.fieldFill,
+                      color: Styles.fieldFill,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(Radii.button),
-                        side: const BorderSide(color: Palette.cardBorder),
+                        side: const BorderSide(color: Styles.cardBorder),
                       ),
                       child: InkWell(
                         onTap: _pickPhoto,
@@ -450,7 +458,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                           height: 54,
                           child: Icon(
                             Icons.add_photo_alternate_outlined,
-                            color: Palette.teal,
+                            color: Styles.teal,
                           ),
                         ),
                       ),
@@ -483,9 +491,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Styles.background,
+        color: Styles.canvas,
         border: Border(
-          bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
+          bottom: BorderSide(color: Styles.cardBorder, width: 0.8),
         ),
       ),
       child: SafeArea(
@@ -517,7 +525,7 @@ class _Header extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13.5,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -530,3 +538,4 @@ class _Header extends StatelessWidget {
     );
   }
 }
+

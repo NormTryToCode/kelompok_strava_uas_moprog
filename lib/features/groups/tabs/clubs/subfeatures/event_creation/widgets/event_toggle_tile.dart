@@ -39,7 +39,7 @@ class EventToggleTile extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       height: 1.3,
-                      color: Styles.tabInactive,
+                      color: Styles.surfaceHighlight,
                     ),
                   ),
                 ),
@@ -53,8 +53,8 @@ class EventToggleTile extends StatelessWidget {
           thumbColor: WidgetStateProperty.all(Colors.white),
           trackColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
-                ? Palette.teal
-                : Styles.inactive,
+                ? Styles.teal
+                : Styles.surfaceHighlight,
           ),
           trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
         ),

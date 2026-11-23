@@ -29,10 +29,7 @@ class _CropOverlayPainter extends CustomPainter {
   final Rect cropRect;
   final bool isDragging;
 
-  const _CropOverlayPainter({
-    required this.cropRect,
-    required this.isDragging,
-  });
+  const _CropOverlayPainter({required this.cropRect, required this.isDragging});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -50,8 +47,8 @@ class _CropOverlayPainter extends CustomPainter {
 
     final Paint gridPaint = Paint()
       ..color = isDragging
-        ? const Color.fromARGB(200, 255, 255, 255)
-        : const Color.fromARGB(140, 255, 255, 255)
+          ? const Color.fromARGB(200, 255, 255, 255)
+          : const Color.fromARGB(140, 255, 255, 255)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
@@ -80,14 +77,14 @@ class _CropOverlayPainter extends CustomPainter {
     );
 
     final Paint borderPaint = Paint()
-      ..color = Styles.tabActive
+      ..color = Styles.primaryLight
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8;
 
     canvas.drawRect(cropRect, borderPaint);
 
     final Paint cornerPaint = Paint()
-      ..color = Styles.tabActive
+      ..color = Styles.primaryLight
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
       ..strokeCap = StrokeCap.square;
@@ -141,3 +138,4 @@ class _CropOverlayPainter extends CustomPainter {
         oldDelegate.isDragging != isDragging;
   }
 }
+

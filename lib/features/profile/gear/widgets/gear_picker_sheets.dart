@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/athlete_gear.dart';
 
 class GearCategoryPickerSheet extends StatelessWidget {
   final GearCategory selectedCategory;
 
-  const GearCategoryPickerSheet({
-    super.key,
-    required this.selectedCategory,
-  });
+  const GearCategoryPickerSheet({super.key, required this.selectedCategory});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +25,7 @@ class GearCategoryPickerSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Styles.inactive,
+                color: Styles.surfaceHighlight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -38,7 +36,7 @@ class GearCategoryPickerSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
           const SizedBox(height: 12),
@@ -58,7 +56,9 @@ class GearCategoryPickerSheet extends StatelessWidget {
                     children: [
                       Icon(
                         category.icon,
-                        color: isSelected ? Styles.accent : Styles.tabInactive,
+                        color: isSelected
+                            ? Styles.accent
+                            : Styles.surfaceHighlight,
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -67,11 +67,11 @@ class GearCategoryPickerSheet extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             color: isSelected
-                              ? Styles.accent
-                              : Styles.tabActive,
+                                ? Styles.accent
+                                : Styles.primaryLight,
                           ),
                         ),
                       ),
@@ -87,7 +87,7 @@ class GearCategoryPickerSheet extends StatelessWidget {
       ),
     );
   }
-} 
+}
 
 class DefaultSportsFilterSheet extends StatefulWidget {
   final GearCategory category;
@@ -101,7 +101,7 @@ class DefaultSportsFilterSheet extends StatefulWidget {
 
   @override
   State<DefaultSportsFilterSheet> createState() =>
-    _DefaultSportsFilterSheetState();
+      _DefaultSportsFilterSheetState();
 }
 
 class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
@@ -117,7 +117,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
   Widget build(BuildContext context) {
     final List<String> allSports = widget.category.defaultSportsOptions;
     final bool isAllSelected =
-      allSports.isNotEmpty && _selected.length == allSports.length;
+        allSports.isNotEmpty && _selected.length == allSports.length;
 
     return Container(
       decoration: const BoxDecoration(
@@ -134,7 +134,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Styles.inactive,
+                color: Styles.surfaceHighlight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -148,7 +148,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
               ),
               TextButton(
@@ -177,7 +177,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
           const SizedBox(height: 10),
@@ -209,8 +209,9 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                             Icon(
                               widget.category.icon,
                               size: 20,
-                              color:
-                                checked ? Styles.accent : Styles.tabInactive,
+                              color: checked
+                                  ? Styles.accent
+                                  : Styles.surfaceHighlight,
                             ),
                             const SizedBox(width: 14),
                             Expanded(
@@ -218,16 +219,17 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                                 sport,
                                 style: const TextStyle(
                                   fontSize: 15,
-                                  color: Styles.tabActive,
+                                  color: Styles.primaryLight,
                                 ),
                               ),
                             ),
                             Icon(
                               checked
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
-                              color:
-                                checked ? Styles.accent : Styles.tabInactive,
+                                  ? Icons.check_box
+                                  : Icons.check_box_outline_blank,
+                              color: checked
+                                  ? Styles.accent
+                                  : Styles.surfaceHighlight,
                             ),
                           ],
                         ),
@@ -244,8 +246,8 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
               Expanded(
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Styles.tabActive,
-                    side: const BorderSide(color: Palette.cardBorder),
+                    foregroundColor: Styles.primaryLight,
+                    side: const BorderSide(color: Styles.cardBorder),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () => Navigator.of(context).pop(),
@@ -257,13 +259,13 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Styles.accent,
-                    foregroundColor: Styles.tabActive,
+                    foregroundColor: Styles.primaryLight,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () =>
-                    Navigator.of(context).pop(_selected.toList()),
+                      Navigator.of(context).pop(_selected.toList()),
                   child: Text('Terapkan (${_selected.length})'),
-                  ),
+                ),
               ),
             ],
           ),
@@ -300,7 +302,7 @@ class GearSubTypeSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Styles.inactive,
+                color: Styles.surfaceHighlight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -311,7 +313,7 @@ class GearSubTypeSheet extends StatelessWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
           const SizedBox(height: 10),
@@ -334,17 +336,21 @@ class GearSubTypeSheet extends StatelessWidget {
                         option,
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                          color:
-                            isSelected ? Styles.accent : Styles.tabActive,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? Styles.accent
+                              : Styles.primaryLight,
                         ),
                       ),
                       Icon(
                         isSelected
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_off,
-                        color: isSelected ? Styles.accent : Styles.tabInactive,
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        color: isSelected
+                            ? Styles.accent
+                            : Styles.surfaceHighlight,
                       ),
                     ],
                   ),
@@ -387,7 +393,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Styles.inactive,
+                color: Styles.surfaceHighlight,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -398,13 +404,13 @@ class GearDistanceLimitSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
           const SizedBox(height: 4),
           const Text(
             'Atur target kilometer maksimal untuk memantau masa pakai perlengkapan.',
-            style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+            style: TextStyle(fontSize: 12, color: Styles.surfaceHighlight),
           ),
           const SizedBox(height: 12),
           Material(
@@ -426,8 +432,8 @@ class GearDistanceLimitSheet extends StatelessWidget {
                         fontSize: 15,
                         fontStyle: FontStyle.italic,
                         color: selectedKm == null
-                          ? Styles.accent
-                          : Styles.tabInactive,
+                            ? Styles.accent
+                            : Styles.surfaceHighlight,
                       ),
                     ),
                     if (selectedKm == null)
@@ -437,7 +443,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(color: Styles.inactive, height: 1),
+          const Divider(color: Styles.surfaceHighlight, height: 1),
           Flexible(
             child: SingleChildScrollView(
               child: Column(
@@ -461,11 +467,11 @@ class GearDistanceLimitSheet extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                                 color: isSelected
-                                  ? Styles.accent
-                                  : Styles.tabActive,
+                                    ? Styles.accent
+                                    : Styles.primaryLight,
                               ),
                             ),
                             if (isSelected)
@@ -484,6 +490,3 @@ class GearDistanceLimitSheet extends StatelessWidget {
     );
   }
 }
-
-
-

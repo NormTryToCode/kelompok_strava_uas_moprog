@@ -43,12 +43,12 @@ class _CategoryOptionChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? Palette.selectedFill : Styles.surface,
+      color: selected ? Styles.selectedFill : Styles.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.chip + 2),
         side: BorderSide(
-          color: selected ? Palette.teal : Palette.cardBorder,
+          color: selected ? Styles.teal : Styles.cardBorder,
           width: selected ? 1.6 : 1,
         ),
       ),
@@ -62,7 +62,7 @@ class _CategoryOptionChip extends StatelessWidget {
               Icon(
                 category.icon,
                 size: 18,
-                color: selected ? Palette.teal : Styles.tabInactive,
+                color: selected ? Styles.teal : Styles.surfaceHighlight,
               ),
               const SizedBox(width: 8),
               Text(
@@ -70,7 +70,7 @@ class _CategoryOptionChip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: selected ? Colors.white : Styles.tabInactive,
+                  color: selected ? Colors.white : Styles.surfaceHighlight,
                 ),
               ),
             ],
@@ -80,3 +80,4 @@ class _CategoryOptionChip extends StatelessWidget {
     );
   }
 }
+

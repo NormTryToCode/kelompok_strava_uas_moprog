@@ -19,7 +19,7 @@ class ChannelListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final last = channel.lastMessage;
     final isAnnouncement = channel.category == ChannelCategory.announcement;
-    final iconColor = isAnnouncement ? Styles.accent : Palette.teal;
+    final iconColor = isAnnouncement ? Styles.accent : Styles.teal;
 
     return SoftCard(
       onTap: onTap,
@@ -27,11 +27,7 @@ class ChannelListCard extends StatelessWidget {
       radius: 18,
       child: Row(
         children: [
-          IconBubble(
-            channel.category.icon,
-            size: 48,
-            color: iconColor,
-          ),
+          IconBubble(channel.category.icon, size: 48, color: iconColor),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -57,7 +53,7 @@ class ChannelListCard extends StatelessWidget {
                       const Icon(
                         Icons.lock_outline,
                         size: 14,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ],
                   ],
@@ -76,7 +72,7 @@ class ChannelListCard extends StatelessWidget {
                   formatClock24(last.sentAt),
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
               const SizedBox(height: 6),
@@ -103,7 +99,7 @@ class ChannelListCard extends StatelessWidget {
                 const Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                 ),
             ],
           ),
@@ -126,14 +122,14 @@ class _LastMessageRow extends StatelessWidget {
         'No messages yet',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: 13.5, color: Styles.tabInactive),
+        style: TextStyle(fontSize: 13.5, color: Styles.surfaceHighlight),
       );
     }
 
     return Row(
       children: [
         if (msg.isCurrentUser) ...[
-          const Icon(Icons.done_all, size: 15, color: Palette.teal),
+          const Icon(Icons.done_all, size: 15, color: Styles.teal),
           const SizedBox(width: 4),
         ],
         Expanded(
@@ -143,10 +139,14 @@ class _LastMessageRow extends StatelessWidget {
                 : '${msg.senderName}: ${msg.content}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 13.5, color: Styles.tabInactive),
+            style: const TextStyle(
+              fontSize: 13.5,
+              color: Styles.surfaceHighlight,
+            ),
           ),
         ),
       ],
     );
   }
 }
+

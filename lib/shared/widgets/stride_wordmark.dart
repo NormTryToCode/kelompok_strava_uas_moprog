@@ -14,20 +14,16 @@ class StrideWordmark extends StatelessWidget {
           width: 28,
           height: 28,
           decoration: BoxDecoration(
-            gradient: Palette.primaryGradient,
+            gradient: Styles.primaryGradient,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(
-            Icons.bolt_rounded,
-            color: Styles.background,
-            size: 18,
-          ),
+          child: const Icon(Icons.bolt_rounded, color: Styles.canvas, size: 18),
         ),
         const SizedBox(width: 8),
         const Text(
           AppBrand.wordmark,
           style: TextStyle(
-            color: Styles.tabActive,
+            color: Styles.primaryLight,
             fontSize: 22,
             fontWeight: FontWeight.w900,
             letterSpacing: 2.2,
@@ -37,3 +33,4 @@ class StrideWordmark extends StatelessWidget {
     );
   }
 }
+

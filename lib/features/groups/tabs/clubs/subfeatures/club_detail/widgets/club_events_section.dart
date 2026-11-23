@@ -25,10 +25,11 @@ class ClubEventsSection extends ConsumerWidget {
     final eventsAsync = ref.watch(eventsProvider);
     final now = DateTime.now();
 
-    final upcoming = (eventsAsync.valueOrNull ?? [])
-        .where((e) => e.clubId == clubId && !e.startsAt.isBefore(now))
-        .toList()
-      ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+    final upcoming =
+        (eventsAsync.valueOrNull ?? [])
+            .where((e) => e.clubId == clubId && !e.startsAt.isBefore(now))
+            .toList()
+          ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
 
     final preview = upcoming.take(3).toList();
 
@@ -56,9 +57,7 @@ class ClubEventsSection extends ConsumerWidget {
         if (eventsAsync.isLoading && !eventsAsync.hasValue)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
-            child: Center(
-              child: CircularProgressIndicator(color: Palette.teal),
-            ),
+            child: Center(child: CircularProgressIndicator(color: Styles.teal)),
           )
         else if (preview.isEmpty)
           SoftCard(
@@ -82,7 +81,10 @@ class ClubEventsSection extends ConsumerWidget {
                   Text(
                     'Plan a ride, run, or workout for your members.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13.5, color: Styles.tabInactive),
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      color: Styles.surfaceHighlight,
+                    ),
                   ),
                 ],
               ),
@@ -110,7 +112,7 @@ class ClubEventsSection extends ConsumerWidget {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: onViewAll,
-                    style: TextButton.styleFrom(foregroundColor: Palette.teal),
+                    style: TextButton.styleFrom(foregroundColor: Styles.teal),
                     child: Text(
                       'See all ${upcoming.length} upcoming events',
                       style: const TextStyle(fontWeight: FontWeight.w700),
@@ -124,3 +126,4 @@ class ClubEventsSection extends ConsumerWidget {
     );
   }
 }
+

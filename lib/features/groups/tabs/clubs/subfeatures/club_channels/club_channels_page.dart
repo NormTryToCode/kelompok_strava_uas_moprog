@@ -35,9 +35,9 @@ class _ClubChannelsPageState extends ConsumerState<ClubChannelsPage> {
     final created = await CreateChannelPage.open(context, widget.club);
     if (created == null || !mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${created.name} channel created')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('${created.name} channel created')));
   }
 
   Future<void> _onOpenChannel(ClubChannel channel) async {
@@ -59,9 +59,9 @@ class _ClubChannelsPageState extends ConsumerState<ClubChannelsPage> {
     final channelsAsync = ref.watch(clubChannelsProvider(widget.club.id));
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -83,9 +83,8 @@ class _ClubChannelsPageState extends ConsumerState<ClubChannelsPage> {
         ),
       ),
       body: channelsAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: Palette.teal),
-        ),
+        loading: () =>
+            const Center(child: CircularProgressIndicator(color: Styles.teal)),
         error: (_, _) => Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -96,13 +95,16 @@ class _ClubChannelsPageState extends ConsumerState<ClubChannelsPage> {
                 const SizedBox(height: 12),
                 const Text(
                   'Could not load channels.',
-                  style: TextStyle(fontSize: 15, color: Styles.tabInactive),
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Styles.surfaceHighlight,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: () =>
                       ref.invalidate(clubChannelsProvider(widget.club.id)),
-                  style: TextButton.styleFrom(foregroundColor: Palette.teal),
+                  style: TextButton.styleFrom(foregroundColor: Styles.teal),
                   child: const Text('Try again'),
                 ),
               ],
@@ -112,9 +114,7 @@ class _ClubChannelsPageState extends ConsumerState<ClubChannelsPage> {
         data: (channels) {
           final filtered = _selectedCategory == null
               ? channels
-              : channels
-                  .where((c) => c.category == _selectedCategory)
-                  .toList();
+              : channels.where((c) => c.category == _selectedCategory).toList();
 
           return ListView(
             padding: const EdgeInsets.only(bottom: 96),
@@ -192,10 +192,11 @@ class _EmptyFilterState extends StatelessWidget {
           Text(
             'Tap "New channel" to start a conversation here.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13.5, color: Styles.tabInactive),
+            style: TextStyle(fontSize: 13.5, color: Styles.surfaceHighlight),
           ),
         ],
       ),
     );
   }
 }
+

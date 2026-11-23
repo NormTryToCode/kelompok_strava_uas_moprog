@@ -1,92 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../edit_profile/providers/athlete_profile_provider.dart';
 import '../models/sport_statistics_data.dart';
+import '../providers/sport_statistics_provider.dart';
 import '../widgets/statistics_section_table.dart';
 import '../widgets/statistics_sport_tab_bar.dart';
 import '../widgets/statistics_summary_card.dart';
 
-class StatisticsView extends StatefulWidget {
-  final int initialRunSessions;
-  final double athleteWeightKg;
-  final ValueChanged<int> onRunSessionsChanged;
+class StatisticsView extends ConsumerStatefulWidget {
   final VoidCallback onBack;
 
   const StatisticsView({
     super.key,
-    required this.initialRunSessions,
-    required this.athleteWeightKg,
-    required this.onRunSessionsChanged,
     required this.onBack,
   });
 
   @override
-  State<StatisticsView> createState() => _StatisticsViewState();
+  ConsumerState<StatisticsView> createState() => _StatisticsViewState();
 }
 
-class _StatisticsViewState extends State<StatisticsView> {
+class _StatisticsViewState extends ConsumerState<StatisticsView> {
   int _selectedSportIndex = 0;
-  int _rideSessions = 0;
-  late int _runSessions;
-  int _swimSessions = 0;
-
-  final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
-
-  @override
-  void initState() {
-    super.initState();
-    _runSessions = widget.initialRunSessions;
-    _loadSavedSportStats();
-  }
-
-  void _loadSavedSportStats() async {
-    final int savedRide = await _asyncPrefs.getInt('stats_ride_sessions') ?? 0;
-    final int savedSwim = await _asyncPrefs.getInt('stats_swim_sessions') ?? 0;
-    if (!mounted) return;
-    setState(() {
-      _rideSessions = savedRide;
-      _swimSessions = savedSwim;
-    });
-  }
-
-  void _updateCurrentSportSessions(int newCount) async {
-    final int clamped = newCount < 0 ? 0 : newCount;
-    setState(() {
-      if (_selectedSportIndex == 0) {
-        _rideSessions = clamped;
-      } else if (_selectedSportIndex == 1) {
-        _runSessions = clamped;
-      } else {
-        _swimSessions = clamped;
-      }
-    });
-
-    if (_selectedSportIndex == 0) {
-      await _asyncPrefs.setInt('stats_ride_sessions', clamped);
-    } else if (_selectedSportIndex == 1) {
-      widget.onRunSessionsChanged(clamped);
-    } else {
-      await _asyncPrefs.setInt('stats_swim_sessions', clamped);
-    }
-  }
-
-  int get _activeSessionCount {
-    if (_selectedSportIndex == 0) return _rideSessions;
-    if (_selectedSportIndex == 1) return _runSessions;
-    return _swimSessions;
-  }
 
   @override
   Widget build(BuildContext context) {
+    final SportSessionsState sessionsState = ref.watch(sportStatisticsProvider);
+    final double athleteWeightKg =
+        ref.watch(athleteProfileProvider).parsedWeightKg;
+    final int activeSessionCount =
+        sessionsState.sessionsForSport(_selectedSportIndex);
+
     final stats = SportStatisticsData(
       sportIndex: _selectedSportIndex,
-      weeklySessions: _activeSessionCount,
+      weeklySessions: activeSessionCount,
       historicalBaseSessions: (_selectedSportIndex == 0)
         ? 6
         : (_selectedSportIndex == 1)
           ? 10
           : 4,
-      athleteWeightKg: widget.athleteWeightKg,
+      athleteWeightKg: athleteWeightKg,
     );
 
     return Column(
@@ -103,7 +56,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                 onTap: widget.onBack,
                 child: const Icon(
                   Icons.arrow_back,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
               const SizedBox(width: 24),
@@ -112,7 +65,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
             ],
@@ -133,11 +86,21 @@ class _StatisticsViewState extends State<StatisticsView> {
               children: [
                 StatisticsSummaryCard(
                   stats: stats,
-                  onDecrement: () =>
-                    _updateCurrentSportSessions(_activeSessionCount - 1),
-                  onReset: () => _updateCurrentSportSessions(0),
-                  onIncrement: () =>
-                    _updateCurrentSportSessions(_activeSessionCount + 1),
+                  onDecrement: () => ref
+                    .read(sportStatisticsProvider.notifier)
+                    .setSportSessions(
+                      _selectedSportIndex,
+                      activeSessionCount - 1,
+                    ),
+                  onReset: () => ref
+                    .read(sportStatisticsProvider.notifier)
+                    .setSportSessions(_selectedSportIndex, 0),
+                  onIncrement: () => ref
+                    .read(sportStatisticsProvider.notifier)
+                    .setSportSessions(
+                      _selectedSportIndex,
+                      activeSessionCount + 1,
+                    ),
                 ),
                 StatisticsSectionTable(
                   sectionTitle: 'AKTIVITAS MINGGUAN RATA2',

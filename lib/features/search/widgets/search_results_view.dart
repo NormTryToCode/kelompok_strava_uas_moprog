@@ -24,7 +24,7 @@ class SearchResultsView extends ConsumerWidget {
       return const Center(
         child: Text(
           'No results found',
-          style: TextStyle(color: Styles.tabActive, fontSize: 18),
+          style: TextStyle(color: Styles.primaryLight, fontSize: 18),
         ),
       );
     }
@@ -69,7 +69,7 @@ class _ResultsLabel extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: Styles.tabActive,
+          color: Styles.primaryLight,
           fontSize: 13,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.5,
@@ -78,3 +78,4 @@ class _ResultsLabel extends StatelessWidget {
     );
   }
 }
+

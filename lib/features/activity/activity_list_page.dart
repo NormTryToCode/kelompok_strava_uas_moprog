@@ -58,17 +58,16 @@ class _ActivityListPageState extends ConsumerState<ActivityListPage> {
   }
 
   void _openAddActivity() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const ManualActivityPage()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const ManualActivityPage()));
   }
 
   Future<void> _deleteActivity(ManualActivity activity) async {
     await ref.read(activityProvider.notifier).remove(activity.id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Deleted "${activity.title}"')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Deleted "${activity.title}"')));
   }
 
   @override
@@ -77,15 +76,12 @@ class _ActivityListPageState extends ConsumerState<ActivityListPage> {
     final unit = ref.watch(settingsProvider).unit;
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppHeader(
         title: 'My Activities',
         showBackButton: true,
         actions: [
-          HeaderIconButton(
-            icon: Icons.add,
-            onPressed: _openAddActivity,
-          ),
+          HeaderIconButton(icon: Icons.add, onPressed: _openAddActivity),
         ],
       ),
       body: activityState.items.isEmpty
@@ -117,10 +113,7 @@ class _SummaryBanner extends StatelessWidget {
   final int count;
   final String totalDistanceText;
 
-  const _SummaryBanner({
-    required this.count,
-    required this.totalDistanceText,
-  });
+  const _SummaryBanner({required this.count, required this.totalDistanceText});
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +122,7 @@ class _SummaryBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Palette.cardBorder),
+        border: Border.all(color: Styles.cardBorder),
       ),
       child: Row(
         children: [
@@ -149,7 +142,7 @@ class _SummaryBanner extends StatelessWidget {
                 Text(
                   '$count',
                   style: const TextStyle(
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                   ),
@@ -207,7 +200,7 @@ class _ActivityCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Palette.cardBorder),
+        border: Border.all(color: Styles.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +220,7 @@ class _ActivityCard extends StatelessWidget {
                     Text(
                       activity.title,
                       style: const TextStyle(
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                       ),
@@ -298,7 +291,7 @@ class _MetricChip extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            color: Styles.tabActive,
+            color: Styles.primaryLight,
             fontSize: 15,
             fontWeight: FontWeight.w700,
           ),
@@ -326,7 +319,7 @@ class _EmptyActivitiesView extends StatelessWidget {
             const Text(
               'No activities yet',
               style: TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
@@ -342,7 +335,7 @@ class _EmptyActivitiesView extends StatelessWidget {
               onPressed: onAdd,
               style: FilledButton.styleFrom(
                 backgroundColor: Styles.accent,
-                foregroundColor: Styles.tabActive,
+                foregroundColor: Styles.primaryLight,
                 shape: const StadiumBorder(),
               ),
               child: const Text('Log Activity'),

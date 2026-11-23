@@ -81,14 +81,17 @@ class _PaceRow extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                 ),
               ),
             ),
             Expanded(child: _numberField(isMin: true)),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text('-', style: TextStyle(fontSize: 18, color: Colors.white)),
+              child: Text(
+                '-',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
             ),
             Expanded(child: _numberField(isMin: false)),
             const SizedBox(width: 10),

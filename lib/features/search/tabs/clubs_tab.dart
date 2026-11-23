@@ -50,15 +50,14 @@ class _SearchClubsTabState extends ConsumerState<SearchClubsTab> {
       options: SportType.values,
       labelOf: (sport) => sport.label,
       selected: _filter.sport,
-      onSelected: (sport) =>
-          setState(() => _filter = _filter.withSport(sport)),
+      onSelected: (sport) => setState(() => _filter = _filter.withSport(sport)),
     );
   }
 
   void _openDetail(SearchClub club) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => SearchClubDetailPage(club: club)),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => SearchClubDetailPage(club: club)));
   }
 
   void _clearFilters() {
@@ -112,10 +111,7 @@ class _SearchClubsTabState extends ConsumerState<SearchClubsTab> {
                   itemCount: visible.length,
                   itemBuilder: (_, i) {
                     final club = visible[i];
-                    return ClubTile(
-                      club: club,
-                      onTap: () => _openDetail(club),
-                    );
+                    return ClubTile(club: club, onTap: () => _openDetail(club));
                   },
                 ),
         ),
@@ -132,8 +128,9 @@ class _EmptyState extends StatelessWidget {
     return const Center(
       child: Text(
         'No clubs found',
-        style: TextStyle(color: Styles.tabActive, fontSize: 18),
+        style: TextStyle(color: Styles.primaryLight, fontSize: 18),
       ),
     );
   }
 }
+

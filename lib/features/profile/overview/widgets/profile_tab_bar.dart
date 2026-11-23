@@ -18,7 +18,7 @@ class ProfileTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Styles.background,
+      color: Styles.canvas,
       child: Column(
         children: [
           Row(
@@ -32,7 +32,7 @@ class ProfileTabBar extends StatelessWidget {
                       Icons.assessment,
                       color: (activeTab == 0)
                           ? Styles.accent
-                          : Styles.tabInactive,
+                          : Styles.surfaceHighlight,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -43,17 +43,15 @@ class ProfileTabBar extends StatelessWidget {
                             ? FontWeight.bold
                             : FontWeight.w500,
                         color: (activeTab == 0)
-                            ? Styles.tabActive
-                            : Styles.tabInactive,
+                            ? Styles.primaryLight
+                            : Styles.surfaceHighlight,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Container(
                       width: 110,
                       height: 3,
-                      color: (activeTab == 0)
-                          ? Styles.accent
-                          : Styles.background,
+                      color: (activeTab == 0) ? Styles.accent : Styles.canvas,
                     ),
                   ],
                 ),
@@ -66,7 +64,7 @@ class ProfileTabBar extends StatelessWidget {
                       Icons.timeline,
                       color: (activeTab == 1)
                           ? Styles.accent
-                          : Styles.tabInactive,
+                          : Styles.surfaceHighlight,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -77,17 +75,15 @@ class ProfileTabBar extends StatelessWidget {
                             ? FontWeight.bold
                             : FontWeight.w500,
                         color: (activeTab == 1)
-                            ? Styles.tabActive
-                            : Styles.tabInactive,
+                            ? Styles.primaryLight
+                            : Styles.surfaceHighlight,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Container(
                       width: 110,
                       height: 3,
-                      color: (activeTab == 1)
-                          ? Styles.accent
-                          : Styles.background,
+                      color: (activeTab == 1) ? Styles.accent : Styles.canvas,
                     ),
                   ],
                 ),
@@ -100,7 +96,7 @@ class ProfileTabBar extends StatelessWidget {
                       Icons.menu,
                       color: (activeTab == 2)
                           ? Styles.accent
-                          : Styles.tabInactive,
+                          : Styles.surfaceHighlight,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -111,29 +107,25 @@ class ProfileTabBar extends StatelessWidget {
                             ? FontWeight.bold
                             : FontWeight.w500,
                         color: (activeTab == 2)
-                            ? Styles.tabActive
-                            : Styles.tabInactive,
+                            ? Styles.primaryLight
+                            : Styles.surfaceHighlight,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Container(
                       width: 110,
                       height: 3,
-                      color: (activeTab == 2)
-                          ? Styles.accent
-                          : Styles.background,
+                      color: (activeTab == 2) ? Styles.accent : Styles.canvas,
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          Container(
-            height: 1,
-            color: Styles.inactive,
-          ),
+          Container(height: 1, color: Styles.surfaceHighlight),
         ],
       ),
     );
   }
 }
+

@@ -29,7 +29,7 @@ class BestEffortsWidget extends StatelessWidget {
                 children: [
                   const Text(
                     "Usaha Terbaik",
-                    style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                    style: TextStyle(fontSize: 15, color: Styles.primaryLight),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -38,11 +38,14 @@ class BestEffortsWidget extends StatelessWidget {
                       Row(
                         children: [
                           Container(
-                            decoration: Styles.gradientOrangeBright,
+                            decoration: BoxDecoration(
+                              gradient: Styles.primaryGradient,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             padding: const EdgeInsets.all(6.0),
                             child: const Icon(
                               Icons.workspace_premium,
-                              color: Styles.background,
+                              color: Styles.canvas,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -53,14 +56,14 @@ class BestEffortsWidget extends StatelessWidget {
                                 "RP 5K",
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: Styles.tabActive,
+                                  color: Styles.primaryLight,
                                 ),
                               ),
                               Text(
                                 "Nov 3, 2026",
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                             ],
@@ -69,7 +72,10 @@ class BestEffortsWidget extends StatelessWidget {
                       ),
                       const Text(
                         "26:54",
-                        style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Styles.primaryLight,
+                        ),
                       ),
                     ],
                   ),
@@ -80,11 +86,11 @@ class BestEffortsWidget extends StatelessWidget {
                       Row(
                         children: [
                           Container(
-                            color: Styles.inactive,
+                            color: Styles.surfaceHighlight,
                             padding: const EdgeInsets.all(6.0),
                             child: const Icon(
                               Icons.military_tech,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -95,14 +101,14 @@ class BestEffortsWidget extends StatelessWidget {
                                 "Waktu 5K tercepat ke-2",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                               Text(
                                 "Nov 3, 2025",
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                             ],
@@ -113,7 +119,7 @@ class BestEffortsWidget extends StatelessWidget {
                         "30:12",
                         style: TextStyle(
                           fontSize: 15,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -134,12 +140,15 @@ class BestEffortsWidget extends StatelessWidget {
                     children: [
                       const Text(
                         "Target",
-                        style: TextStyle(fontSize: 14, color: Styles.tabActive),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Styles.primaryLight,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       const Icon(
                         Icons.directions_run,
-                        color: Styles.active,
+                        color: Styles.primaryLight,
                         size: 28,
                       ),
                       const SizedBox(height: 6),
@@ -147,14 +156,14 @@ class BestEffortsWidget extends StatelessWidget {
                         "Target Berlari Mingguan",
                         style: TextStyle(
                           fontSize: 12,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                       Text(
                         "$runSessions/4 lari",
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Styles.active,
+                          color: Styles.primaryLight,
                         ),
                       ),
                     ],
@@ -169,7 +178,10 @@ class BestEffortsWidget extends StatelessWidget {
                     children: [
                       Text(
                         "Usaha Relatif",
-                        style: TextStyle(fontSize: 14, color: Styles.tabActive),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Styles.primaryLight,
+                        ),
                       ),
                       SizedBox(height: 4),
                       Text(
@@ -180,19 +192,22 @@ class BestEffortsWidget extends StatelessWidget {
                         "Nov 2 - Nov 8, 2026",
                         style: TextStyle(
                           fontSize: 11,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         "22",
-                        style: TextStyle(fontSize: 16, color: Styles.badge),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Styles.primaryDark,
+                        ),
                       ),
                       Text(
                         "Okt 26 - Nov 1, 2026",
                         style: TextStyle(
                           fontSize: 11,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -218,7 +233,7 @@ class BestEffortsWidget extends StatelessWidget {
               children: [
                 const Text(
                   "Catatan Latihan",
-                  style: TextStyle(fontSize: 15, color: Styles.tabActive),
+                  style: TextStyle(fontSize: 15, color: Styles.primaryLight),
                 ),
                 const SizedBox(height: 6),
                 const Row(
@@ -226,11 +241,17 @@ class BestEffortsWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Nov 2 - Nov 8, 2026",
-                      style: TextStyle(fontSize: 13, color: Styles.tabActive),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Styles.primaryLight,
+                      ),
                     ),
                     Text(
                       "10,9 km",
-                      style: TextStyle(fontSize: 13, color: Styles.tabActive),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Styles.primaryLight,
+                      ),
                     ),
                   ],
                 ),
@@ -238,13 +259,13 @@ class BestEffortsWidget extends StatelessWidget {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text("S", style: TextStyle(color: Styles.tabInactive)),
-                    Text("S", style: TextStyle(color: Styles.tabInactive)),
-                    Text("R", style: TextStyle(color: Styles.tabInactive)),
-                    Text("K", style: TextStyle(color: Styles.tabInactive)),
-                    Text("J", style: TextStyle(color: Styles.tabInactive)),
-                    Text("S", style: TextStyle(color: Styles.tabInactive)),
-                    Text("M", style: TextStyle(color: Styles.tabInactive)),
+                    Text("S", style: TextStyle(color: Styles.surfaceHighlight)),
+                    Text("S", style: TextStyle(color: Styles.surfaceHighlight)),
+                    Text("R", style: TextStyle(color: Styles.surfaceHighlight)),
+                    Text("K", style: TextStyle(color: Styles.surfaceHighlight)),
+                    Text("J", style: TextStyle(color: Styles.surfaceHighlight)),
+                    Text("S", style: TextStyle(color: Styles.surfaceHighlight)),
+                    Text("M", style: TextStyle(color: Styles.surfaceHighlight)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -252,29 +273,27 @@ class BestEffortsWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     const SizedBox(width: 20),
-                    const Icon(Icons.circle, size: 12, color: Styles.active),
+                    const Icon(
+                      Icons.circle,
+                      size: 12,
+                      color: Styles.primaryLight,
+                    ),
                     const SizedBox(width: 20),
                     Container(
-                      color: Styles.active,
+                      color: Styles.primaryLight,
                       padding: const EdgeInsets.all(6.0),
                       child: const Text(
                         "3,7 km",
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Styles.background,
-                        ),
+                        style: TextStyle(fontSize: 11, color: Styles.canvas),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Container(
-                      color: Styles.active,
+                      color: Styles.primaryLight,
                       padding: const EdgeInsets.all(8.0),
                       child: const Text(
                         "6,4 km",
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Styles.background,
-                        ),
+                        style: TextStyle(fontSize: 11, color: Styles.canvas),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -291,7 +310,7 @@ class BestEffortsWidget extends StatelessWidget {
             child: const Center(
               child: Text(
                 "Mulai Percobaan Gratis",
-                style: TextStyle(fontSize: 14, color: Styles.tabActive),
+                style: TextStyle(fontSize: 14, color: Styles.primaryLight),
               ),
             ),
           ),
@@ -301,7 +320,7 @@ class BestEffortsWidget extends StatelessWidget {
             children: [
               const Text(
                 "Tertarik berbagi masukan Anda?",
-                style: TextStyle(fontSize: 13, color: Styles.tabActive),
+                style: TextStyle(fontSize: 13, color: Styles.primaryLight),
               ),
               ElevatedButton(
                 onPressed: onOpenFeedback,
@@ -317,3 +336,4 @@ class BestEffortsWidget extends StatelessWidget {
     );
   }
 }
+

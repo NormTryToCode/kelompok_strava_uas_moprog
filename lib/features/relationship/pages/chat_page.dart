@@ -51,10 +51,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
         title: Text(widget.friend.name),
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -63,20 +63,20 @@ class _ChatPageState extends State<ChatPage> {
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _messages.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Belum ada pesan',
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                      )
-                    : ListView.builder(
-                        reverse: true,
-                        itemCount: _messages.length,
-                        itemBuilder: (context, i) {
-                          final m = _messages[_messages.length - 1 - i];
-                          return ChatBubble(text: m.text, isMine: m.isMine);
-                        },
-                      ),
+                ? const Center(
+                    child: Text(
+                      'Belum ada pesan',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  )
+                : ListView.builder(
+                    reverse: true,
+                    itemCount: _messages.length,
+                    itemBuilder: (context, i) {
+                      final m = _messages[_messages.length - 1 - i];
+                      return ChatBubble(text: m.text, isMine: m.isMine);
+                    },
+                  ),
           ),
           MessageInput(onSend: _send),
         ],
@@ -84,3 +84,4 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
+

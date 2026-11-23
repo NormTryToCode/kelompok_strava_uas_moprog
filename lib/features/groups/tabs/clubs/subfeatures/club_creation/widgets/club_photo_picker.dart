@@ -20,13 +20,17 @@ class ClubPhotoPicker extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Styles.surface,
-                border: Border.all(color: Palette.cardBorder, width: 1.5),
+                border: Border.all(color: Styles.cardBorder, width: 1.5),
               ),
               alignment: Alignment.center,
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.add_a_photo_outlined, size: 30, color: Palette.teal),
+                  Icon(
+                    Icons.add_a_photo_outlined,
+                    size: 30,
+                    color: Styles.teal,
+                  ),
                   SizedBox(height: 6),
                   Text(
                     'Add photo',
@@ -47,8 +51,8 @@ class ClubPhotoPicker extends StatelessWidget {
                 height: 34,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: Palette.primaryGradient,
-                  border: Border.all(color: Styles.background, width: 3),
+                  gradient: Styles.primaryGradient,
+                  border: Border.all(color: Styles.canvas, width: 3),
                 ),
                 child: const Icon(Icons.add, size: 18, color: Colors.white),
               ),

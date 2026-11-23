@@ -31,7 +31,7 @@ class FilterOptionSheet<T> extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
@@ -79,7 +79,7 @@ class _OptionRow extends StatelessWidget {
       title: Text(
         label,
         style: TextStyle(
-          color: isSelected ? Styles.accent : Styles.tabActive,
+          color: isSelected ? Styles.accent : Styles.primaryLight,
           fontSize: 17,
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
         ),
@@ -117,3 +117,4 @@ Future<void> showFilterSheet<T>({
     ),
   );
 }
+

@@ -61,7 +61,7 @@ Future<List<ClubType>?> showClubTypePickerSheet(
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: Palette.teal,
+                          color: Styles.teal,
                         ),
                       ),
                     ],
@@ -96,3 +96,4 @@ Future<List<ClubType>?> showClubTypePickerSheet(
     },
   );
 }
+

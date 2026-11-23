@@ -64,7 +64,7 @@ Future<T?> showOptionSheet<T>(
                                       ? FontWeight.w700
                                       : FontWeight.w400,
                                   color: isSelected
-                                      ? Palette.teal
+                                      ? Styles.teal
                                       : Colors.white,
                                 ),
                               ),
@@ -73,7 +73,7 @@ Future<T?> showOptionSheet<T>(
                               const Icon(
                                 Icons.check_circle,
                                 size: 22,
-                                color: Palette.teal,
+                                color: Styles.teal,
                               ),
                           ],
                         ),
@@ -90,3 +90,4 @@ Future<T?> showOptionSheet<T>(
     },
   );
 }
+

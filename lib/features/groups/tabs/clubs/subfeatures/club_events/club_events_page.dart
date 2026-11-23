@@ -17,9 +17,10 @@ class ClubEventsPage extends ConsumerStatefulWidget {
   const ClubEventsPage({super.key, required this.club});
 
   static Future<void> open(BuildContext context, Club club) {
-    return Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(builder: (_) => ClubEventsPage(club: club)),
-    );
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute<void>(builder: (_) => ClubEventsPage(club: club)));
   }
 
   @override
@@ -33,9 +34,8 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
     final created = await EventCreationPage.open(context, widget.club);
     if (created == null || !mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${created.name} created')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${created.name} created')));
   }
 
   @override
@@ -44,9 +44,9 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
     final now = DateTime.now();
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: Column(
@@ -63,7 +63,7 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
               style: const TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w500,
-                color: Styles.tabInactive,
+                color: Styles.surfaceHighlight,
               ),
             ),
           ],
@@ -89,7 +89,7 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
           Expanded(
             child: eventsAsync.when(
               loading: () => const Center(
-                child: CircularProgressIndicator(color: Palette.teal),
+                child: CircularProgressIndicator(color: Styles.teal),
               ),
               error: (_, _) => Center(
                 child: Padding(
@@ -103,14 +103,14 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
                         'Could not load events.',
                         style: TextStyle(
                           fontSize: 15,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: () => ref.invalidate(eventsProvider),
                         style: TextButton.styleFrom(
-                          foregroundColor: Palette.teal,
+                          foregroundColor: Styles.teal,
                         ),
                         child: const Text('Try again'),
                       ),
@@ -124,18 +124,19 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
                     .toList();
 
                 final isPast = _filter == _EventFilter.past;
-                final filtered = clubEvents
-                    .where(
-                      (e) => isPast
-                          ? e.startsAt.isBefore(now)
-                          : !e.startsAt.isBefore(now),
-                    )
-                    .toList()
-                  ..sort(
-                    (a, b) => isPast
-                        ? b.startsAt.compareTo(a.startsAt)
-                        : a.startsAt.compareTo(b.startsAt),
-                  );
+                final filtered =
+                    clubEvents
+                        .where(
+                          (e) => isPast
+                              ? e.startsAt.isBefore(now)
+                              : !e.startsAt.isBefore(now),
+                        )
+                        .toList()
+                      ..sort(
+                        (a, b) => isPast
+                            ? b.startsAt.compareTo(a.startsAt)
+                            : a.startsAt.compareTo(b.startsAt),
+                      );
 
                 if (filtered.isEmpty) {
                   return _EmptyEventsView(
@@ -176,10 +177,7 @@ class _EventsFilterToggle extends StatelessWidget {
   final _EventFilter selected;
   final ValueChanged<_EventFilter> onChanged;
 
-  const _EventsFilterToggle({
-    required this.selected,
-    required this.onChanged,
-  });
+  const _EventsFilterToggle({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +186,7 @@ class _EventsFilterToggle extends StatelessWidget {
       decoration: BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.circular(Radii.button),
-        border: Border.all(color: Palette.cardBorder),
+        border: Border.all(color: Styles.cardBorder),
       ),
       child: Row(
         children: [
@@ -226,7 +224,7 @@ class _SegmentItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? Palette.selectedFill : Colors.transparent,
+      color: selected ? Styles.selectedFill : Colors.transparent,
       borderRadius: BorderRadius.circular(Radii.button - 3),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -236,14 +234,14 @@ class _SegmentItem extends StatelessWidget {
           decoration: selected
               ? BoxDecoration(
                   borderRadius: BorderRadius.circular(Radii.button - 3),
-                  border: Border.all(color: Palette.teal.withAlpha(130)),
+                  border: Border.all(color: Styles.teal.withAlpha(130)),
                 )
               : null,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (selected) ...[
-                const Icon(Icons.check, size: 16, color: Palette.teal),
+                const Icon(Icons.check, size: 16, color: Styles.teal),
                 const SizedBox(width: 6),
               ],
               Text(
@@ -251,7 +249,7 @@ class _SegmentItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: selected ? Colors.white : Styles.tabInactive,
+                  color: selected ? Colors.white : Styles.surfaceHighlight,
                 ),
               ),
             ],
@@ -266,10 +264,7 @@ class _EmptyEventsView extends StatelessWidget {
   final bool isPast;
   final VoidCallback onCreateEvent;
 
-  const _EmptyEventsView({
-    required this.isPast,
-    required this.onCreateEvent,
-  });
+  const _EmptyEventsView({required this.isPast, required this.onCreateEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -302,7 +297,7 @@ class _EmptyEventsView extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14.5,
                 height: 1.4,
-                color: Styles.tabInactive,
+                color: Styles.surfaceHighlight,
               ),
             ),
             if (!isPast) ...[
@@ -321,3 +316,4 @@ class _EmptyEventsView extends StatelessWidget {
     );
   }
 }
+

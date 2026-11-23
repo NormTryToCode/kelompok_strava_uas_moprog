@@ -9,8 +9,8 @@ class AppFooter extends StatelessWidget {
 
   static Color _color(Set<WidgetState> states) =>
       states.contains(WidgetState.selected)
-          ? Styles.champagne
-          : Styles.tabInactive;
+      ? Styles.primaryLight
+      : Styles.surfaceHighlight;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class AppFooter extends StatelessWidget {
       ),
       child: NavigationBarTheme(
         data: NavigationBarThemeData(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           surfaceTintColor: Colors.transparent,
           indicatorColor: Styles.deepTeal,
           indicatorShape: RoundedRectangleBorder(
@@ -73,3 +73,4 @@ class AppFooter extends StatelessWidget {
     );
   }
 }
+

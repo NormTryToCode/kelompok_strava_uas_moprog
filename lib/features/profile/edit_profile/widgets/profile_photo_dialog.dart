@@ -26,7 +26,7 @@ class ProfilePhotoDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 18),
@@ -43,7 +43,7 @@ class ProfilePhotoDialog extends StatelessWidget {
                       'Ambil Foto',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -64,7 +64,7 @@ class ProfilePhotoDialog extends StatelessWidget {
                       'Pilih Dari Galeri',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -77,3 +77,4 @@ class ProfilePhotoDialog extends StatelessWidget {
     );
   }
 }
+

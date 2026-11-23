@@ -127,9 +127,8 @@ class _LoginWidgetState extends State<LoginWidget> {
 
               // Compact Checkboxes
               Theme(
-                data: Theme.of(context).copyWith(
-                  visualDensity: VisualDensity.compact,
-                ),
+                data: Theme.of(context)
+                    .copyWith(visualDensity: VisualDensity.compact),
                 child: Column(
                   children: [
                     const CheckBoxWidget(checkBoxText: "Remember Me"),
@@ -173,7 +172,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Styles.badge,
+                    backgroundColor: Styles.primaryDark,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -217,47 +216,40 @@ class _LoginWidgetState extends State<LoginWidget> {
               ),
               const SizedBox(height: 20),
 
-            const Divider(
-              color: Colors.white,
-              thickness: 1,
-            ),
+              const Divider(color: Colors.white, thickness: 1),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                },
-                icon: const Text(
-                  "G",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFFDB4437),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Text(
+                    "G",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFFDB4437),
+                    ),
                   ),
-                ),
-                label: const Text(
-                  "Login with Google",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                  label: const Text(
+                    "Login with Google",
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black87,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 8), 
+              const SizedBox(height: 8),
 
-            SizedBox(
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
@@ -269,7 +261,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Styles.background,
+                    backgroundColor: Styles.canvas,
                     foregroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(

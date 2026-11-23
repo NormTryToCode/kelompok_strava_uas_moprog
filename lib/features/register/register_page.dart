@@ -8,8 +8,8 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
-      body: Center(child: RegisterWidget())
+      backgroundColor: Styles.canvas,
+      body: Center(child: RegisterWidget()),
     );
   }
 }

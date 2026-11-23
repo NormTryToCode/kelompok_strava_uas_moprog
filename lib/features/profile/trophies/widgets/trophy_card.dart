@@ -1,43 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../../overview/providers/profile_activity_provider.dart';
 import '../models/trophy_badge.dart';
+import '../providers/trophy_provider.dart';
 import '../screens/trophy_detail_screen.dart';
 
-class TrophyCard extends StatelessWidget {
+class TrophyCard extends ConsumerWidget {
   final TrophyBadge badge;
-  final int currentActivities;
-  final VoidCallback? onStatusChanged;
-  final ValueChanged<String>? onToggleClaim;
 
   const TrophyCard({
     super.key,
     required this.badge,
-    this.currentActivities = 0,
-    this.onStatusChanged,
-    this.onToggleClaim,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int currentActivities = ref.watch(runSessionsProvider);
+    final bool isClaimed = ref.watch(claimedTrophiesProvider).contains(badge.id);
     final bool isUnlocked =
-        badge.isChecked || (currentActivities >= badge.requiredActivities);
+      isClaimed || (currentActivities >= badge.requiredActivities);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () async {
-        await Navigator.push(
+      onTap: () {
+        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TrophyDetailScreen(
-              badge: badge,
-              currentActivities: currentActivities,
-              onToggleClaim: onToggleClaim,
-            ),
+            builder: (context) => TrophyDetailScreen(badge: badge),
           ),
         );
-        if (onStatusChanged != null) {
-          onStatusChanged!();
-        }
       },
       child: Padding(
         padding: const EdgeInsets.all(6.0),
@@ -48,7 +40,7 @@ class TrophyCard extends StatelessWidget {
               width: 84,
               height: 84,
               decoration: isUnlocked
-                ? Styles.gradientOrangeBright
+                ? const BoxDecoration(gradient: Styles.primaryGradient)
                 : const BoxDecoration(color: Styles.surface),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -58,16 +50,14 @@ class TrophyCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: isUnlocked
-                        ? Styles.background
-                        : Styles.inactive,
+                      color: isUnlocked ? Styles.canvas : Styles.textMuted,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Icon(
                     isUnlocked ? Icons.emoji_events : Icons.lock_outline,
                     size: 26,
-                    color: isUnlocked ? Styles.background : Styles.tabActive,
+                    color: isUnlocked ? Styles.canvas : Styles.textPrimary,
                   ),
                 ],
               ),
@@ -75,10 +65,13 @@ class TrophyCard extends StatelessWidget {
             const SizedBox(height: 8.0),
             Text(
               badge.title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
-                color: isUnlocked ? Styles.accent : Styles.tabActive,
+                color: isUnlocked ? Styles.accent : Styles.textPrimary,
               ),
             ),
           ],

@@ -1,49 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../../overview/providers/profile_activity_provider.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
 import '../models/trophy_badge.dart';
+import '../providers/trophy_provider.dart';
 import '../widgets/trophy_check_box.dart';
 
-class TrophyDetailScreen extends StatefulWidget {
+class TrophyDetailScreen extends ConsumerWidget {
   final TrophyBadge badge;
-  final int currentActivities;
-  final ValueChanged<String>? onToggleClaim;
 
   const TrophyDetailScreen({
     super.key,
     required this.badge,
-    this.currentActivities = 0,
-    this.onToggleClaim,
   });
 
   @override
-  State<TrophyDetailScreen> createState() => _TrophyDetailScreenState();
-}
-
-class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
-  void _syncToggleState() {
-    setState(() {});
-    if (widget.onToggleClaim != null) {
-      widget.onToggleClaim!(widget.badge.id);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final bool isUnlocked = widget.badge.isChecked ||
-        (widget.currentActivities >= widget.badge.requiredActivities);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int currentActivities = ref.watch(runSessionsProvider);
+    final bool isClaimed = ref.watch(claimedTrophiesProvider).contains(badge.id);
+    final bool isUnlocked =
+      isClaimed || (currentActivities >= badge.requiredActivities);
 
     return Animate(
       effects: const [FadeEffect()],
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppBar(
           backgroundColor: Styles.surface,
           title: const Text(
             'Detail Tonggak Pencapaian',
-            style: TextStyle(color: Styles.tabActive, fontSize: 18),
+            style: TextStyle(color: Styles.textPrimary, fontSize: 18),
           ),
-          iconTheme: const IconThemeData(color: Styles.tabActive),
+          iconTheme: const IconThemeData(color: Styles.textPrimary),
         ),
         body: SafeArea(
           child: Center(
@@ -57,52 +47,50 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                       width: 140,
                       height: 140,
                       decoration: isUnlocked
-                        ? Styles.gradientOrangeBright
+                        ? const BoxDecoration(gradient: Styles.primaryGradient)
                         : const BoxDecoration(color: Styles.surface),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            widget.badge.watermarkNumber,
+                            badge.watermarkNumber,
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: isUnlocked
-                                ? Styles.background
-                                : Styles.inactive,
+                                ? Styles.canvas
+                                : Styles.textMuted,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Icon(
-                            isUnlocked
-                              ? Icons.emoji_events
-                              : Icons.lock_outline,
+                            isUnlocked ? Icons.emoji_events : Icons.lock_outline,
                             size: 48,
                             color: isUnlocked
-                              ? Styles.background
-                              : Styles.tabActive,
+                              ? Styles.canvas
+                              : Styles.textPrimary,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      widget.badge.title,
+                      badge.title,
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       isUnlocked
                         ? 'STATUS: TERBUKA (TERCAPAI)'
-                        : 'STATUS: TERKUNCI (${widget.currentActivities}/${widget.badge.requiredActivities} Aktivitas)',
+                        : 'STATUS: TERKUNCI ($currentActivities/${badge.requiredActivities} Aktivitas)',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: isUnlocked ? Styles.active : Styles.accent,
+                        color: isUnlocked ? Styles.success : Styles.accent,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -112,10 +100,10 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                       child: Column(
                         children: [
                           Text(
-                            widget.badge.description,
+                            badge.description,
                             style: const TextStyle(
                               fontSize: 15,
-                              color: Styles.tabInactive,
+                              color: Styles.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -124,12 +112,9 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                             children: [
                               const Text(
                                 'Tandai Klaim Trofi Manual: ',
-                                style: TextStyle(color: Styles.tabActive),
+                                style: TextStyle(color: Styles.textPrimary),
                               ),
-                              TrophyCheckBox(
-                                badge: widget.badge,
-                                onChanged: _syncToggleState,
-                              ),
+                              TrophyCheckBox(badge: badge),
                             ],
                           ),
                         ],
@@ -137,12 +122,20 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        widget.badge.toggleIsChecked();
-                        _syncToggleState();
+                      onPressed: () async {
+                        await ref
+                          .read(claimedTrophiesProvider.notifier)
+                          .toggleClaim(badge.id);
+                        if (!context.mounted) return;
+                        ProfileSnackbarHelper.showSuccess(
+                          context,
+                          isClaimed
+                            ? 'Klaim trofi "${badge.title}" dibatalkan.'
+                            : 'Trofi "${badge.title}" berhasil diklaim!',
+                        );
                       },
                       child: Text(
-                        widget.badge.isChecked
+                        isClaimed
                           ? 'Batalkan Klaim Trofi'
                           : 'Simulasi Buka Trofi Ini',
                         style: const TextStyle(color: Styles.accent),

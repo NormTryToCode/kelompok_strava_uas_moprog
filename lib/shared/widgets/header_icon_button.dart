@@ -20,16 +20,16 @@ class HeaderIconButton extends StatelessWidget {
       child: IconButton(
         style: IconButton.styleFrom(
           backgroundColor: Styles.surface,
-          foregroundColor: Styles.tabActive,
+          foregroundColor: Styles.primaryLight,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: Palette.cardBorder),
+            side: const BorderSide(color: Styles.cardBorder),
           ),
         ),
         icon: Badge(
           isLabelVisible: badgeCount > 0,
-          backgroundColor: Styles.badge,
-          textColor: Styles.tabActive,
+          backgroundColor: Styles.primaryDark,
+          textColor: Styles.primaryLight,
           label: Text('$badgeCount'),
           child: Icon(icon, size: 21),
         ),

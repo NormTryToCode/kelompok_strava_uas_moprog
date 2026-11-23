@@ -31,7 +31,7 @@ class ChoiceCard extends StatelessWidget {
           IconBubble(
             icon,
             size: 46,
-            color: selected ? Palette.teal : Styles.tabInactive,
+            color: selected ? Styles.teal : Styles.surfaceHighlight,
           ),
           const SizedBox(height: 14),
           Text(
@@ -48,7 +48,7 @@ class ChoiceCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13.5,
               height: 1.35,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
         ],
