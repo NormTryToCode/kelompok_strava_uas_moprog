@@ -72,28 +72,37 @@ class HomePage extends StatelessWidget {
             spacing: 32,
             children: [
               const SizedBox(height: 4),
-              const HomeStreakWidget(),
-              const SizedBox(height: 2),
-              Center(child: Text("uam"),),
-              HorizontalCarousel.cards(
-                items: _badges,
-                bordered: true,
-                cardBuilder: (context, badge) => Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Image.asset(badge['image']!, fit: BoxFit.contain),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      badge['title']!,
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 8),
 
+              const HomeStreakWidget(),
+
+              const SizedBox(height: 2),
+
+             Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Daily Stats",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                      Text(
+                        "Todays Stats",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: Styles.badge.withValues(alpha: 0.75),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
+
+  
               HorizontalCarousel.cards(
                 items: _dailyStats,
                 bordered: true,
@@ -111,7 +120,50 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
+             Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Badges",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+                    Text(
+                      "Earn the badges",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: Styles.badge.withValues(alpha: 0.75),
+                      ),
+                    )
+                  ],
+                ),
+              ),
 
+              HorizontalCarousel.cards(
+                items: _badges,
+                bordered: true,
+                cardBuilder: (context, badge) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Image.asset(badge['image']!, fit: BoxFit.contain),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      badge['title']!,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 8),
+  
             ],
           ),
         ),
