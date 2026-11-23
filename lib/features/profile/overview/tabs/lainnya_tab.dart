@@ -151,7 +151,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -160,7 +160,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
             decoration: BoxDecoration(
               color: Styles.surface,
               borderRadius: BorderRadius.circular(Radii.chip),
-              border: Border.all(color: Palette.cardBorder),
+              border: Border.all(color: Styles.cardBorder),
             ),
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -168,7 +168,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
               children: [
                 const Text(
                   "Ikuti Tantangan untuk menemukan motivasi, membangun kebiasaan, dan mendapatkan hadiah.",
-                  style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                  style: TextStyle(fontSize: 12, color: Styles.textSecondary),
                 ),
                 const SizedBox(height: 10),
                 Center(
@@ -201,7 +201,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+                      color: Styles.textPrimary,
                     ),
                   ),
                   Text(
@@ -209,8 +209,8 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                     style: TextStyle(
                       fontSize: 12,
                       color: unlockedCount > 0
-                        ? Styles.active
-                        : Styles.tabInactive,
+                        ? Styles.success
+                        : Styles.textSecondary,
                     ),
                   ),
                 ],
@@ -246,7 +246,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           decoration: isUnlocked
                             ? BoxDecoration(
-                                gradient: Palette.primaryGradient,
+                                gradient: Styles.primaryGradient,
                                 borderRadius:
                                   BorderRadius.circular(Radii.chip),
                               )
@@ -255,7 +255,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                                 borderRadius:
                                   BorderRadius.circular(Radii.chip),
                                 border: Border.all(
-                                  color: Palette.cardBorder,
+                                  color: Styles.cardBorder,
                                 ),
                               ),
                           child: Column(
@@ -267,8 +267,8 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: isUnlocked
-                                    ? Styles.background
-                                    : Styles.inactive,
+                                    ? Styles.canvas
+                                    : Styles.textMuted,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -278,8 +278,8 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                                   : Icons.lock_outline,
                                 size: 22,
                                 color: isUnlocked
-                                  ? Styles.background
-                                  : Styles.tabActive,
+                                  ? Styles.canvas
+                                  : Styles.textPrimary,
                               ),
                             ],
                           ),
@@ -294,7 +294,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                               : FontWeight.normal,
                             color: isUnlocked
                               ? Styles.accent
-                              : Styles.tabInactive,
+                              : Styles.textSecondary,
                           ),
                         ),
                       ],
@@ -339,21 +339,21 @@ class _LainnyaMenuTile extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Radii.chip),
-            border: Border.all(color: Palette.cardBorder),
+            border: Border.all(color: Styles.cardBorder),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Icon(icon, color: Styles.tabActive),
+                  Icon(icon, color: Styles.textPrimary),
                   const SizedBox(width: 14),
                   Text(
                     title,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Styles.tabActive,
+                      color: Styles.textPrimary,
                     ),
                   ),
                 ],
@@ -363,7 +363,7 @@ class _LainnyaMenuTile extends StatelessWidget {
                   trailingWidget!,
                   const Icon(
                     Icons.chevron_right,
-                    color: Styles.tabInactive,
+                    color: Styles.textSecondary,
                   ),
                 ],
               ),

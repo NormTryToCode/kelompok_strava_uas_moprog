@@ -13,7 +13,7 @@ Future<bool> showConfirmDeleteDialog(
       backgroundColor: Styles.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Palette.cardBorder),
+        side: const BorderSide(color: Styles.cardBorder),
       ),
       title: Text(
         title,
@@ -26,7 +26,7 @@ Future<bool> showConfirmDeleteDialog(
       content: Text(
         message,
         style: const TextStyle(
-          color: Styles.tabInactive,
+          color: Styles.surfaceHighlight,
           fontSize: 14.5,
           height: 1.4,
         ),
@@ -36,7 +36,7 @@ Future<bool> showConfirmDeleteDialog(
           onPressed: () => Navigator.of(dialogContext).pop(false),
           child: const Text(
             'Cancel',
-            style: TextStyle(color: Styles.tabInactive),
+            style: TextStyle(color: Styles.surfaceHighlight),
           ),
         ),
         TextButton(
@@ -55,3 +55,4 @@ Future<bool> showConfirmDeleteDialog(
 
   return confirmed == true;
 }
+

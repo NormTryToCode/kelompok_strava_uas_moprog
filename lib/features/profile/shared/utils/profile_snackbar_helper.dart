@@ -12,11 +12,11 @@ class ProfileSnackbarHelper {
           content: Text(
             message,
             style: const TextStyle(
-              color: Styles.background,
+              color: Styles.canvas,
               fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor: Palette.success,
+          backgroundColor: Styles.success,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -30,11 +30,11 @@ class ProfileSnackbarHelper {
           content: Text(
             message,
             style: const TextStyle(
-              color: Styles.tabActive,
+              color: Styles.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor: Palette.danger,
+          backgroundColor: Styles.danger,
           duration: const Duration(seconds: 2),
         ),
       );
@@ -48,7 +48,7 @@ class ProfileSnackbarHelper {
           content: Text(
             message,
             style: const TextStyle(
-              color: Styles.tabActive,
+              color: Styles.textPrimary,
               fontWeight: FontWeight.w500,
             ),
           ),

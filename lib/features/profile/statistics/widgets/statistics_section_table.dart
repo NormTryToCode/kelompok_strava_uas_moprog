@@ -5,10 +5,7 @@ class StatisticMetricItem {
   final String label;
   final String value;
 
-  const StatisticMetricItem({
-    required this.label,
-    required this.value,
-  });
+  const StatisticMetricItem({required this.label, required this.value});
 }
 
 class StatisticsSectionTable extends StatelessWidget {
@@ -28,28 +25,22 @@ class StatisticsSectionTable extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          color: Styles.background,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 10.0,
-          ),
+          color: Styles.canvas,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
           child: Text(
             sectionTitle,
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
         ),
         Container(
           width: double.infinity,
           color: Styles.surface,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 6.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
           child: Column(
             children: List.generate(items.length, (index) {
               final item = items[index];
@@ -62,7 +53,7 @@ class StatisticsSectionTable extends StatelessWidget {
                       item.label,
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     Text(
@@ -70,7 +61,7 @@ class StatisticsSectionTable extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -83,3 +74,4 @@ class StatisticsSectionTable extends StatelessWidget {
     );
   }
 }
+

@@ -145,7 +145,7 @@ class ProfilePage extends ConsumerWidget {
       child: Animate(
         effects: const [FadeEffect()],
         child: Scaffold(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           body: SafeArea(
             child: _buildActiveScreenContent(context, ref),
           ),

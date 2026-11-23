@@ -28,7 +28,7 @@ class PrimaryButton extends StatelessWidget {
       color: Colors.transparent,
       child: Ink(
         decoration: BoxDecoration(
-          color: enabled ? Styles.accent : Styles.inactive,
+          color: enabled ? Styles.accent : Styles.surfaceHighlight,
           borderRadius: radius,
         ),
         child: InkWell(
@@ -84,8 +84,9 @@ class GhostButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
     final radius = BorderRadius.circular(12);
-    final foreground =
-        enabled ? Colors.white : Styles.tabInactive.withAlpha(110);
+    final foreground = enabled
+        ? Colors.white
+        : Styles.surfaceHighlight.withAlpha(110);
 
     return Material(
       color: Colors.transparent,
@@ -94,7 +95,9 @@ class GhostButton extends StatelessWidget {
           color: Styles.surface,
           borderRadius: radius,
           border: Border.all(
-            color: enabled ? Palette.cardBorder : Palette.cardBorder.withAlpha(90),
+            color: enabled
+                ? Styles.cardBorder
+                : Styles.cardBorder.withAlpha(90),
             width: 1,
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/athlete_gear.dart';
 import '../providers/athlete_gear_provider.dart';
 
@@ -40,7 +41,7 @@ class GearDetailSheet extends ConsumerWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Styles.inactive,
+                  color: Styles.surfaceHighlight,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -55,9 +56,9 @@ class GearDetailSheet extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Palette.fieldFill,
+                          color: Styles.fieldFill,
                           borderRadius: BorderRadius.circular(Radii.chip),
-                          border: Border.all(color: Palette.cardBorder),
+                          border: Border.all(color: Styles.cardBorder),
                         ),
                         child: Icon(
                           gear.category.icon,
@@ -75,18 +76,18 @@ class GearDetailSheet extends ConsumerWidget {
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: Styles.tabActive,
+                                color: Styles.primaryLight,
                               ),
                             ),
                             Text(
                               gear.isRetired
-                                ? '${gear.category.label} • Dipensiunkan'
-                                : '${gear.category.label} • Aktif',
+                                  ? '${gear.category.label} • Dipensiunkan'
+                                  : '${gear.category.label} • Aktif',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: gear.isRetired
-                                  ? Styles.tabInactive
-                                  : Styles.active,
+                                    ? Styles.surfaceHighlight
+                                    : Styles.primaryLight,
                               ),
                             ),
                           ],
@@ -97,7 +98,7 @@ class GearDetailSheet extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: Styles.tabInactive),
+                  icon: const Icon(Icons.close, color: Styles.surfaceHighlight),
                 ),
               ],
             ),
@@ -118,7 +119,7 @@ class GearDetailSheet extends ConsumerWidget {
               _DetailRow(
                 label: 'Berat',
                 value:
-                  '${gear.weightKg!.toStringAsFixed(1).replaceAll('.', ',')} kg',
+                    '${gear.weightKg!.toStringAsFixed(1).replaceAll('.', ',')} kg',
               ),
             if (gear.category == GearCategory.wearable &&
                 gear.batteryHours != null)
@@ -129,8 +130,8 @@ class GearDetailSheet extends ConsumerWidget {
             _DetailRow(
               label: 'Jarak tempuh',
               value: gear.maxDistanceKm != null
-                ? '${gear.formattedDistance} / ${gear.maxDistanceKm} km'
-                : gear.formattedDistance,
+                  ? '${gear.formattedDistance} / ${gear.maxDistanceKm} km'
+                  : gear.formattedDistance,
             ),
             if (wearRatio != null) ...[
               const SizedBox(height: 4),
@@ -139,7 +140,7 @@ class GearDetailSheet extends ConsumerWidget {
                 child: LinearProgressIndicator(
                   value: wearRatio,
                   minHeight: 8,
-                  backgroundColor: Styles.background,
+                  backgroundColor: Styles.canvas,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     gear.isReplacementDue ? Colors.redAccent : Styles.accent,
                   ),
@@ -148,13 +149,13 @@ class GearDetailSheet extends ConsumerWidget {
               const SizedBox(height: 6),
               Text(
                 gear.isReplacementDue
-                  ? 'Target batas pemakaian tercapai — pertimbangkan ganti perlengkapan.'
-                  : 'Terpakai ${(wearRatio * 100).round()}% dari batas target ${gear.maxDistanceKm} km',
+                    ? 'Target batas pemakaian tercapai — pertimbangkan ganti perlengkapan.'
+                    : 'Terpakai ${(wearRatio * 100).round()}% dari batas target ${gear.maxDistanceKm} km',
                 style: TextStyle(
                   fontSize: 12,
                   color: gear.isReplacementDue
-                    ? Colors.redAccent
-                    : Styles.tabInactive,
+                      ? Colors.redAccent
+                      : Styles.surfaceHighlight,
                 ),
               ),
               const SizedBox(height: 12),
@@ -165,7 +166,10 @@ class GearDetailSheet extends ConsumerWidget {
                 children: [
                   const Text(
                     'Catat Jarak Cepat:',
-                    style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Styles.surfaceHighlight,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   OutlinedButton(
@@ -180,8 +184,8 @@ class GearDetailSheet extends ConsumerWidget {
                     ),
                     onPressed: () {
                       ref
-                        .read(athleteGearProvider.notifier)
-                        .addDistance(gear.id, 5.0);
+                          .read(athleteGearProvider.notifier)
+                          .addDistance(gear.id, 5.0);
                     },
                     child: const Text('+5 km'),
                   ),
@@ -198,8 +202,8 @@ class GearDetailSheet extends ConsumerWidget {
                     ),
                     onPressed: () {
                       ref
-                        .read(athleteGearProvider.notifier)
-                        .addDistance(gear.id, 25.0);
+                          .read(athleteGearProvider.notifier)
+                          .addDistance(gear.id, 25.0);
                     },
                     child: const Text('+25 km'),
                   ),
@@ -212,8 +216,8 @@ class GearDetailSheet extends ConsumerWidget {
             _DetailRow(
               label: 'Olahraga Default',
               value: gear.defaultSports.isEmpty
-                ? 'Tidak ada'
-                : gear.defaultSports.join(', '),
+                  ? 'Tidak ada'
+                  : gear.defaultSports.join(', '),
             ),
             const SizedBox(height: 18),
             SizedBox(
@@ -221,7 +225,7 @@ class GearDetailSheet extends ConsumerWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Styles.accent,
-                  foregroundColor: Styles.tabActive,
+                  foregroundColor: Styles.primaryLight,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(Radii.button),
@@ -229,8 +233,8 @@ class GearDetailSheet extends ConsumerWidget {
                 ),
                 onPressed: () async {
                   await ref
-                    .read(athleteGearProvider.notifier)
-                    .toggleRetireGear(gear.id);
+                      .read(athleteGearProvider.notifier)
+                      .toggleRetireGear(gear.id);
                   if (!context.mounted) return;
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -238,17 +242,17 @@ class GearDetailSheet extends ConsumerWidget {
                       backgroundColor: Styles.surface,
                       content: Text(
                         gear.isRetired
-                          ? '${gear.displayName} berhasil diaktifkan kembali.'
-                          : '${gear.displayName} dipindahkan ke daftar pensiun.',
-                        style: const TextStyle(color: Styles.tabActive),
+                            ? '${gear.displayName} berhasil diaktifkan kembali.'
+                            : '${gear.displayName} dipindahkan ke daftar pensiun.',
+                        style: const TextStyle(color: Styles.primaryLight),
                       ),
                     ),
                   );
                 },
                 child: Text(
                   gear.isRetired
-                    ? 'Aktifkan Kembali ${gear.category.label}'
-                    : 'Pensiunkan ${gear.category.label}',
+                      ? 'Aktifkan Kembali ${gear.category.label}'
+                      : 'Pensiunkan ${gear.category.label}',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -261,8 +265,8 @@ class GearDetailSheet extends ConsumerWidget {
               width: double.infinity,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Styles.tabActive,
-                  side: const BorderSide(color: Palette.cardBorder),
+                  foregroundColor: Styles.primaryLight,
+                  side: const BorderSide(color: Styles.cardBorder),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(Radii.button),
@@ -292,10 +296,7 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow({
-    required this.label,
-    required this.value,
-  });
+  const _DetailRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -308,7 +309,7 @@ class _DetailRow extends StatelessWidget {
             label,
             style: const TextStyle(
               fontSize: 12,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
           const SizedBox(height: 2),
@@ -317,7 +318,7 @@ class _DetailRow extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
         ],
@@ -325,3 +326,4 @@ class _DetailRow extends StatelessWidget {
     );
   }
 }
+

@@ -8,7 +8,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: Center(child: LoginWidget()),
     );
   }

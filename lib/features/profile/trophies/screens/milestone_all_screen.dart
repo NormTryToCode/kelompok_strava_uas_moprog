@@ -15,18 +15,18 @@ class MilestoneAllScreen extends ConsumerWidget {
     return Animate(
       effects: const [FadeEffect()],
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppBar(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           title: const Text(
             'Tonggak pencapaian',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.textPrimary,
             ),
           ),
-          iconTheme: const IconThemeData(color: Styles.tabActive),
+          iconTheme: const IconThemeData(color: Styles.textPrimary),
         ),
         body: SafeArea(
           child: Padding(

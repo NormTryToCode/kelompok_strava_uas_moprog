@@ -308,9 +308,9 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
               primary: Styles.accent,
-              onPrimary: Styles.tabActive,
+              onPrimary: Styles.textPrimary,
               surface: Styles.surface,
-              onSurface: Styles.tabActive,
+              onSurface: Styles.textPrimary,
             ),
           ),
           child: child!,
@@ -342,7 +342,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                       onTap: _handleBackNavigation,
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -351,7 +351,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                   ],
@@ -468,7 +468,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Styles.active,
+                        color: Styles.success,
                       ),
                     ),
                   ),
@@ -493,7 +493,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
@@ -501,7 +501,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
               "Digunakan untuk menghitung kalori, kekuatan, dan lainnya",
               style: TextStyle(
                 fontSize: 12,
-                color: Styles.tabInactive,
+                color: Styles.textSecondary,
               ),
             ),
             const SizedBox(height: 12),

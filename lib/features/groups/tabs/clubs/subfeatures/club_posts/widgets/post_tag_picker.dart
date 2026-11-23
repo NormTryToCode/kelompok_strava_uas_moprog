@@ -20,28 +20,31 @@ class PostTagPicker extends StatelessWidget {
       children: [
         for (final tag in PostTag.values)
           Material(
-            color: tag == selected ? Palette.selectedFill : Styles.surface,
+            color: tag == selected ? Styles.selectedFill : Styles.surface,
             clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(Radii.chip),
               side: BorderSide(
-                color: tag == selected ? Palette.teal : Palette.cardBorder,
+                color: tag == selected ? Styles.teal : Styles.cardBorder,
                 width: tag == selected ? 1.5 : 1,
               ),
             ),
             child: InkWell(
               onTap: () => onChanged(tag),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 9,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       tag.icon,
                       size: 16,
-                      color:
-                          tag == selected ? Palette.teal : Styles.tabInactive,
+                      color: tag == selected
+                          ? Styles.teal
+                          : Styles.surfaceHighlight,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -49,8 +52,9 @@ class PostTagPicker extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600,
-                        color:
-                            tag == selected ? Colors.white : Styles.tabInactive,
+                        color: tag == selected
+                            ? Colors.white
+                            : Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -62,3 +66,4 @@ class PostTagPicker extends StatelessWidget {
     );
   }
 }
+

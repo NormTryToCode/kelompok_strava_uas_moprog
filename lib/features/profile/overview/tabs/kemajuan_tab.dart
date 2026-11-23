@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../widgets/best_efforts_widget.dart';
 import '../widgets/weekly_run_counter.dart';
 
@@ -45,9 +46,7 @@ class _KemajuanTabState extends State<KemajuanTab> {
                 child: Text(
                   "Berlari",
                   style: TextStyle(
-                    color: (_subSection == 0)
-                      ? Styles.accent
-                      : Styles.background,
+                    color: (_subSection == 0) ? Styles.accent : Styles.canvas,
                   ),
                 ),
               ),
@@ -61,9 +60,7 @@ class _KemajuanTabState extends State<KemajuanTab> {
                 child: Text(
                   "Usaha & Target",
                   style: TextStyle(
-                    color: (_subSection == 1)
-                      ? Styles.accent
-                      : Styles.background,
+                    color: (_subSection == 1) ? Styles.accent : Styles.canvas,
                   ),
                 ),
               ),
@@ -77,9 +74,7 @@ class _KemajuanTabState extends State<KemajuanTab> {
                 child: Text(
                   "Catatan",
                   style: TextStyle(
-                    color: (_subSection == 2)
-                      ? Styles.accent
-                      : Styles.background,
+                    color: (_subSection == 2) ? Styles.accent : Styles.canvas,
                   ),
                 ),
               ),
@@ -103,3 +98,4 @@ class _KemajuanTabState extends State<KemajuanTab> {
     );
   }
 }
+

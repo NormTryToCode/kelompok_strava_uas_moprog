@@ -19,9 +19,8 @@ class ClubsTab extends ConsumerWidget {
     final created = await ClubCreationPage.open(context);
     if (created == null || !context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${created.name} created')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${created.name} created')));
   }
 
   @override
@@ -99,10 +98,11 @@ class _EmptyClubs extends StatelessWidget {
           Text(
             'Create one to start organizing events.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Styles.tabInactive),
+            style: TextStyle(fontSize: 14, color: Styles.surfaceHighlight),
           ),
         ],
       ),
     );
   }
 }
+

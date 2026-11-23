@@ -22,7 +22,7 @@ class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
         : widget.club;
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: const AppHeader(title: 'Club', showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -32,7 +32,7 @@ class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
             Text(
               club.name,
               style: const TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
               ),
@@ -55,7 +55,7 @@ class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
                 onPressed: () => setState(() => _joined = !_joined),
                 style: FilledButton.styleFrom(
                   backgroundColor: _joined ? Colors.white12 : Styles.accent,
-                  foregroundColor: Styles.tabActive,
+                  foregroundColor: Styles.primaryLight,
                   shape: const StadiumBorder(),
                 ),
                 child: Text(
@@ -73,3 +73,4 @@ class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
     );
   }
 }
+

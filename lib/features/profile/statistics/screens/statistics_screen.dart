@@ -56,7 +56,7 @@ class _StatisticsViewState extends ConsumerState<StatisticsView> {
                 onTap: widget.onBack,
                 child: const Icon(
                   Icons.arrow_back,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
               const SizedBox(width: 24),
@@ -65,7 +65,7 @@ class _StatisticsViewState extends ConsumerState<StatisticsView> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
             ],

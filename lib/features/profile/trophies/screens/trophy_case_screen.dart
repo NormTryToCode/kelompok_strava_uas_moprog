@@ -26,7 +26,7 @@ class TrophyCaseView extends ConsumerWidget {
             children: [
               IconButton.filled(
                 onPressed: onBack,
-                icon: const Icon(Icons.arrow_back, color: Styles.tabActive),
+                icon: const Icon(Icons.arrow_back, color: Styles.textPrimary),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -34,7 +34,7 @@ class TrophyCaseView extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
             ],
@@ -60,7 +60,7 @@ class TrophyCaseView extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Styles.tabActive,
+                            color: Styles.textPrimary,
                           ),
                         ),
                         GestureDetector(
@@ -77,7 +77,7 @@ class TrophyCaseView extends ConsumerWidget {
                             "Lihat Semua",
                             style: TextStyle(
                               fontSize: 13,
-                              color: Styles.tabInactive,
+                              color: Styles.textSecondary,
                             ),
                           ),
                         ),

@@ -28,7 +28,7 @@ class TrophyCheckBox extends ConsumerWidget {
           isClaimed
             ? Icons.check_box_outlined
             : Icons.check_box_outline_blank,
-          color: isClaimed ? Styles.accent : Styles.tabInactive,
+          color: isClaimed ? Styles.accent : Styles.textSecondary,
         ),
       ),
     );

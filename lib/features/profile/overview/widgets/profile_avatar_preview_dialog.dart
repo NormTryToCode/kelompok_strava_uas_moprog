@@ -40,7 +40,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
               color: Styles.surface,
               borderRadius: BorderRadius.circular(Radii.card),
               border: Border.all(
-                color: Palette.cardBorder,
+                color: Styles.cardBorder,
                 width: 2.0,
               ),
             ),
@@ -85,7 +85,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Styles.tabActive,
+                              color: Styles.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -93,7 +93,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             '${profileData.city}, ${profileData.country} • ${profileData.primarySport}',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Styles.tabInactive,
+                              color: Styles.textSecondary,
                             ),
                           ),
                         ],
@@ -111,8 +111,8 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Styles.surface,
-                  foregroundColor: Styles.tabActive,
-                  side: const BorderSide(color: Palette.cardBorder),
+                  foregroundColor: Styles.textPrimary,
+                  side: const BorderSide(color: Styles.cardBorder),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: 10.0,
@@ -128,7 +128,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Styles.accent,
-                  foregroundColor: Styles.tabActive,
+                  foregroundColor: Styles.textPrimary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: 10.0,

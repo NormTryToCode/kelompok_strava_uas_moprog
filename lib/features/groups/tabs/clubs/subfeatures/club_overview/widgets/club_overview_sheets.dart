@@ -39,7 +39,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                     style: const TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
-                      color: Palette.teal,
+                      color: Styles.teal,
                     ),
                   ),
                 ],
@@ -48,9 +48,9 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Palette.fieldFill,
+                  color: Styles.fieldFill,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Palette.cardBorder),
+                  border: Border.all(color: Styles.cardBorder),
                 ),
                 child: Row(
                   children: [
@@ -60,15 +60,15 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Palette.selectedFill,
-                        border: Border.all(color: Palette.teal, width: 1.5),
+                        color: Styles.selectedFill,
+                        border: Border.all(color: Styles.teal, width: 1.5),
                       ),
                       child: const Text(
                         'Y',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
-                          color: Palette.teal,
+                          color: Styles.teal,
                         ),
                       ),
                     ),
@@ -90,7 +90,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                             'Owner \u00b7 ${club.locationLabel}',
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                             ),
                           ),
                         ],
@@ -98,7 +98,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                     ),
                     const Icon(
                       Icons.verified_user_outlined,
-                      color: Palette.teal,
+                      color: Styles.teal,
                       size: 20,
                     ),
                   ],
@@ -110,7 +110,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                 style: TextStyle(
                   fontSize: 13.5,
                   height: 1.4,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                 ),
               ),
               const SizedBox(height: 18),
@@ -176,7 +176,7 @@ Future<void> showCommunityStandardsSheet(BuildContext context) {
                 style: TextStyle(
                   fontSize: 13.5,
                   height: 1.4,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                 ),
               ),
               const SizedBox(height: 18),
@@ -205,7 +205,7 @@ Future<void> showCommunityStandardsSheet(BuildContext context) {
                             style: const TextStyle(
                               fontSize: 13.5,
                               height: 1.4,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                             ),
                           ),
                         ],
@@ -270,21 +270,24 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
                   const SizedBox(height: 6),
                   const Text(
                     'Select the reason that best describes the issue.',
-                    style: TextStyle(fontSize: 13.5, color: Styles.tabInactive),
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      color: Styles.surfaceHighlight,
+                    ),
                   ),
                   const SizedBox(height: 14),
                   for (var i = 0; i < reasons.length; i++) ...[
                     if (i > 0) const SizedBox(height: 8),
                     Material(
                       color: selectedReason == reasons[i]
-                          ? Palette.selectedFill
-                          : Palette.fieldFill,
+                          ? Styles.selectedFill
+                          : Styles.fieldFill,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                         side: BorderSide(
                           color: selectedReason == reasons[i]
-                              ? Palette.teal
-                              : Palette.cardBorder,
+                              ? Styles.teal
+                              : Styles.cardBorder,
                           width: selectedReason == reasons[i] ? 1.5 : 1,
                         ),
                       ),
@@ -315,8 +318,8 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
                                     : Icons.radio_button_unchecked,
                                 size: 20,
                                 color: selectedReason == reasons[i]
-                                    ? Palette.teal
-                                    : Styles.tabInactive,
+                                    ? Styles.teal
+                                    : Styles.surfaceHighlight,
                               ),
                             ],
                           ),
@@ -340,3 +343,4 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
     },
   );
 }
+

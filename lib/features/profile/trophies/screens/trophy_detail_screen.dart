@@ -26,14 +26,14 @@ class TrophyDetailScreen extends ConsumerWidget {
     return Animate(
       effects: const [FadeEffect()],
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppBar(
           backgroundColor: Styles.surface,
           title: const Text(
             'Detail Tonggak Pencapaian',
-            style: TextStyle(color: Styles.tabActive, fontSize: 18),
+            style: TextStyle(color: Styles.textPrimary, fontSize: 18),
           ),
-          iconTheme: const IconThemeData(color: Styles.tabActive),
+          iconTheme: const IconThemeData(color: Styles.textPrimary),
         ),
         body: SafeArea(
           child: Center(
@@ -47,7 +47,7 @@ class TrophyDetailScreen extends ConsumerWidget {
                       width: 140,
                       height: 140,
                       decoration: isUnlocked
-                        ? Styles.gradientOrangeBright
+                        ? const BoxDecoration(gradient: Styles.primaryGradient)
                         : const BoxDecoration(color: Styles.surface),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -58,8 +58,8 @@ class TrophyDetailScreen extends ConsumerWidget {
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: isUnlocked
-                                ? Styles.background
-                                : Styles.inactive,
+                                ? Styles.canvas
+                                : Styles.textMuted,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -67,8 +67,8 @@ class TrophyDetailScreen extends ConsumerWidget {
                             isUnlocked ? Icons.emoji_events : Icons.lock_outline,
                             size: 48,
                             color: isUnlocked
-                              ? Styles.background
-                              : Styles.tabActive,
+                              ? Styles.canvas
+                              : Styles.textPrimary,
                           ),
                         ],
                       ),
@@ -79,7 +79,7 @@ class TrophyDetailScreen extends ConsumerWidget {
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -90,7 +90,7 @@ class TrophyDetailScreen extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: isUnlocked ? Styles.active : Styles.accent,
+                        color: isUnlocked ? Styles.success : Styles.accent,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -103,7 +103,7 @@ class TrophyDetailScreen extends ConsumerWidget {
                             badge.description,
                             style: const TextStyle(
                               fontSize: 15,
-                              color: Styles.tabInactive,
+                              color: Styles.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -112,7 +112,7 @@ class TrophyDetailScreen extends ConsumerWidget {
                             children: [
                               const Text(
                                 'Tandai Klaim Trofi Manual: ',
-                                style: TextStyle(color: Styles.tabActive),
+                                style: TextStyle(color: Styles.textPrimary),
                               ),
                               TrophyCheckBox(badge: badge),
                             ],

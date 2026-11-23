@@ -62,7 +62,7 @@ class PostCardItem extends StatelessWidget {
                       post.createdAt.timeAgo(),
                       style: const TextStyle(
                         fontSize: 12.5,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -75,7 +75,7 @@ class PostCardItem extends StatelessWidget {
                   icon: const Icon(
                     Icons.more_vert,
                     size: 20,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                   color: Styles.surface,
                   onSelected: (value) {
@@ -125,7 +125,7 @@ class PostCardItem extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14.5,
                 height: 1.45,
-                color: Styles.tabInactive,
+                color: Styles.surfaceHighlight,
               ),
             ),
           ],
@@ -141,11 +141,11 @@ class PostCardItem extends StatelessWidget {
                 errorBuilder: (_, _, _) => Container(
                   height: 120,
                   width: double.infinity,
-                  color: Palette.fieldFill,
+                  color: Styles.fieldFill,
                   alignment: Alignment.center,
                   child: const Icon(
                     Icons.broken_image_outlined,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                     size: 32,
                   ),
                 ),
@@ -159,30 +159,35 @@ class PostCardItem extends StatelessWidget {
                 post.kudosLabel,
                 style: TextStyle(
                   fontSize: 12.5,
-                  fontWeight:
-                      post.kudosCount > 0 ? FontWeight.w600 : FontWeight.w400,
-                  color:
-                      post.hasGivenKudos ? Palette.teal : Styles.tabInactive,
+                  fontWeight: post.kudosCount > 0
+                      ? FontWeight.w600
+                      : FontWeight.w400,
+                  color: post.hasGivenKudos
+                      ? Styles.teal
+                      : Styles.surfaceHighlight,
                 ),
               ),
               const Spacer(),
               if (!post.allowComments)
                 const Text(
                   'Comments off',
-                  style: TextStyle(fontSize: 12.5, color: Styles.tabInactive),
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: Styles.surfaceHighlight,
+                  ),
                 )
               else if (post.commentLabel.isNotEmpty)
                 Text(
                   post.commentLabel,
                   style: const TextStyle(
                     fontSize: 12.5,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
             ],
           ),
           const SizedBox(height: 12),
-          const Divider(height: 1, color: Palette.cardBorder),
+          const Divider(height: 1, color: Styles.cardBorder),
           const SizedBox(height: 10),
           Row(
             children: [
@@ -235,15 +240,15 @@ class _PostAuthorAvatar extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Palette.selectedFill,
-        border: Border.all(color: Palette.teal, width: 1.5),
+        color: Styles.selectedFill,
+        border: Border.all(color: Styles.teal, width: 1.5),
       ),
       child: Text(
         initial,
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w800,
-          color: Palette.teal,
+          color: Styles.teal,
         ),
       ),
     );
@@ -260,20 +265,20 @@ class _TagBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
-        color: Palette.teal.withAlpha(28),
+        color: Styles.teal.withAlpha(28),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(tag.icon, size: 13, color: Palette.teal),
+          Icon(tag.icon, size: 13, color: Styles.teal),
           const SizedBox(width: 4),
           Text(
             tag.label,
             style: const TextStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w700,
-              color: Palette.teal,
+              color: Styles.teal,
             ),
           ),
         ],
@@ -300,11 +305,11 @@ class _ActionPillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = !enabled
-        ? Styles.tabInactive.withAlpha(90)
+        ? Styles.surfaceHighlight.withAlpha(90)
         : (active ? Styles.accent : Colors.white);
 
     return Material(
-      color: active ? Styles.accent.withAlpha(30) : Palette.fieldFill,
+      color: active ? Styles.accent.withAlpha(30) : Styles.fieldFill,
       borderRadius: BorderRadius.circular(Radii.chip),
       child: InkWell(
         onTap: enabled ? onTap : null,
@@ -331,3 +336,4 @@ class _ActionPillButton extends StatelessWidget {
     );
   }
 }
+

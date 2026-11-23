@@ -123,15 +123,15 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
 
     return postsAsync.when(
       loading: () => const Scaffold(
-        backgroundColor: Styles.background,
-        body: Center(child: CircularProgressIndicator(color: Palette.teal)),
+        backgroundColor: Styles.canvas,
+        body: Center(child: CircularProgressIndicator(color: Styles.teal)),
       ),
       error: (_, _) => const Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         body: Center(
           child: Text(
             'Could not load post.',
-            style: TextStyle(color: Styles.tabInactive),
+            style: TextStyle(color: Styles.surfaceHighlight),
           ),
         ),
       ),
@@ -139,15 +139,15 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
         final match = posts.where((p) => p.id == widget.postId);
         if (match.isEmpty) {
           return Scaffold(
-            backgroundColor: Styles.background,
+            backgroundColor: Styles.canvas,
             appBar: AppBar(
-              backgroundColor: Styles.background,
+              backgroundColor: Styles.canvas,
               foregroundColor: Colors.white,
             ),
             body: const Center(
               child: Text(
                 'Post no longer exists.',
-                style: TextStyle(color: Styles.tabInactive),
+                style: TextStyle(color: Styles.surfaceHighlight),
               ),
             ),
           );
@@ -157,9 +157,9 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
         final notifier = ref.read(clubPostsProvider(widget.club.id).notifier);
 
         return Scaffold(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           appBar: AppBar(
-            backgroundColor: Styles.background,
+            backgroundColor: Styles.canvas,
             surfaceTintColor: Colors.transparent,
             foregroundColor: Colors.white,
             title: const Text(
@@ -207,7 +207,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
-                                color: Palette.teal,
+                                color: Styles.teal,
                               ),
                             ),
                     ),
@@ -238,7 +238,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                                 'Start the conversation below.',
                                 style: TextStyle(
                                   fontSize: 13.5,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                             ],
@@ -267,7 +267,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                 Container(
                   decoration: const BoxDecoration(
                     color: Styles.surface,
-                    border: Border(top: BorderSide(color: Palette.cardBorder)),
+                    border: Border(top: BorderSide(color: Styles.cardBorder)),
                   ),
                   child: SafeArea(
                     top: false,
@@ -282,17 +282,18 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                               textCapitalization: TextCapitalization.sentences,
                               textInputAction: TextInputAction.send,
                               onSubmitted: (_) => _submitComment(),
-                              cursorColor: Palette.teal,
+                              cursorColor: Styles.teal,
                               style: const TextStyle(
                                 fontSize: 15,
                                 color: Colors.white,
                               ),
                               decoration: InputDecoration(
                                 hintText: 'Add a comment...',
-                                hintStyle:
-                                    const TextStyle(color: Styles.tabInactive),
+                                hintStyle: const TextStyle(
+                                  color: Styles.surfaceHighlight,
+                                ),
                                 filled: true,
-                                fillColor: Palette.fieldFill,
+                                fillColor: Styles.fieldFill,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 12,
@@ -300,13 +301,13 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(24),
                                   borderSide: const BorderSide(
-                                    color: Palette.cardBorder,
+                                    color: Styles.cardBorder,
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(24),
                                   borderSide: const BorderSide(
-                                    color: Palette.teal,
+                                    color: Styles.teal,
                                     width: 1.5,
                                   ),
                                 ),
@@ -343,3 +344,4 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
     );
   }
 }
+

@@ -24,13 +24,13 @@ class NotificationTile extends StatelessWidget {
               height: 52,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                gradient: Palette.primaryGradient,
+                gradient: Styles.primaryGradient,
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Text(
                 AppBrand.wordmark,
                 style: TextStyle(
-                  color: Styles.background,
+                  color: Styles.canvas,
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.8,
@@ -45,17 +45,18 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     item.title,
                     style: TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 17,
-                      fontWeight:
-                          item.isRead ? FontWeight.w500 : FontWeight.w700,
+                      fontWeight: item.isRead
+                          ? FontWeight.w500
+                          : FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.body,
                     style: const TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 15,
                     ),
                   ),
@@ -78,3 +79,4 @@ class NotificationTile extends StatelessWidget {
     );
   }
 }
+

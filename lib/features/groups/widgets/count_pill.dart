@@ -14,16 +14,17 @@ class CountPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Palette.cardBorder),
+        border: Border.all(color: Styles.cardBorder),
       ),
       child: Text(
         label ?? '$count',
         style: const TextStyle(
           fontSize: 12.5,
           fontWeight: FontWeight.w700,
-          color: Styles.tabInactive,
+          color: Styles.surfaceHighlight,
         ),
       ),
     );
   }
 }
+

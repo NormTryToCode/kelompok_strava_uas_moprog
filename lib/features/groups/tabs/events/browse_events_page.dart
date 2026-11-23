@@ -13,10 +13,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.d
 class BrowseEventsPage extends ConsumerStatefulWidget {
   final EventFilter initialFilter;
 
-  const BrowseEventsPage({
-    super.key,
-    this.initialFilter = const EventFilter(),
-  });
+  const BrowseEventsPage({super.key, this.initialFilter = const EventFilter()});
 
   static Future<void> open(
     BuildContext context, {
@@ -93,9 +90,9 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
     final hasAnyFilter = _filter.isFiltered || _sportQuery.trim().isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -123,9 +120,7 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
                 ),
                 const SizedBox(width: 8),
                 _ToolbarPill(
-                  icon: hasSport
-                      ? selectedSport.icon
-                      : Icons.layers_outlined,
+                  icon: hasSport ? selectedSport.icon : Icons.layers_outlined,
                   label: hasSport ? selectedSport.name : 'Sport',
                   showDropdown: true,
                   active: hasSport,
@@ -153,10 +148,10 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
               style: const TextStyle(fontSize: 14.5, color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Search by sport',
-                hintStyle: const TextStyle(color: Styles.tabInactive),
+                hintStyle: const TextStyle(color: Styles.surfaceHighlight),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                   size: 20,
                 ),
                 suffixIcon: _sportQuery.isEmpty
@@ -168,7 +163,7 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
                         },
                         icon: const Icon(
                           Icons.close,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                           size: 18,
                         ),
                       ),
@@ -177,7 +172,7 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 11),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(color: Palette.cardBorder),
+                  borderSide: const BorderSide(color: Styles.cardBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -247,7 +242,7 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                             ),
                           ),
                           if (hasAnyFilter) ...[
@@ -280,7 +275,7 @@ class _BrowseEventsPageState extends ConsumerState<BrowseEventsPage> {
                               '${visible.length} ${visible.length == 1 ? 'event' : 'events'} found',
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: Styles.tabInactive,
+                                color: Styles.surfaceHighlight,
                               ),
                             ),
                             const Spacer(),
@@ -355,9 +350,7 @@ class _ToolbarPill extends StatelessWidget {
     return Material(
       color: active ? Styles.accent.withAlpha(24) : Styles.surface,
       shape: StadiumBorder(
-        side: BorderSide(
-          color: active ? Styles.accent : Palette.cardBorder,
-        ),
+        side: BorderSide(color: active ? Styles.accent : Styles.cardBorder),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -393,3 +386,4 @@ class _ToolbarPill extends StatelessWidget {
     );
   }
 }
+

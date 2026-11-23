@@ -20,10 +20,26 @@ class EventMapPreview extends StatelessWidget {
   });
 
   static const _darkNavyMapFilter = ColorFilter.matrix(<double>[
-    -0.85, 0, 0, 0, 230,
-    0, -0.82, 0, 0, 236,
-    0, 0, -0.78, 0, 240,
-    0, 0, 0, 1, 0,
+    -0.85,
+    0,
+    0,
+    0,
+    230,
+    0,
+    -0.82,
+    0,
+    0,
+    236,
+    0,
+    0,
+    -0.78,
+    0,
+    240,
+    0,
+    0,
+    0,
+    1,
+    0,
   ]);
 
   @override
@@ -37,7 +53,7 @@ class EventMapPreview extends StatelessWidget {
         options: MapOptions(
           initialCenter: point,
           initialZoom: zoom,
-          backgroundColor: Palette.deepNavy,
+          backgroundColor: Styles.deepNavy,
           interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.none,
           ),
@@ -64,11 +80,8 @@ class EventMapPreview extends StatelessWidget {
                     height: 34,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Palette.marigold.withAlpha(55),
-                      border: Border.all(
-                        color: Palette.gold,
-                        width: 1.6,
-                      ),
+                      color: Styles.marigold.withAlpha(55),
+                      border: Border.all(color: Styles.gold, width: 1.6),
                     ),
                     alignment: Alignment.center,
                     child: Container(
@@ -76,7 +89,7 @@ class EventMapPreview extends StatelessWidget {
                       height: 12,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Palette.marigold,
+                        color: Styles.marigold,
                       ),
                     ),
                   ),
@@ -94,3 +107,4 @@ class EventMapPreview extends StatelessWidget {
     return map;
   }
 }
+

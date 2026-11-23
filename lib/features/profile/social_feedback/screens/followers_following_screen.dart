@@ -49,7 +49,7 @@ class _FollowersFollowingViewState
                 onTap: widget.onBack,
                 child: const Icon(
                   Icons.arrow_back,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
               const SizedBox(width: 20),
@@ -58,7 +58,7 @@ class _FollowersFollowingViewState
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
               ),
             ],
@@ -82,8 +82,8 @@ class _FollowersFollowingViewState
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: isFollowingTab
-                          ? Styles.tabActive
-                          : Styles.tabInactive,
+                          ? Styles.textPrimary
+                          : Styles.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -91,7 +91,7 @@ class _FollowersFollowingViewState
                       width: 110,
                       height: 3,
                       color:
-                        isFollowingTab ? Styles.accent : Styles.background,
+                        isFollowingTab ? Styles.accent : Styles.canvas,
                     ),
                   ],
                 ),
@@ -112,8 +112,8 @@ class _FollowersFollowingViewState
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: !isFollowingTab
-                          ? Styles.tabActive
-                          : Styles.tabInactive,
+                          ? Styles.textPrimary
+                          : Styles.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -121,7 +121,7 @@ class _FollowersFollowingViewState
                       width: 120,
                       height: 3,
                       color:
-                        !isFollowingTab ? Styles.accent : Styles.background,
+                        !isFollowingTab ? Styles.accent : Styles.canvas,
                     ),
                   ],
                 ),
@@ -129,7 +129,7 @@ class _FollowersFollowingViewState
             ),
           ],
         ),
-        Container(height: 1, color: Styles.inactive),
+        Container(height: 1, color: Styles.textMuted),
         Expanded(
           child: isFollowingTab && followingIds.isNotEmpty
             ? ListView.separated(
@@ -147,7 +147,7 @@ class _FollowersFollowingViewState
                     decoration: BoxDecoration(
                       color: Styles.surface,
                       borderRadius: BorderRadius.circular(Radii.chip),
-                      border: Border.all(color: Palette.cardBorder),
+                      border: Border.all(color: Styles.cardBorder),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -158,7 +158,7 @@ class _FollowersFollowingViewState
                               backgroundColor: Styles.deepTeal,
                               child: Icon(
                                 Icons.person,
-                                color: Styles.tabActive,
+                                color: Styles.textPrimary,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -167,7 +167,7 @@ class _FollowersFollowingViewState
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Styles.tabActive,
+                                color: Styles.textPrimary,
                               ),
                             ),
                           ],
@@ -201,7 +201,7 @@ class _FollowersFollowingViewState
                           : 'Anda saat ini tidak memiliki pengikut',
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Styles.tabActive,
+                          color: Styles.textPrimary,
                         ),
                       ),
                       if (isFollowingTab) const SizedBox(height: 20),
@@ -212,7 +212,7 @@ class _FollowersFollowingViewState
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Styles.accent,
-                              foregroundColor: Styles.tabActive,
+                              foregroundColor: Styles.textPrimary,
                             ),
                             onPressed: () {
                               if (widget.onFindAthletes != null) {
@@ -224,7 +224,7 @@ class _FollowersFollowingViewState
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: Styles.tabActive,
+                                color: Styles.textPrimary,
                               ),
                             ),
                           ),

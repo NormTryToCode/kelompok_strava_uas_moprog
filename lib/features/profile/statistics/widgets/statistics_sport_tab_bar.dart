@@ -20,7 +20,7 @@ class StatisticsSportTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Styles.background,
+      color: Styles.canvas,
       child: Column(
         children: [
           Row(
@@ -38,8 +38,8 @@ class StatisticsSportTabBar extends StatelessWidget {
                           _sportIcons[index],
                           size: 28,
                           color: isSelected
-                              ? Styles.tabActive
-                              : Styles.tabInactive,
+                              ? Styles.primaryLight
+                              : Styles.surfaceHighlight,
                         ),
                         const SizedBox(height: 12),
                         Container(
@@ -59,12 +59,10 @@ class StatisticsSportTabBar extends StatelessWidget {
               );
             }),
           ),
-          Container(
-            height: 1,
-            color: Styles.inactive,
-          ),
+          Container(height: 1, color: Styles.surfaceHighlight),
         ],
       ),
     );
   }
 }
+

@@ -17,9 +17,10 @@ class ShareClubPage extends ConsumerStatefulWidget {
   const ShareClubPage({super.key, required this.club});
 
   static Future<void> open(BuildContext context, Club club) {
-    return Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(builder: (_) => ShareClubPage(club: club)),
-    );
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute<void>(builder: (_) => ShareClubPage(club: club)));
   }
 
   @override
@@ -55,8 +56,7 @@ class _ShareClubPageState extends ConsumerState<ShareClubPage> {
       final context = _posterKey.currentContext;
       if (context == null) return null;
 
-      final boundary =
-          context.findRenderObject() as RenderRepaintBoundary?;
+      final boundary = context.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return null;
 
       final image = await boundary.toImage(pixelRatio: 3.0);
@@ -157,9 +157,9 @@ class _ShareClubPageState extends ConsumerState<ShareClubPage> {
     final clubUrl = ClubShareService.clubUrl(club);
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -192,7 +192,7 @@ class _ShareClubPageState extends ConsumerState<ShareClubPage> {
               decoration: const BoxDecoration(
                 color: Styles.surface,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                border: Border(top: BorderSide(color: Palette.cardBorder)),
+                border: Border(top: BorderSide(color: Styles.cardBorder)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +216,7 @@ class _ShareClubPageState extends ConsumerState<ShareClubPage> {
                       child: Center(
                         child: CircularProgressIndicator(
                           strokeWidth: 2.2,
-                          color: Palette.teal,
+                          color: Styles.teal,
                         ),
                       ),
                     )
@@ -281,3 +281,4 @@ class _ShareClubPageState extends ConsumerState<ShareClubPage> {
     );
   }
 }
+

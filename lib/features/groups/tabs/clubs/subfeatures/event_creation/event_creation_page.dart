@@ -93,7 +93,9 @@ class _EventCreationPageState extends ConsumerState<EventCreationPage> {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save the event. Please try again.')),
+        const SnackBar(
+          content: Text('Could not save the event. Please try again.'),
+        ),
       );
     }
   }
@@ -101,7 +103,7 @@ class _EventCreationPageState extends ConsumerState<EventCreationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: Column(
         children: [
           _Header(
@@ -186,9 +188,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Styles.background,
+        color: Styles.canvas,
         border: Border(
-          bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
+          bottom: BorderSide(color: Styles.cardBorder, width: 0.8),
         ),
       ),
       child: SafeArea(
@@ -220,7 +222,7 @@ class _Header extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13.5,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -244,8 +246,8 @@ class _BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Styles.background,
-        border: Border(top: BorderSide(color: Palette.cardBorder)),
+        color: Styles.canvas,
+        border: Border(top: BorderSide(color: Styles.cardBorder)),
       ),
       child: SafeArea(
         top: false,

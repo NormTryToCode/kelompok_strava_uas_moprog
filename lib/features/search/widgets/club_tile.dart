@@ -44,7 +44,7 @@ class ClubTile extends StatelessWidget {
                   child: Text(
                     club.initials,
                     style: const TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
@@ -68,7 +68,7 @@ class ClubTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),
@@ -89,3 +89,4 @@ class ClubTile extends StatelessWidget {
     );
   }
 }
+

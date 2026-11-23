@@ -40,7 +40,7 @@ class TrophyCard extends ConsumerWidget {
               width: 84,
               height: 84,
               decoration: isUnlocked
-                ? Styles.gradientOrangeBright
+                ? const BoxDecoration(gradient: Styles.primaryGradient)
                 : const BoxDecoration(color: Styles.surface),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -50,14 +50,14 @@ class TrophyCard extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: isUnlocked ? Styles.background : Styles.inactive,
+                      color: isUnlocked ? Styles.canvas : Styles.textMuted,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Icon(
                     isUnlocked ? Icons.emoji_events : Icons.lock_outline,
                     size: 26,
-                    color: isUnlocked ? Styles.background : Styles.tabActive,
+                    color: isUnlocked ? Styles.canvas : Styles.textPrimary,
                   ),
                 ],
               ),
@@ -71,7 +71,7 @@ class TrophyCard extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
-                color: isUnlocked ? Styles.accent : Styles.tabActive,
+                color: isUnlocked ? Styles.accent : Styles.textPrimary,
               ),
             ),
           ],

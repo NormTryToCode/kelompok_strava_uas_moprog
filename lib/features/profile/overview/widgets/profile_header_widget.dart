@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../../edit_profile/models/athlete_profile_data.dart';
 import '../../shared/widgets/athlete_avatar_widget.dart';
 
@@ -61,7 +62,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -69,7 +70,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                       "$activityCount aktivitas  •  ${profileData.gender} (${profileData.weightKg} kg)",
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -84,7 +85,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                 profileData.bio,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
               ),
             ),
@@ -95,18 +96,12 @@ class ProfileHeaderWidget extends StatelessWidget {
                 onTap: onTapFollowers,
                 child: const Text(
                   "0 pengikut",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Styles.tabActive,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Styles.primaryLight),
                 ),
               ),
               const Text(
                 "  •  ",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Styles.tabActive,
-                ),
+                style: TextStyle(fontSize: 14, color: Styles.primaryLight),
               ),
               GestureDetector(
                 onTap: onTapFollowing,
@@ -114,7 +109,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                   "$followingCount mengikuti",
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                   ),
                 ),
               ),
@@ -130,7 +125,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                   onPressed: onEditProfile,
                   child: const Text(
                     "Edit profil",
-                    style: TextStyle(color: Styles.background),
+                    style: TextStyle(color: Styles.canvas),
                   ),
                 ),
               ),
@@ -140,7 +135,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                   onPressed: onShareProfile,
                   child: const Text(
                     "Bagikan profil",
-                    style: TextStyle(color: Styles.background),
+                    style: TextStyle(color: Styles.canvas),
                   ),
                 ),
               ),
@@ -151,3 +146,4 @@ class ProfileHeaderWidget extends StatelessWidget {
     );
   }
 }
+

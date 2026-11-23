@@ -22,21 +22,21 @@ class Step3ClubDetails extends StatelessWidget {
 
   InputDecoration _decoration(String label) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Radii.field),
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: BorderRadius.circular(Radii.field),
+      borderSide: BorderSide(color: color, width: width),
+    );
 
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Styles.tabInactive),
-      floatingLabelStyle: const TextStyle(color: Palette.teal),
+      labelStyle: const TextStyle(color: Styles.surfaceHighlight),
+      floatingLabelStyle: const TextStyle(color: Styles.teal),
       alignLabelWithHint: true,
       filled: true,
-      fillColor: Palette.fieldFill,
-      counterStyle: const TextStyle(color: Styles.tabInactive),
+      fillColor: Styles.fieldFill,
+      counterStyle: const TextStyle(color: Styles.surfaceHighlight),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      enabledBorder: border(Palette.cardBorder, 1.2),
-      focusedBorder: border(Palette.teal, 1.8),
+      enabledBorder: border(Styles.cardBorder, 1.2),
+      focusedBorder: border(Styles.teal, 1.8),
     );
   }
 
@@ -61,7 +61,7 @@ class Step3ClubDetails extends StatelessWidget {
             onChanged: onNameChanged,
             maxLength: 40,
             textCapitalization: TextCapitalization.words,
-            cursorColor: Palette.teal,
+            cursorColor: Styles.teal,
             style: const TextStyle(fontSize: 16, color: Colors.white),
             decoration: _decoration('Club name'),
           ),
@@ -73,7 +73,7 @@ class Step3ClubDetails extends StatelessWidget {
             minLines: 4,
             maxLines: 6,
             textCapitalization: TextCapitalization.sentences,
-            cursorColor: Palette.teal,
+            cursorColor: Styles.teal,
             style: const TextStyle(fontSize: 16, color: Colors.white),
             decoration: _decoration('Description (optional)'),
           ),
@@ -84,7 +84,11 @@ class Step3ClubDetails extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.verified_user_outlined, size: 18, color: Palette.teal),
+                Icon(
+                  Icons.verified_user_outlined,
+                  size: 18,
+                  color: Styles.teal,
+                ),
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -92,7 +96,7 @@ class Step3ClubDetails extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Styles.tabInactive,
+                      color: Styles.surfaceHighlight,
                     ),
                   ),
                 ),

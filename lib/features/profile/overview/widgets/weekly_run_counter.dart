@@ -34,10 +34,7 @@ class WeeklyRunCounter extends StatelessWidget {
               children: [
                 const Text(
                   "Minggu ini",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Styles.tabActive,
-                  ),
+                  style: TextStyle(fontSize: 18, color: Styles.primaryLight),
                 ),
                 Row(
                   children: [
@@ -68,13 +65,16 @@ class WeeklyRunCounter extends StatelessWidget {
                   children: [
                     const Text(
                       "Jarak",
-                      style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Styles.surfaceHighlight,
+                      ),
                     ),
                     Text(
                       "$distanceKm km",
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -85,13 +85,16 @@ class WeeklyRunCounter extends StatelessWidget {
                   children: [
                     const Text(
                       "Waktu",
-                      style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Styles.surfaceHighlight,
+                      ),
                     ),
                     Text(
                       "${durationMinutes}m",
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -102,13 +105,16 @@ class WeeklyRunCounter extends StatelessWidget {
                   children: [
                     const Text(
                       "Kenaikan Elev",
-                      style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Styles.surfaceHighlight,
+                      ),
                     ),
                     Text(
                       "$elevationMeters m",
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -118,7 +124,7 @@ class WeeklyRunCounter extends StatelessWidget {
             const SizedBox(height: 12),
             const Text(
               "12 Minggu Terakhir",
-              style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+              style: TextStyle(fontSize: 12, color: Styles.surfaceHighlight),
             ),
             const SizedBox(height: 8),
             Row(
@@ -130,13 +136,13 @@ class WeeklyRunCounter extends StatelessWidget {
                     Container(
                       width: 260,
                       height: 1,
-                      color: Styles.inactive,
+                      color: Styles.surfaceHighlight,
                     ),
                     const SizedBox(height: 22),
                     Container(
                       width: 260,
                       height: 1,
-                      color: Styles.inactive,
+                      color: Styles.surfaceHighlight,
                     ),
                     const SizedBox(height: 18),
                     Row(
@@ -166,7 +172,7 @@ class WeeklyRunCounter extends StatelessWidget {
                           "SEP",
                           style: TextStyle(
                             fontSize: 11,
-                            color: Styles.tabInactive,
+                            color: Styles.surfaceHighlight,
                           ),
                         ),
                         SizedBox(width: 72),
@@ -174,7 +180,7 @@ class WeeklyRunCounter extends StatelessWidget {
                           "OKT",
                           style: TextStyle(
                             fontSize: 11,
-                            color: Styles.tabInactive,
+                            color: Styles.surfaceHighlight,
                           ),
                         ),
                         SizedBox(width: 72),
@@ -182,7 +188,7 @@ class WeeklyRunCounter extends StatelessWidget {
                           "NOV",
                           style: TextStyle(
                             fontSize: 11,
-                            color: Styles.tabActive,
+                            color: Styles.primaryLight,
                           ),
                         ),
                       ],
@@ -194,12 +200,18 @@ class WeeklyRunCounter extends StatelessWidget {
                   children: [
                     const Text(
                       "6 km",
-                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Styles.surfaceHighlight,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     const Text(
                       "3 km",
-                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Styles.surfaceHighlight,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     Text(
@@ -218,7 +230,7 @@ class WeeklyRunCounter extends StatelessWidget {
                 padding: EdgeInsets.all(4.0),
                 child: Text(
                   "Target Maksimal (10 Sesi) Minggu Ini Tercapai!",
-                  style: TextStyle(fontSize: 12, color: Styles.active),
+                  style: TextStyle(fontSize: 12, color: Styles.primaryLight),
                 ),
               ),
           ],
@@ -227,3 +239,4 @@ class WeeklyRunCounter extends StatelessWidget {
     );
   }
 }
+

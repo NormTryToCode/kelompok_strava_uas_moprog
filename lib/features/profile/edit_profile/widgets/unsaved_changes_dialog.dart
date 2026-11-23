@@ -23,10 +23,7 @@ class UnsavedChangesDialog extends StatelessWidget {
           children: [
             const Text(
               'Perubahan Belum Disimpan',
-              style: TextStyle(
-                fontSize: 16,
-                color: Styles.tabActive,
-              ),
+              style: TextStyle(fontSize: 16, color: Styles.primaryLight),
             ),
             const SizedBox(height: 24),
             Row(
@@ -90,23 +87,15 @@ class SavingProfileDialog extends StatelessWidget {
     return const Dialog(
       backgroundColor: Styles.surface,
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 20.0,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(
-              color: Styles.accent,
-            ),
+            CircularProgressIndicator(color: Styles.accent),
             SizedBox(width: 24),
             Text(
               'Menyimpan...',
-              style: TextStyle(
-                fontSize: 16,
-                color: Styles.tabActive,
-              ),
+              style: TextStyle(fontSize: 16, color: Styles.primaryLight),
             ),
           ],
         ),
@@ -114,3 +103,4 @@ class SavingProfileDialog extends StatelessWidget {
     );
   }
 }
+

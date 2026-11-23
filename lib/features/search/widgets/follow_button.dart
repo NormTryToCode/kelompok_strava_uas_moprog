@@ -16,12 +16,10 @@ class FollowButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: isFollowing ? Styles.tabActive : Styles.accent,
+        foregroundColor: isFollowing ? Styles.primaryLight : Styles.accent,
         backgroundColor: isFollowing ? Colors.white12 : Colors.transparent,
         shape: const StadiumBorder(),
-        side: BorderSide(
-          color: isFollowing ? Colors.white24 : Styles.accent,
-        ),
+        side: BorderSide(color: isFollowing ? Colors.white24 : Styles.accent),
         padding: const EdgeInsets.symmetric(horizontal: 20),
       ),
       child: Text(
@@ -31,3 +29,4 @@ class FollowButton extends StatelessWidget {
     );
   }
 }
+

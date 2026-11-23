@@ -130,7 +130,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                       onTap: widget.onSubmitFeedback,
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -139,7 +139,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                   ],
@@ -154,7 +154,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                       color: (_selectedOption != -1 ||
                         _controller.text.trim().isNotEmpty)
                           ? Styles.accent
-                          : Styles.tabInactive,
+                          : Styles.textSecondary,
                     ),
                   ),
                 ),
@@ -166,7 +166,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.textPrimary,
               ),
             ),
             const SizedBox(height: 24),
@@ -187,14 +187,14 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                         _options[index],
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Styles.tabActive,
+                          color: Styles.textPrimary,
                         ),
                       ),
                       Icon(
                         isSelected
                           ? Icons.radio_button_checked
                           : Icons.radio_button_off,
-                        color: isSelected ? Styles.accent : Styles.tabActive,
+                        color: isSelected ? Styles.accent : Styles.textPrimary,
                         size: 24,
                       ),
                     ],
@@ -207,7 +207,7 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
               "Komentar Tambahan",
               style: TextStyle(
                 fontSize: 16,
-                color: Styles.tabActive,
+                color: Styles.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -225,15 +225,15 @@ class _FeedbackViewState extends ConsumerState<FeedbackView> {
                 placeholder: 'Apa yang membantu? Tidak membantu?',
                 placeholderStyle: const TextStyle(
                   fontSize: 15,
-                  color: Styles.inactive,
+                  color: Styles.textMuted,
                 ),
                 padding: EdgeInsets.zero,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
                 decoration: const BoxDecoration(
-                  color: Styles.background,
+                  color: Styles.canvas,
                 ),
               ),
             ),
