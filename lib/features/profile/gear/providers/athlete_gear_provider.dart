@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_gear.dart';
 
@@ -21,8 +23,11 @@ final customBrandsProvider =
 );
 
 class AthleteGearNotifier extends Notifier<List<AthleteGear>> {
+  static const String _collection = 'athlete_gears';
   static const String _storageKey = 'athlete_gear_list_v1';
+
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
+  StreamSubscription<List>? _firestoreSub;
   bool _isDisposed = false;
 
   @override
@@ -30,8 +35,11 @@ class AthleteGearNotifier extends Notifier<List<AthleteGear>> {
     _isDisposed = false;
     ref.onDispose(() {
       _isDisposed = true;
+      _firestoreSub?.cancel();
     });
+
     _loadFromStorage();
+    _listenFirestore();
     return const [];
   }
 
@@ -45,14 +53,30 @@ class AthleteGearNotifier extends Notifier<List<AthleteGear>> {
         .map((e) => AthleteGear.fromJson(e as Map<String, dynamic>))
         .toList();
 
-      if (!_isDisposed) {
+      if (!_isDisposed && state.isEmpty) {
         state = loaded;
       }
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
-  Future<void> _saveToStorage(List<AthleteGear> items) async {
+  void _listenFirestore() {
+    try {
+      _firestoreSub = DatabaseService.instance.watch(_collection).listen(
+        (docs) {
+          if (_isDisposed) return;
+          final List<AthleteGear> remoteItems =
+            docs.map((doc) => AthleteGear.fromJson(doc)).toList()
+              ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+          state = remoteItems;
+          _saveToLocalCache(remoteItems);
+        },
+        onError: (_) {},
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _saveToLocalCache(List<AthleteGear> items) async {
     final String encoded = jsonEncode(items.map((e) => e.toJson()).toList());
     await _asyncPrefs.setString(_storageKey, encoded);
   }
@@ -60,7 +84,11 @@ class AthleteGearNotifier extends Notifier<List<AthleteGear>> {
   Future<void> addGear(AthleteGear gear) async {
     final updated = [gear, ...state];
     state = updated;
-    await _saveToStorage(updated);
+    await _saveToLocalCache(updated);
+
+    try {
+      await DatabaseService.instance.save(_collection, gear.id, gear.toJson());
+    } catch (_) {}
   }
 
   Future<void> updateGear(AthleteGear updatedGear) async {
@@ -69,46 +97,83 @@ class AthleteGearNotifier extends Notifier<List<AthleteGear>> {
         if (item.id == updatedGear.id) updatedGear else item,
     ];
     state = updated;
-    await _saveToStorage(updated);
+    await _saveToLocalCache(updated);
+
+    try {
+      await DatabaseService.instance.save(
+        _collection,
+        updatedGear.id,
+        updatedGear.toJson(),
+      );
+    } catch (_) {}
   }
 
   Future<void> toggleRetireGear(String gearId) async {
+    AthleteGear? target;
     final updated = [
       for (final item in state)
         if (item.id == gearId)
-          item.copyWith(isRetired: !item.isRetired)
+          target = item.copyWith(isRetired: !item.isRetired)
         else
           item,
     ];
     state = updated;
-    await _saveToStorage(updated);
+    await _saveToLocalCache(updated);
+
+    if (target != null) {
+      try {
+        await DatabaseService.instance.save(
+          _collection,
+          target.id,
+          target.toJson(),
+        );
+      } catch (_) {}
+    }
   }
 
   Future<void> addDistance(String gearId, double deltaKm) async {
+    AthleteGear? target;
     final updated = [
       for (final item in state)
         if (item.id == gearId)
-          item.copyWith(
-            currentDistanceKm: (item.currentDistanceKm + deltaKm)
-              .clamp(0.0, 99999.0),
+          target = item.copyWith(
+            currentDistanceKm:
+              (item.currentDistanceKm + deltaKm).clamp(0.0, 99999.0),
           )
         else
           item,
     ];
     state = updated;
-    await _saveToStorage(updated);
+    await _saveToLocalCache(updated);
+
+    if (target != null) {
+      try {
+        await DatabaseService.instance.save(
+          _collection,
+          target.id,
+          target.toJson(),
+        );
+      } catch (_) {}
+    }
   }
 
   Future<void> deleteGear(String gearId) async {
     final updated = state.where((item) => item.id != gearId).toList();
     state = updated;
-    await _saveToStorage(updated);
+    await _saveToLocalCache(updated);
+
+    try {
+      await DatabaseService.instance.remove(_collection, gearId);
+    } catch (_) {}
   }
 }
 
 class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
+  static const String _collection = 'athlete_gear_brands';
   static const String _brandsKey = 'athlete_custom_gear_brands_v1';
+
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
+  StreamSubscription<List>? _firestoreSub;
   bool _isDisposed = false;
 
   @override
@@ -116,12 +181,15 @@ class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
     _isDisposed = false;
     ref.onDispose(() {
       _isDisposed = true;
+      _firestoreSub?.cancel();
     });
-    _loadBrands();
+
+    _loadLocalBrands();
+    _listenFirestore();
     return const {};
   }
 
-  Future<void> _loadBrands() async {
+  Future<void> _loadLocalBrands() async {
     try {
       final String? raw = await _asyncPrefs.getString(_brandsKey);
       if (raw == null || raw.isEmpty || _isDisposed) return;
@@ -134,9 +202,52 @@ class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
           (value as List<dynamic>).map((e) => e.toString()).toList(),
         ),
       );
-      if (!_isDisposed) {
+      if (!_isDisposed && state.isEmpty) {
         state = parsed;
       }
+    } catch (_) {}
+  }
+
+  void _listenFirestore() {
+    try {
+      _firestoreSub = DatabaseService.instance.watch(_collection).listen(
+        (docs) {
+          if (_isDisposed) return;
+          final CustomBrandsMap remoteMap = {};
+          for (final doc in docs) {
+            final String categoryId = doc['id'] as String? ?? '';
+            final List<dynamic> rawBrands =
+              doc['brands'] as List<dynamic>? ?? const [];
+            if (categoryId.isNotEmpty) {
+              remoteMap[categoryId] =
+                rawBrands.map((e) => e.toString()).toList();
+            }
+          }
+          state = remoteMap;
+          _asyncPrefs.setString(_brandsKey, jsonEncode(remoteMap));
+        },
+        onError: (_) {},
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _syncCategoryBrands(
+    GearCategory category,
+    List<String> brands,
+  ) async {
+    final CustomBrandsMap updated = {
+      ...state,
+      category.name: brands,
+    };
+    state = updated;
+    await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
+
+    try {
+      await DatabaseService.instance.save(
+        _collection,
+        category.name,
+        {'brands': brands},
+      );
     } catch (_) {}
   }
 
@@ -151,12 +262,7 @@ class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
     if (alreadyExists) return;
 
     existing.add(trimmed);
-    final CustomBrandsMap updated = {
-      ...state,
-      category.name: existing,
-    };
-    state = updated;
-    await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
+    await _syncCategoryBrands(category, existing);
   }
 
   Future<void> updateCustomBrand(
@@ -188,12 +294,7 @@ class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
       existing[index] = trimmedNew;
     }
 
-    final CustomBrandsMap updated = {
-      ...state,
-      category.name: existing,
-    };
-    state = updated;
-    await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
+    await _syncCategoryBrands(category, existing);
   }
 
   Future<void> removeCustomBrand(
@@ -201,15 +302,7 @@ class CustomBrandsNotifier extends Notifier<CustomBrandsMap> {
     String brandName,
   ) async {
     final existing = List<String>.from(state[category.name] ?? const []);
-    existing.removeWhere(
-      (b) => b.toLowerCase() == brandName.toLowerCase(),
-    );
-
-    final CustomBrandsMap updated = {
-      ...state,
-      category.name: existing,
-    };
-    state = updated;
-    await _asyncPrefs.setString(_brandsKey, jsonEncode(updated));
+    existing.removeWhere((b) => b.toLowerCase() == brandName.toLowerCase());
+    await _syncCategoryBrands(category, existing);
   }
 }
