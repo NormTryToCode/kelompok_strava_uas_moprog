@@ -76,10 +76,6 @@ class Palette {
     colors: [primaryLight, primary],
   );
 
-  // =========================================================================
-  // Gradient & Glow Helpers
-  // =========================================================================
-
   /// Gradasi linear fleksibel untuk button, badge, atau accent aktif.
   static LinearGradient linearGradient({
     List<Color> colors = const [primaryLight, primary],
