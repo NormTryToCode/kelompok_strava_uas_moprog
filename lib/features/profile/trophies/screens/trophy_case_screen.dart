@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../../shared/utils/profile_page_route.dart';
 import '../providers/trophy_provider.dart';
 import '../widgets/trophy_card.dart';
 import 'milestone_all_screen.dart';
@@ -21,16 +22,16 @@ class TrophyCaseView extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [
-              IconButton.filled(
+              IconButton(
                 onPressed: onBack,
                 icon: const Icon(Icons.arrow_back, color: Styles.textPrimary),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 6),
               const Text(
-                "Tempat Trofi",
+                'Tempat Trofi',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -40,78 +41,81 @@ class TrophyCaseView extends ConsumerWidget {
             ],
           ),
         ),
+        const Divider(height: 1, color: Styles.border),
         Expanded(
           child: trophiesAsync.when(
             data: (allBadges) {
               final previewBadges = allBadges.take(6).toList();
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: Row(
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "Tonggak pencapaian",
+                          'Tonggak Pencapaian',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Styles.textPrimary,
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
+                        TextButton(
+                          onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                  const MilestoneAllScreen(),
-                              ),
+                              buildProfileRoute(const MilestoneAllScreen()),
                             );
                           },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Styles.primaryLight,
+                          ),
                           child: const Text(
-                            "Lihat Semua",
+                            'Lihat Semua >',
                             style: TextStyle(
                               fontSize: 13,
-                              color: Styles.textSecondary,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Container(
-                    color: Styles.surface,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12.0,
-                      horizontal: 8.0,
-                    ),
-                    height: 290,
-                    child: GridView.builder(
-                      gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: 0.78,
-                          crossAxisCount: 3,
+                    const SizedBox(height: 8),
+                    Container(
+                      decoration: Styles.cardDecoration(
+                        radius: Radii.card,
+                        withGlow: true,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14.0,
+                        horizontal: 8.0,
+                      ),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            childAspectRatio: 0.72,
+                            crossAxisCount: 3,
                         ),
-                      itemCount: previewBadges.length,
-                      itemBuilder: (context, index) =>
-                        TrophyCard(badge: previewBadges[index]),
+                        itemCount: previewBadges.length,
+                        itemBuilder: (context, index) =>
+                          TrophyCard(badge: previewBadges[index]),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
             loading: () => const Center(
-              child: CircularProgressIndicator(color: Styles.accent),
+              child: CircularProgressIndicator(color: Styles.primary),
             ),
             error: (error, _) => const Center(
               child: Text(
                 'Gagal memuat tonggak pencapaian.',
-                style: TextStyle(color: Styles.accent),
+                style: TextStyle(color: Styles.danger),
               ),
             ),
           ),
