@@ -5,6 +5,7 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/app_footer.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/map_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/profile_page.dart';
+import "package:kelompok_strava_uas_moprog/features/record/record_page.dart";
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -19,7 +20,7 @@ class _MainShellState extends State<MainShell> {
   static const _pages = [
     HomePage(),
     MapPage(),
-    _Placeholder('Record'),
+    Record(),
     GroupsPage(),
     ProfilePage(),
   ];
@@ -28,7 +29,9 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.background,
-      body: SafeArea(child: IndexedStack(index: _index, children: _pages)),
+      body: SafeArea(
+        child: IndexedStack(index: _index, children: _pages),
+      ),
       bottomNavigationBar: AppFooter(
         currentIndex: _index,
         onTap: (i) => setState(() => _index = i),
@@ -42,6 +45,7 @@ class _Placeholder extends StatelessWidget {
   const _Placeholder(this.name);
 
   @override
-  Widget build(BuildContext context) =>
-      Center(child: Text(name, style: const TextStyle(color: Colors.white)));
+  Widget build(BuildContext context) => Center(
+    child: Text(name, style: const TextStyle(color: Colors.white)),
+  );
 }
