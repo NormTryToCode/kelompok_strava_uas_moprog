@@ -1,0 +1,45 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+class ActivityRepository {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String get _uid {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'unauthenticated',
+        message: 'User must be signed in.',
+      );
+    }
+    return user.uid;
+  }
+
+  Future<void> saveActivity({
+    required double distanceKm,
+    required int durationSeconds,
+  }) async {
+    try {
+      await _db.collection('activities').add({
+        'userId': _uid,
+        'distanceKm': distanceKm,
+        'durationSeconds': durationSeconds,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } on FirebaseException catch (e) {
+      if (e.code == 'permission-denied') {
+        throw Exception('You do not have permission to save this activity.');
+      }
+      rethrow;
+    }
+  }
+
+  Stream<QuerySnapshot>> watchMyActivities() {
+    return _db
+        .collection('activities')
+        .where('userId', isEqualTo: _uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+}
