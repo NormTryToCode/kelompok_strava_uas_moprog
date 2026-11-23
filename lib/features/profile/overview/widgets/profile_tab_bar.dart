@@ -22,110 +22,86 @@ class ProfileTabBar extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              GestureDetector(
+              _TabItem(
+                icon: Icons.assessment_rounded,
+                label: 'Kemajuan',
+                isActive: activeTab == 0,
                 onTap: onTapKemajuan,
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.assessment,
-                      color: (activeTab == 0)
-                          ? Styles.accent
-                          : Styles.surfaceHighlight,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Kemajuan",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: (activeTab == 0)
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: (activeTab == 0)
-                            ? Styles.primaryLight
-                            : Styles.surfaceHighlight,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      width: 110,
-                      height: 3,
-                      color: (activeTab == 0) ? Styles.accent : Styles.canvas,
-                    ),
-                  ],
-                ),
               ),
-              GestureDetector(
+              _TabItem(
+                icon: Icons.timeline_rounded,
+                label: 'Aktivitas',
+                isActive: activeTab == 1,
                 onTap: onTapAktivitas,
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.timeline,
-                      color: (activeTab == 1)
-                          ? Styles.accent
-                          : Styles.surfaceHighlight,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Aktivitas",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: (activeTab == 1)
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: (activeTab == 1)
-                            ? Styles.primaryLight
-                            : Styles.surfaceHighlight,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      width: 110,
-                      height: 3,
-                      color: (activeTab == 1) ? Styles.accent : Styles.canvas,
-                    ),
-                  ],
-                ),
               ),
-              GestureDetector(
+              _TabItem(
+                icon: Icons.menu_rounded,
+                label: 'Lainnya',
+                isActive: activeTab == 2,
                 onTap: onTapLainnya,
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.menu,
-                      color: (activeTab == 2)
-                          ? Styles.accent
-                          : Styles.surfaceHighlight,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Lainnya",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: (activeTab == 2)
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: (activeTab == 2)
-                            ? Styles.primaryLight
-                            : Styles.surfaceHighlight,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      width: 110,
-                      height: 3,
-                      color: (activeTab == 2) ? Styles.accent : Styles.canvas,
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
-          Container(height: 1, color: Styles.surfaceHighlight),
+          Container(
+            height: 1,
+            color: Styles.border,
+          ),
         ],
       ),
     );
   }
 }
 
+class _TabItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _TabItem({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Column(
+          children: [
+            const SizedBox(height: 6),
+            Icon(
+              icon,
+              size: 22,
+              color: isActive ? Styles.primaryLight : Styles.textSecondary,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                color: isActive ? Styles.textPrimary : Styles.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 3,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                gradient: isActive ? Styles.primaryGradient : null,
+                color: isActive ? null : Colors.transparent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
