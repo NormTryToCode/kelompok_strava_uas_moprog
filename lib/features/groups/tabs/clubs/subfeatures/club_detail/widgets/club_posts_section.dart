@@ -47,16 +47,14 @@ class ClubPostsSection extends ConsumerWidget {
         postsAsync.when(
           loading: () => const Padding(
             padding: EdgeInsets.symmetric(vertical: 24),
-            child: Center(
-              child: CircularProgressIndicator(color: Palette.teal),
-            ),
+            child: Center(child: CircularProgressIndicator(color: Styles.teal)),
           ),
           error: (_, _) => const SoftCard(
             padding: EdgeInsets.all(20),
             child: Center(
               child: Text(
                 'Could not load club posts.',
-                style: TextStyle(color: Styles.tabInactive),
+                style: TextStyle(color: Styles.surfaceHighlight),
               ),
             ),
           ),
@@ -84,7 +82,7 @@ class ClubPostsSection extends ConsumerWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 13.5,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -125,3 +123,4 @@ class ClubPostsSection extends ConsumerWidget {
     );
   }
 }
+

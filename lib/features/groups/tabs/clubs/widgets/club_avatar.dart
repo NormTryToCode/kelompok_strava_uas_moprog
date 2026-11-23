@@ -50,7 +50,7 @@ class ClubAvatar extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: Palette.coverFor(club.id),
+        gradient: Styles.coverFor(club.id),
         border: Border.all(
           color: ringColor ?? Styles.surface,
           width: size * 0.07,
@@ -70,3 +70,4 @@ class ClubAvatar extends StatelessWidget {
     );
   }
 }
+

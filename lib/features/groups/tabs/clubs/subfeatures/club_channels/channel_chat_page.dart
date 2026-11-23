@@ -87,15 +87,15 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
 
     return channelsAsync.when(
       loading: () => const Scaffold(
-        backgroundColor: Styles.background,
-        body: Center(child: CircularProgressIndicator(color: Palette.teal)),
+        backgroundColor: Styles.canvas,
+        body: Center(child: CircularProgressIndicator(color: Styles.teal)),
       ),
       error: (_, _) => const Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         body: Center(
           child: Text(
             'Unable to open channel.',
-            style: TextStyle(color: Styles.tabInactive),
+            style: TextStyle(color: Styles.surfaceHighlight),
           ),
         ),
       ),
@@ -103,15 +103,15 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
         final match = channels.where((c) => c.id == widget.channelId);
         if (match.isEmpty) {
           return Scaffold(
-            backgroundColor: Styles.background,
+            backgroundColor: Styles.canvas,
             appBar: AppBar(
-              backgroundColor: Styles.background,
+              backgroundColor: Styles.canvas,
               foregroundColor: Colors.white,
             ),
             body: const Center(
               child: Text(
                 'Channel no longer exists.',
-                style: TextStyle(color: Styles.tabInactive),
+                style: TextStyle(color: Styles.surfaceHighlight),
               ),
             ),
           );
@@ -120,10 +120,10 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
         final channel = match.first;
         final iconColor = channel.category == ChannelCategory.announcement
             ? Styles.accent
-            : Palette.teal;
+            : Styles.teal;
 
         return Scaffold(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           appBar: AppBar(
             backgroundColor: Styles.surface,
             surfaceTintColor: Colors.transparent,
@@ -152,7 +152,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -190,7 +190,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
               Container(
                 decoration: const BoxDecoration(
                   color: Styles.surface,
-                  border: Border(top: BorderSide(color: Palette.cardBorder)),
+                  border: Border(top: BorderSide(color: Styles.cardBorder)),
                 ),
                 child: SafeArea(
                   top: false,
@@ -204,30 +204,32 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
                             textCapitalization: TextCapitalization.sentences,
                             textInputAction: TextInputAction.send,
                             onSubmitted: (_) => _sendMessage(),
-                            cursorColor: Palette.teal,
+                            cursorColor: Styles.teal,
                             style: const TextStyle(
                               fontSize: 15,
                               color: Colors.white,
                             ),
                             decoration: InputDecoration(
                               hintText: 'Message #${channel.name}',
-                              hintStyle:
-                                  const TextStyle(color: Styles.tabInactive),
+                              hintStyle: const TextStyle(
+                                color: Styles.surfaceHighlight,
+                              ),
                               filled: true,
-                              fillColor: Palette.fieldFill,
+                              fillColor: Styles.fieldFill,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 12,
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(24),
-                                borderSide:
-                                    const BorderSide(color: Palette.cardBorder),
+                                borderSide: const BorderSide(
+                                  color: Styles.cardBorder,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(24),
                                 borderSide: const BorderSide(
-                                  color: Palette.teal,
+                                  color: Styles.teal,
                                   width: 1.5,
                                 ),
                               ),
@@ -297,7 +299,7 @@ class _EmptyChatState extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   height: 1.4,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                 ),
               ),
             ],
@@ -328,10 +330,7 @@ class _MessageBubble extends StatelessWidget {
   final ChannelMessage message;
   final String timeLabel;
 
-  const _MessageBubble({
-    required this.message,
-    required this.timeLabel,
-  });
+  const _MessageBubble({required this.message, required this.timeLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +345,7 @@ class _MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
         decoration: BoxDecoration(
-          color: isMine ? Palette.selectedFill : Styles.surface,
+          color: isMine ? Styles.selectedFill : Styles.surface,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(18),
             topRight: const Radius.circular(18),
@@ -354,12 +353,13 @@ class _MessageBubble extends StatelessWidget {
             bottomRight: Radius.circular(isMine ? 4 : 18),
           ),
           border: Border.all(
-            color: isMine ? Palette.teal.withAlpha(120) : Palette.cardBorder,
+            color: isMine ? Styles.teal.withAlpha(120) : Styles.cardBorder,
           ),
         ),
         child: Column(
-          crossAxisAlignment:
-              isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMine
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             if (!isMine) ...[
               Text(
@@ -367,7 +367,7 @@ class _MessageBubble extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: Palette.teal,
+                  color: Styles.teal,
                 ),
               ),
               const SizedBox(height: 3),
@@ -388,12 +388,12 @@ class _MessageBubble extends StatelessWidget {
                   timeLabel,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
                 if (isMine) ...[
                   const SizedBox(width: 4),
-                  const Icon(Icons.done_all, size: 14, color: Palette.teal),
+                  const Icon(Icons.done_all, size: 14, color: Styles.teal),
                 ],
               ],
             ),
@@ -403,3 +403,4 @@ class _MessageBubble extends StatelessWidget {
     );
   }
 }
+

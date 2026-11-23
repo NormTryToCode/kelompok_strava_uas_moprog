@@ -28,11 +28,11 @@ class EventDetailPage extends ConsumerWidget {
   Color _kindColor(EventKind kind) {
     switch (kind.id) {
       case 'workout':
-        return Palette.gold;
+        return Styles.gold;
       case 'competition':
-        return Palette.marigold;
+        return Styles.marigold;
       default:
-        return Palette.aqua;
+        return Styles.aqua;
     }
   }
 
@@ -88,9 +88,8 @@ class EventDetailPage extends ConsumerWidget {
     await ref.read(eventsProvider.notifier).deleteEvent(event.id);
     if (!context.mounted) return;
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${event.name} deleted')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${event.name} deleted')));
   }
 
   @override
@@ -112,19 +111,19 @@ class EventDetailPage extends ConsumerWidget {
         '${weekdayName(event.startsAt.weekday)}, ${formatDate(event.startsAt)} \u00b7 ${formatClock24(event.startsAt)}';
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
-        foregroundColor: Palette.textPrimary,
+        foregroundColor: Styles.textPrimary,
         title: const Text(
           'Event Details',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
         ),
         actions: [
           PopupMenuButton<String>(
-            color: Palette.deepNavy,
-            icon: const Icon(Icons.more_horiz, color: Palette.textPrimary),
+            color: Styles.deepNavy,
+            icon: const Icon(Icons.more_horiz, color: Styles.textPrimary),
             onSelected: (value) {
               if (value == 'share') {
                 _shareEvent(event);
@@ -137,7 +136,7 @@ class EventDetailPage extends ConsumerWidget {
                 value: 'share',
                 child: Text(
                   'Share event',
-                  style: TextStyle(color: Palette.textPrimary),
+                  style: TextStyle(color: Styles.textPrimary),
                 ),
               ),
               if (!event.id.startsWith('seed_event_'))
@@ -161,9 +160,9 @@ class EventDetailPage extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Palette.deepNavy,
+                    color: Styles.deepNavy,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Palette.deepTeal),
+                    border: Border.all(color: Styles.deepTeal),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,10 +177,10 @@ class EventDetailPage extends ConsumerWidget {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              color: Palette.selectedFill,
+                              color: Styles.selectedFill,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: Palette.aqua.withAlpha(110),
+                                color: Styles.aqua.withAlpha(110),
                               ),
                             ),
                             child: Row(
@@ -190,7 +189,7 @@ class EventDetailPage extends ConsumerWidget {
                                 Icon(
                                   event.sport?.icon ?? event.kind.icon,
                                   size: 14,
-                                  color: Palette.aqua,
+                                  color: Styles.aqua,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
@@ -200,7 +199,7 @@ class EventDetailPage extends ConsumerWidget {
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 0.7,
-                                    color: Palette.aqua,
+                                    color: Styles.aqua,
                                   ),
                                 ),
                               ],
@@ -237,7 +236,7 @@ class EventDetailPage extends ConsumerWidget {
                           fontSize: 23,
                           fontWeight: FontWeight.w800,
                           height: 1.2,
-                          color: Palette.textPrimary,
+                          color: Styles.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -246,7 +245,7 @@ class EventDetailPage extends ConsumerWidget {
                           const Icon(
                             Icons.schedule,
                             size: 16,
-                            color: Palette.gold,
+                            color: Styles.gold,
                           ),
                           const SizedBox(width: 7),
                           Expanded(
@@ -255,7 +254,7 @@ class EventDetailPage extends ConsumerWidget {
                               style: const TextStyle(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w600,
-                                color: Palette.textPrimary,
+                                color: Styles.textPrimary,
                               ),
                             ),
                           ),
@@ -269,13 +268,13 @@ class EventDetailPage extends ConsumerWidget {
                             event.recurrence!.summary(event.startsAt),
                             style: const TextStyle(
                               fontSize: 12.5,
-                              color: Palette.textSecondary,
+                              color: Styles.textSecondary,
                             ),
                           ),
                         ),
                       ],
                       const SizedBox(height: 16),
-                      const Divider(height: 1, color: Palette.cardBorder),
+                      const Divider(height: 1, color: Styles.cardBorder),
                       const SizedBox(height: 14),
                       IntrinsicHeight(
                         child: Row(
@@ -284,30 +283,31 @@ class EventDetailPage extends ConsumerWidget {
                               child: _MetricCell(
                                 label: 'DISTANCE',
                                 value: _formatDistance(event),
-                                valueColor: Palette.textPrimary,
+                                valueColor: Styles.textPrimary,
                               ),
                             ),
                             const VerticalDivider(
                               width: 1,
-                              color: Palette.cardBorder,
+                              color: Styles.cardBorder,
                             ),
                             Expanded(
                               child: _MetricCell(
                                 label: 'SURFACE',
-                                value: event.surface?.name ??
+                                value:
+                                    event.surface?.name ??
                                     (event.isVirtual ? 'Virtual' : 'Mixed'),
-                                valueColor: Palette.aqua,
+                                valueColor: Styles.aqua,
                               ),
                             ),
                             const VerticalDivider(
                               width: 1,
-                              color: Palette.cardBorder,
+                              color: Styles.cardBorder,
                             ),
                             Expanded(
                               child: _MetricCell(
                                 label: 'GOING',
                                 value: '${event.attendeeCount}',
-                                valueColor: Palette.gold,
+                                valueColor: Styles.gold,
                               ),
                             ),
                           ],
@@ -330,9 +330,9 @@ class EventDetailPage extends ConsumerWidget {
                               );
                           },
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Palette.textPrimary,
-                            backgroundColor: Palette.selectedFill,
-                            side: const BorderSide(color: Palette.deepTeal),
+                            foregroundColor: Styles.textPrimary,
+                            backgroundColor: Styles.selectedFill,
+                            side: const BorderSide(color: Styles.deepTeal),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -340,7 +340,7 @@ class EventDetailPage extends ConsumerWidget {
                           icon: const Icon(
                             Icons.calendar_month_outlined,
                             size: 17,
-                            color: Palette.aqua,
+                            color: Styles.aqua,
                           ),
                           label: const Text(
                             'Add to Calendar',
@@ -360,14 +360,14 @@ class EventDetailPage extends ConsumerWidget {
                   const _SectionLabel('ABOUT THIS EVENT'),
                   const SizedBox(height: 8),
                   SoftCard(
-                    color: Palette.deepNavy,
+                    color: Styles.deepNavy,
                     padding: const EdgeInsets.all(15),
                     child: Text(
                       event.description,
                       style: const TextStyle(
                         fontSize: 14.5,
                         height: 1.5,
-                        color: Palette.textSecondary,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ),
@@ -378,9 +378,9 @@ class EventDetailPage extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Container(
                   decoration: BoxDecoration(
-                    color: Palette.deepNavy,
+                    color: Styles.deepNavy,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Palette.cardBorder),
+                    border: Border.all(color: Styles.cardBorder),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: Column(
@@ -403,14 +403,15 @@ class EventDetailPage extends ConsumerWidget {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: event.isVirtual
-                                    ? Palette.selectedFill
-                                    : Palette.marigold.withAlpha(30),
+                                    ? Styles.selectedFill
+                                    : Styles.marigold.withAlpha(30),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
-                                  color: (event.isVirtual
-                                          ? Palette.aqua
-                                          : Palette.marigold)
-                                      .withAlpha(120),
+                                  color:
+                                      (event.isVirtual
+                                              ? Styles.aqua
+                                              : Styles.marigold)
+                                          .withAlpha(120),
                                 ),
                               ),
                               child: Icon(
@@ -419,8 +420,8 @@ class EventDetailPage extends ConsumerWidget {
                                     : Icons.location_on_outlined,
                                 size: 20,
                                 color: event.isVirtual
-                                    ? Palette.aqua
-                                    : Palette.marigold,
+                                    ? Styles.aqua
+                                    : Styles.marigold,
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -433,7 +434,7 @@ class EventDetailPage extends ConsumerWidget {
                                     style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
-                                      color: Palette.textPrimary,
+                                      color: Styles.textPrimary,
                                     ),
                                   ),
                                   if (!event.isVirtual &&
@@ -444,7 +445,7 @@ class EventDetailPage extends ConsumerWidget {
                                       event.location!.detail,
                                       style: const TextStyle(
                                         fontSize: 13,
-                                        color: Palette.textSecondary,
+                                        color: Styles.textSecondary,
                                       ),
                                     ),
                                   ] else if (event.isVirtual) ...[
@@ -453,7 +454,7 @@ class EventDetailPage extends ConsumerWidget {
                                       'Join from anywhere online',
                                       style: TextStyle(
                                         fontSize: 13,
-                                        color: Palette.textSecondary,
+                                        color: Styles.textSecondary,
                                       ),
                                     ),
                                   ],
@@ -471,7 +472,7 @@ class EventDetailPage extends ConsumerWidget {
                 const _SectionLabel('HOSTED BY'),
                 const SizedBox(height: 8),
                 SoftCard(
-                  color: Palette.deepNavy,
+                  color: Styles.deepNavy,
                   padding: const EdgeInsets.all(15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,16 +484,16 @@ class EventDetailPage extends ConsumerWidget {
                             height: 44,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Palette.deepTeal.withAlpha(130),
+                              color: Styles.deepTeal.withAlpha(130),
                               borderRadius: BorderRadius.circular(11),
-                              border: Border.all(color: Palette.deepTeal),
+                              border: Border.all(color: Styles.deepTeal),
                             ),
                             child: Text(
                               _initials(event.clubName),
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
-                                color: Palette.gold,
+                                color: Styles.gold,
                               ),
                             ),
                           ),
@@ -508,7 +509,7 @@ class EventDetailPage extends ConsumerWidget {
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w800,
-                                    color: Palette.textPrimary,
+                                    color: Styles.textPrimary,
                                   ),
                                 ),
                                 if (event.clubMemberCount != null) ...[
@@ -517,7 +518,7 @@ class EventDetailPage extends ConsumerWidget {
                                     '${event.clubMemberCount!.withThousands} Athletes',
                                     style: const TextStyle(
                                       fontSize: 13,
-                                      color: Palette.textSecondary,
+                                      color: Styles.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -534,14 +535,14 @@ class EventDetailPage extends ConsumerWidget {
                           style: const TextStyle(
                             fontSize: 13.5,
                             height: 1.45,
-                            color: Palette.textSecondary,
+                            color: Styles.textSecondary,
                           ),
                         ),
                       ],
                       if (event.organizerName != null &&
                           event.organizerName!.isNotEmpty) ...[
                         const SizedBox(height: 12),
-                        const Divider(height: 1, color: Palette.cardBorder),
+                        const Divider(height: 1, color: Styles.cardBorder),
                         const SizedBox(height: 12),
                         Row(
                           children: [
@@ -551,15 +552,15 @@ class EventDetailPage extends ConsumerWidget {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Palette.fieldFill,
-                                border: Border.all(color: Palette.cardBorder),
+                                color: Styles.fieldFill,
+                                border: Border.all(color: Styles.cardBorder),
                               ),
                               child: Text(
                                 _initials(event.organizerName!),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w800,
-                                  color: Palette.textPrimary,
+                                  color: Styles.textPrimary,
                                 ),
                               ),
                             ),
@@ -570,7 +571,7 @@ class EventDetailPage extends ConsumerWidget {
                                 style: const TextStyle(
                                   fontSize: 14.5,
                                   fontWeight: FontWeight.w700,
-                                  color: Palette.textPrimary,
+                                  color: Styles.textPrimary,
                                 ),
                               ),
                             ),
@@ -580,7 +581,7 @@ class EventDetailPage extends ConsumerWidget {
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 0.7,
-                                color: Palette.gold,
+                                color: Styles.gold,
                               ),
                             ),
                           ],
@@ -594,7 +595,7 @@ class EventDetailPage extends ConsumerWidget {
                 _SectionLabel('ATTENDEES (${event.attendeeCount})'),
                 const SizedBox(height: 8),
                 SoftCard(
-                  color: Palette.deepNavy,
+                  color: Styles.deepNavy,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 15,
                     vertical: 12,
@@ -610,10 +611,7 @@ class EventDetailPage extends ConsumerWidget {
                         ),
                       for (var i = 0; i < participants.length; i++) ...[
                         if (i > 0 || event.isAttending)
-                          const Divider(
-                            height: 18,
-                            color: Palette.cardBorder,
-                          ),
+                          const Divider(height: 18, color: Styles.cardBorder),
                         _ParticipantRow(
                           initials: participants[i].initials,
                           name: participants[i].name,
@@ -628,8 +626,8 @@ class EventDetailPage extends ConsumerWidget {
           ),
           Container(
             decoration: const BoxDecoration(
-              color: Styles.background,
-              border: Border(top: BorderSide(color: Palette.cardBorder)),
+              color: Styles.canvas,
+              border: Border(top: BorderSide(color: Styles.cardBorder)),
             ),
             child: SafeArea(
               top: false,
@@ -648,11 +646,9 @@ class EventDetailPage extends ConsumerWidget {
                                       .read(eventsProvider.notifier)
                                       .toggleRsvp(event.id),
                                   style: OutlinedButton.styleFrom(
-                                    foregroundColor: Palette.aqua,
-                                    backgroundColor: Palette.selectedFill,
-                                    side: const BorderSide(
-                                      color: Palette.aqua,
-                                    ),
+                                    foregroundColor: Styles.aqua,
+                                    backgroundColor: Styles.selectedFill,
+                                    side: const BorderSide(color: Styles.aqua),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -696,8 +692,8 @@ class EventDetailPage extends ConsumerWidget {
                         child: OutlinedButton.icon(
                           onPressed: () => _shareEvent(event),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Palette.textPrimary,
-                            side: const BorderSide(color: Palette.deepTeal),
+                            foregroundColor: Styles.textPrimary,
+                            side: const BorderSide(color: Styles.deepTeal),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -739,7 +735,7 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 11.5,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.0,
-          color: Palette.textMuted,
+          color: Styles.textMuted,
         ),
       ),
     );
@@ -769,7 +765,7 @@ class _MetricCell extends StatelessWidget {
               fontSize: 10.5,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.7,
-              color: Palette.textMuted,
+              color: Styles.textMuted,
             ),
           ),
           const SizedBox(height: 4),
@@ -812,9 +808,9 @@ class _ParticipantRow extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: highlight ? Palette.selectedFill : Palette.fieldFill,
+            color: highlight ? Styles.selectedFill : Styles.fieldFill,
             border: Border.all(
-              color: highlight ? Palette.aqua : Palette.cardBorder,
+              color: highlight ? Styles.aqua : Styles.cardBorder,
             ),
           ),
           child: Text(
@@ -822,7 +818,7 @@ class _ParticipantRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
-              color: highlight ? Palette.aqua : Palette.textPrimary,
+              color: highlight ? Styles.aqua : Styles.textPrimary,
             ),
           ),
         ),
@@ -836,7 +832,7 @@ class _ParticipantRow extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w700,
-                  color: Palette.textPrimary,
+                  color: Styles.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
@@ -846,7 +842,7 @@ class _ParticipantRow extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 12.5,
-                  color: Palette.textSecondary,
+                  color: Styles.textSecondary,
                 ),
               ),
             ],
@@ -856,3 +852,4 @@ class _ParticipantRow extends StatelessWidget {
     );
   }
 }
+

@@ -35,8 +35,8 @@ class ClubMediaEditor extends StatelessWidget {
               height: 154,
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: Palette.coverFor(previewClub.id),
-                border: Border.all(color: Palette.cardBorder),
+                gradient: Styles.coverFor(previewClub.id),
+                border: Border.all(color: Styles.cardBorder),
               ),
               child: Stack(
                 fit: StackFit.expand,
@@ -54,7 +54,7 @@ class ClubMediaEditor extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Styles.background.withAlpha(140),
+                          Styles.canvas.withAlpha(140),
                         ],
                       ),
                     ),
@@ -67,7 +67,7 @@ class ClubMediaEditor extends StatelessWidget {
                       children: [
                         if (hasCover && onRemoveCover != null) ...[
                           Material(
-                            color: Styles.background.withAlpha(190),
+                            color: Styles.canvas.withAlpha(190),
                             shape: const CircleBorder(),
                             child: InkWell(
                               customBorder: const CircleBorder(),
@@ -86,11 +86,9 @@ class ClubMediaEditor extends StatelessWidget {
                           const SizedBox(width: 8),
                         ],
                         Material(
-                          color: Styles.background.withAlpha(205),
+                          color: Styles.canvas.withAlpha(205),
                           shape: StadiumBorder(
-                            side: BorderSide(
-                              color: Colors.white.withAlpha(45),
-                            ),
+                            side: BorderSide(color: Colors.white.withAlpha(45)),
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: InkWell(
@@ -106,7 +104,7 @@ class ClubMediaEditor extends StatelessWidget {
                                   const Icon(
                                     Icons.edit_outlined,
                                     size: 15,
-                                    color: Palette.teal,
+                                    color: Styles.teal,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
@@ -140,7 +138,7 @@ class ClubMediaEditor extends StatelessWidget {
                   ClubAvatar(
                     club: previewClub,
                     size: 76,
-                    ringColor: Styles.background,
+                    ringColor: Styles.canvas,
                   ),
                   Positioned(
                     right: -2,
@@ -150,11 +148,8 @@ class ClubMediaEditor extends StatelessWidget {
                       height: 28,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: Palette.primaryGradient,
-                        border: Border.all(
-                          color: Styles.background,
-                          width: 2.5,
-                        ),
+                        gradient: Styles.primaryGradient,
+                        border: Border.all(color: Styles.canvas, width: 2.5),
                       ),
                       child: const Icon(
                         Icons.edit_outlined,
@@ -172,3 +167,4 @@ class ClubMediaEditor extends StatelessWidget {
     );
   }
 }
+

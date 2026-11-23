@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../../gear/providers/athlete_gear_provider.dart';
 
 class _TrophyPreviewItem {
@@ -71,7 +72,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
 
   bool _isPreviewUnlocked(_TrophyPreviewItem item) {
     return widget.currentActivities >= item.requiredActivities ||
-      widget.claimedTrophyIds.contains(item.id);
+        widget.claimedTrophyIds.contains(item.id);
   }
 
   @override
@@ -111,10 +112,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
                     backgroundColor: Styles.accent,
                     label: Text(
                       '$activeCount aktif',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 11),
                     ),
                   ),
                 );
@@ -127,7 +125,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
           const SizedBox(height: 8),
@@ -136,7 +134,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
             decoration: BoxDecoration(
               color: Styles.surface,
               borderRadius: BorderRadius.circular(Radii.chip),
-              border: Border.all(color: Palette.cardBorder),
+              border: Border.all(color: Styles.cardBorder),
             ),
             padding: const EdgeInsets.all(12.0),
             child: Column(
@@ -144,7 +142,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
               children: [
                 const Text(
                   "Ikuti Tantangan untuk menemukan motivasi, membangun kebiasaan, dan mendapatkan hadiah.",
-                  style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Styles.surfaceHighlight,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Center(
@@ -156,8 +157,8 @@ class _LainnyaTabState extends State<LainnyaTab> {
                     },
                     child: Text(
                       joinedChallenge
-                        ? "Tantangan Diikuti!"
-                        : "Temukan Tantangan baru",
+                          ? "Tantangan Diikuti!"
+                          : "Temukan Tantangan baru",
                       style: const TextStyle(color: Styles.accent),
                     ),
                   ),
@@ -177,7 +178,7 @@ class _LainnyaTabState extends State<LainnyaTab> {
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                   Text(
@@ -185,8 +186,8 @@ class _LainnyaTabState extends State<LainnyaTab> {
                     style: TextStyle(
                       fontSize: 12,
                       color: unlockedCount > 0
-                        ? Styles.active
-                        : Styles.tabInactive,
+                          ? Styles.primaryLight
+                          : Styles.surfaceHighlight,
                     ),
                   ),
                 ],
@@ -217,19 +218,19 @@ class _LainnyaTabState extends State<LainnyaTab> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           decoration: isUnlocked
-                            ? BoxDecoration(
-                                gradient: Palette.primaryGradient,
-                                borderRadius:
-                                  BorderRadius.circular(Radii.chip),
-                              )
-                            : BoxDecoration(
-                                color: Styles.surface,
-                                borderRadius:
-                                  BorderRadius.circular(Radii.chip),
-                                border: Border.all(
-                                  color: Palette.cardBorder,
+                              ? BoxDecoration(
+                                  gradient: Styles.primaryGradient,
+                                  borderRadius: BorderRadius.circular(
+                                    Radii.chip,
+                                  ),
+                                )
+                              : BoxDecoration(
+                                  color: Styles.surface,
+                                  borderRadius: BorderRadius.circular(
+                                    Radii.chip,
+                                  ),
+                                  border: Border.all(color: Styles.cardBorder),
                                 ),
-                              ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -239,19 +240,19 @@ class _LainnyaTabState extends State<LainnyaTab> {
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: isUnlocked
-                                    ? Styles.background
-                                    : Styles.inactive,
+                                      ? Styles.canvas
+                                      : Styles.surfaceHighlight,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Icon(
                                 isUnlocked
-                                  ? Icons.emoji_events
-                                  : Icons.lock_outline,
+                                    ? Icons.emoji_events
+                                    : Icons.lock_outline,
                                 size: 22,
                                 color: isUnlocked
-                                  ? Styles.background
-                                  : Styles.tabActive,
+                                    ? Styles.canvas
+                                    : Styles.primaryLight,
                               ),
                             ],
                           ),
@@ -262,11 +263,11 @@ class _LainnyaTabState extends State<LainnyaTab> {
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: isUnlocked
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             color: isUnlocked
-                              ? Styles.accent
-                              : Styles.tabInactive,
+                                ? Styles.accent
+                                : Styles.surfaceHighlight,
                           ),
                         ),
                       ],
@@ -305,27 +306,24 @@ class _LainnyaMenuTile extends StatelessWidget {
         onTap: onTap,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 14.0,
-            vertical: 14.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 14.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Radii.chip),
-            border: Border.all(color: Palette.cardBorder),
+            border: Border.all(color: Styles.cardBorder),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Icon(icon, color: Styles.tabActive),
+                  Icon(icon, color: Styles.primaryLight),
                   const SizedBox(width: 14),
                   Text(
                     title,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ],
@@ -335,7 +333,7 @@ class _LainnyaMenuTile extends StatelessWidget {
                   ?trailingWidget,
                   const Icon(
                     Icons.chevron_right,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ],
               ),
@@ -346,3 +344,4 @@ class _LainnyaMenuTile extends StatelessWidget {
     );
   }
 }
+

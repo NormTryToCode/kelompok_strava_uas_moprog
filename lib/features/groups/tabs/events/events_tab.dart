@@ -21,9 +21,8 @@ class EventsTab extends ConsumerWidget {
     final now = DateTime.now();
 
     return eventsAsync.when(
-      loading: () => const Center(
-        child: CircularProgressIndicator(color: Styles.accent),
-      ),
+      loading: () =>
+          const Center(child: CircularProgressIndicator(color: Styles.accent)),
       error: (_, _) => Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -34,7 +33,7 @@ class EventsTab extends ConsumerWidget {
               const SizedBox(height: 12),
               const Text(
                 'Could not load events.',
-                style: TextStyle(fontSize: 15, color: Styles.tabInactive),
+                style: TextStyle(fontSize: 15, color: Styles.surfaceHighlight),
               ),
               const SizedBox(height: 8),
               TextButton(
@@ -47,10 +46,9 @@ class EventsTab extends ConsumerWidget {
         ),
       ),
       data: (allEvents) {
-        final upcoming = allEvents
-            .where((e) => !e.startsAt.isBefore(now))
-            .toList()
-          ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
+        final upcoming =
+            allEvents.where((e) => !e.startsAt.isBefore(now)).toList()
+              ..sort((a, b) => a.startsAt.compareTo(b.startsAt));
 
         final preview = upcoming.take(_previewLimit).toList();
 
@@ -59,8 +57,9 @@ class EventsTab extends ConsumerWidget {
           children: [
             SectionTitle(
               'Upcoming events',
-              trailing:
-                  upcoming.isEmpty ? null : CountPill(count: upcoming.length),
+              trailing: upcoming.isEmpty
+                  ? null
+                  : CountPill(count: upcoming.length),
             ),
             const SizedBox(height: 12),
             if (preview.isEmpty)
@@ -82,9 +81,9 @@ class EventsTab extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: () => BrowseEventsPage.open(context),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Palette.textPrimary,
-                  backgroundColor: Palette.deepNavy,
-                  side: const BorderSide(color: Palette.deepTeal),
+                  foregroundColor: Styles.textPrimary,
+                  backgroundColor: Styles.deepNavy,
+                  side: const BorderSide(color: Styles.deepTeal),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -92,7 +91,7 @@ class EventsTab extends ConsumerWidget {
                 icon: const Icon(
                   Icons.explore_outlined,
                   size: 19,
-                  color: Palette.gold,
+                  color: Styles.gold,
                 ),
                 label: Text(
                   upcoming.length > preview.length
@@ -135,10 +134,11 @@ class _EmptyEventsCard extends StatelessWidget {
           Text(
             'Create an event from any club or browse upcoming events.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Styles.tabInactive),
+            style: TextStyle(fontSize: 14, color: Styles.surfaceHighlight),
           ),
         ],
       ),
     );
   }
 }
+

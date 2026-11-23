@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/trophy_badge.dart';
 import '../services/trophy_api_service.dart';
 import '../widgets/trophy_card.dart';
@@ -43,7 +44,7 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
             children: [
               IconButton.filled(
                 onPressed: widget.onBack,
-                icon: const Icon(Icons.arrow_back, color: Styles.tabActive),
+                icon: const Icon(Icons.arrow_back, color: Styles.primaryLight),
               ),
               const SizedBox(width: 12),
               const Text(
@@ -51,7 +52,7 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
               ),
             ],
@@ -91,7 +92,7 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Styles.tabActive,
+                              color: Styles.primaryLight,
                             ),
                           ),
                           GestureDetector(
@@ -112,7 +113,7 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                               "Lihat Semua",
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Styles.tabInactive,
+                                color: Styles.surfaceHighlight,
                               ),
                             ),
                           ),
@@ -129,9 +130,9 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
                       child: GridView.builder(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: 0.85,
-                          crossAxisCount: 3,
-                        ),
+                              childAspectRatio: 0.85,
+                              crossAxisCount: 3,
+                            ),
                         itemCount: previewBadges.length,
                         itemBuilder: (context, index) {
                           return TrophyCard(
@@ -159,3 +160,4 @@ class _TrophyCaseViewState extends State<TrophyCaseView> {
     );
   }
 }
+

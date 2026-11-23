@@ -136,7 +136,9 @@ class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save the club. Please try again.')),
+        const SnackBar(
+          content: Text('Could not save the club. Please try again.'),
+        ),
       );
     }
   }
@@ -152,7 +154,7 @@ class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: SafeArea(
         child: Column(
           children: [
@@ -171,10 +173,7 @@ class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 220),
-                child: KeyedSubtree(
-                  key: ValueKey(_step),
-                  child: _buildStep(),
-                ),
+                child: KeyedSubtree(key: ValueKey(_step), child: _buildStep()),
               ),
             ),
             _BottomBar(
@@ -227,7 +226,7 @@ class _TopBar extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
         ],
@@ -254,7 +253,7 @@ class _BottomBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
       decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Palette.cardBorder)),
+        border: Border(top: BorderSide(color: Styles.cardBorder)),
       ),
       child: Row(
         children: [

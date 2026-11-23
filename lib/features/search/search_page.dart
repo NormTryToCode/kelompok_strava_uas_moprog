@@ -12,13 +12,13 @@ class SearchPage extends StatelessWidget {
     return const DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppHeader(title: 'Search', showBackButton: true),
         body: Column(
           children: [
             TabBar(
               indicatorColor: Styles.accent,
-              labelColor: Styles.tabActive,
+              labelColor: Styles.primaryLight,
               unselectedLabelColor: Colors.white54,
               labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               tabs: [
@@ -27,12 +27,7 @@ class SearchPage extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: TabBarView(
-                children: [
-                  FriendsTab(),
-                  SearchClubsTab(),
-                ],
-              ),
+              child: TabBarView(children: [FriendsTab(), SearchClubsTab()]),
             ),
           ],
         ),
@@ -40,3 +35,4 @@ class SearchPage extends StatelessWidget {
     );
   }
 }
+

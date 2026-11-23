@@ -33,17 +33,11 @@ class ProfileLabeledField extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Styles.background,
-          border: Border.all(
-            color: Styles.inactive,
-            width: 1.2,
-          ),
+          color: Styles.canvas,
+          border: Border.all(color: Styles.surfaceHighlight, width: 1.2),
           borderRadius: BorderRadius.circular(8.0),
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12.0,
-          vertical: 8.0,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,7 +45,7 @@ class ProfileLabeledField extends StatelessWidget {
               label,
               style: const TextStyle(
                 fontSize: 11,
-                color: Styles.tabInactive,
+                color: Styles.surfaceHighlight,
               ),
             ),
             const SizedBox(height: 4),
@@ -63,12 +57,12 @@ class ProfileLabeledField extends StatelessWidget {
                     valueText ?? '',
                     style: const TextStyle(
                       fontSize: 15,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                   const Icon(
                     Icons.keyboard_arrow_down,
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                     size: 20,
                   ),
                 ],
@@ -82,17 +76,15 @@ class ProfileLabeledField extends StatelessWidget {
                 inputFormatters: inputFormatters,
                 placeholderStyle: const TextStyle(
                   fontSize: 14,
-                  color: Styles.inactive,
+                  color: Styles.surfaceHighlight,
                 ),
                 padding: EdgeInsets.zero,
                 autocorrect: false,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
-                decoration: const BoxDecoration(
-                  color: Styles.background,
-                ),
+                decoration: const BoxDecoration(color: Styles.canvas),
               ),
           ],
         ),
@@ -100,3 +92,4 @@ class ProfileLabeledField extends StatelessWidget {
     );
   }
 }
+

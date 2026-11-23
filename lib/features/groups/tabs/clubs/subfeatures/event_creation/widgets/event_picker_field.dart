@@ -33,12 +33,12 @@ class EventPickerField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Material(
-            color: Palette.fieldFill,
+            color: Styles.fieldFill,
             clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(Radii.field),
               side: BorderSide(
-                color: hasError ? eventErrorColor : Palette.cardBorder,
+                color: hasError ? eventErrorColor : Styles.cardBorder,
                 width: hasError ? 1.4 : 1.2,
               ),
             ),
@@ -51,7 +51,7 @@ class EventPickerField extends StatelessWidget {
                   child: Row(
                     children: [
                       if (leadingIcon != null) ...[
-                        Icon(leadingIcon, size: 22, color: Palette.teal),
+                        Icon(leadingIcon, size: 22, color: Styles.teal),
                         const SizedBox(width: 12),
                       ],
                       Expanded(
@@ -61,14 +61,16 @@ class EventPickerField extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 16,
-                            color: hasValue ? Colors.white : Styles.tabInactive,
+                            color: hasValue
+                                ? Colors.white
+                                : Styles.surfaceHighlight,
                           ),
                         ),
                       ),
                       trailing ??
                           const Icon(
                             Icons.keyboard_arrow_down,
-                            color: Styles.tabInactive,
+                            color: Styles.surfaceHighlight,
                           ),
                     ],
                   ),

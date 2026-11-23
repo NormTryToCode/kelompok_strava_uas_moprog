@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/sport_statistics_data.dart';
 import '../widgets/statistics_section_table.dart';
 import '../widgets/statistics_sport_tab_bar.dart';
@@ -82,8 +83,8 @@ class _StatisticsViewState extends State<StatisticsView> {
       sportIndex: _selectedSportIndex,
       weeklySessions: _activeSessionCount,
       historicalBaseSessions: (_selectedSportIndex == 0)
-        ? 6
-        : (_selectedSportIndex == 1)
+          ? 6
+          : (_selectedSportIndex == 1)
           ? 10
           : 4,
       athleteWeightKg: widget.athleteWeightKg,
@@ -93,18 +94,12 @@ class _StatisticsViewState extends State<StatisticsView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 14.0,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
           child: Row(
             children: [
               GestureDetector(
                 onTap: widget.onBack,
-                child: const Icon(
-                  Icons.arrow_back,
-                  color: Styles.tabActive,
-                ),
+                child: const Icon(Icons.arrow_back, color: Styles.primaryLight),
               ),
               const SizedBox(width: 24),
               const Text(
@@ -112,7 +107,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
               ),
             ],
@@ -134,10 +129,10 @@ class _StatisticsViewState extends State<StatisticsView> {
                 StatisticsSummaryCard(
                   stats: stats,
                   onDecrement: () =>
-                    _updateCurrentSportSessions(_activeSessionCount - 1),
+                      _updateCurrentSportSessions(_activeSessionCount - 1),
                   onReset: () => _updateCurrentSportSessions(0),
                   onIncrement: () =>
-                    _updateCurrentSportSessions(_activeSessionCount + 1),
+                      _updateCurrentSportSessions(_activeSessionCount + 1),
                 ),
                 StatisticsSectionTable(
                   sectionTitle: 'AKTIVITAS MINGGUAN RATA2',
@@ -200,3 +195,4 @@ class _StatisticsViewState extends State<StatisticsView> {
     );
   }
 }
+

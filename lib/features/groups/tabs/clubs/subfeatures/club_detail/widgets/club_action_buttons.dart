@@ -51,7 +51,7 @@ class ClubActionButtons extends StatelessWidget {
                 Material(
                   color: Styles.surface,
                   shape: const CircleBorder(
-                    side: BorderSide(color: Palette.cardBorder),
+                    side: BorderSide(color: Styles.cardBorder),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
@@ -73,7 +73,7 @@ class ClubActionButtons extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
               ],
@@ -84,3 +84,4 @@ class ClubActionButtons extends StatelessWidget {
     );
   }
 }
+

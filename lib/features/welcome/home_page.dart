@@ -46,10 +46,7 @@ class WelcomePage extends StatelessWidget {
                   const Text(
                     'Record your routes, pace, and progress in real time with our app.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
@@ -57,7 +54,7 @@ class WelcomePage extends StatelessWidget {
                     height: 52,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Styles.badge,
+                        backgroundColor: Styles.primaryDark,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -66,8 +63,9 @@ class WelcomePage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const LoginPage(),
-                        ),
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
                         );
                       },
                       child: const Text(
@@ -85,7 +83,7 @@ class WelcomePage extends StatelessWidget {
                     height: 52,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Styles.background,
+                        backgroundColor: Styles.canvas,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -94,7 +92,8 @@ class WelcomePage extends StatelessWidget {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegisterPage(),
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterPage(),
                           ),
                         );
                       },
@@ -107,7 +106,6 @@ class WelcomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),

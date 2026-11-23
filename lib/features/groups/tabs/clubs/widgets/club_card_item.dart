@@ -34,9 +34,7 @@ class ClubCardItem extends StatelessWidget {
                 child: Container(
                   height: 68,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: Palette.coverFor(club.id),
-                  ),
+                  decoration: BoxDecoration(gradient: Styles.coverFor(club.id)),
                   child: hasCover
                       ? Image.file(
                           File(coverPath),
@@ -74,7 +72,11 @@ class ClubCardItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(club.sport.icon, size: 14, color: Styles.tabInactive),
+                    Icon(
+                      club.sport.icon,
+                      size: 14,
+                      color: Styles.surfaceHighlight,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -83,7 +85,7 @@ class ClubCardItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 12.5,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ),
@@ -99,3 +101,4 @@ class ClubCardItem extends StatelessWidget {
     );
   }
 }
+

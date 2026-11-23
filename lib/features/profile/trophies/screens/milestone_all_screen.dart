@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/trophy_badge.dart';
 import '../widgets/trophy_card.dart';
 
@@ -26,18 +27,18 @@ class _MilestoneAllScreenState extends State<MilestoneAllScreen> {
     return Animate(
       effects: const [FadeEffect()],
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppBar(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           title: const Text(
             'Tonggak pencapaian',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
-          iconTheme: const IconThemeData(color: Styles.tabActive),
+          iconTheme: const IconThemeData(color: Styles.primaryLight),
         ),
         body: SafeArea(
           child: Padding(
@@ -65,3 +66,4 @@ class _MilestoneAllScreenState extends State<MilestoneAllScreen> {
     );
   }
 }
+

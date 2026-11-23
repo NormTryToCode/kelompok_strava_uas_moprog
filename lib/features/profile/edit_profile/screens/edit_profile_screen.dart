@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/athlete_profile_data.dart';
 import '../../shared/services/profile_location_service.dart';
 import '../../shared/widgets/athlete_avatar_widget.dart';
@@ -50,10 +52,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   final ImagePicker _imagePicker = ImagePicker();
   final ProfileLocationService _locationService = ProfileLocationService();
 
-  static const List<String> _sportOptions = [
-    'Berlari',
-    'Bersepeda',
-  ];
+  static const List<String> _sportOptions = ['Berlari', 'Bersepeda'];
 
   static const List<String> _genderOptions = [
     'Pria',
@@ -206,9 +205,8 @@ class _EditProfileViewState extends State<EditProfileView> {
       final String? croppedPath = await Navigator.push<String>(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => ProfilePhotoCropScreen(
-            imageFile: File(pickedFile.path),
-          ),
+          builder: (BuildContext context) =>
+              ProfilePhotoCropScreen(imageFile: File(pickedFile.path)),
         ),
       );
 
@@ -282,9 +280,9 @@ class _EditProfileViewState extends State<EditProfileView> {
           data: ThemeData.dark().copyWith(
             colorScheme: const ColorScheme.dark(
               primary: Styles.accent,
-              onPrimary: Styles.tabActive,
+              onPrimary: Styles.primaryLight,
               surface: Styles.surface,
-              onSurface: Styles.tabActive,
+              onSurface: Styles.primaryLight,
             ),
           ),
           child: child!,
@@ -316,7 +314,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                       onTap: _handleBackNavigation,
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -325,7 +323,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -337,7 +335,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ),
@@ -347,10 +345,7 @@ class _EditProfileViewState extends State<EditProfileView> {
             Center(
               child: GestureDetector(
                 onTap: _showPhotoPickerDialog,
-                child: AthleteAvatarWidget(
-                  avatarPath: _avatarPath,
-                  size: 76,
-                ),
+                child: AthleteAvatarWidget(avatarPath: _avatarPath, size: 76),
               ),
             ),
             const SizedBox(height: 24),
@@ -409,11 +404,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                   onTap: _detectCurrentGpsLocation,
                   child: const Row(
                     children: [
-                      Icon(
-                        Icons.navigation,
-                        size: 16,
-                        color: Styles.accent,
-                      ),
+                      Icon(Icons.navigation, size: 16, color: Styles.accent),
                       SizedBox(width: 6),
                       Text(
                         'Cek Koordinat GPS Saat Ini',
@@ -433,7 +424,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Styles.active,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ),
@@ -458,16 +449,13 @@ class _EditProfileViewState extends State<EditProfileView> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 4),
             const Text(
               "Digunakan untuk menghitung kalori, kekuatan, dan lainnya",
-              style: TextStyle(
-                fontSize: 12,
-                color: Styles.tabInactive,
-              ),
+              style: TextStyle(fontSize: 12, color: Styles.surfaceHighlight),
             ),
             const SizedBox(height: 12),
             ProfileLabeledField(
@@ -499,3 +487,4 @@ class _EditProfileViewState extends State<EditProfileView> {
     );
   }
 }
+

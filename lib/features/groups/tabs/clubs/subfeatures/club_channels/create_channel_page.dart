@@ -44,23 +44,24 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
     super.dispose();
   }
 
-  InputDecoration _fieldDecoration({
-    required String hint,
-  }) {
+  InputDecoration _fieldDecoration({required String hint}) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Radii.field),
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: BorderRadius.circular(Radii.field),
+      borderSide: BorderSide(color: color, width: width),
+    );
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Styles.tabInactive),
+      hintStyle: const TextStyle(color: Styles.surfaceHighlight),
       filled: true,
-      fillColor: Palette.fieldFill,
-      counterStyle: const TextStyle(color: Styles.tabInactive, fontSize: 12),
+      fillColor: Styles.fieldFill,
+      counterStyle: const TextStyle(
+        color: Styles.surfaceHighlight,
+        fontSize: 12,
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      enabledBorder: border(Palette.cardBorder, 1.2),
-      focusedBorder: border(Palette.teal, 1.8),
+      enabledBorder: border(Styles.cardBorder, 1.2),
+      focusedBorder: border(Styles.teal, 1.8),
     );
   }
 
@@ -94,7 +95,7 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: Column(
         children: [
           _Header(
@@ -122,7 +123,7 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                     controller: _nameController,
                     maxLength: 40,
                     textCapitalization: TextCapitalization.words,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     style: const TextStyle(fontSize: 16, color: Colors.white),
                     decoration: _fieldDecoration(hint: 'Name your channel'),
                     onChanged: (_) => setState(() {}),
@@ -136,7 +137,7 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                     minLines: 2,
                     maxLines: 4,
                     textCapitalization: TextCapitalization.sentences,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     style: const TextStyle(fontSize: 15.5, color: Colors.white),
                     decoration: _fieldDecoration(
                       hint: 'Write a brief description about your channel',
@@ -157,9 +158,11 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        for (var i = 0;
-                            i < ChannelMembership.values.length;
-                            i++) ...[
+                        for (
+                          var i = 0;
+                          i < ChannelMembership.values.length;
+                          i++
+                        ) ...[
                           if (i > 0) const SizedBox(width: 12),
                           Expanded(
                             child: ChoiceCard(
@@ -184,9 +187,11 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        for (var i = 0;
-                            i < ChannelPostPermission.values.length;
-                            i++) ...[
+                        for (
+                          var i = 0;
+                          i < ChannelPostPermission.values.length;
+                          i++
+                        ) ...[
                           if (i > 0) const SizedBox(width: 12),
                           Expanded(
                             child: ChoiceCard(
@@ -194,7 +199,8 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                               title: ChannelPostPermission.values[i].title,
                               subtitle:
                                   ChannelPostPermission.values[i].subtitle,
-                              selected: ChannelPostPermission.values[i] ==
+                              selected:
+                                  ChannelPostPermission.values[i] ==
                                   _postPermission,
                               onTap: () => setState(
                                 () => _postPermission =
@@ -212,8 +218,8 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
           ),
           Container(
             decoration: const BoxDecoration(
-              color: Styles.background,
-              border: Border(top: BorderSide(color: Palette.cardBorder)),
+              color: Styles.canvas,
+              border: Border(top: BorderSide(color: Styles.cardBorder)),
             ),
             child: SafeArea(
               top: false,
@@ -229,7 +235,10 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                     const SizedBox(height: 8),
                     const Text(
                       'Settings can be changed at any time.',
-                      style: TextStyle(fontSize: 12.5, color: Styles.tabInactive),
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: Styles.surfaceHighlight,
+                      ),
                     ),
                   ],
                 ),
@@ -252,9 +261,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Styles.background,
+        color: Styles.canvas,
         border: Border(
-          bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
+          bottom: BorderSide(color: Styles.cardBorder, width: 0.8),
         ),
       ),
       child: SafeArea(
@@ -286,7 +295,7 @@ class _Header extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13.5,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -338,9 +347,10 @@ class _FieldHeader extends StatelessWidget {
         else
           const Text(
             'Optional',
-            style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+            style: TextStyle(fontSize: 12, color: Styles.surfaceHighlight),
           ),
       ],
     );
   }
 }
+

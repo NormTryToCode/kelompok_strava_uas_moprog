@@ -13,10 +13,8 @@ class GroupsTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Styles.background,
-        border: Border(
-          bottom: BorderSide(color: Palette.cardBorder, width: 1),
-        ),
+        color: Styles.canvas,
+        border: Border(bottom: BorderSide(color: Styles.cardBorder, width: 1)),
       ),
       child: const TabBar(
         dividerColor: Colors.transparent,
@@ -24,7 +22,7 @@ class GroupsTabBar extends StatelessWidget {
         indicatorWeight: 2.5,
         indicatorColor: Styles.accent,
         labelColor: Colors.white,
-        unselectedLabelColor: Styles.tabInactive,
+        unselectedLabelColor: Styles.surfaceHighlight,
         labelStyle: _labelStyle,
         unselectedLabelStyle: TextStyle(
           fontSize: 15,

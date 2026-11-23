@@ -53,13 +53,13 @@ class ClubChannelsSection extends ConsumerWidget {
                       subtitle,
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Styles.tabInactive),
+              const Icon(Icons.chevron_right, color: Styles.surfaceHighlight),
             ],
           ),
         ),
@@ -67,3 +67,4 @@ class ClubChannelsSection extends ConsumerWidget {
     );
   }
 }
+

@@ -26,12 +26,13 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: showBackButton,
       leading: leadingWidget,
       leadingWidth: leadingWidget == null ? null : 150,
-      backgroundColor: Styles.background,
-      foregroundColor: Styles.tabActive,
+      backgroundColor: Styles.canvas,
+      foregroundColor: Styles.primaryLight,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
       centerTitle: false,
-      title: titleWidget ??
+      title:
+          titleWidget ??
           (title == null
               ? null
               : Text(
@@ -45,3 +46,4 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+

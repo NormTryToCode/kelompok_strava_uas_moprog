@@ -136,14 +136,11 @@ class CarouselCard extends StatelessWidget {
     this.border,
   });
 
-  factory CarouselCard.bordered({
-    Key? key,
-    required Widget child,
-  }) {
+  factory CarouselCard.bordered({Key? key, required Widget child}) {
     return CarouselCard(
       key: key,
       color: Styles.surface,
-      border: Border.all(color: Palette.cardBorder),
+      border: Border.all(color: Styles.cardBorder),
       child: child,
     );
   }
