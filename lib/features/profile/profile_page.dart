@@ -18,7 +18,7 @@ import 'trophies/screens/trophy_case_screen.dart';
 import 'overview/widgets/profile_avatar_preview_dialog.dart';
 import 'overview/widgets/profile_header_widget.dart';
 import 'overview/widgets/profile_tab_bar.dart';
-import 'overview/widgets/share_profile_sheet.dart';
+import 'shared/services/profile_share_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
