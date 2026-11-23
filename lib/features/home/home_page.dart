@@ -25,11 +25,11 @@ class HomePage extends StatelessWidget {
   ];
 
   static const List<Map<String, String>> _dailyStats = [
-    {'title': 'Heart Rate', 'image': 'asset/images/Heart_rate.jpg'},
-    {'title': 'Pace Speed', 'image': 'asset/images/Pace.jpg'},
-    {'title': 'Average Time', 'image': 'asset/images/Average.jpg'},
-    {'title': 'Calories Burn', 'image': 'asset/images/Colories.jpg'},
-    {'title': 'Steps Taken', 'image': 'asset/images/Steps.jpg'},
+    {'title': 'Heart Rate', 'image': 'asset/images/heart rate.png'},
+    {'title': 'Pace Speed', 'image': 'asset/images/pace.png'},
+    {'title': 'Average Time', 'image': 'asset/images/time.png'},
+    {'title': 'Calories Burn', 'image': 'asset/images/calories.png'},
+    {'title': 'Steps Taken', 'image': 'asset/images/steps.png'},
   ];
 
   @override
@@ -74,6 +74,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 4),
               const HomeStreakWidget(),
               const SizedBox(height: 2),
+              Center(child: Text("uam"),),
               HorizontalCarousel.cards(
                 items: _badges,
                 bordered: true,
@@ -92,6 +93,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8),
+
               HorizontalCarousel.cards(
                 items: _dailyStats,
                 bordered: true,
