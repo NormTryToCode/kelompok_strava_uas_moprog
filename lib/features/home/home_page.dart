@@ -24,6 +24,14 @@ class HomePage extends StatelessWidget {
     {'title': 'Elite Global Runeer', 'image': 'asset/images/elite_global_runner.png'},
   ];
 
+  static const List<Map<String, String>> _dailyStats = [
+    {'title': 'Heart Rate', 'image': 'asset/images/Heart_rate.jpg'},
+    {'title': 'Pace Speed', 'image': 'asset/images/Pace.jpg'},
+    {'title': 'Average Time', 'image': 'asset/images/Average.jpg'},
+    {'title': 'Calories Burn', 'image': 'asset/images/Colories.jpg'},
+    {'title': 'Steps Taken', 'image': 'asset/images/Steps.jpg'},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +91,25 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(height: 8),
+              HorizontalCarousel.cards(
+                items: _dailyStats,
+                bordered: true,
+                cardBuilder: (context, badge) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Image.asset(badge['image']!, fit: BoxFit.contain),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      badge['title']!,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+
             ],
           ),
         ),
