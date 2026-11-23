@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w900,
-                          color: Styles.badge.withValues(alpha: 0.75),
+                          color: Styles.accent.withValues(alpha: 0.75),
                         ),
                       )
                     ],
@@ -137,7 +137,7 @@ class HomePage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
-                        color: Styles.badge.withValues(alpha: 0.75),
+                        color: Styles.accent.withValues(alpha: 0.75),
                       ),
                     )
                   ],
