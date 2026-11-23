@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../../shared/services/profile_location_service.dart';
+import '../../shared/services/profile_url_service.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
 
 class SegmentLocationView extends StatefulWidget {
   final VoidCallback onBack;
@@ -15,7 +17,8 @@ class SegmentLocationView extends StatefulWidget {
 }
 
 class _SegmentLocationViewState extends State<SegmentLocationView> {
-  final ProfileLocationService locationService = ProfileLocationService();
+  final ProfileLocationService _locationService = ProfileLocationService();
+  final ProfileUrlService _urlService = ProfileUrlService();
 
   double lat = 0.0;
   double lng = 0.0;
@@ -29,19 +32,35 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
     });
 
     try {
-      await locationService.getCurrentLocation();
+      await _locationService.getCurrentLocation();
       if (!mounted) return;
       setState(() {
-        lat = locationService.lat;
-        lng = locationService.lng;
+        lat = _locationService.lat;
+        lng = _locationService.lng;
         isLoading = false;
       });
+      ProfileSnackbarHelper.showSuccess(
+        context,
+        'Koordinat GPS segmen berhasil diperbarui!',
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() {
         errorMessage = e.toString();
         isLoading = false;
       });
+      ProfileSnackbarHelper.showError(context, 'Gagal memuat lokasi GPS.');
+    }
+  }
+
+  Future<void> _openLocationInBrowser() async {
+    final String mapUrl =
+      'https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=16/$lat/$lng';
+    try {
+      await _urlService.openUrl(mapUrl);
+    } catch (e) {
+      if (!mounted) return;
+      ProfileSnackbarHelper.showError(context, '$e');
     }
   }
 
@@ -80,13 +99,19 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
-                color: Styles.surface,
+                decoration: BoxDecoration(
+                  color: Styles.surface,
+                  borderRadius: BorderRadius.circular(Radii.field),
+                  border: Border.all(color: Palette.cardBorder),
+                ),
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      hasLocation ? Icons.my_location : Icons.location_searching,
+                      hasLocation
+                        ? Icons.my_location
+                        : Icons.location_searching,
                       color: hasLocation ? Styles.active : Styles.accent,
                       size: 40,
                     ),
@@ -115,6 +140,22 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                         color: Styles.accent,
                       ),
                     ),
+                    if (hasLocation) ...[
+                      const SizedBox(height: 14),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Styles.tabActive,
+                          side: const BorderSide(color: Styles.accent),
+                        ),
+                        onPressed: _openLocationInBrowser,
+                        icon: const Icon(
+                          Icons.open_in_new,
+                          size: 16,
+                          color: Styles.accent,
+                        ),
+                        label: const Text('Buka Koordinat di Peta Web'),
+                      ),
+                    ],
                     if (isLoading)
                       const Padding(
                         padding: EdgeInsets.only(top: 12.0),
