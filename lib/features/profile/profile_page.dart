@@ -109,33 +109,35 @@ class ProfilePage extends ConsumerWidget {
             onTapAktivitas: () => navNotifier.selectTab(1),
             onTapLainnya: () => navNotifier.selectTab(2),
           ),
-          if (navState.activeTab == 0)
-            KemajuanTab(
-              runSessions: runSessions,
-              onDecrement: () => statsNotifier.decrementRun(),
-              onReset: () => statsNotifier.resetRun(),
-              onIncrement: (runSessions < 10)
-                ? () => statsNotifier.incrementRun(maxLimit: 10)
-                : null,
-              onOpenFeedback: () =>
-                navNotifier.openScreen(ProfileSubScreen.feedback),
-            ),
-          if (navState.activeTab == 1)
-            AktivitasTab(
-              activityCount: runSessions,
-              onAddFirstActivity: () => statsNotifier.incrementRun(),
-            ),
-          if (navState.activeTab == 2)
-            LainnyaTab(
-              onOpenTrophyCase: () =>
-                navNotifier.openScreen(ProfileSubScreen.trophyCase),
-              onOpenGearCatalog: () =>
-                navNotifier.openScreen(ProfileSubScreen.gearManagement),
-              onOpenSegments: () =>
-                navNotifier.openScreen(ProfileSubScreen.segments),
-              onOpenStatistics: () =>
-                navNotifier.openScreen(ProfileSubScreen.statistics),
-            ),
+          IndexedStack(
+            index: navState.activeTab,
+            children: [
+              KemajuanTab(
+                runSessions: runSessions,
+                onDecrement: () => statsNotifier.decrementRun(),
+                onReset: () => statsNotifier.resetRun(),
+                onIncrement: (runSessions < 10)
+                  ? () => statsNotifier.incrementRun(maxLimit: 10)
+                  : null,
+                onOpenFeedback: () =>
+                  navNotifier.openScreen(ProfileSubScreen.feedback),
+              ),
+              AktivitasTab(
+                activityCount: runSessions,
+                onAddFirstActivity: () => statsNotifier.incrementRun(),
+              ),
+              LainnyaTab(
+                onOpenTrophyCase: () =>
+                  navNotifier.openScreen(ProfileSubScreen.trophyCase),
+                onOpenGearCatalog: () =>
+                  navNotifier.openScreen(ProfileSubScreen.gearManagement),
+                onOpenSegments: () =>
+                  navNotifier.openScreen(ProfileSubScreen.segments),
+                onOpenStatistics: () =>
+                  navNotifier.openScreen(ProfileSubScreen.statistics),
+              ),
+            ],
+          ),
         ],
       ),
     );
