@@ -80,9 +80,9 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
     );
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -95,10 +95,7 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
         children: [
           ClubOverviewSummaryCard(club: club),
           const SizedBox(height: 24),
-          SectionTitle(
-            'Members',
-            trailing: CountPill(count: club.memberCount),
-          ),
+          SectionTitle('Members', trailing: CountPill(count: club.memberCount)),
           const SizedBox(height: 12),
           ClubMembersCard(
             club: club,
@@ -132,13 +129,13 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
                         'View guidelines for clubs and members',
                         style: TextStyle(
                           fontSize: 13,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: Styles.tabInactive),
+                Icon(Icons.chevron_right, color: Styles.surfaceHighlight),
               ],
             ),
           ),
@@ -179,3 +176,4 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
     );
   }
 }
+

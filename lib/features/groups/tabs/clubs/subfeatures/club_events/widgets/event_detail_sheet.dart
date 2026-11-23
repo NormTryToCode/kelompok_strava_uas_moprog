@@ -57,9 +57,8 @@ class _EventDetailSheetBody extends ConsumerWidget {
     await ref.read(eventsProvider.notifier).deleteEvent(event.id);
     if (!context.mounted) return;
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${event.name} deleted')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${event.name} deleted')));
   }
 
   String _formatDistance(Event event) {
@@ -93,7 +92,7 @@ class _EventDetailSheetBody extends ConsumerWidget {
                 IconBubble(
                   event.sport?.icon ?? event.kind.icon,
                   size: 48,
-                  color: isPast ? Styles.tabInactive : Palette.teal,
+                  color: isPast ? Styles.surfaceHighlight : Styles.teal,
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -113,7 +112,7 @@ class _EventDetailSheetBody extends ConsumerWidget {
                         'Hosted by ${event.clubName}',
                         style: const TextStyle(
                           fontSize: 13.5,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -152,26 +151,24 @@ class _EventDetailSheetBody extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             _DetailRow(
-              icon: event.isVirtual
-                  ? Icons.public
-                  : Icons.location_on_outlined,
+              icon: event.isVirtual ? Icons.public : Icons.location_on_outlined,
               title: event.placeLabel,
               subtitle: event.isVirtual
                   ? 'Online event'
                   : (event.location?.detail.isNotEmpty == true
-                      ? event.location!.detail
-                      : null),
+                        ? event.location!.detail
+                        : null),
             ),
             if (event.description.isNotEmpty) ...[
               const SizedBox(height: 16),
-              const Divider(height: 1, color: Palette.cardBorder),
+              const Divider(height: 1, color: Styles.cardBorder),
               const SizedBox(height: 14),
               Text(
                 event.description,
                 style: const TextStyle(
                   fontSize: 14.5,
                   height: 1.45,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                 ),
               ),
             ],
@@ -204,18 +201,14 @@ class _DetailRow extends StatelessWidget {
   final String title;
   final String? subtitle;
 
-  const _DetailRow({
-    required this.icon,
-    required this.title,
-    this.subtitle,
-  });
+  const _DetailRow({required this.icon, required this.title, this.subtitle});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 19, color: Palette.teal),
+        Icon(icon, size: 19, color: Styles.teal),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -235,7 +228,7 @@ class _DetailRow extends StatelessWidget {
                   subtitle!,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
               ],
@@ -246,3 +239,4 @@ class _DetailRow extends StatelessWidget {
     );
   }
 }
+

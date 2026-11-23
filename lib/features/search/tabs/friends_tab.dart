@@ -21,11 +21,7 @@ class FriendsTab extends ConsumerStatefulWidget {
   final List<Person>? people;
   final List<SearchClub>? clubs;
 
-  const FriendsTab({
-    super.key,
-    this.people,
-    this.clubs,
-  });
+  const FriendsTab({super.key, this.people, this.clubs});
 
   @override
   ConsumerState<FriendsTab> createState() => _FriendsTabState();
@@ -63,9 +59,9 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
   }
 
   void _openClub(SearchClub club) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => SearchClubDetailPage(club: club)),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => SearchClubDetailPage(club: club)));
   }
 
   Widget _suggestions() {
@@ -75,7 +71,7 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
         children: [
           const TabBar(
             indicatorColor: Styles.accent,
-            labelColor: Styles.tabActive,
+            labelColor: Styles.primaryLight,
             unselectedLabelColor: Colors.white54,
             labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
             tabs: [
@@ -140,3 +136,4 @@ class _FriendsTabState extends ConsumerState<FriendsTab> {
     );
   }
 }
+

@@ -10,13 +10,9 @@ class StreakChartWidget extends StatefulWidget {
 }
 
 class _StreakChartWidgetState extends State<StreakChartWidget> {
-  final List<double> weeklyData = [
-    2, 4, 3, 6, 5, 7, 4
-  ];
+  final List<double> weeklyData = [2, 4, 3, 6, 5, 7, 4];
 
-  final List<String> days = [
-    'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'
-  ];
+  final List<String> days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +24,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Styles.badge,
+              color: Styles.primaryDark,
             ),
           ),
         ),
@@ -47,11 +43,12 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                       const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),              borderData: FlBorderData(show: false),
+              borderData: FlBorderData(show: false),
               gridData: FlGridData(show: false),
               titlesData: FlTitlesData(
                 topTitles: const AxisTitles(
@@ -79,7 +76,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                           days[index],
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Styles.badge,
+                            color: Styles.primaryDark,
                           ),
                         ),
                       );
@@ -96,7 +93,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                       toY: weeklyData[index],
                       width: 16,
                       borderRadius: BorderRadius.circular(6),
-                      color: Styles.badge,
+                      color: Styles.primaryDark,
                       backDrawRodData: BackgroundBarChartRodData(
                         show: true,
                         toY: 8,
@@ -113,4 +110,3 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
     );
   }
 }
-

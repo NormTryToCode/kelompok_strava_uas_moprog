@@ -30,7 +30,7 @@ class ProfileOptionDialog extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 16),
@@ -51,7 +51,9 @@ class ProfileOptionDialog extends StatelessWidget {
                         isSelected
                             ? Icons.radio_button_checked
                             : Icons.radio_button_off,
-                        color: isSelected ? Styles.accent : Styles.tabInactive,
+                        color: isSelected
+                            ? Styles.accent
+                            : Styles.surfaceHighlight,
                         size: 24,
                       ),
                       const SizedBox(width: 16),
@@ -59,7 +61,7 @@ class ProfileOptionDialog extends StatelessWidget {
                         option,
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Styles.tabActive,
+                          color: Styles.primaryLight,
                         ),
                       ),
                     ],
@@ -73,3 +75,4 @@ class ProfileOptionDialog extends StatelessWidget {
     );
   }
 }
+

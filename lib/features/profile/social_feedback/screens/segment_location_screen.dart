@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../../shared/services/profile_location_service.dart';
 
 class SegmentLocationView extends StatefulWidget {
   final VoidCallback onBack;
 
-  const SegmentLocationView({
-    super.key,
-    required this.onBack,
-  });
+  const SegmentLocationView({super.key, required this.onBack});
 
   @override
   State<SegmentLocationView> createState() => _SegmentLocationViewState();
@@ -50,7 +48,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
     final bool hasLocation = (lat != 0.0 || lng != 0.0);
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -63,7 +61,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                     onTap: widget.onBack,
                     child: const Icon(
                       Icons.arrow_back,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -72,7 +70,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ],
@@ -86,8 +84,10 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      hasLocation ? Icons.my_location : Icons.location_searching,
-                      color: hasLocation ? Styles.active : Styles.accent,
+                      hasLocation
+                          ? Icons.my_location
+                          : Icons.location_searching,
+                      color: hasLocation ? Styles.primaryLight : Styles.accent,
                       size: 40,
                     ),
                     const SizedBox(height: 12),
@@ -96,7 +96,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -141,7 +141,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
               ),
               const SizedBox(height: 10),
@@ -150,7 +150,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                   'Tekan tombol navigasi di kanan bawah untuk memindai koordinat GPS Anda dan menemukan segmen lari terdekat.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 )
               else
@@ -170,14 +170,14 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Styles.tabActive,
+                                  color: Styles.primaryLight,
                                 ),
                               ),
                               Text(
                                 'Koordinat Terkunci (${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)})',
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: Styles.active,
+                                  color: Styles.primaryLight,
                                 ),
                               ),
                             ],
@@ -208,14 +208,14 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Styles.tabActive,
+                                  color: Styles.primaryLight,
                                 ),
                               ),
                               Text(
                                 'Elevasi 0.4% • Rute Terverifikasi GPS',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Styles.tabInactive,
+                                  color: Styles.surfaceHighlight,
                                 ),
                               ),
                             ],
@@ -240,11 +240,9 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Styles.accent,
         onPressed: _fetchGpsCoordinates,
-        child: const Icon(
-          Icons.navigation,
-          color: Styles.tabActive,
-        ),
+        child: const Icon(Icons.navigation, color: Styles.primaryLight),
       ),
     );
   }
 }
+

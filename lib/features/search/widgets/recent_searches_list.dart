@@ -28,7 +28,7 @@ class RecentSearchesList extends StatelessWidget {
               const Text(
                 'RECENT SEARCHES',
                 style: TextStyle(
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.5,
@@ -54,7 +54,7 @@ class RecentSearchesList extends StatelessWidget {
             leading: const Icon(Icons.history, color: Colors.white70),
             title: Text(
               item,
-              style: const TextStyle(color: Styles.tabActive, fontSize: 17),
+              style: const TextStyle(color: Styles.primaryLight, fontSize: 17),
             ),
             trailing: IconButton(
               tooltip: 'Remove $item',
@@ -66,3 +66,4 @@ class RecentSearchesList extends StatelessWidget {
     );
   }
 }
+

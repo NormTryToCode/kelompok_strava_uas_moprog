@@ -134,7 +134,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                   child: ElevatedButton(
                     onPressed: _handleResetPassword,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Styles.badge,
+                      backgroundColor: Styles.primaryDark,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       elevation: 2,
@@ -161,7 +161,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Styles.badge,
+                      backgroundColor: Styles.primaryDark,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -182,12 +182,12 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
               const SizedBox(height: 12),
               TextButton.icon(
                 onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                    );
-                  },                
-                  icon: const Icon(
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                icon: const Icon(
                   Icons.arrow_back_rounded,
                   size: 18,
                   color: Colors.white,

@@ -10,6 +10,7 @@ import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart'
 import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
+
 import 'edit_profile/models/athlete_profile_data.dart';
 import 'overview/tabs/aktivitas_tab.dart';
 import 'overview/tabs/kemajuan_tab.dart';
@@ -64,27 +65,27 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _loadSavedProfileData() async {
     final String firstName =
-      await _asyncPrefs.getString('first_name') ?? _profileData.firstName;
+        await _asyncPrefs.getString('first_name') ?? _profileData.firstName;
     final String lastName =
-      await _asyncPrefs.getString('last_name') ?? _profileData.lastName;
+        await _asyncPrefs.getString('last_name') ?? _profileData.lastName;
     final String city =
-      await _asyncPrefs.getString('city') ?? _profileData.city;
+        await _asyncPrefs.getString('city') ?? _profileData.city;
     final String country =
-      await _asyncPrefs.getString('country') ?? _profileData.country;
+        await _asyncPrefs.getString('country') ?? _profileData.country;
     final String sport =
-      await _asyncPrefs.getString('sport') ?? _profileData.primarySport;
+        await _asyncPrefs.getString('sport') ?? _profileData.primarySport;
     final String savedBio =
-      await _asyncPrefs.getString('text') ?? _profileData.bio;
+        await _asyncPrefs.getString('text') ?? _profileData.bio;
     final String birthDate =
-      await _asyncPrefs.getString('birth_date') ?? _profileData.birthDate;
+        await _asyncPrefs.getString('birth_date') ?? _profileData.birthDate;
     final String gender =
-      await _asyncPrefs.getString('gender') ?? _profileData.gender;
+        await _asyncPrefs.getString('gender') ?? _profileData.gender;
     final String weight =
-      await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
+        await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
     final String avatarPath =
-      await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
+        await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
     final List<String> savedClaimed =
-      await _asyncPrefs.getStringList('claimed_trophies') ?? [];
+        await _asyncPrefs.getStringList('claimed_trophies') ?? [];
 
     if (!mounted) return;
     setState(() {
@@ -143,8 +144,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _handleShareProfile() async {
-    final String status =
-        await ProfileShareHelper.shareAthleteProfile(_profileData.fullName);
+    final String status = await ProfileShareHelper.shareAthleteProfile(
+      _profileData.fullName,
+    );
     if (!mounted) return;
     _showTemporaryShareMessage(status);
   }
@@ -237,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
 
-   return Consumer(
+    return Consumer(
       builder: (context, ref, _) {
         final followingCount = ref.watch(followingCountProvider);
         return SingleChildScrollView(
@@ -279,7 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     _shareStatusMessage,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: Styles.active,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ),
@@ -317,12 +319,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     });
                   },
                   onIncrement: (_runSessions < 10)
-                    ? () {
-                      setState(() {
-                        _runSessions = _runSessions + 1;
-                      });
-                    }
-                    : null,
+                      ? () {
+                          setState(() {
+                            _runSessions = _runSessions + 1;
+                          });
+                        }
+                      : null,
                   onOpenFeedback: () {
                     setState(() {
                       _activeScreen = 3;
@@ -370,14 +372,14 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Animate(
         effects: const [FadeEffect()],
         child: Scaffold(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           appBar: _activeScreen == 0
               ? AppHeader(
                   title: 'You',
@@ -404,11 +406,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 )
               : null,
-          body: SafeArea(
-            child: _buildActiveScreenContent(),
-          ),
+          body: SafeArea(child: _buildActiveScreenContent()),
         ),
       ),
     );
   }
 }
+

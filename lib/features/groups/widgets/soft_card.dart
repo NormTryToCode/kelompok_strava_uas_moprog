@@ -35,7 +35,7 @@ class SoftCard extends StatelessWidget {
           gradient: gradient,
           borderRadius: shape,
           border: Border.all(
-            color: borderColor ?? Palette.cardBorder,
+            color: borderColor ?? Styles.cardBorder,
             width: borderWidth,
           ),
         ),

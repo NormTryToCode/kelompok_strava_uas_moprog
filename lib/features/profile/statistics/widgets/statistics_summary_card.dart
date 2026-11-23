@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/extensions/int_extensions.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../../gear/providers/athlete_gear_provider.dart';
 import '../models/sport_statistics_data.dart';
 
@@ -29,7 +30,7 @@ class StatisticsSummaryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Styles.surface,
           borderRadius: BorderRadius.circular(12.0),
-          border: Border.all(color: Styles.inactive),
+          border: Border.all(color: Styles.surfaceHighlight),
         ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -46,7 +47,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -54,22 +55,23 @@ class StatisticsSummaryCard extends StatelessWidget {
                       'Status: ${stats.athleteLevelBadge}',
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Styles.active,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
                 ),
                 Consumer(
                   builder: (context, ref, child) {
-                    final int activeGearCount =
-                        ref.watch(activeGearCountProvider);
+                    final int activeGearCount = ref.watch(
+                      activeGearCountProvider,
+                    );
                     return Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10.0,
                         vertical: 4.0,
                       ),
                       decoration: BoxDecoration(
-                        color: Styles.background,
+                        color: Styles.canvas,
                         borderRadius: BorderRadius.circular(12.0),
                         border: Border.all(color: Styles.accent),
                       ),
@@ -94,7 +96,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                   'Target Tahunan (${stats.yearlyDistanceText} / ${stats.annualTargetDistance.withThousands} ${stats.distanceUnit})',
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
                 Text(
@@ -116,7 +118,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                   width: constraints.maxWidth,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: Styles.background,
+                    color: Styles.canvas,
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                   alignment: Alignment.centerLeft,
@@ -124,7 +126,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                     width: barWidth,
                     height: 8,
                     decoration: BoxDecoration(
-                      gradient: Palette.primaryGradient,
+                      gradient: Styles.primaryGradient,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                   ),
@@ -147,7 +149,7 @@ class StatisticsSummaryCard extends StatelessWidget {
                       'Estimasi Kalori: ${stats.estimatedCaloriesBurned.withThousands} kcal',
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -178,3 +180,4 @@ class StatisticsSummaryCard extends StatelessWidget {
     );
   }
 }
+

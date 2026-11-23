@@ -29,7 +29,7 @@ class CreateClubBar extends StatelessWidget {
             style: TextStyle(
               fontSize: 13.5,
               height: 1.4,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
           const SizedBox(height: 14),
@@ -45,3 +45,4 @@ class CreateClubBar extends StatelessWidget {
     );
   }
 }
+

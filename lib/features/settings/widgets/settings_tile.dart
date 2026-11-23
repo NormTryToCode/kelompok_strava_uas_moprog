@@ -24,11 +24,11 @@ class SettingsTile extends StatelessWidget {
     final subtitleText = subtitle;
     return ListTile(
       onTap: onTap,
-      leading: Icon(icon, color: titleColor ?? Styles.tabActive),
+      leading: Icon(icon, color: titleColor ?? Styles.primaryLight),
       title: Text(
         title,
         style: TextStyle(
-          color: titleColor ?? Styles.tabActive,
+          color: titleColor ?? Styles.primaryLight,
           fontSize: 17,
           fontWeight: FontWeight.w600,
         ),
@@ -45,3 +45,4 @@ class SettingsTile extends StatelessWidget {
     );
   }
 }
+

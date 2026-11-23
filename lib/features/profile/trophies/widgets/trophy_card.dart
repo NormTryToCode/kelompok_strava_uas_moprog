@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/trophy_badge.dart';
 import '../screens/trophy_detail_screen.dart';
 
@@ -48,8 +49,11 @@ class TrophyCard extends StatelessWidget {
               width: 84,
               height: 84,
               decoration: isUnlocked
-                ? Styles.gradientOrangeBright
-                : const BoxDecoration(color: Styles.surface),
+                  ? BoxDecoration(
+                      gradient: Styles.primaryGradient,
+                      borderRadius: BorderRadius.circular(12),
+                    )
+                  : const BoxDecoration(color: Styles.surface),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -59,15 +63,15 @@ class TrophyCard extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: isUnlocked
-                        ? Styles.background
-                        : Styles.inactive,
+                          ? Styles.canvas
+                          : Styles.surfaceHighlight,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Icon(
                     isUnlocked ? Icons.emoji_events : Icons.lock_outline,
                     size: 26,
-                    color: isUnlocked ? Styles.background : Styles.tabActive,
+                    color: isUnlocked ? Styles.canvas : Styles.primaryLight,
                   ),
                 ],
               ),
@@ -78,7 +82,7 @@ class TrophyCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
-                color: isUnlocked ? Styles.accent : Styles.tabActive,
+                color: isUnlocked ? Styles.accent : Styles.primaryLight,
               ),
             ),
           ],
@@ -87,3 +91,4 @@ class TrophyCard extends StatelessWidget {
     );
   }
 }
+

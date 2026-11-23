@@ -79,22 +79,23 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
 
     await ref.read(activityProvider.notifier).add(activity);
     final unit = ref.read(settingsProvider).unit;
-    ref.read(notificationsProvider.notifier).notifyActivityLogged(
+    ref
+        .read(notificationsProvider.notifier)
+        .notifyActivityLogged(
           title: activity.title,
           distanceLabel: formatDistanceWithUnit(activity.distanceKm, unit),
         );
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Activity saved')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Activity saved')));
     Navigator.of(context).maybePop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppHeader(
         title: 'Manual Activity',
         showBackButton: true,
@@ -102,9 +103,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
           HeaderIconButton(
             icon: Icons.history,
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const ActivityListPage(),
-              ),
+              MaterialPageRoute<void>(builder: (_) => const ActivityListPage()),
             ),
           ),
         ],
@@ -116,7 +115,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
           children: [
             TextFormField(
               controller: _title,
-              style: const TextStyle(color: Styles.tabActive),
+              style: const TextStyle(color: Styles.primaryLight),
               decoration: _decoration('Title', hint: 'Morning run'),
               validator: (value) =>
                   (value ?? '').trim().isEmpty ? 'Enter a title' : null,
@@ -130,7 +129,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
                     label: Text(type.label),
                     selected: _type == type,
                     selectedColor: Styles.accent,
-                    labelStyle: const TextStyle(color: Styles.tabActive),
+                    labelStyle: const TextStyle(color: Styles.primaryLight),
                     onSelected: (_) => setState(() => _type = type),
                   ),
               ],
@@ -148,13 +147,13 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
               ),
               title: Text(
                 formatDate(_date),
-                style: const TextStyle(color: Styles.tabActive),
+                style: const TextStyle(color: Styles.primaryLight),
               ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _duration,
-              style: const TextStyle(color: Styles.tabActive),
+              style: const TextStyle(color: Styles.primaryLight),
               decoration: _decoration('Duration', hint: '45 or 1:30'),
               validator: (value) => parseDuration(value ?? '') == null
                   ? 'Use minutes or h:mm, e.g. 45 or 1:30'
@@ -166,7 +165,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              style: const TextStyle(color: Styles.tabActive),
+              style: const TextStyle(color: Styles.primaryLight),
               decoration: _decoration('Distance (km)', hint: '5.2'),
               validator: (value) => parseDistance(value ?? '') == null
                   ? 'Enter a distance greater than 0'
@@ -176,7 +175,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
             TextFormField(
               controller: _notes,
               maxLines: 3,
-              style: const TextStyle(color: Styles.tabActive),
+              style: const TextStyle(color: Styles.primaryLight),
               decoration: _decoration('Notes'),
             ),
             const SizedBox(height: 24),
@@ -184,7 +183,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
               onPressed: _save,
               style: FilledButton.styleFrom(
                 backgroundColor: Styles.accent,
-                foregroundColor: Styles.tabActive,
+                foregroundColor: Styles.primaryLight,
                 minimumSize: const Size.fromHeight(52),
                 shape: const StadiumBorder(),
               ),

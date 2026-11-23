@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/trophy_badge.dart';
 import '../widgets/trophy_check_box.dart';
 
@@ -30,20 +31,21 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isUnlocked = widget.badge.isChecked ||
+    final bool isUnlocked =
+        widget.badge.isChecked ||
         (widget.currentActivities >= widget.badge.requiredActivities);
 
     return Animate(
       effects: const [FadeEffect()],
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppBar(
           backgroundColor: Styles.surface,
           title: const Text(
             'Detail Tonggak Pencapaian',
-            style: TextStyle(color: Styles.tabActive, fontSize: 18),
+            style: TextStyle(color: Styles.primaryLight, fontSize: 18),
           ),
-          iconTheme: const IconThemeData(color: Styles.tabActive),
+          iconTheme: const IconThemeData(color: Styles.primaryLight),
         ),
         body: SafeArea(
           child: Center(
@@ -57,8 +59,11 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                       width: 140,
                       height: 140,
                       decoration: isUnlocked
-                        ? Styles.gradientOrangeBright
-                        : const BoxDecoration(color: Styles.surface),
+                          ? BoxDecoration(
+                              gradient: Styles.primaryGradient,
+                              borderRadius: BorderRadius.circular(12),
+                            )
+                          : const BoxDecoration(color: Styles.surface),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -68,19 +73,19 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: isUnlocked
-                                ? Styles.background
-                                : Styles.inactive,
+                                  ? Styles.canvas
+                                  : Styles.surfaceHighlight,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Icon(
                             isUnlocked
-                              ? Icons.emoji_events
-                              : Icons.lock_outline,
+                                ? Icons.emoji_events
+                                : Icons.lock_outline,
                             size: 48,
                             color: isUnlocked
-                              ? Styles.background
-                              : Styles.tabActive,
+                                ? Styles.canvas
+                                : Styles.primaryLight,
                           ),
                         ],
                       ),
@@ -91,18 +96,18 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       isUnlocked
-                        ? 'STATUS: TERBUKA (TERCAPAI)'
-                        : 'STATUS: TERKUNCI (${widget.currentActivities}/${widget.badge.requiredActivities} Aktivitas)',
+                          ? 'STATUS: TERBUKA (TERCAPAI)'
+                          : 'STATUS: TERKUNCI (${widget.currentActivities}/${widget.badge.requiredActivities} Aktivitas)',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: isUnlocked ? Styles.active : Styles.accent,
+                        color: isUnlocked ? Styles.primaryLight : Styles.accent,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -115,7 +120,7 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                             widget.badge.description,
                             style: const TextStyle(
                               fontSize: 15,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -124,7 +129,7 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                             children: [
                               const Text(
                                 'Tandai Klaim Trofi Manual: ',
-                                style: TextStyle(color: Styles.tabActive),
+                                style: TextStyle(color: Styles.primaryLight),
                               ),
                               TrophyCheckBox(
                                 badge: widget.badge,
@@ -143,8 +148,8 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
                       },
                       child: Text(
                         widget.badge.isChecked
-                          ? 'Batalkan Klaim Trofi'
-                          : 'Simulasi Buka Trofi Ini',
+                            ? 'Batalkan Klaim Trofi'
+                            : 'Simulasi Buka Trofi Ini',
                         style: const TextStyle(color: Styles.accent),
                       ),
                     ),
@@ -158,3 +163,4 @@ class _TrophyDetailScreenState extends State<TrophyDetailScreen> {
     );
   }
 }
+

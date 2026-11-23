@@ -26,11 +26,7 @@ class AktivitasTab extends StatelessWidget {
               children: [
                 const Row(
                   children: [
-                    Icon(
-                      Icons.timeline,
-                      color: Styles.tabActive,
-                      size: 28,
-                    ),
+                    Icon(Icons.timeline, color: Styles.primaryLight, size: 28),
                     SizedBox(width: 14),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +35,7 @@ class AktivitasTab extends StatelessWidget {
                           "Rekam aktivitas pertama Anda",
                           style: TextStyle(
                             fontSize: 15,
-                            color: Styles.tabActive,
+                            color: Styles.primaryLight,
                           ),
                         ),
                         SizedBox(height: 4),
@@ -47,7 +43,7 @@ class AktivitasTab extends StatelessWidget {
                           "Saat merekam aktivitas, Anda akan\nmelihatnya di sini.",
                           style: TextStyle(
                             fontSize: 13,
-                            color: Styles.tabInactive,
+                            color: Styles.surfaceHighlight,
                           ),
                         ),
                       ],
@@ -58,7 +54,7 @@ class AktivitasTab extends StatelessWidget {
                   onPressed: onAddFirstActivity,
                   icon: const Icon(
                     Icons.chevron_right,
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                   ),
                 ),
               ],
@@ -76,7 +72,7 @@ class AktivitasTab extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.directions_run,
-                        color: Styles.active,
+                        color: Styles.primaryLight,
                         size: 28,
                       ),
                       const SizedBox(width: 14),
@@ -87,24 +83,21 @@ class AktivitasTab extends StatelessWidget {
                             "Lari Pagi Jakarta ($activityCount Sesi)",
                             style: const TextStyle(
                               fontSize: 15,
-                              color: Styles.tabActive,
+                              color: Styles.primaryLight,
                             ),
                           ),
                           Text(
                             "Total Jarak: ${activityCount * 3} km • Waktu: ${activityCount * 20}m",
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Styles.active,
+                              color: Styles.primaryLight,
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  const Icon(
-                    Icons.check_circle,
-                    color: Styles.active,
-                  ),
+                  const Icon(Icons.check_circle, color: Styles.primaryLight),
                 ],
               ),
             ),
@@ -113,3 +106,4 @@ class AktivitasTab extends StatelessWidget {
     );
   }
 }
+

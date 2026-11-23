@@ -21,7 +21,7 @@ class ClubSharePosterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final coverPath = club.coverPath;
     final hasCover = coverPath != null && coverPath.isNotEmpty;
-    final colors = Palette.coverColors(club.id);
+    final colors = Styles.coverColors(club.id);
 
     return RepaintBoundary(
       key: posterKey,
@@ -34,17 +34,10 @@ class ClubSharePosterCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  colors.first,
-                  colors.last,
-                  Styles.background,
-                ],
+                colors: [colors.first, colors.last, Styles.canvas],
                 stops: const [0, 0.58, 1],
               ),
-              border: Border.all(
-                color: Colors.white.withAlpha(35),
-                width: 1.2,
-              ),
+              border: Border.all(color: Colors.white.withAlpha(35), width: 1.2),
             ),
             child: Stack(
               fit: StackFit.expand,
@@ -62,14 +55,14 @@ class ClubSharePosterCard extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: hasCover
                           ? [
-                              Styles.background.withAlpha(115),
-                              Styles.background.withAlpha(175),
-                              Styles.background.withAlpha(235),
+                              Styles.canvas.withAlpha(115),
+                              Styles.canvas.withAlpha(175),
+                              Styles.canvas.withAlpha(235),
                             ]
                           : [
                               Colors.black.withAlpha(20),
                               Colors.black.withAlpha(90),
-                              Styles.background.withAlpha(215),
+                              Styles.canvas.withAlpha(215),
                             ],
                     ),
                   ),
@@ -106,7 +99,7 @@ class ClubSharePosterCard extends StatelessWidget {
                               Icon(
                                 club.sport.icon,
                                 size: 14,
-                                color: Palette.teal,
+                                color: Styles.teal,
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -146,7 +139,7 @@ class ClubSharePosterCard extends StatelessWidget {
                           Icon(
                             Icons.thumb_up_alt_outlined,
                             size: 20,
-                            color: Palette.teal,
+                            color: Styles.teal,
                           ),
                         ],
                       ),
@@ -161,7 +154,7 @@ class ClubSharePosterCard extends StatelessWidget {
                               color: Colors.black.withAlpha(95),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: Palette.teal.withAlpha(150),
+                                color: Styles.teal.withAlpha(150),
                               ),
                             ),
                             child: Row(
@@ -170,7 +163,7 @@ class ClubSharePosterCard extends StatelessWidget {
                                 const Icon(
                                   Icons.link,
                                   size: 15,
-                                  color: Palette.teal,
+                                  color: Styles.teal,
                                 ),
                                 const SizedBox(width: 6),
                                 Flexible(
@@ -219,3 +212,4 @@ class ClubSharePosterCard extends StatelessWidget {
     );
   }
 }
+

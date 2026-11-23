@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppHeader(
         titleWidget: const StrideWordmark(),
         actions: [
@@ -35,9 +35,8 @@ class HomePage extends StatelessWidget {
           ),
           HeaderIconButton(
             icon: Icons.search,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SearchPage()),
-            ),
+            onPressed: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SearchPage())),
           ),
           Consumer(
             builder: (context, ref, _) => HeaderIconButton(

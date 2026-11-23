@@ -28,7 +28,7 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: SafeArea(
         child: IndexedStack(index: _index, children: _pages),
       ),

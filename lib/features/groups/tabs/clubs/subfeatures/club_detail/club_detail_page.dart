@@ -24,9 +24,10 @@ class ClubDetailPage extends ConsumerStatefulWidget {
   const ClubDetailPage({super.key, required this.club});
 
   static Future<void> open(BuildContext context, Club club) {
-    return Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(builder: (_) => ClubDetailPage(club: club)),
-    );
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute<void>(builder: (_) => ClubDetailPage(club: club)));
   }
 
   @override
@@ -37,47 +38,42 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
   final _postsSectionKey = GlobalKey();
 
   void _comingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Coming soon')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Coming soon')));
   }
 
   Future<void> _editClub(Club club) async {
     final updated = await EditClubPage.open(context, club);
     if (updated == null || !mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Club details updated')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Club details updated')));
   }
 
   Future<void> _createEvent(Club club) async {
     final event = await EventCreationPage.open(context, club);
     if (event == null || !mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${event.name} created')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${event.name} created')));
   }
 
   Future<void> _createPost(Club club) async {
     final post = await CreatePostPage.open(context, club);
     if (post == null || !mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Post published')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Post published')));
   }
 
   Future<void> _openOverview(Club club) async {
     final deleted = await ClubOverviewPage.open(context, club);
     if (deleted != true || !mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${club.name} deleted')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('${club.name} deleted')));
     Navigator.of(context).pop();
-  } 
+  }
 
   void _scrollToPosts() {
     final target = _postsSectionKey.currentContext;
@@ -98,7 +94,7 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
     );
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _createPost(club),
         backgroundColor: Styles.accent,
@@ -161,3 +157,4 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
     );
   }
 }
+

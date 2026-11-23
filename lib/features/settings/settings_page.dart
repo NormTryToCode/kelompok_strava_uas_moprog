@@ -31,9 +31,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _comingSoon() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Coming soon')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Coming soon')));
   }
 
   void _openNotificationPreferences() {
@@ -58,7 +57,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         backgroundColor: Styles.surface,
         title: const Text(
           'Log out?',
-          style: TextStyle(color: Styles.tabActive),
+          style: TextStyle(color: Styles.primaryLight),
         ),
         content: const Text(
           'You will need to log in again to use your account.',
@@ -94,7 +93,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: const AppHeader(title: 'Settings', showBackButton: true),
       body: ListView(
         children: [
@@ -153,3 +152,4 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 }
+

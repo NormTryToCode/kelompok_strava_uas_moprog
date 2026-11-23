@@ -4,10 +4,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 class FeedbackThankYouDialog extends StatelessWidget {
   final VoidCallback onConfirmOk;
 
-  const FeedbackThankYouDialog({
-    super.key,
-    required this.onConfirmOk,
-  });
+  const FeedbackThankYouDialog({super.key, required this.onConfirmOk});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +21,13 @@ class FeedbackThankYouDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 14),
             const Text(
               'Terima Kasih, Ulasanmu Sangat Berarti Bagi Kami',
-              style: TextStyle(
-                fontSize: 15,
-                color: Styles.tabActive,
-              ),
+              style: TextStyle(fontSize: 15, color: Styles.primaryLight),
             ),
             const SizedBox(height: 24),
             Row(
@@ -67,3 +61,4 @@ class FeedbackThankYouDialog extends StatelessWidget {
     );
   }
 }
+

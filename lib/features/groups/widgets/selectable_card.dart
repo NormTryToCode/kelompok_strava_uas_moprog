@@ -29,7 +29,7 @@ class SelectableCard extends StatelessWidget {
           SoftCard(
             onTap: tappable ? onTap : null,
             color: selected ? Styles.accent.withAlpha(24) : Styles.surface,
-            borderColor: selected ? Styles.accent : Palette.cardBorder,
+            borderColor: selected ? Styles.accent : Styles.cardBorder,
             borderWidth: selected ? 1.5 : 1,
             radius: 14,
             padding: padding,

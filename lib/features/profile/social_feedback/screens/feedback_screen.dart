@@ -1,17 +1,16 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:path_provider/path_provider.dart';
+
 import '../widgets/feedback_thank_you_dialog.dart';
 
 class FeedbackView extends StatefulWidget {
   final VoidCallback onSubmitFeedback;
 
-  const FeedbackView({
-    super.key,
-    required this.onSubmitFeedback,
-  });
+  const FeedbackView({super.key, required this.onSubmitFeedback});
 
   @override
   State<FeedbackView> createState() => _FeedbackViewState();
@@ -55,8 +54,7 @@ class _FeedbackViewState extends State<FeedbackView> {
           _controller.text = savedText;
         });
       }
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   Future<void> _handleSendFeedback() async {
@@ -64,17 +62,14 @@ class _FeedbackViewState extends State<FeedbackView> {
     try {
       final file = await _localFile;
       await file.writeAsString(_controller.text);
-    } catch (_) {
-    }
+    } catch (_) {}
 
     if (!mounted) return;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return FeedbackThankYouDialog(
-          onConfirmOk: widget.onSubmitFeedback,
-        );
+        return FeedbackThankYouDialog(onConfirmOk: widget.onSubmitFeedback);
       },
     );
   }
@@ -83,10 +78,7 @@ class _FeedbackViewState extends State<FeedbackView> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-          vertical: 14.0,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -99,7 +91,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       onTap: widget.onSubmitFeedback,
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -108,7 +100,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -120,10 +112,11 @@ class _FeedbackViewState extends State<FeedbackView> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: (_selectedOption != -1 ||
+                      color:
+                          (_selectedOption != -1 ||
                               _controller.text.trim().isNotEmpty)
                           ? Styles.accent
-                          : Styles.tabInactive,
+                          : Styles.surfaceHighlight,
                     ),
                   ),
                 ),
@@ -135,7 +128,7 @@ class _FeedbackViewState extends State<FeedbackView> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 24),
@@ -156,14 +149,14 @@ class _FeedbackViewState extends State<FeedbackView> {
                         _options[index],
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Styles.tabActive,
+                          color: Styles.primaryLight,
                         ),
                       ),
                       Icon(
                         isSelected
                             ? Icons.radio_button_checked
                             : Icons.radio_button_off,
-                        color: isSelected ? Styles.accent : Styles.tabActive,
+                        color: isSelected ? Styles.accent : Styles.primaryLight,
                         size: 24,
                       ),
                     ],
@@ -174,10 +167,7 @@ class _FeedbackViewState extends State<FeedbackView> {
             const SizedBox(height: 28),
             const Text(
               "Komentar Tambahan",
-              style: TextStyle(
-                fontSize: 16,
-                color: Styles.tabActive,
-              ),
+              style: TextStyle(fontSize: 16, color: Styles.primaryLight),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -194,16 +184,14 @@ class _FeedbackViewState extends State<FeedbackView> {
                 placeholder: 'Apa yang membantu? Tidak membantu?',
                 placeholderStyle: const TextStyle(
                   fontSize: 15,
-                  color: Styles.inactive,
+                  color: Styles.surfaceHighlight,
                 ),
                 padding: EdgeInsets.zero,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
-                decoration: const BoxDecoration(
-                  color: Styles.background,
-                ),
+                decoration: const BoxDecoration(color: Styles.canvas),
               ),
             ),
           ],
@@ -212,3 +200,4 @@ class _FeedbackViewState extends State<FeedbackView> {
     );
   }
 }
+

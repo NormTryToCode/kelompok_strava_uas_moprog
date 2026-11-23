@@ -1,27 +1,27 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../../edit_profile/models/athlete_profile_data.dart';
 import '../../shared/widgets/custom_image_network.dart';
 
 class ProfileAvatarPreviewDialog extends StatelessWidget {
   final AthleteProfileData profileData;
 
-  const ProfileAvatarPreviewDialog({
-    super.key,
-    required this.profileData,
-  });
+  const ProfileAvatarPreviewDialog({super.key, required this.profileData});
 
   static const String _defaultAvatarUrl =
       'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
 
   @override
   Widget build(BuildContext context) {
-    final bool hasLocalFile = profileData.avatarPath.isNotEmpty &&
+    final bool hasLocalFile =
+        profileData.avatarPath.isNotEmpty &&
         File(profileData.avatarPath).existsSync();
     final String displayFirstName = profileData.firstName.trim().isNotEmpty
-      ? profileData.firstName.trim()
-      : 'Atlet';
+        ? profileData.firstName.trim()
+        : 'Atlet';
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -35,10 +35,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
             decoration: BoxDecoration(
               color: Styles.surface,
               borderRadius: BorderRadius.circular(Radii.card),
-              border: Border.all(
-                color: Palette.cardBorder,
-                width: 2.0,
-              ),
+              border: Border.all(color: Styles.cardBorder, width: 2.0),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Radii.card - 2),
@@ -46,14 +43,14 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   hasLocalFile
-                    ? Image.file(
-                        File(profileData.avatarPath),
-                        fit: BoxFit.cover,
-                      )
-                    : const CustomImageNetwork(
-                        imageUrl: _defaultAvatarUrl,
-                        fit: BoxFit.cover,
-                      ),
+                      ? Image.file(
+                          File(profileData.avatarPath),
+                          fit: BoxFit.cover,
+                        )
+                      : const CustomImageNetwork(
+                          imageUrl: _defaultAvatarUrl,
+                          fit: BoxFit.cover,
+                        ),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -81,7 +78,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Styles.tabActive,
+                              color: Styles.primaryLight,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -89,7 +86,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             '${profileData.city}, ${profileData.country} • ${profileData.primarySport}',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                             ),
                           ),
                         ],
@@ -104,8 +101,8 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: Styles.surface,
-              foregroundColor: Styles.tabActive,
-              side: const BorderSide(color: Palette.cardBorder),
+              foregroundColor: Styles.primaryLight,
+              side: const BorderSide(color: Styles.cardBorder),
               padding: const EdgeInsets.symmetric(
                 horizontal: 20.0,
                 vertical: 10.0,
@@ -122,3 +119,4 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
     );
   }
 }
+

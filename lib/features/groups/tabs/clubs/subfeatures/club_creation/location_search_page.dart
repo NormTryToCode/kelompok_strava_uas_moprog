@@ -82,7 +82,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: SafeArea(
         child: Column(
           children: [
@@ -109,7 +109,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
               padding: EdgeInsets.only(bottom: 12),
               child: Text(
                 'Place data \u00a9 OpenStreetMap contributors',
-                style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                style: TextStyle(fontSize: 11, color: Styles.surfaceHighlight),
               ),
             ),
           ],
@@ -127,7 +127,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
         );
       case _Status.loading:
         return const Center(
-          child: CircularProgressIndicator(color: Palette.teal),
+          child: CircularProgressIndicator(color: Styles.teal),
         );
       case _Status.error:
         return _Message(
@@ -146,11 +146,8 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
         return ListView.separated(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           itemCount: _results.length,
-          separatorBuilder: (_, _) => const Divider(
-            height: 1,
-            indent: 74,
-            color: Palette.cardBorder,
-          ),
+          separatorBuilder: (_, _) =>
+              const Divider(height: 1, indent: 74, color: Styles.cardBorder),
           itemBuilder: (_, i) => LocationResultTile(
             location: _results[i],
             onTap: () => Navigator.of(context).pop(_results[i]),
@@ -174,21 +171,21 @@ class _SearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Radii.field),
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: BorderRadius.circular(Radii.field),
+      borderSide: BorderSide(color: color, width: width),
+    );
 
     return TextField(
       controller: controller,
       onChanged: onChanged,
       autofocus: true,
       textInputAction: TextInputAction.search,
-      cursorColor: Palette.teal,
+      cursorColor: Styles.teal,
       style: const TextStyle(fontSize: 16, color: Colors.white),
       decoration: InputDecoration(
         hintText: 'Search places',
-        hintStyle: const TextStyle(color: Styles.tabInactive),
-        prefixIcon: const Icon(Icons.search, color: Styles.tabInactive),
+        hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+        prefixIcon: const Icon(Icons.search, color: Styles.surfaceHighlight),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
           builder: (_, value, _) => value.text.isEmpty
@@ -201,8 +198,8 @@ class _SearchField extends StatelessWidget {
         filled: true,
         fillColor: Styles.surface,
         contentPadding: const EdgeInsets.symmetric(vertical: 14),
-        enabledBorder: border(Palette.cardBorder, 1.2),
-        focusedBorder: border(Palette.teal, 1.8),
+        enabledBorder: border(Styles.cardBorder, 1.2),
+        focusedBorder: border(Styles.teal, 1.8),
       ),
     );
   }
@@ -234,7 +231,10 @@ class _Message extends StatelessWidget {
             Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 15, color: Styles.tabInactive),
+              style: const TextStyle(
+                fontSize: 15,
+                color: Styles.surfaceHighlight,
+              ),
             ),
             if (actionLabel != null)
               TextButton(

@@ -20,9 +20,7 @@ class _ContactsTabState extends State<ContactsTab> {
   @override
   Widget build(BuildContext context) {
     if (!_allowed) {
-      return _PermissionPrompt(
-        onAllow: () => setState(() => _allowed = true),
-      );
+      return _PermissionPrompt(onAllow: () => setState(() => _allowed = true));
     }
 
     final list = widget.contacts ?? buildDummyContacts();
@@ -37,29 +35,28 @@ class _ContactsTabState extends State<ContactsTab> {
             child: Text(
               contact.name[0],
               style: const TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontWeight: FontWeight.w800,
               ),
             ),
           ),
           title: Text(
             contact.name,
-            style: const TextStyle(color: Styles.tabActive, fontSize: 17),
+            style: const TextStyle(color: Styles.primaryLight, fontSize: 17),
           ),
           subtitle: Text(
             contact.phone,
             style: const TextStyle(color: Colors.white70),
           ),
           trailing: OutlinedButton(
-            onPressed:
-                invited ? null : () => setState(() => _invited.add(contact.id)),
+            onPressed: invited
+                ? null
+                : () => setState(() => _invited.add(contact.id)),
             style: OutlinedButton.styleFrom(
               foregroundColor: Styles.accent,
               disabledForegroundColor: Colors.white38,
               shape: const StadiumBorder(),
-              side: BorderSide(
-                color: invited ? Colors.white24 : Styles.accent,
-              ),
+              side: BorderSide(color: invited ? Colors.white24 : Styles.accent),
             ),
             child: Text(invited ? 'Invited' : 'Invite'),
           ),
@@ -88,7 +85,7 @@ class _PermissionPrompt extends StatelessWidget {
               'Find friends in your contacts',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
@@ -104,7 +101,7 @@ class _PermissionPrompt extends StatelessWidget {
               onPressed: onAllow,
               style: FilledButton.styleFrom(
                 backgroundColor: Styles.accent,
-                foregroundColor: Styles.tabActive,
+                foregroundColor: Styles.primaryLight,
                 shape: const StadiumBorder(),
                 padding: const EdgeInsets.symmetric(horizontal: 32),
               ),
@@ -116,3 +113,4 @@ class _PermissionPrompt extends StatelessWidget {
     );
   }
 }
+

@@ -25,7 +25,7 @@ class UnitPickerSheet extends StatelessWidget {
             child: Text(
               'Units of measurement',
               style: TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
@@ -37,10 +37,11 @@ class UnitPickerSheet extends StatelessWidget {
               title: Text(
                 '${unit.label} (${unit.abbreviation})',
                 style: TextStyle(
-                  color: unit == selected ? Styles.accent : Styles.tabActive,
+                  color: unit == selected ? Styles.accent : Styles.primaryLight,
                   fontSize: 17,
-                  fontWeight:
-                      unit == selected ? FontWeight.w700 : FontWeight.w500,
+                  fontWeight: unit == selected
+                      ? FontWeight.w700
+                      : FontWeight.w500,
                 ),
               ),
               trailing: unit == selected
@@ -66,3 +67,4 @@ Future<void> showUnitPicker(BuildContext context, WidgetRef ref) {
     ),
   );
 }
+

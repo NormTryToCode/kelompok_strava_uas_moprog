@@ -82,10 +82,10 @@ class _EventSportSearchSheetBodyState
                 style: const TextStyle(fontSize: 15, color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'Search sport (e.g. Running, Cycling, Yoga)',
-                  hintStyle: const TextStyle(color: Styles.tabInactive),
+                  hintStyle: const TextStyle(color: Styles.surfaceHighlight),
                   prefixIcon: const Icon(
                     Icons.search,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                     size: 20,
                   ),
                   suffixIcon: _query.isEmpty
@@ -97,16 +97,16 @@ class _EventSportSearchSheetBodyState
                           },
                           icon: const Icon(
                             Icons.close,
-                            color: Styles.tabInactive,
+                            color: Styles.surfaceHighlight,
                             size: 18,
                           ),
                         ),
                   filled: true,
-                  fillColor: Palette.fieldFill,
+                  fillColor: Styles.fieldFill,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: Palette.cardBorder),
+                    borderSide: const BorderSide(color: Styles.cardBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -118,7 +118,7 @@ class _EventSportSearchSheetBodyState
                 ),
               ),
             ),
-            const Divider(height: 1, color: Palette.cardBorder),
+            const Divider(height: 1, color: Styles.cardBorder),
             Expanded(
               child: filtered.isEmpty
                   ? Center(
@@ -126,7 +126,7 @@ class _EventSportSearchSheetBodyState
                         'No sports found for "$_query"',
                         style: const TextStyle(
                           fontSize: 14.5,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     )
@@ -137,7 +137,7 @@ class _EventSportSearchSheetBodyState
                       separatorBuilder: (_, _) => const Divider(
                         height: 1,
                         indent: 64,
-                        color: Palette.cardBorder,
+                        color: Styles.cardBorder,
                       ),
                       itemBuilder: (_, index) {
                         final sport = filtered[index];
@@ -186,7 +186,7 @@ class _EventSportSearchSheetBodyState
                                           style: const TextStyle(
                                             fontSize: 12.5,
                                             height: 1.35,
-                                            color: Styles.tabInactive,
+                                            color: Styles.surfaceHighlight,
                                           ),
                                         ),
                                       ],
@@ -201,7 +201,7 @@ class _EventSportSearchSheetBodyState
                                   size: 22,
                                   color: isSelected
                                       ? Styles.accent
-                                      : Styles.tabInactive,
+                                      : Styles.surfaceHighlight,
                                 ),
                               ],
                             ),
@@ -216,3 +216,4 @@ class _EventSportSearchSheetBodyState
     );
   }
 }
+

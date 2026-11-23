@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+
 import '../models/athlete_gear.dart';
 import '../providers/athlete_gear_provider.dart';
 import '../widgets/gear_picker_sheets.dart';
@@ -116,10 +117,8 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     final String? picked = await showModalBottomSheet<String>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (_) => GearSubTypeSheet(
-        category: _category,
-        selectedSubType: _subType,
-      ),
+      builder: (_) =>
+          GearSubTypeSheet(category: _category, selectedSubType: _subType),
     );
     if (picked != null && mounted) {
       setState(() {
@@ -131,10 +130,8 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
   Future<void> _selectBrand() async {
     final String? picked = await Navigator.of(context).push<String>(
       MaterialPageRoute(
-        builder: (_) => GearBrandSearchScreen(
-          category: _category,
-          initialBrand: _brand,
-        ),
+        builder: (_) =>
+            GearBrandSearchScreen(category: _category, initialBrand: _brand),
       ),
     );
     if (picked != null && mounted) {
@@ -166,7 +163,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
         backgroundColor: Colors.redAccent,
         content: Text(
           message,
-          style: const TextStyle(color: Styles.tabActive),
+          style: const TextStyle(color: Styles.primaryLight),
         ),
       ),
     );
@@ -176,7 +173,9 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (_subType.trim().isEmpty) {
-      _showValidationError('Pilih ${_category.subTypeFieldLabel} terlebih dahulu.');
+      _showValidationError(
+        'Pilih ${_category.subTypeFieldLabel} terlebih dahulu.',
+      );
       return;
     }
     if (_brand.trim().isEmpty) {
@@ -193,15 +192,17 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
       final rawWeight = _weightController.text.trim().replaceAll(',', '.');
       parsedWeight = double.tryParse(rawWeight);
       if (parsedWeight == null || parsedWeight <= 0) {
-        _showValidationError('Berat sepeda (kg) wajib diisi dengan angka valid.');
+        _showValidationError(
+          'Berat sepeda (kg) wajib diisi dengan angka valid.',
+        );
         return;
       }
     }
 
     int? parsedBattery;
     if (_category == GearCategory.wearable &&
-      _batteryController.text.trim().isNotEmpty) {
-        parsedBattery = int.tryParse(_batteryController.text.trim());
+        _batteryController.text.trim().isNotEmpty) {
+      parsedBattery = int.tryParse(_batteryController.text.trim());
     }
 
     final notifier = ref.read(athleteGearProvider.notifier);
@@ -267,7 +268,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -275,7 +276,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                   'Data "${existing.displayName}" akan dihapus permanen dari daftar perlengkapan Anda.',
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
                 const SizedBox(height: 22),
@@ -286,7 +287,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                       onPressed: () => Navigator.of(dialogContext).pop(false),
                       child: const Text(
                         'Batalkan',
-                        style: TextStyle(color: Styles.tabInactive),
+                        style: TextStyle(color: Styles.surfaceHighlight),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -326,18 +327,16 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppBar(
-          backgroundColor: Styles.background,
-          foregroundColor: Styles.tabActive,
+          backgroundColor: Styles.canvas,
+          foregroundColor: Styles.primaryLight,
           title: Text(
-            _isEditMode
-              ? 'Edit ${_category.label}'
-              : 'Tambahkan Perlengkapan',
+            _isEditMode ? 'Edit ${_category.label}' : 'Tambahkan Perlengkapan',
             style: const TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.primaryLight,
             ),
           ),
           actions: [
@@ -377,19 +376,20 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                 ProfileLabeledField(
                   label: 'Nama Panggilan',
                   controller: _nicknameController,
-                  placeholder: 'Contoh: ${_category == GearCategory.bike 
-                    ? 'BMX Saya' 
-                    : _category == GearCategory.shoes 
-                      ? 'Sepatu Lomba 10K' 
-                      : 'Perangkat Utama'}',
+                  placeholder:
+                      'Contoh: ${_category == GearCategory.bike
+                          ? 'BMX Saya'
+                          : _category == GearCategory.shoes
+                          ? 'Sepatu Lomba 10K'
+                          : 'Perangkat Utama'}',
                   textCapitalization: TextCapitalization.words,
                 ),
                 const SizedBox(height: 14),
                 ProfileLabeledField(
                   label: _category.subTypeFieldLabel,
                   valueText: _subType.isEmpty
-                    ? 'Pilih ${_category.subTypeFieldLabel}'
-                    : _subType,
+                      ? 'Pilih ${_category.subTypeFieldLabel}'
+                      : _subType,
                   onTap: _selectSubType,
                 ),
                 const SizedBox(height: 14),
@@ -403,8 +403,8 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                   label: 'Model',
                   controller: _modelController,
                   placeholder: _category == GearCategory.bike
-                    ? 'Contoh: Cascade 4 / Tarmac SL8'
-                    : _category == GearCategory.shoes
+                      ? 'Contoh: Cascade 4 / Tarmac SL8'
+                      : _category == GearCategory.shoes
                       ? 'Contoh: GoWalk / Alphafly 3'
                       : 'Masukkan model perlengkapan',
                   textCapitalization: TextCapitalization.words,
@@ -428,11 +428,11 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                     _category == GearCategory.swim) ...[
                   ProfileLabeledField(
                     label: _category == GearCategory.shoes
-                      ? 'Beri tahu saya saat mencapai'
-                      : 'Target Jarak Maksimal',
+                        ? 'Beri tahu saya saat mencapai'
+                        : 'Target Jarak Maksimal',
                     valueText: _maxDistanceKm != null
-                      ? '$_maxDistanceKm km'
-                      : 'Ketuk untuk memilih km',
+                        ? '$_maxDistanceKm km'
+                        : 'Ketuk untuk memilih km',
                     onTap: _selectMaxDistance,
                   ),
                   const SizedBox(height: 14),
@@ -443,9 +443,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                     controller: _batteryController,
                     placeholder: 'Contoh: 36',
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -489,3 +487,4 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     );
   }
 }
+

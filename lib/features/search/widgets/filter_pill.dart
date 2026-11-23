@@ -21,7 +21,7 @@ class FilterPill extends StatelessWidget {
     return OutlinedButton(
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
-        foregroundColor: isActive ? Styles.accent : Styles.tabActive,
+        foregroundColor: isActive ? Styles.accent : Styles.primaryLight,
         backgroundColor: isActive
             ? Styles.accent.withValues(alpha: 0.12)
             : Colors.transparent,
@@ -44,3 +44,4 @@ class FilterPill extends StatelessWidget {
     );
   }
 }
+

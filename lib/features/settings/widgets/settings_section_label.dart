@@ -15,7 +15,7 @@ class SettingsSectionLabel extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-          color: Styles.tabActive,
+          color: Styles.primaryLight,
           fontSize: 13,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.5,
@@ -24,3 +24,4 @@ class SettingsSectionLabel extends StatelessWidget {
     );
   }
 }
+
