@@ -7,6 +7,7 @@ import '../models/athlete_profile_data.dart';
 import '../providers/athlete_profile_provider.dart';
 import '../../shared/services/profile_image_service.dart';
 import '../../shared/services/profile_location_service.dart';
+import '../../shared/utils/profile_page_route.dart';
 import '../../shared/utils/profile_snackbar_helper.dart';
 import '../../shared/widgets/athlete_avatar_widget.dart';
 import '../../shared/widgets/profile_labeled_field.dart';
@@ -41,9 +42,8 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   late DateTime _selectedBirthDate;
   late String _avatarPath;
 
-  double _gpsLat = 0.0;
-  double _gpsLng = 0.0;
   String _gpsStatusText = '';
+  bool _gpsHasError = false;
 
   final ProfileImageService _imageService = ProfileImageService();
   final ProfileLocationService _locationService = ProfileLocationService();
@@ -191,10 +191,11 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     try {
       await _locationService.getCurrentLocation();
       if (!mounted) return;
+      final String latShort = _locationService.lat.toStringAsFixed(4);
+      final String lngShort = _locationService.lng.toStringAsFixed(4);
       setState(() {
-        _gpsLat = _locationService.lat;
-        _gpsLng = _locationService.lng;
-        _gpsStatusText = 'Lat: $_gpsLat, Lng: $_gpsLng';
+        _gpsHasError = false;
+        _gpsStatusText = 'Lat: $latShort  •  Lng: $lngShort';
       });
       ProfileSnackbarHelper.showSuccess(
         context,
@@ -203,6 +204,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
+        _gpsHasError = true;
         _gpsStatusText = e.toString();
       });
       ProfileSnackbarHelper.showError(context, 'Gagal membaca GPS: $e');
@@ -223,10 +225,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
 
       final String? croppedPath = await Navigator.push<String>(
         context,
-        MaterialPageRoute(
-          builder: (BuildContext context) =>
-            ProfilePhotoCropScreen(imageFile: file),
-        ),
+        buildProfileRoute<String>(ProfilePhotoCropScreen(imageFile: file)),
       );
 
       if (croppedPath != null && mounted) {
@@ -305,14 +304,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
       confirmText: 'OK',
       builder: (BuildContext context, Widget? child) {
         return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Styles.accent,
-              onPrimary: Styles.textPrimary,
-              surface: Styles.surface,
-              onSurface: Styles.textPrimary,
-            ),
-          ),
+          data: buildProfileDarkTheme(),
           child: child!,
         );
       },
@@ -347,7 +339,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                     ),
                     const SizedBox(width: 16),
                     const Text(
-                      "Edit Profil",
+                      'Edit Profil',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -359,11 +351,11 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                 GestureDetector(
                   onTap: _handleSaveWithLoading,
                   child: const Text(
-                    "SELESAI",
+                    'SELESAI',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Styles.accent,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ),
@@ -375,24 +367,32 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                 onTap: _showPhotoPickerDialog,
                 child: Column(
                   children: [
-                    AthleteAvatarWidget(
-                      avatarPath: _avatarPath,
-                      size: 80,
+                    Container(
+                      padding: const EdgeInsets.all(2.5),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: Styles.primaryGradient,
+                        boxShadow: Styles.glow(intensity: 0.3, blur: 14),
+                      ),
+                      child: AthleteAvatarWidget(
+                        avatarPath: _avatarPath,
+                        size: 80,
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     const Text(
                       'Ubah Foto Profil',
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Styles.accent,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             Row(
               children: [
                 Expanded(
@@ -436,45 +436,74 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: _detectCurrentGpsLocation,
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.navigation,
-                        size: 16,
-                        color: Styles.accent,
-                      ),
-                      SizedBox(width: 6),
-                      Text(
-                        'Cek Koordinat GPS Saat Ini',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Styles.accent,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (_gpsStatusText.isNotEmpty)
-                  Flexible(
-                    child: Text(
-                      _gpsStatusText,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Styles.success,
+            const SizedBox(height: 10),
+            InkWell(
+              borderRadius: BorderRadius.circular(Radii.chip),
+              onTap: _detectCurrentGpsLocation,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.navigation_rounded,
+                      size: 16,
+                      color: Styles.primaryLight,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'Cek Koordinat GPS Saat Ini',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.primaryLight,
                       ),
                     ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 12),
+            if (_gpsStatusText.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Styles.surfaceElevated,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: (_gpsHasError ? Styles.danger : Styles.success)
+                      .withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      _gpsHasError
+                        ? Icons.error_outline
+                        : Icons.my_location_rounded,
+                      size: 15,
+                      color: _gpsHasError ? Styles.danger : Styles.success,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _gpsStatusText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: _gpsHasError ? Styles.danger : Styles.success,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 14),
             ProfileLabeledField(
               label: 'Olahraga Utama',
               valueText: _selectedSport,
@@ -487,20 +516,21 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
               placeholder: 'Tulis bio singkat Anda...',
               textCapitalization: TextCapitalization.sentences,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             const Text(
-              "INFORMASI ATLET",
+              'INFORMASI ATLET',
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Styles.textPrimary,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 4),
             const Text(
-              "Digunakan untuk menghitung kalori, kekuatan, dan lainnya",
+              'Digunakan untuk menghitung kalori, kekuatan, dan lainnya',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 12.5,
                 color: Styles.textSecondary,
               ),
             ),
@@ -528,6 +558,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
                 FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
               ],
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
