@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../../gear/providers/athlete_gear_provider.dart';
+import '../../shared/services/profile_url_service.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
+import '../../trophies/providers/trophy_provider.dart';
+import '../providers/profile_activity_provider.dart';
 
 class _TrophyPreviewItem {
   final String id;
@@ -17,9 +22,7 @@ class _TrophyPreviewItem {
   });
 }
 
-class LainnyaTab extends StatefulWidget {
-  final int currentActivities;
-  final Set<String> claimedTrophyIds;
+class LainnyaTab extends ConsumerStatefulWidget {
   final VoidCallback onOpenTrophyCase;
   final VoidCallback onOpenGearCatalog;
   final VoidCallback onOpenSegments;
@@ -27,8 +30,6 @@ class LainnyaTab extends StatefulWidget {
 
   const LainnyaTab({
     super.key,
-    required this.currentActivities,
-    this.claimedTrophyIds = const {},
     required this.onOpenTrophyCase,
     required this.onOpenGearCatalog,
     required this.onOpenSegments,
@@ -36,11 +37,12 @@ class LainnyaTab extends StatefulWidget {
   });
 
   @override
-  State<LainnyaTab> createState() => _LainnyaTabState();
+  ConsumerState<LainnyaTab> createState() => _LainnyaTabState();
 }
 
-class _LainnyaTabState extends State<LainnyaTab> {
+class _LainnyaTabState extends ConsumerState<LainnyaTab> {
   bool joinedChallenge = false;
+  final ProfileUrlService _urlService = ProfileUrlService();
 
   static const List<_TrophyPreviewItem> _previewItems = [
     _TrophyPreviewItem(
@@ -69,14 +71,36 @@ class _LainnyaTabState extends State<LainnyaTab> {
     ),
   ];
 
-  bool _isPreviewUnlocked(_TrophyPreviewItem item) {
-    return widget.currentActivities >= item.requiredActivities ||
-      widget.claimedTrophyIds.contains(item.id);
+  bool _isPreviewUnlocked(
+    _TrophyPreviewItem item,
+    int currentActivities,
+    Set<String> claimedTrophyIds,
+  ) {
+    return currentActivities >= item.requiredActivities ||
+      claimedTrophyIds.contains(item.id);
+  }
+
+  Future<void> _openExternalPortal() async {
+    try {
+      await _urlService.openUrl('https://www.strava.com/features');
+    } catch (e) {
+      if (!mounted) return;
+      ProfileSnackbarHelper.showError(context, '$e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final int unlockedCount = _previewItems.where(_isPreviewUnlocked).length;
+    final int currentActivities = ref.watch(runSessionsProvider);
+    final Set<String> claimedTrophyIds = ref.watch(claimedTrophiesProvider);
+    final int activeGearCount = ref.watch(activeGearCountProvider);
+
+    final int unlockedCount = _previewItems
+      .where(
+        (item) =>
+          _isPreviewUnlocked(item, currentActivities, claimedTrophyIds),
+      )
+      .length;
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -99,27 +123,27 @@ class _LainnyaTabState extends State<LainnyaTab> {
             icon: Icons.pedal_bike,
             title: 'Perlengkapan',
             onTap: widget.onOpenGearCatalog,
-            trailingWidget: Consumer(
-              builder: (context, ref, child) {
-                final int activeCount = ref.watch(activeGearCountProvider);
-                if (activeCount == 0) {
-                  return const SizedBox.shrink();
-                }
-                return Padding(
+            trailingWidget: activeGearCount == 0
+              ? null
+              : Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Badge(
                     backgroundColor: Styles.accent,
                     label: Text(
-                      '$activeCount aktif',
+                      '$activeGearCount aktif',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                       ),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+          ),
+          const SizedBox(height: 8),
+          _LainnyaMenuTile(
+            icon: Icons.open_in_new,
+            title: 'Portal Web & Panduan ${AppBrand.name}',
+            onTap: _openExternalPortal,
           ),
           const SizedBox(height: 16),
           const Text(
@@ -204,7 +228,11 @@ class _LainnyaTabState extends State<LainnyaTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: _previewItems.map((item) {
-              final bool isUnlocked = _isPreviewUnlocked(item);
+              final bool isUnlocked = _isPreviewUnlocked(
+                item,
+                currentActivities,
+                claimedTrophyIds,
+              );
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -332,7 +360,7 @@ class _LainnyaMenuTile extends StatelessWidget {
               ),
               Row(
                 children: [
-                  ?trailingWidget,
+                  trailingWidget!,
                   const Icon(
                     Icons.chevron_right,
                     color: Styles.tabInactive,
