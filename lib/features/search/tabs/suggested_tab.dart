@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/follow_button.dart';
@@ -25,12 +26,19 @@ class SuggestedTab extends ConsumerWidget {
             itemCount: list.length,
             itemBuilder: (_, i) {
               final person = list[i];
+              final isFollowing = following.contains(person.id);
               return PersonTile(
                 person: person,
                 trailing: FollowButton(
-                  isFollowing: following.contains(person.id),
-                  onPressed: () =>
-                      ref.read(followProvider.notifier).toggle(person.id),
+                  isFollowing: isFollowing,
+                  onPressed: () {
+                    ref.read(followProvider.notifier).toggle(person.id);
+                    if (!isFollowing) {
+                      ref
+                          .read(notificationsProvider.notifier)
+                          .notifyFollowing(personName: person.name);
+                    }
+                  },
                 ),
               );
             },
@@ -64,4 +72,3 @@ class _SectionLabel extends StatelessWidget {
     );
   }
 }
-
