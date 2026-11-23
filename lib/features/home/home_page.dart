@@ -12,6 +12,7 @@ import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/widgets/streak_chart_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -77,6 +78,8 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 2),
 
+              const StreakChartWidget(),
+
              Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -100,8 +103,6 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-
-
   
               HorizontalCarousel.cards(
                 items: _dailyStats,
