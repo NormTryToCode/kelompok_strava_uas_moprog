@@ -184,7 +184,7 @@ class _MapPageState extends State<MapPage> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               itemCount: spots.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, i) => SizedBox(
                 width: 220,
                 child: SpotCard(

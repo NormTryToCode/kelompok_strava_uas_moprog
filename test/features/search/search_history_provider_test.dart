@@ -80,7 +80,7 @@ void main() {
     var calls = 0;
     container.listen<List<String>>(
       searchHistoryProvider,
-      (_, __) => calls++,
+      (_, _) => calls++,
     );
 
     notifier.add('   ');
