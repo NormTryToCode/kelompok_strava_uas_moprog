@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/home_streak_widget.dart';
-import 'package:kelompok_strava_uas_moprog/features/home/widgets/badge_widget.dart';
-import 'package:kelompok_strava_uas_moprog/features/home/widgets/streak_chart_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
-import 'package:kelompok_strava_uas_moprog/shared/widgets/upgrade_pill.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/horizontal_carousel.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/widgets/streak_chart_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  static const List<Map<String, String>> _badges = [
+    {'title': 'Basic Runner', 'image': 'asset/images/basic_runner.png'},
+    {'title': 'Rookie Runner', 'image': 'asset/images/rookie_runner.png'},
+    {'title': 'Master Runner', 'image': 'asset/images/master_runner.png'},
+    {'title': 'Grand Master Runner', 'image': 'asset/images/grand_master_runner.png'},
+    {'title': 'Elite Global Runeer', 'image': 'asset/images/elite_global_runner.png'},
+  ];
+
+  static const List<Map<String, String>> _dailyStats = [
+    {'title': 'Heart Rate', 'image': 'asset/images/heart rate.png'},
+    {'title': 'Pace Speed', 'image': 'asset/images/pace.png'},
+    {'title': 'Average Time', 'image': 'asset/images/time.png'},
+    {'title': 'Calories Burn', 'image': 'asset/images/calories.png'},
+    {'title': 'Steps Taken', 'image': 'asset/images/steps.png'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -49,17 +64,106 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.only(bottom: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 32,
             children: [
-              SizedBox(height: 4.1),
-              HomeStreakWidget(),
-              StreakChartWidget(),
-              BadgeWidget(),
+              const SizedBox(height: 4),
+
+              const HomeStreakWidget(),
+
+              const SizedBox(height: 2),
+
+              const StreakChartWidget(),
+
+             Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Daily Stats",
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                      Text(
+                        "Todays Stats",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: Styles.badge.withValues(alpha: 0.75),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+  
+              HorizontalCarousel.cards(
+                items: _dailyStats,
+                bordered: true,
+                cardBuilder: (context, badge) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Image.asset(badge['image']!, fit: BoxFit.contain),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      badge['title']!,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+             Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Badges",
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepOrange,
+                      ),
+                    ),
+                    Text(
+                      "Earn the badges",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: Styles.badge.withValues(alpha: 0.75),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
+              HorizontalCarousel.cards(
+                items: _badges,
+                bordered: true,
+                cardBuilder: (context, badge) => Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Image.asset(badge['image']!, fit: BoxFit.contain),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      badge['title']!,
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 8),
+  
             ],
           ),
         ),
