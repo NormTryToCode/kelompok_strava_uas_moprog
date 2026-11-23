@@ -1,28 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import '../models/trophy_badge.dart';
+import '../providers/trophy_provider.dart';
 import '../widgets/trophy_card.dart';
 
-class MilestoneAllScreen extends StatefulWidget {
-  final List<TrophyBadge> badges;
-  final int currentActivities;
-  final ValueChanged<String>? onToggleClaim;
-
-  const MilestoneAllScreen({
-    super.key,
-    required this.badges,
-    this.currentActivities = 0,
-    this.onToggleClaim,
-  });
+class MilestoneAllScreen extends ConsumerWidget {
+  const MilestoneAllScreen({super.key});
 
   @override
-  State<MilestoneAllScreen> createState() => _MilestoneAllScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final trophiesAsync = ref.watch(trophyListProvider);
 
-class _MilestoneAllScreenState extends State<MilestoneAllScreen> {
-  @override
-  Widget build(BuildContext context) {
     return Animate(
       effects: const [FadeEffect()],
       child: Scaffold(
@@ -42,22 +31,25 @@ class _MilestoneAllScreenState extends State<MilestoneAllScreen> {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 0.82,
-                crossAxisCount: 3,
+            child: trophiesAsync.when(
+              data: (badges) => GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 0.78,
+                  crossAxisCount: 3,
+                ),
+                itemCount: badges.length,
+                itemBuilder: (context, index) =>
+                  TrophyCard(badge: badges[index]),
               ),
-              itemCount: widget.badges.length,
-              itemBuilder: (context, index) {
-                return TrophyCard(
-                  badge: widget.badges[index],
-                  currentActivities: widget.currentActivities,
-                  onToggleClaim: widget.onToggleClaim,
-                  onStatusChanged: () {
-                    setState(() {});
-                  },
-                );
-              },
+              loading: () => const Center(
+                child: CircularProgressIndicator(color: Styles.accent),
+              ),
+              error: (error, _) => Center(
+                child: Text(
+                  'Gagal memuat data: $error',
+                  style: const TextStyle(color: Styles.accent),
+                ),
+              ),
             ),
           ),
         ),
