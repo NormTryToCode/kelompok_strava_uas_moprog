@@ -78,7 +78,7 @@ void main() {
     await notifier.add(_activity('a', DateTime(2026, 11, 1)));
 
     var calls = 0;
-    container.listen<ActivityState>(activityProvider, (_, __) => calls++);
+    container.listen<ActivityState>(activityProvider, (_, _) => calls++);
 
     await notifier.remove('missing');
     await container.pump();

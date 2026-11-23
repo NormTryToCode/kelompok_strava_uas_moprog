@@ -137,9 +137,9 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.deepOrange.withOpacity(0.15),
+            color: Colors.deepOrange.withValues(alpha: .15),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.deepOrange.withOpacity(0.5)),
+            border: Border.all(color: Colors.deepOrange.withValues(alpha: .5)),
           ),
           child: const Row(
             mainAxisSize: MainAxisSize.min,
@@ -189,12 +189,12 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? item.color.withOpacity(0.16)
+                      ? item.color.withValues(alpha: .16)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(9),
                   border: Border.all(
                     color: isSelected
-                        ? item.color.withOpacity(0.55)
+                        ? item.color.withValues(alpha: .55)
                         : Colors.transparent,
                   ),
                 ),
@@ -207,7 +207,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? item.color
-                            : item.color.withOpacity(0.55),
+                            : item.color.withValues(alpha: 0.55),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -254,7 +254,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
             horizontalLines: [
               HorizontalLine(
                 y: metric.goalY,
-                color: metric.color.withOpacity(0.45),
+                color: metric.color.withValues(alpha: 0.45),
                 strokeWidth: 1.2,
                 dashArray: [6, 5],
                 label: HorizontalLineLabel(
@@ -262,7 +262,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                   alignment: Alignment.topRight,
                   padding: const EdgeInsets.only(bottom: 4, right: 2),
                   style: TextStyle(
-                    color: metric.color.withOpacity(0.85),
+                    color: metric.color.withValues(alpha: 0.85),
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -289,12 +289,12 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
               return spotIndexes.map((_) {
                 return TouchedSpotIndicatorData(
                   FlLine(
-                    color: metric.color.withOpacity(0.4),
+                    color: metric.color.withValues(alpha: 0.4),
                     strokeWidth: 1.5,
                   ),
                   FlDotData(
                     show: true,
-                    getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+                    getDotPainter: (_, _, _, _) => FlDotCirclePainter(
                       radius: 6,
                       color: Colors.white,
                       strokeWidth: 2.5,
@@ -308,7 +308,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
               tooltipBorderRadius: BorderRadius.circular(10),
               getTooltipColor: (_) => Colors.grey[850]!,
               tooltipBorder: BorderSide(
-                color: metric.color.withOpacity(0.45),
+                color: metric.color.withValues(alpha: 0.45),
                 width: 1,
               ),
               getTooltipItems: (touchedSpots) {
@@ -386,12 +386,12 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
               barWidth: 3,
               isStrokeCapRound: true,
               shadow: Shadow(
-                color: metric.color.withOpacity(0.6),
+                color: metric.color.withValues(alpha: 0.6),
                 blurRadius: 10,
               ),
               dotData: FlDotData(
                 show: true,
-                getDotPainter: (spot, _, __, ___) {
+                getDotPainter: (spot, _, _, _) {
                   final hitGoal = spot.y >= metric.goalY;
                   return FlDotCirclePainter(
                     radius: hitGoal ? 4.5 : 3.5,
@@ -407,7 +407,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    metric.color.withOpacity(0.32),
+                    metric.color.withValues(alpha: 0.32),
                     Colors.transparent,
                   ],
                 ),

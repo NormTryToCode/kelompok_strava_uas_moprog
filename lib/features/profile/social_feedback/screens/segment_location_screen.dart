@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-
 import '../../shared/services/profile_location_service.dart';
+import '../../shared/services/profile_url_service.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
 
 class SegmentLocationView extends StatefulWidget {
   final VoidCallback onBack;
 
-  const SegmentLocationView({super.key, required this.onBack});
+  const SegmentLocationView({
+    super.key,
+    required this.onBack,
+  });
 
   @override
   State<SegmentLocationView> createState() => _SegmentLocationViewState();
 }
 
 class _SegmentLocationViewState extends State<SegmentLocationView> {
-  final ProfileLocationService locationService = ProfileLocationService();
+  final ProfileLocationService _locationService = ProfileLocationService();
+  final ProfileUrlService _urlService = ProfileUrlService();
 
   double lat = 0.0;
   double lng = 0.0;
@@ -27,19 +32,35 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
     });
 
     try {
-      await locationService.getCurrentLocation();
+      await _locationService.getCurrentLocation();
       if (!mounted) return;
       setState(() {
-        lat = locationService.lat;
-        lng = locationService.lng;
+        lat = _locationService.lat;
+        lng = _locationService.lng;
         isLoading = false;
       });
+      ProfileSnackbarHelper.showSuccess(
+        context,
+        'Koordinat GPS segmen berhasil diperbarui!',
+      );
     } catch (e) {
       if (!mounted) return;
       setState(() {
         errorMessage = e.toString();
         isLoading = false;
       });
+      ProfileSnackbarHelper.showError(context, 'Gagal memuat lokasi GPS.');
+    }
+  }
+
+  Future<void> _openLocationInBrowser() async {
+    final String mapUrl =
+      'https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=16/$lat/$lng';
+    try {
+      await _urlService.openUrl(mapUrl);
+    } catch (e) {
+      if (!mounted) return;
+      ProfileSnackbarHelper.showError(context, '$e');
     }
   }
 
@@ -61,7 +82,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                     onTap: widget.onBack,
                     child: const Icon(
                       Icons.arrow_back,
-                      color: Styles.primaryLight,
+                      color: Styles.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -70,7 +91,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Styles.primaryLight,
+                      color: Styles.textPrimary,
                     ),
                   ),
                 ],
@@ -78,16 +99,20 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
-                color: Styles.surface,
+                decoration: BoxDecoration(
+                  color: Styles.surface,
+                  borderRadius: BorderRadius.circular(Radii.field),
+                  border: Border.all(color: Styles.cardBorder),
+                ),
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       hasLocation
-                          ? Icons.my_location
-                          : Icons.location_searching,
-                      color: hasLocation ? Styles.primaryLight : Styles.accent,
+                        ? Icons.my_location
+                        : Icons.location_searching,
+                      color: hasLocation ? Styles.success : Styles.accent,
                       size: 40,
                     ),
                     const SizedBox(height: 12),
@@ -96,7 +121,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
-                        color: Styles.primaryLight,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -115,6 +140,22 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                         color: Styles.accent,
                       ),
                     ),
+                    if (hasLocation) ...[
+                      const SizedBox(height: 14),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Styles.textPrimary,
+                          side: const BorderSide(color: Styles.accent),
+                        ),
+                        onPressed: _openLocationInBrowser,
+                        icon: const Icon(
+                          Icons.open_in_new,
+                          size: 16,
+                          color: Styles.accent,
+                        ),
+                        label: const Text('Buka Koordinat di Peta Web'),
+                      ),
+                    ],
                     if (isLoading)
                       const Padding(
                         padding: EdgeInsets.only(top: 12.0),
@@ -141,7 +182,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Styles.primaryLight,
+                  color: Styles.textPrimary,
                 ),
               ),
               const SizedBox(height: 10),
@@ -150,7 +191,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                   'Tekan tombol navigasi di kanan bawah untuk memindai koordinat GPS Anda dan menemukan segmen lari terdekat.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 )
               else
@@ -170,14 +211,14 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Styles.primaryLight,
+                                  color: Styles.textPrimary,
                                 ),
                               ),
                               Text(
                                 'Koordinat Terkunci (${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)})',
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: Styles.primaryLight,
+                                  color: Styles.success,
                                 ),
                               ),
                             ],
@@ -208,14 +249,14 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Styles.primaryLight,
+                                  color: Styles.textPrimary,
                                 ),
                               ),
                               Text(
                                 'Elevasi 0.4% • Rute Terverifikasi GPS',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Styles.surfaceHighlight,
+                                  color: Styles.textSecondary,
                                 ),
                               ),
                             ],
@@ -240,9 +281,11 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Styles.accent,
         onPressed: _fetchGpsCoordinates,
-        child: const Icon(Icons.navigation, color: Styles.primaryLight),
+        child: const Icon(
+          Icons.navigation,
+          color: Styles.textPrimary,
+        ),
       ),
     );
   }
 }
-

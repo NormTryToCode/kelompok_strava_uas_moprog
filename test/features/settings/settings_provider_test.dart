@@ -84,7 +84,7 @@ void main() {
     final container = _container(MemorySettingsStore());
     final notifier = container.read(settingsProvider.notifier);
     var calls = 0;
-    container.listen<SettingsState>(settingsProvider, (_, __) => calls++);
+    container.listen<SettingsState>(settingsProvider, (_, _) => calls++);
 
     await notifier.setUnit(SettingsDistanceUnit.kilometers);
     await notifier.setNotification(NotificationPref.followers, true);
