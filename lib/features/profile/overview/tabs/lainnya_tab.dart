@@ -103,22 +103,22 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
       .length;
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _LainnyaMenuTile(
-            icon: Icons.list_alt,
+            icon: Icons.bar_chart_rounded,
             title: 'Statistik',
             onTap: widget.onOpenStatistics,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           _LainnyaMenuTile(
             icon: Icons.location_on_outlined,
             title: 'Segmen',
             onTap: widget.onOpenSegments,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           _LainnyaMenuTile(
             icon: Icons.pedal_bike,
             title: 'Perlengkapan',
@@ -127,27 +127,36 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
               ? null
               : Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Badge(
-                    backgroundColor: Styles.accent,
-                    label: Text(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Styles.primary.withValues(alpha: 0.22),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Styles.primaryLight),
+                    ),
+                    child: Text(
                       '$activeGearCount aktif',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Styles.primaryLight,
                         fontSize: 11,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           _LainnyaMenuTile(
-            icon: Icons.open_in_new,
+            icon: Icons.open_in_new_rounded,
             title: 'Portal Web & Panduan ${AppBrand.name}',
             onTap: _openExternalPortal,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           const Text(
-            "Tantangan",
+            'Tantangan',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
@@ -157,22 +166,41 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
-            decoration: BoxDecoration(
-              color: Styles.surface,
-              borderRadius: BorderRadius.circular(Radii.chip),
-              border: Border.all(color: Styles.cardBorder),
+            decoration: Styles.cardDecoration(
+              radius: Radii.field,
+              highlighted: true,
             ),
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(14.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Ikuti Tantangan untuk menemukan motivasi, membangun kebiasaan, dan mendapatkan hadiah.",
-                  style: TextStyle(fontSize: 12, color: Styles.textSecondary),
+                  'Ikuti Tantangan untuk menemukan motivasi, membangun kebiasaan, dan mendapatkan hadiah.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.4,
+                    color: Styles.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Center(
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: joinedChallenge
+                        ? Styles.success.withValues(alpha: 0.2)
+                        : Styles.primary,
+                      foregroundColor: joinedChallenge
+                        ? Styles.success
+                        : Styles.textPrimary,
+                      side: joinedChallenge
+                        ? const BorderSide(color: Styles.success)
+                        : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Radii.button),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                     onPressed: () {
                       setState(() {
                         joinedChallenge = !joinedChallenge;
@@ -180,46 +208,53 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                     },
                     child: Text(
                       joinedChallenge
-                        ? "Tantangan Diikuti!"
-                        : "Temukan Tantangan baru",
-                      style: const TextStyle(color: Styles.accent),
+                        ? 'Tantangan Diikuti!'
+                        : 'Temukan Tantangan Baru',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Tempat Trofi",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.textPrimary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Tempat Trofi',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Styles.textPrimary,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "$unlockedCount dari ${_previewItems.length} tonggak utama terbuka",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: unlockedCount > 0
-                        ? Styles.success
-                        : Styles.textSecondary,
+                    const SizedBox(height: 2),
+                    Text(
+                      '$unlockedCount dari ${_previewItems.length} tonggak utama terbuka',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: unlockedCount > 0
+                          ? Styles.success
+                          : Styles.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              ElevatedButton(
+              TextButton(
                 onPressed: widget.onOpenTrophyCase,
+                style: TextButton.styleFrom(
+                  foregroundColor: Styles.primaryLight,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
                 child: const Text(
-                  "Semua trofi >",
-                  style: TextStyle(color: Styles.accent),
+                  'Semua trofi >',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -243,19 +278,23 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                       children: [
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
                           decoration: isUnlocked
                             ? BoxDecoration(
                                 gradient: Styles.primaryGradient,
                                 borderRadius:
                                   BorderRadius.circular(Radii.chip),
+                                boxShadow: Styles.glow(
+                                  intensity: 0.25,
+                                  blur: 12,
+                                ),
                               )
                             : BoxDecoration(
-                                color: Styles.surface,
+                                color: Styles.surfaceElevated,
                                 borderRadius:
                                   BorderRadius.circular(Radii.chip),
                                 border: Border.all(
-                                  color: Styles.cardBorder,
+                                  color: Styles.borderStrong,
                                 ),
                               ),
                           child: Column(
@@ -268,10 +307,10 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                                   fontWeight: FontWeight.bold,
                                   color: isUnlocked
                                     ? Styles.canvas
-                                    : Styles.textMuted,
+                                    : Styles.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 3),
                               Icon(
                                 isUnlocked
                                   ? Icons.emoji_events
@@ -279,7 +318,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                                 size: 22,
                                 color: isUnlocked
                                   ? Styles.canvas
-                                  : Styles.textPrimary,
+                                  : Styles.primaryLight,
                               ),
                             ],
                           ),
@@ -291,9 +330,9 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                             fontSize: 11,
                             fontWeight: isUnlocked
                               ? FontWeight.bold
-                              : FontWeight.normal,
+                              : FontWeight.w500,
                             color: isUnlocked
-                              ? Styles.accent
+                              ? Styles.primaryLight
                               : Styles.textSecondary,
                           ),
                         ),
@@ -339,28 +378,41 @@ class _LainnyaMenuTile extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Radii.chip),
-            border: Border.all(color: Styles.cardBorder),
+            border: Border.all(color: Styles.borderStrong),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(icon, color: Styles.textPrimary),
-                  const SizedBox(width: 14),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Styles.textPrimary,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Styles.surfaceHighlight,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(icon, color: Styles.primaryLight, size: 19),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  trailingWidget!,
+                  if (trailingWidget != null) trailingWidget!,
                   const Icon(
                     Icons.chevron_right,
                     color: Styles.textSecondary,
