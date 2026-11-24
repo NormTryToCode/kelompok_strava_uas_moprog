@@ -74,8 +74,8 @@ class ClubMembersCard extends StatelessWidget {
                                 color: Styles.teal.withAlpha(110),
                               ),
                             ),
-                            child: const Text(
-                              'OWNER',
+                            child: Text(
+                              club.isOwner ? 'OWNER' : 'MEMBER',
                               style: TextStyle(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,

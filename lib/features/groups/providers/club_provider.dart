@@ -17,8 +17,11 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
   Future<void> addClub(Club club) async {
     await _repository.addClub(club);
     final current = state.valueOrNull ?? const <Club>[];
-    state = AsyncData([club, ...current]);
+    final filtered = current.where((c) => c.id != club.id).toList();
+    state = AsyncData([club, ...filtered]);
   }
+
+  Future<void> joinClub(Club club) => addClub(club.copyWith(isOwner: false));
 
   Future<void> updateClub(Club updated) async {
     await _repository.updateClub(updated);
@@ -34,6 +37,8 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     final current = state.valueOrNull ?? const <Club>[];
     state = AsyncData(current.where((c) => c.id != clubId).toList());
   }
+
+  Future<void> leaveClub(String clubId) => deleteClub(clubId);
 }
 
 final clubsProvider = AsyncNotifierProvider<ClubsNotifier, List<Club>>(

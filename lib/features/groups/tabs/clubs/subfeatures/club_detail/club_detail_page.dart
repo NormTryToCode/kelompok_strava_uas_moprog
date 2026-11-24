@@ -70,9 +70,13 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
     final deleted = await ClubOverviewPage.open(context, club);
     if (deleted != true || !mounted) return;
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('${club.name} deleted')));
-    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          club.isOwner ? '${club.name} deleted' : 'Left ${club.name}',
+        ),
+      ),
+    );
   }
 
   void _scrollToPosts() {
