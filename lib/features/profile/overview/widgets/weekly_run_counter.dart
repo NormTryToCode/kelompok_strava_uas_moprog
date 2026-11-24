@@ -84,7 +84,7 @@ class WeeklyRunCounter extends StatelessWidget {
                       const Text(
                         'Jarak',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Styles.textSecondary,
                         ),
                       ),
@@ -107,7 +107,7 @@ class WeeklyRunCounter extends StatelessWidget {
                       const Text(
                         'Waktu',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Styles.textSecondary,
                         ),
                       ),
@@ -130,7 +130,7 @@ class WeeklyRunCounter extends StatelessWidget {
                       const Text(
                         'Kenaikan Elev',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Styles.textSecondary,
                         ),
                       ),
@@ -202,21 +202,21 @@ class WeeklyRunCounter extends StatelessWidget {
                           Text(
                             'SEP',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 12,
                               color: Styles.textSecondary,
                             ),
                           ),
                           Text(
                             'OKT',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 12,
                               color: Styles.textSecondary,
                             ),
                           ),
                           Text(
                             'NOV',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: Styles.textPrimary,
                             ),
@@ -233,7 +233,7 @@ class WeeklyRunCounter extends StatelessWidget {
                     const Text(
                       '6 km',
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 12,
                         color: Styles.textSecondary,
                       ),
                     ),
@@ -241,7 +241,7 @@ class WeeklyRunCounter extends StatelessWidget {
                     const Text(
                       '3 km',
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 12,
                         color: Styles.textSecondary,
                       ),
                     ),

@@ -237,7 +237,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                     Text(
                       '$unlockedCount dari ${_previewItems.length} tonggak utama terbuka',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 13,
                         color: unlockedCount > 0
                           ? Styles.success
                           : Styles.textSecondary,
@@ -303,7 +303,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                               Text(
                                 item.watermarkNumber,
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: isUnlocked
                                     ? Styles.canvas
@@ -327,7 +327,7 @@ class _LainnyaTabState extends ConsumerState<LainnyaTab> {
                         Text(
                           item.shortLabel,
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 12,
                             fontWeight: isUnlocked
                               ? FontWeight.bold
                               : FontWeight.w500,
@@ -412,7 +412,7 @@ class _LainnyaMenuTile extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (trailingWidget != null) trailingWidget!,
+                  ?trailingWidget,
                   const Icon(
                     Icons.chevron_right,
                     color: Styles.textSecondary,

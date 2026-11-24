@@ -54,10 +54,10 @@ class _FollowersFollowingViewState
               ),
               const SizedBox(width: 20),
               Text(
-                isFollowingTab ? 'Mengikuti' : 'Para pengikut',
+                isFollowingTab ? 'Mengikuti' : 'Para Pengikut',
                 style: const TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                   color: Styles.textPrimary,
                 ),
               ),
@@ -69,6 +69,7 @@ class _FollowersFollowingViewState
           children: [
             Expanded(
               child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   setState(() {
                     _activeTab = 0;
@@ -80,7 +81,7 @@ class _FollowersFollowingViewState
                       'Mengikuti (${followingIds.length})',
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                         color: isFollowingTab
                           ? Styles.textPrimary
                           : Styles.textSecondary,
@@ -88,10 +89,13 @@ class _FollowersFollowingViewState
                     ),
                     const SizedBox(height: 10),
                     Container(
-                      width: 110,
                       height: 3,
-                      color:
-                        isFollowingTab ? Styles.accent : Styles.canvas,
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        gradient: isFollowingTab ? Styles.primaryGradient : null,
+                        color: isFollowingTab ? null : Colors.transparent,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ],
                 ),
@@ -99,6 +103,7 @@ class _FollowersFollowingViewState
             ),
             Expanded(
               child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   setState(() {
                     _activeTab = 1;
@@ -110,7 +115,7 @@ class _FollowersFollowingViewState
                       'Para pengikut (0)',
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                         color: !isFollowingTab
                           ? Styles.textPrimary
                           : Styles.textSecondary,
@@ -118,10 +123,13 @@ class _FollowersFollowingViewState
                     ),
                     const SizedBox(height: 10),
                     Container(
-                      width: 120,
                       height: 3,
-                      color:
-                        !isFollowingTab ? Styles.accent : Styles.canvas,
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        gradient: !isFollowingTab ? Styles.primaryGradient : null,
+                        color: !isFollowingTab ? null : Colors.transparent,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ],
                 ),
@@ -129,14 +137,13 @@ class _FollowersFollowingViewState
             ),
           ],
         ),
-        Container(height: 1, color: Styles.textMuted),
+        Container(height: 1, color: Styles.border),
         Expanded(
           child: isFollowingTab && followingIds.isNotEmpty
             ? ListView.separated(
                 padding: const EdgeInsets.all(16.0),
                 itemCount: followingIds.length,
-                separatorBuilder: (context, index) =>
-                  const SizedBox(height: 10),
+                separatorBuilder: (_, _) => const SizedBox(height: 10),
                 itemBuilder: (context, index) {
                   final String athleteId = followingIds[index];
                   return Container(
@@ -144,75 +151,90 @@ class _FollowersFollowingViewState
                       horizontal: 14.0,
                       vertical: 12.0,
                     ),
-                    decoration: BoxDecoration(
-                      color: Styles.surface,
-                      borderRadius: BorderRadius.circular(Radii.chip),
-                      border: Border.all(color: Styles.cardBorder),
-                    ),
+                    decoration: Styles.cardDecoration(radius: Radii.chip),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              backgroundColor: Styles.deepTeal,
-                              child: Icon(
-                                Icons.person,
-                                color: Styles.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              athleteId,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Styles.textPrimary,
-                              ),
-                            ),
-                          ],
+                        const CircleAvatar(
+                          backgroundColor: Styles.surfaceHighlight,
+                          child: Icon(
+                            Icons.person,
+                            color: Styles.primaryLight,
+                          ),
                         ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            athleteId,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w600,
+                              color: Styles.textPrimary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Styles.accent,
-                            side: const BorderSide(color: Styles.accent),
+                            backgroundColor: Styles.surfaceElevated,
+                            foregroundColor: Styles.primaryLight,
+                            side: const BorderSide(color: Styles.primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(Radii.chip),
+                            ),
                           ),
                           onPressed: () {
                             ref
                               .read(followProvider.notifier)
                               .toggle(athleteId);
                           },
-                          child: const Text('Batal Ikuti'),
+                          child: const Text(
+                            'Batal Ikuti',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
                         ),
                       ],
                     ),
                   );
                 },
               )
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 6),
-                      Text(
-                        isFollowingTab
-                          ? 'Anda belum mengikuti siapa pun'
-                          : 'Anda saat ini tidak memiliki pengikut',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Styles.textPrimary,
-                        ),
+            : Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 6),
+                    Text(
+                      isFollowingTab
+                        ? 'Anda belum mengikuti siapa pun.'
+                        : 'Anda saat ini belum memiliki pengikut.',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Styles.textPrimary,
                       ),
-                      if (isFollowingTab) const SizedBox(height: 20),
-                      if (isFollowingTab)
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
+                    ),
+                    if (isFollowingTab) const SizedBox(height: 20),
+                    if (isFollowingTab)
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Styles.primaryDark, Styles.primary],
+                            ),
+                            borderRadius: BorderRadius.circular(Radii.button),
+                            boxShadow: Styles.glow(intensity: 0.3, blur: 14),
+                          ),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Styles.accent,
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
                               foregroundColor: Styles.textPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                  BorderRadius.circular(Radii.button),
+                              ),
                             ),
                             onPressed: () {
                               if (widget.onFindAthletes != null) {
@@ -222,16 +244,16 @@ class _FollowersFollowingViewState
                             child: const Text(
                               'Cari Atlet',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 15.5,
                                 fontWeight: FontWeight.bold,
-                                color: Styles.textPrimary,
                               ),
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
+              ),
         ),
       ],
     );

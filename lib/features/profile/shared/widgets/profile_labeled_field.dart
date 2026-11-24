@@ -43,7 +43,7 @@ class ProfileLabeledField extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(
           horizontal: 14.0,
-          vertical: 10.0,
+          vertical: 11.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +51,7 @@ class ProfileLabeledField extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                fontSize: 11.5,
+                fontSize: 12.5,
                 fontWeight: FontWeight.w600,
                 color: Styles.textSecondary,
               ),
@@ -66,7 +66,7 @@ class ProfileLabeledField extends StatelessWidget {
                       valueText ?? '',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 15,
+                        fontSize: 15.5,
                         fontWeight: FontWeight.w500,
                         color: Styles.textPrimary,
                       ),
@@ -76,7 +76,7 @@ class ProfileLabeledField extends StatelessWidget {
                   const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: Styles.primaryLight,
-                    size: 20,
+                    size: 21,
                   ),
                 ],
               )
@@ -87,15 +87,15 @@ class ProfileLabeledField extends StatelessWidget {
                 textCapitalization: textCapitalization,
                 keyboardType: keyboardType,
                 inputFormatters: inputFormatters,
-                placeholderStyle: const TextStyle(
-                  fontSize: 14,
-                  color: Styles.textMuted,
+                placeholderStyle: TextStyle(
+                  fontSize: 14.5,
+                  color: Styles.textSecondary.withValues(alpha: 0.72),
                 ),
                 padding: EdgeInsets.zero,
                 autocorrect: false,
                 cursorColor: Styles.primaryLight,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 15.5,
                   color: Styles.textPrimary,
                 ),
                 decoration: const BoxDecoration(
