@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
-import 'package:kelompok_strava_uas_moprog/features/login/widgets/checkbox_widget.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/checkbox_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
