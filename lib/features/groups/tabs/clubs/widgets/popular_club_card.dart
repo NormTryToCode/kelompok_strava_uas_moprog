@@ -88,10 +88,23 @@ class PopularClubCard extends StatelessWidget {
                                   width: 52,
                                   height: 52,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, _, _) =>
-                                      _InitialText(club.initials),
+                                  errorBuilder: (_, _, _) => Text(
+                                    club.initials,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w800,
+                                      color: Styles.textPrimary,
+                                    ),
+                                  ),
                                 )
-                              : _InitialText(club.initials),
+                              : Text(
+                                  club.initials,
+                                  style: const TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w800,
+                                    color: Styles.textPrimary,
+                                  ),
+                                ),
                         ),
                         const Spacer(),
                         Container(
@@ -100,9 +113,7 @@ class PopularClubCard extends StatelessWidget {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: Styles.surfaceElevated.withValues(
-                              alpha: 0.88,
-                            ),
+                            color: Styles.surfaceElevated,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: Styles.borderStrong),
                           ),
@@ -179,13 +190,9 @@ class PopularClubCard extends StatelessWidget {
                           decoration: isJoined
                               ? BoxDecoration(
                                   color: Styles.surfaceHighlight,
-                                  borderRadius: BorderRadius.circular(
-                                    Radii.chip,
-                                  ),
+                                  borderRadius: BorderRadius.circular(Radii.chip),
                                   border: Border.all(
-                                    color: Styles.borderGlow.withValues(
-                                      alpha: 0.55,
-                                    ),
+                                    color: Styles.borderGlow.withValues(alpha: 0.55),
                                   ),
                                 )
                               : Styles.buttonDecoration(
@@ -228,24 +235,6 @@ class PopularClubCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _InitialText extends StatelessWidget {
-  final String text;
-
-  const _InitialText(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 17,
-        fontWeight: FontWeight.w800,
-        color: Styles.textPrimary,
       ),
     );
   }
