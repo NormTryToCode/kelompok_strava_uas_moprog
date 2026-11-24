@@ -5,104 +5,426 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dar
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/club_creation_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/club_detail_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/club_card_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/create_club_bar.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/popular_club_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/your_club_tile.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 
-class ClubsTab extends ConsumerWidget {
+enum _ClubCategoryFilter { all, running, cycling, multisport }
+
+final _joinedPopularClubIdsProvider = StateProvider<Set<String>>(
+  (ref) => const {'club1', 'club3'},
+);
+
+class ClubsTab extends ConsumerStatefulWidget {
   const ClubsTab({super.key});
 
-  Future<void> _onCreateClub(BuildContext context) async {
-    final created = await ClubCreationPage.open(context);
-    if (created == null || !context.mounted) return;
+  @override
+  ConsumerState<ClubsTab> createState() => _ClubsTabState();
+}
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('${created.name} created')));
+class _ClubsTabState extends ConsumerState<ClubsTab> {
+  final List<SearchClub> _popularClubs = buildDummyClubs();
+  _ClubCategoryFilter _filter = _ClubCategoryFilter.all;
+
+  Future<void> _onCreateClub() async {
+    final created = await ClubCreationPage.open(context);
+    if (created == null || !mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${created.name} created')),
+    );
+  }
+
+  void _toggleJoinPopular(SearchClub club) {
+    final current = ref.read(_joinedPopularClubIdsProvider);
+    final next = Set<String>.of(current);
+    final joining = next.add(club.id);
+    if (!joining) next.remove(club.id);
+    ref.read(_joinedPopularClubIdsProvider.notifier).state = next;
+  }
+
+  bool _matchesUserClub(Club club) {
+    switch (_filter) {
+      case _ClubCategoryFilter.all:
+        return true;
+      case _ClubCategoryFilter.running:
+        return club.sport.id == 'running' || club.sport.id == 'virtual-running';
+      case _ClubCategoryFilter.cycling:
+        return club.sport.id == 'cycling' || club.sport.id == 'e-biking';
+      case _ClubCategoryFilter.multisport:
+        return club.sport.id != 'running' &&
+            club.sport.id != 'virtual-running' &&
+            club.sport.id != 'cycling' &&
+            club.sport.id != 'e-biking';
+    }
+  }
+
+  bool _matchesSearchClub(SearchClub club) {
+    switch (_filter) {
+      case _ClubCategoryFilter.all:
+        return true;
+      case _ClubCategoryFilter.running:
+        return club.sport == SportType.running;
+      case _ClubCategoryFilter.cycling:
+        return club.sport == SportType.cycling;
+      case _ClubCategoryFilter.multisport:
+        return club.sport != SportType.running &&
+            club.sport != SportType.cycling;
+    }
+  }
+
+  String _initials(String name) {
+    final words = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
+    if (words.isEmpty) return '?';
+    if (words.length == 1) return words.first[0].toUpperCase();
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+
+  String _formatCompactMembers(int count) {
+    if (count >= 1000000) {
+      return '${(count / 1000000).toStringAsFixed(1)}M members';
+    }
+    if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(1)}K members';
+    }
+    return count == 1 ? '1 member' : '$count members';
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final clubsAsync = ref.watch(clubsProvider);
-    final clubs = clubsAsync.valueOrNull ?? const <Club>[];
-    final loading = clubsAsync.isLoading && !clubsAsync.hasValue;
+    final userClubs = clubsAsync.valueOrNull ?? const <Club>[];
+    final joinedIds = ref.watch(_joinedPopularClubIdsProvider);
 
-    return CustomScrollView(
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          sliver: SliverToBoxAdapter(
-            child: CreateClubBar(onCreate: () => _onCreateClub(context)),
-          ),
+    final joinedPopular = _popularClubs
+        .where((c) => joinedIds.contains(c.id))
+        .toList();
+
+    final filteredUserClubs = userClubs.where(_matchesUserClub).toList();
+    final filteredJoinedPopular =
+        joinedPopular.where(_matchesSearchClub).toList();
+
+    final totalVisible =
+        filteredUserClubs.length + filteredJoinedPopular.length;
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(0, 6, 0, 28),
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: CreateClubBar(onCreate: _onCreateClub),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-          sliver: SliverToBoxAdapter(
-            child: SectionTitle(
-              'Your clubs',
-              trailing: clubs.isEmpty ? null : CountPill(count: clubs.length),
-            ),
-          ),
-        ),
-        if (!loading && clubs.isEmpty)
-          const SliverPadding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 24),
-            sliver: SliverToBoxAdapter(child: _EmptyClubs()),
-          ),
-        if (clubs.isNotEmpty)
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                mainAxisExtent: 204,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => ClubCardItem(
-                  club: clubs[index],
-                  onTap: () => ClubDetailPage.open(context, clubs[index]),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Popular near you',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: Styles.textPrimary,
+                  ),
                 ),
-                childCount: clubs.length,
               ),
+              TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const SearchPage()),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: Styles.primaryLight,
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'See all',
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(width: 2),
+                    Icon(Icons.chevron_right, size: 17),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 232,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: _popularClubs.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (_, index) {
+              final club = _popularClubs[index];
+              final isJoined = joinedIds.contains(club.id);
+              return PopularClubCard(
+                club: club,
+                isJoined: isJoined,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => SearchClubDetailPage(club: club),
+                  ),
+                ),
+                onToggleJoin: () => _toggleJoinPopular(club),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 26),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Your clubs',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
+              color: Styles.textPrimary,
             ),
           ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 38,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              _FilterChipPill(
+                label: 'All',
+                selected: _filter == _ClubCategoryFilter.all,
+                onTap: () => setState(() => _filter = _ClubCategoryFilter.all),
+              ),
+              const SizedBox(width: 8),
+              _FilterChipPill(
+                icon: Icons.directions_run,
+                label: 'Running',
+                selected: _filter == _ClubCategoryFilter.running,
+                onTap: () =>
+                    setState(() => _filter = _ClubCategoryFilter.running),
+              ),
+              const SizedBox(width: 8),
+              _FilterChipPill(
+                icon: Icons.directions_bike,
+                label: 'Cycling',
+                selected: _filter == _ClubCategoryFilter.cycling,
+                onTap: () =>
+                    setState(() => _filter = _ClubCategoryFilter.cycling),
+              ),
+              const SizedBox(width: 8),
+              _FilterChipPill(
+                label: 'Multisport',
+                selected: _filter == _ClubCategoryFilter.multisport,
+                onTap: () =>
+                    setState(() => _filter = _ClubCategoryFilter.multisport),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: totalVisible == 0
+              ? _EmptyYourClubs(
+                  isFiltered: _filter != _ClubCategoryFilter.all,
+                  onResetFilter: () =>
+                      setState(() => _filter = _ClubCategoryFilter.all),
+                )
+              : Container(
+                  decoration: Styles.cardDecoration(radius: Radii.card),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < filteredUserClubs.length; i++) ...[
+                        if (i > 0)
+                          const Divider(
+                            height: 1,
+                            indent: 14,
+                            endIndent: 14,
+                            color: Styles.divider,
+                          ),
+                        YourClubTile(
+                          seedId: filteredUserClubs[i].id,
+                          name: filteredUserClubs[i].name,
+                          initials: _initials(filteredUserClubs[i].name),
+                          sportLabel: filteredUserClubs[i].sport.name,
+                          locationLabel: filteredUserClubs[i].locationLabel,
+                          memberLabel: filteredUserClubs[i].memberLabel,
+                          avatarPath: filteredUserClubs[i].avatarPath,
+                          isOwner: true,
+                          onTap: () => ClubDetailPage.open(
+                            context,
+                            filteredUserClubs[i],
+                          ),
+                        ),
+                      ],
+                      for (var i = 0;
+                          i < filteredJoinedPopular.length;
+                          i++) ...[
+                        if (i > 0 || filteredUserClubs.isNotEmpty)
+                          const Divider(
+                            height: 1,
+                            indent: 14,
+                            endIndent: 14,
+                            color: Styles.divider,
+                          ),
+                        YourClubTile(
+                          seedId: filteredJoinedPopular[i].id,
+                          name: filteredJoinedPopular[i].name,
+                          initials: filteredJoinedPopular[i].initials,
+                          sportLabel: filteredJoinedPopular[i].sport.label,
+                          locationLabel: filteredJoinedPopular[i].city,
+                          memberLabel: _formatCompactMembers(
+                            filteredJoinedPopular[i].memberCount + 1,
+                          ),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => SearchClubDetailPage(
+                                club: filteredJoinedPopular[i],
+                              ),
+                            ),
+                          ),
+                          onActionTap: () =>
+                              _toggleJoinPopular(filteredJoinedPopular[i]),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+        ),
       ],
     );
   }
 }
 
-class _EmptyClubs extends StatelessWidget {
-  const _EmptyClubs();
+class _FilterChipPill extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _FilterChipPill({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return const SoftCard(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 28),
-      child: Column(
-        children: [
-          IconBubble(Icons.flag_outlined, size: 56),
-          SizedBox(height: 14),
-          Text(
-            'No clubs yet',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
+    return Material(
+      color: selected ? Styles.surfaceHighlight : Styles.surface,
+      shape: StadiumBorder(
+        side: BorderSide(
+          color: selected ? Styles.primary : Styles.border,
+          width: selected ? 1.3 : 1,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(
+                  icon,
+                  size: 15,
+                  color: selected ? Styles.primaryLight : Styles.textSecondary,
+                ),
+                const SizedBox(width: 6),
+              ],
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  color: selected ? Styles.textPrimary : Styles.textSecondary,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 4),
-          Text(
-            'Create one to start organizing events.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Styles.surfaceHighlight),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
+class _EmptyYourClubs extends StatelessWidget {
+  final bool isFiltered;
+  final VoidCallback onResetFilter;
+
+  const _EmptyYourClubs({
+    required this.isFiltered,
+    required this.onResetFilter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+      decoration: Styles.cardDecoration(radius: Radii.card),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.groups_outlined,
+            size: 40,
+            color: Styles.primaryLight,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            isFiltered ? 'No clubs in this category' : 'No clubs joined yet',
+            style: const TextStyle(
+              fontSize: 15.5,
+              fontWeight: FontWeight.w700,
+              color: Styles.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            isFiltered
+                ? 'Try switching back to All to see your clubs.'
+                : 'Create your own club above or join a popular one.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Styles.textSecondary,
+            ),
+          ),
+          if (isFiltered) ...[
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: onResetFilter,
+              style: TextButton.styleFrom(foregroundColor: Styles.primaryLight),
+              child: const Text(
+                'Show all clubs',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

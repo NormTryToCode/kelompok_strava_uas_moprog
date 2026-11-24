@@ -4,36 +4,44 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 class GroupsTabBar extends StatelessWidget {
   const GroupsTabBar({super.key});
 
-  static const _labelStyle = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeight.w700,
-  );
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Styles.canvas,
-        border: Border(bottom: BorderSide(color: Styles.cardBorder, width: 1)),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Styles.surface,
+        borderRadius: BorderRadius.circular(Radii.button + 4),
+        border: Border.all(color: Styles.border),
       ),
-      child: const TabBar(
+      child: TabBar(
         dividerColor: Colors.transparent,
         indicatorSize: TabBarIndicatorSize.tab,
-        indicatorWeight: 2.5,
-        indicatorColor: Styles.accent,
-        labelColor: Colors.white,
-        unselectedLabelColor: Styles.surfaceHighlight,
-        labelStyle: _labelStyle,
-        unselectedLabelStyle: TextStyle(
-          fontSize: 15,
+        indicator: BoxDecoration(
+          gradient: Styles.linearGradient(
+            colors: const [Styles.primary, Styles.primaryLight],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(Radii.button),
+          boxShadow: Styles.glow(intensity: 0.38, blur: 16),
+        ),
+        labelColor: Styles.textPrimary,
+        unselectedLabelColor: Styles.textSecondary,
+        labelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+        overlayColor: const WidgetStatePropertyAll(Colors.transparent),
         splashFactory: NoSplash.splashFactory,
-        tabs: [
-          Tab(height: 44, text: 'Challenges'),
-          Tab(height: 44, text: 'Clubs'),
-          Tab(height: 44, text: 'Events'),
+        tabs: const [
+          Tab(height: 40, text: 'Challenges'),
+          Tab(height: 40, text: 'Clubs'),
+          Tab(height: 40, text: 'Events'),
         ],
       ),
     );
