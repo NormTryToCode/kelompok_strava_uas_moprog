@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 
 class ForgetPasswordWidget extends StatefulWidget {
   const ForgetPasswordWidget({super.key});
@@ -37,107 +38,102 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
     });
   }
 
+  void _goToLogin() {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double cardWidth = screenWidth * 0.9 > 400 ? 400 : screenWidth * 0.9;
-
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 24),
-        child: Container(
-          width: cardWidth,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          decoration: BoxDecoration(
-            color: Styles.accent,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 16,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Top Icon Badge
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: const BoxDecoration(
-                  color: Colors.white24,
-                  shape: BoxShape.circle,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            decoration: BoxDecoration(
+              color: Styles.accent,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
                 ),
-                child: Icon(
-                  _isSent
-                      ? Icons.mark_email_read_outlined
-                      : Icons.lock_reset_rounded,
-                  size: 36,
-                  color: Colors.white,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              Text(
-                _isSent ? "Check Your Email" : "Forgot Password?",
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 0.3,
-                ),
-              ),
-
-              const SizedBox(height: 6),
-
-              Text(
-                _isSent
-                    ? "We've sent a password reset link to\n${_emailController.text.trim()}, check your spam email if it does not appear"
-                    : "Enter your registered email address and we'll send you a link to reset your password.",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white70,
-                  height: 1.4,
-                ),
-              ),
-
-              const SizedBox(height: 24),
-
-              if (!_isSent) ...[
-                // Email Input
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _handleResetPassword(),
-                  decoration: InputDecoration(
-                    hintText: "Enter your email",
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isSent
+                        ? Icons.mark_email_read_outlined
+                        : Icons.lock_reset_rounded,
+                    size: 36,
+                    color: Colors.white,
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
 
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
+                Text(
+                  _isSent ? "Check Your Email" : "Forgot Password?",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  _isSent
+                      ? "We've sent a password reset link to\n${_emailController.text.trim()}. Check your spam folder if it does not appear."
+                      : "Enter your registered email address and we'll send you a link to reset your password.",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white70,
+                    height: 1.4,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                if (!_isSent) ...[
+                  AuthTextField(
+                    controller: _emailController,
+                    hintText: "Enter your email",
+                    prefixIcon: Icons.email_outlined,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.done,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  ElevatedButton(
                     onPressed: _handleResetPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Styles.primaryDark,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      elevation: 2,
+                      minimumSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -150,11 +146,8 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                       ),
                     ),
                   ),
-                ),
-              ] else ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
+                ] else ...[
+                  ElevatedButton(
                     onPressed: () {
                       setState(() {
                         _isSent = false;
@@ -163,7 +156,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Styles.primaryDark,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      minimumSize: const Size(double.infinity, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -176,32 +169,31 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
 
-              const SizedBox(height: 12),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                icon: const Icon(
-                  Icons.arrow_back_rounded,
-                  size: 18,
-                  color: Colors.white,
-                ),
-                label: const Text(
-                  "Back to Login",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                const SizedBox(height: 16),
+
+                OutlinedButton.icon(
+                  onPressed: _goToLogin,
+                  icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                  label: const Text(
+                    "Back to Login",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white70, width: 1.2),
+                    minimumSize: const Size(double.infinity, 44),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

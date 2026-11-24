@@ -12,7 +12,20 @@
           "package_name": "com.example.kelompok_strava_uas_moprog"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "971947737969-9ehj6uu1nsf77darcum5r6c6hqdqh9gs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kelompok_strava_uas_moprog",
+            "certificate_hash": "ea588b62ca73125473deb8f44e63c2362381c8d0"
+          }
+        },
+        {
+          "client_id": "971947737969-p78743s232el6tea5r25u6i4a16jiu3l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAzZHIIRV9dsAIOBAQlMq6vFr4st8AbiZY"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971947737969-p78743s232el6tea5r25u6i4a16jiu3l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "971947737969-ia5akn3qp2j978qiogvqnkg51hfv8ch7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.kelompokStravaUasMoprog"
+              }
+            }
+          ]
         }
       }
     }
