@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
+import '../../shared/utils/profile_snackbar_helper.dart';
 import '../models/athlete_gear.dart';
 import '../providers/athlete_gear_provider.dart';
 
@@ -17,7 +18,7 @@ class GearBrandSearchScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<GearBrandSearchScreen> createState() =>
-      _GearBrandSearchScreenState();
+    _GearBrandSearchScreenState();
 }
 
 class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
@@ -42,8 +43,8 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
     if (trimmed.isEmpty) return;
 
     await ref
-        .read(customBrandsProvider.notifier)
-        .addCustomBrand(widget.category, trimmed);
+      .read(customBrandsProvider.notifier)
+      .addCustomBrand(widget.category, trimmed);
 
     if (!mounted) return;
     Navigator.of(context).pop(trimmed);
@@ -51,8 +52,8 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
 
   Future<void> _deleteCustomBrand(String brandName) async {
     await ref
-        .read(customBrandsProvider.notifier)
-        .removeCustomBrand(widget.category, brandName);
+      .read(customBrandsProvider.notifier)
+      .removeCustomBrand(widget.category, brandName);
 
     if (!mounted) return;
     if (_selectedBrand.trim().toLowerCase() == brandName.toLowerCase()) {
@@ -61,14 +62,9 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
       });
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Styles.surface,
-        content: Text(
-          'Merek "$brandName" berhasil dihapus.',
-          style: const TextStyle(color: Styles.primaryLight),
-        ),
-      ),
+    ProfileSnackbarHelper.showInfo(
+      context,
+      'Merek "$brandName" berhasil dihapus.',
     );
   }
 
@@ -79,11 +75,13 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
 
     final String? updatedName = await showDialog<String>(
       context: context,
+      barrierColor: const Color.fromARGB(210, 7, 6, 12),
       builder: (BuildContext dialogContext) {
         return Dialog(
           backgroundColor: Styles.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Radii.field),
+            borderRadius: BorderRadius.circular(Radii.card),
+            side: const BorderSide(color: Styles.borderStrong),
           ),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -94,40 +92,46 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                 const Text(
                   'Edit Nama Merek',
                   style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Styles.primaryLight,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Styles.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 6),
                 const Text(
                   'Perbaiki ejaan merek yang ditambahkan sebelumnya.',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Styles.surfaceHighlight,
+                    fontSize: 13.5,
+                    color: Styles.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
                 TextField(
                   controller: editController,
                   autofocus: true,
                   textCapitalization: TextCapitalization.words,
+                  cursorColor: Styles.primaryLight,
                   style: const TextStyle(
-                    color: Styles.primaryLight,
-                    fontSize: 15,
+                    color: Styles.textPrimary,
+                    fontSize: 15.5,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Masukkan nama merek yang benar',
-                    hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+                    hintStyle: TextStyle(
+                      color: Styles.textSecondary.withValues(alpha: 0.72),
+                    ),
                     filled: true,
                     fillColor: Styles.fieldFill,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Radii.chip),
-                      borderSide: const BorderSide(color: Styles.cardBorder),
+                      borderSide: const BorderSide(color: Styles.borderStrong),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Radii.chip),
-                      borderSide: const BorderSide(color: Styles.accent),
+                      borderSide: const BorderSide(
+                        color: Styles.primaryLight,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -139,20 +143,31 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                       onPressed: () => Navigator.of(dialogContext).pop(),
                       child: const Text(
                         'Batalkan',
-                        style: TextStyle(color: Styles.surfaceHighlight),
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.textSecondary,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    TextButton(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Styles.primary,
+                        foregroundColor: Styles.textPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Radii.chip),
+                        ),
+                      ),
                       onPressed: () {
                         Navigator.of(dialogContext)
-                            .pop(editController.text.trim());
+                          .pop(editController.text.trim());
                       },
                       child: const Text(
                         'Simpan',
                         style: TextStyle(
+                          fontSize: 14.5,
                           fontWeight: FontWeight.bold,
-                          color: Styles.accent,
                         ),
                       ),
                     ),
@@ -172,8 +187,8 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
     }
 
     await ref
-        .read(customBrandsProvider.notifier)
-        .updateCustomBrand(widget.category, oldBrand, updatedName);
+      .read(customBrandsProvider.notifier)
+      .updateCustomBrand(widget.category, oldBrand, updatedName);
 
     if (!mounted) return;
     if (_selectedBrand.trim().toLowerCase() == oldBrand.toLowerCase()) {
@@ -182,14 +197,9 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
       });
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Styles.surface,
-        content: Text(
-          'Merek diubah menjadi "$updatedName".',
-          style: const TextStyle(color: Styles.primaryLight),
-        ),
-      ),
+    ProfileSnackbarHelper.showSuccess(
+      context,
+      'Merek diubah menjadi "$updatedName".',
     );
   }
 
@@ -198,8 +208,8 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
     final customBrandsMap = ref.watch(customBrandsProvider);
     final customList = customBrandsMap[widget.category.name] ?? const [];
     final Set<String> presetLowerSet = widget.category.presetBrands
-        .map((e) => e.toLowerCase())
-        .toSet();
+      .map((e) => e.toLowerCase())
+      .toSet();
 
     final Set<String> mergedSet = {
       ...widget.category.presetBrands,
@@ -210,16 +220,15 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
 
     final String trimmedQuery = _query.trim();
     final List<String> filteredBrands = trimmedQuery.isEmpty
-        ? allBrands
-        : allBrands
-              .where(
-                (brand) =>
-                    brand.toLowerCase().contains(trimmedQuery.toLowerCase()),
-              )
-              .toList();
+      ? allBrands
+      : allBrands
+        .where(
+          (brand) =>
+            brand.toLowerCase().contains(trimmedQuery.toLowerCase()),
+        )
+        .toList();
 
-    final bool hasExactMatch =
-        trimmedQuery.isNotEmpty &&
+    final bool hasExactMatch = trimmedQuery.isNotEmpty &&
         allBrands.any(
           (brand) => brand.toLowerCase() == trimmedQuery.toLowerCase(),
         );
@@ -234,17 +243,18 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
         backgroundColor: Styles.canvas,
         appBar: AppBar(
           backgroundColor: Styles.canvas,
-          foregroundColor: Styles.primaryLight,
+          foregroundColor: Styles.textPrimary,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back, color: Styles.textPrimary),
             onPressed: () => Navigator.of(context).pop(_selectedBrand),
           ),
           title: Text(
             'Merek ${widget.category.label}',
             style: const TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Styles.primaryLight,
+              fontWeight: FontWeight.w800,
+              color: Styles.textPrimary,
             ),
           ),
         ),
@@ -256,9 +266,10 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                 child: TextField(
                   controller: _searchController,
                   autofocus: true,
+                  cursorColor: Styles.primaryLight,
                   style: const TextStyle(
-                    color: Styles.primaryLight,
-                    fontSize: 15,
+                    color: Styles.textPrimary,
+                    fontSize: 15.5,
                   ),
                   textCapitalization: TextCapitalization.words,
                   onChanged: (value) {
@@ -268,34 +279,40 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Cari merek atau ketik merek baru...',
-                    hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+                    hintStyle: TextStyle(
+                      fontSize: 14.5,
+                      color: Styles.textSecondary.withValues(alpha: 0.78),
+                    ),
                     prefixIcon: const Icon(
-                      Icons.search,
-                      color: Styles.surfaceHighlight,
+                      Icons.search_rounded,
+                      color: Styles.primaryLight,
                     ),
                     suffixIcon: _query.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(
-                              Icons.clear,
-                              color: Styles.surfaceHighlight,
-                            ),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _query = '';
-                              });
-                            },
-                          )
-                        : null,
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.clear_rounded,
+                            color: Styles.textSecondary,
+                          ),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _query = '';
+                            });
+                          },
+                        )
+                      : null,
                     filled: true,
                     fillColor: Styles.fieldFill,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Radii.chip),
-                      borderSide: const BorderSide(color: Styles.cardBorder),
+                      borderSide: const BorderSide(color: Styles.borderStrong),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(Radii.chip),
-                      borderSide: const BorderSide(color: Styles.accent),
+                      borderSide: const BorderSide(
+                        color: Styles.primaryLight,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                 ),
@@ -304,7 +321,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                   child: Material(
-                    color: Styles.selectedFill,
+                    color: Styles.surfaceHighlight,
                     borderRadius: BorderRadius.circular(Radii.chip),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(Radii.chip),
@@ -317,22 +334,22 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(Radii.chip),
-                          border: Border.all(color: Styles.accent),
+                          border: Border.all(color: Styles.primaryLight),
                         ),
                         child: Row(
                           children: [
                             const Icon(
-                              Icons.add_circle_outline,
-                              color: Styles.accent,
+                              Icons.add_circle_outline_rounded,
+                              color: Styles.primaryLight,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 'Tambahkan merek "$trimmedQuery"',
                                 style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 15.5,
                                   fontWeight: FontWeight.bold,
-                                  color: Styles.primaryLight,
+                                  color: Styles.textPrimary,
                                 ),
                               ),
                             ),
@@ -344,57 +361,62 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                 ),
               Expanded(
                 child: filteredBrands.isEmpty
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Text(
-                            'Merek "$trimmedQuery" belum terdaftar.\nKetuk tombol di atas untuk menambahkannya.',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Styles.surfaceHighlight,
-                            ),
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Text(
+                          'Merek "$trimmedQuery" belum terdaftar.\nKetuk tombol di atas untuk menambahkannya.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 14.5,
+                            height: 1.45,
+                            color: Styles.textSecondary,
                           ),
                         ),
-                      )
+                      ),
+                    )
                     : ListView.separated(
                         itemCount: filteredBrands.length,
                         separatorBuilder: (_, _) => const Divider(
                           height: 1,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.divider,
                         ),
                         itemBuilder: (context, index) {
                           final brand = filteredBrands[index];
                           final bool isCustom = !presetLowerSet.contains(
                             brand.toLowerCase(),
                           );
-                          final bool isSelected =
-                              brand.toLowerCase() ==
-                              _selectedBrand.trim().toLowerCase();
+                          final bool isSelected = brand.toLowerCase() ==
+                            _selectedBrand.trim().toLowerCase();
 
                           return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 2,
+                            ),
                             onTap: () => Navigator.of(context).pop(brand),
                             title: Text(
                               brand,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                                 color: isSelected
-                                    ? Styles.accent
-                                    : Styles.primaryLight,
+                                  ? Styles.primaryLight
+                                  : Styles.textPrimary,
                               ),
                             ),
                             subtitle: isCustom
-                                ? const Text(
-                                    'Merek kustom',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Styles.accent,
-                                    ),
-                                  )
-                                : null,
+                              ? const Text(
+                                  'Merek kustom',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: Styles.secondary,
+                                  ),
+                                )
+                              : null,
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -404,23 +426,26 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                                     icon: const Icon(
                                       Icons.edit_outlined,
                                       size: 20,
-                                      color: Styles.surfaceHighlight,
+                                      color: Styles.textSecondary,
                                     ),
                                     onPressed: () =>
-                                        _showEditCustomBrandDialog(brand),
+                                      _showEditCustomBrandDialog(brand),
                                   ),
                                   IconButton(
                                     tooltip: 'Hapus merek kustom',
                                     icon: const Icon(
                                       Icons.delete_outline,
                                       size: 20,
-                                      color: Colors.redAccent,
+                                      color: Styles.danger,
                                     ),
                                     onPressed: () => _deleteCustomBrand(brand),
                                   ),
                                 ],
                                 if (isSelected)
-                                  const Icon(Icons.check, color: Styles.accent),
+                                  const Icon(
+                                    Icons.check_rounded,
+                                    color: Styles.primaryLight,
+                                  ),
                               ],
                             ),
                           );
@@ -434,4 +459,3 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
     );
   }
 }
-
