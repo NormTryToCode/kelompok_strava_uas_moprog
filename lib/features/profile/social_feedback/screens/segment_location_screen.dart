@@ -71,8 +71,8 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
     return Scaffold(
       backgroundColor: Styles.canvas,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 88.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -86,12 +86,15 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Text(
-                    'Segmen & Koordinat GPS',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.textPrimary,
+                  const Expanded(
+                    child: Text(
+                      'Segmen & Koordinat GPS',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Styles.textPrimary,
+                      ),
                     ),
                   ),
                 ],
@@ -99,10 +102,10 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
               const SizedBox(height: 20),
               Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Styles.surface,
-                  borderRadius: BorderRadius.circular(Radii.field),
-                  border: Border.all(color: Styles.cardBorder),
+                decoration: Styles.cardDecoration(
+                  radius: Radii.card,
+                  highlighted: true,
+                  withGlow: true,
                 ),
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -110,56 +113,71 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                   children: [
                     Icon(
                       hasLocation
-                        ? Icons.my_location
-                        : Icons.location_searching,
-                      color: hasLocation ? Styles.success : Styles.accent,
+                        ? Icons.my_location_rounded
+                        : Icons.location_searching_rounded,
+                      color: hasLocation ? Styles.success : Styles.primaryLight,
                       size: 40,
                     ),
                     const SizedBox(height: 12),
                     const Text(
                       'Titik Koordinat Atlet Saat Ini',
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w700,
                         color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Lat: $lat',
+                      'Lat: ${hasLocation ? lat.toStringAsFixed(4) : '0.0000'}',
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Styles.accent,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Lng: $lng',
+                      'Lng: ${hasLocation ? lng.toStringAsFixed(4) : '0.0000'}',
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Styles.accent,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.primaryLight,
                       ),
                     ),
                     if (hasLocation) ...[
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
                       OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
+                          backgroundColor: Styles.surfaceElevated,
                           foregroundColor: Styles.textPrimary,
-                          side: const BorderSide(color: Styles.accent),
+                          side: const BorderSide(color: Styles.primaryLight),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(Radii.button),
+                          ),
                         ),
                         onPressed: _openLocationInBrowser,
                         icon: const Icon(
-                          Icons.open_in_new,
-                          size: 16,
-                          color: Styles.accent,
+                          Icons.open_in_new_rounded,
+                          size: 17,
+                          color: Styles.primaryLight,
                         ),
-                        label: const Text('Buka Koordinat di Peta Web'),
+                        label: const Text(
+                          'Buka Koordinat di Peta Web',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ],
                     if (isLoading)
                       const Padding(
-                        padding: EdgeInsets.only(top: 12.0),
-                        child: CircularProgressIndicator(color: Styles.accent),
+                        padding: EdgeInsets.only(top: 14.0),
+                        child: CircularProgressIndicator(
+                          color: Styles.primaryLight,
+                        ),
                       ),
                     if (errorMessage.isNotEmpty)
                       Padding(
@@ -168,20 +186,20 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                           errorMessage,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 13,
-                            color: Styles.accent,
+                            fontSize: 13.5,
+                            color: Styles.danger,
                           ),
                         ),
                       ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 22),
               const Text(
                 'Segmen Lari Terdekat dari Titik GPS',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16.5,
+                  fontWeight: FontWeight.w800,
                   color: Styles.textPrimary,
                 ),
               ),
@@ -191,6 +209,7 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                   'Tekan tombol navigasi di kanan bawah untuk memindai koordinat GPS Anda dan menemukan segmen lari terdekat.',
                   style: TextStyle(
                     fontSize: 14,
+                    height: 1.45,
                     color: Styles.textSecondary,
                   ),
                 )
@@ -198,75 +217,83 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
                 Column(
                   children: [
                     Container(
-                      color: Styles.surface,
-                      padding: const EdgeInsets.all(14.0),
+                      decoration: Styles.cardDecoration(radius: Radii.field),
+                      padding: const EdgeInsets.all(15.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'GBK Outer Ring Sprint 1.2K',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Styles.textPrimary,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'GBK Outer Ring Sprint 1.2K',
+                                  style: TextStyle(
+                                    fontSize: 15.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Styles.textPrimary,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Koordinat Terkunci (${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)})',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Styles.success,
+                                const SizedBox(height: 3),
+                                Text(
+                                  'Koordinat Terkunci (${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)})',
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    color: Styles.success,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: 10),
                           const Text(
                             '1,2 km',
                             style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Styles.accent,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: Styles.primaryLight,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Container(
-                      color: Styles.surface,
-                      padding: const EdgeInsets.all(14.0),
+                      decoration: Styles.cardDecoration(radius: Radii.field),
+                      padding: const EdgeInsets.all(15.0),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Sudirman Loop Fast Segment',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Styles.textPrimary,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Sudirman Loop Fast Segment',
+                                  style: TextStyle(
+                                    fontSize: 15.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Styles.textPrimary,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Elevasi 0.4% • Rute Terverifikasi GPS',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Styles.textSecondary,
+                                SizedBox(height: 3),
+                                Text(
+                                  'Elevasi 0.4% • Rute Terverifikasi GPS',
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: Styles.textSecondary,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          SizedBox(width: 10),
                           Text(
                             '3,5 km',
                             style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Styles.accent,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: Styles.primaryLight,
                             ),
                           ),
                         ],
@@ -279,12 +306,10 @@ class _SegmentLocationViewState extends State<SegmentLocationView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Styles.accent,
+        backgroundColor: Styles.primary,
+        foregroundColor: Styles.textPrimary,
         onPressed: _fetchGpsCoordinates,
-        child: const Icon(
-          Icons.navigation,
-          color: Styles.textPrimary,
-        ),
+        child: const Icon(Icons.navigation_rounded),
       ),
     );
   }
