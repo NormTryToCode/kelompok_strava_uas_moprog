@@ -40,9 +40,10 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
               color: Styles.surface,
               borderRadius: BorderRadius.circular(Radii.card),
               border: Border.all(
-                color: Styles.cardBorder,
+                color: Styles.borderStrong,
                 width: 2.0,
               ),
+              boxShadow: Styles.ambientGlow(),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Radii.card - 2),
@@ -72,7 +73,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Color.fromARGB(215, 6, 11, 20),
+                            Color.fromARGB(225, 7, 6, 12),
                           ],
                         ),
                       ),
@@ -84,15 +85,16 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             displayFirstName,
                             style: const TextStyle(
                               fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w800,
                               color: Styles.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: 3),
                           Text(
                             '${profileData.city}, ${profileData.country} • ${profileData.primarySport}',
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
                               color: Styles.textSecondary,
                             ),
                           ),
@@ -110,28 +112,37 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Styles.surface,
+                  backgroundColor: Styles.surfaceElevated,
                   foregroundColor: Styles.textPrimary,
-                  side: const BorderSide(color: Styles.cardBorder),
+                  side: const BorderSide(color: Styles.borderStrong),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0,
+                    horizontal: 18.0,
+                    vertical: 11.0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(Radii.button),
                   ),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                icon: const Icon(Icons.close, size: 18),
-                label: const Text('Tutup'),
+                icon: const Icon(Icons.close_rounded, size: 18),
+                label: const Text(
+                  'Tutup',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
               const SizedBox(width: 12),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Styles.accent,
+                  backgroundColor: Styles.primary,
                   foregroundColor: Styles.textPrimary,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 10.0,
+                    horizontal: 18.0,
+                    vertical: 11.0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(Radii.button),
                   ),
                 ),
                 onPressed: () async {
@@ -145,8 +156,11 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                     ProfileSnackbarHelper.showError(context, '$e');
                   }
                 },
-                icon: const Icon(Icons.link, size: 18),
-                label: const Text('Buka Web'),
+                icon: const Icon(Icons.link_rounded, size: 18),
+                label: const Text(
+                  'Buka Web',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
             ],
           ),
