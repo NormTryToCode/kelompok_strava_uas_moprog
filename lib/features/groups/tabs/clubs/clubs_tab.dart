@@ -15,10 +15,6 @@ import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 
 enum _ClubCategoryFilter { all, running, cycling, multisport }
 
-final _joinedPopularClubIdsProvider = StateProvider<Set<String>>(
-  (ref) => const {'club1', 'club3'},
-);
-
 class ClubsTab extends ConsumerStatefulWidget {
   const ClubsTab({super.key});
 
@@ -39,12 +35,8 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
     );
   }
 
-  void _toggleJoinPopular(SearchClub club) {
-    final current = ref.read(_joinedPopularClubIdsProvider);
-    final next = Set<String>.of(current);
-    final joining = next.add(club.id);
-    if (!joining) next.remove(club.id);
-    ref.read(_joinedPopularClubIdsProvider.notifier).state = next;
+  Future<void> _toggleJoinPopular(SearchClub club) async {
+    await ref.read(joinedPopularClubsProvider.notifier).toggle(club.id);
   }
 
   bool _matchesUserClub(Club club) {
@@ -102,7 +94,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
   Widget build(BuildContext context) {
     final clubsAsync = ref.watch(clubsProvider);
     final userClubs = clubsAsync.valueOrNull ?? const <Club>[];
-    final joinedIds = ref.watch(_joinedPopularClubIdsProvider);
+    final joinedIds = ref.watch(joinedPopularClubsProvider).valueOrNull ?? const<String>{};
 
     final joinedPopular = _popularClubs
         .where((c) => joinedIds.contains(c.id))
@@ -139,7 +131,9 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(builder: (_) => const SearchPage()),
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SearchPage(initialTab: 1),
+                  ),
                 ),
                 style: TextButton.styleFrom(
                   foregroundColor: Styles.primaryLight,
