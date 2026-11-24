@@ -35,11 +35,25 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
     );
   }
 
-  Future<void> _toggleJoinPopular(SearchClub club) async {
-    await ref.read(joinedPopularClubsProvider.notifier).toggle(club.id);
+  Future<void> _onTapJoinPopular(
+    SearchClub popular,
+    Club? existingClub,
+  ) async {
+    if (existingClub != null) {
+      await ClubDetailPage.open(context, existingClub);
+      return;
+    }
+
+    final joinedClub = Club.fromSearchClub(popular);
+    await ref.read(clubsProvider.notifier).joinClub(joinedClub);
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Joined ${popular.name}')),
+    );
   }
 
-  bool _matchesUserClub(Club club) {
+  bool _matchesFilter(Club club) {
     switch (_filter) {
       case _ClubCategoryFilter.all:
         return true;
@@ -55,20 +69,6 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
     }
   }
 
-  bool _matchesSearchClub(SearchClub club) {
-    switch (_filter) {
-      case _ClubCategoryFilter.all:
-        return true;
-      case _ClubCategoryFilter.running:
-        return club.sport == SportType.running;
-      case _ClubCategoryFilter.cycling:
-        return club.sport == SportType.cycling;
-      case _ClubCategoryFilter.multisport:
-        return club.sport != SportType.running &&
-            club.sport != SportType.cycling;
-    }
-  }
-
   String _initials(String name) {
     final words = name
         .trim()
@@ -80,32 +80,12 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
     return (words[0][0] + words[1][0]).toUpperCase();
   }
 
-  String _formatCompactMembers(int count) {
-    if (count >= 1000000) {
-      return '${(count / 1000000).toStringAsFixed(1)}M members';
-    }
-    if (count >= 1000) {
-      return '${(count / 1000).toStringAsFixed(1)}K members';
-    }
-    return count == 1 ? '1 member' : '$count members';
-  }
-
   @override
   Widget build(BuildContext context) {
     final clubsAsync = ref.watch(clubsProvider);
     final userClubs = clubsAsync.valueOrNull ?? const <Club>[];
-    final joinedIds = ref.watch(joinedPopularClubsProvider).valueOrNull ?? const<String>{};
-
-    final joinedPopular = _popularClubs
-        .where((c) => joinedIds.contains(c.id))
-        .toList();
-
-    final filteredUserClubs = userClubs.where(_matchesUserClub).toList();
-    final filteredJoinedPopular =
-        joinedPopular.where(_matchesSearchClub).toList();
-
-    final totalVisible =
-        filteredUserClubs.length + filteredJoinedPopular.length;
+    final clubsById = {for (final club in userClubs) club.id: club};
+    final visibleClubs = userClubs.where(_matchesFilter).toList();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(0, 6, 0, 28),
@@ -168,17 +148,23 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
             itemCount: _popularClubs.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (_, index) {
-              final club = _popularClubs[index];
-              final isJoined = joinedIds.contains(club.id);
+              final popular = _popularClubs[index];
+              final existing = clubsById[popular.id];
               return PopularClubCard(
-                club: club,
-                isJoined: isJoined,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => SearchClubDetailPage(club: club),
-                  ),
-                ),
-                onToggleJoin: () => _toggleJoinPopular(club),
+                club: popular,
+                isJoined: existing != null,
+                onTap: () {
+                  if (existing != null) {
+                    ClubDetailPage.open(context, existing);
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => SearchClubDetailPage(club: popular),
+                      ),
+                    );
+                  }
+                },
+                onToggleJoin: () => _onTapJoinPopular(popular, existing),
               );
             },
           ),
@@ -236,7 +222,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
         const SizedBox(height: 14),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: totalVisible == 0
+          child: visibleClubs.isEmpty
               ? _EmptyYourClubs(
                   isFiltered: _filter != _ClubCategoryFilter.all,
                   onResetFilter: () =>
@@ -247,7 +233,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: [
-                      for (var i = 0; i < filteredUserClubs.length; i++) ...[
+                      for (var i = 0; i < visibleClubs.length; i++) ...[
                         if (i > 0)
                           const Divider(
                             height: 1,
@@ -256,48 +242,17 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
                             color: Styles.divider,
                           ),
                         YourClubTile(
-                          seedId: filteredUserClubs[i].id,
-                          name: filteredUserClubs[i].name,
-                          initials: _initials(filteredUserClubs[i].name),
-                          sportLabel: filteredUserClubs[i].sport.name,
-                          locationLabel: filteredUserClubs[i].locationLabel,
-                          memberLabel: filteredUserClubs[i].memberLabel,
-                          avatarPath: filteredUserClubs[i].avatarPath,
-                          isOwner: true,
+                          seedId: visibleClubs[i].id,
+                          name: visibleClubs[i].name,
+                          initials: _initials(visibleClubs[i].name),
+                          sportLabel: visibleClubs[i].sport.name,
+                          locationLabel: visibleClubs[i].locationLabel,
+                          memberLabel: visibleClubs[i].memberLabel,
+                          avatarPath: visibleClubs[i].avatarPath,
                           onTap: () => ClubDetailPage.open(
                             context,
-                            filteredUserClubs[i],
+                            visibleClubs[i],
                           ),
-                        ),
-                      ],
-                      for (var i = 0;
-                          i < filteredJoinedPopular.length;
-                          i++) ...[
-                        if (i > 0 || filteredUserClubs.isNotEmpty)
-                          const Divider(
-                            height: 1,
-                            indent: 14,
-                            endIndent: 14,
-                            color: Styles.divider,
-                          ),
-                        YourClubTile(
-                          seedId: filteredJoinedPopular[i].id,
-                          name: filteredJoinedPopular[i].name,
-                          initials: filteredJoinedPopular[i].initials,
-                          sportLabel: filteredJoinedPopular[i].sport.label,
-                          locationLabel: filteredJoinedPopular[i].city,
-                          memberLabel: _formatCompactMembers(
-                            filteredJoinedPopular[i].memberCount + 1,
-                          ),
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => SearchClubDetailPage(
-                                club: filteredJoinedPopular[i],
-                              ),
-                            ),
-                          ),
-                          onActionTap: () =>
-                              _toggleJoinPopular(filteredJoinedPopular[i]),
                         ),
                       ],
                     ],

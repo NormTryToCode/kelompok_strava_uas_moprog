@@ -11,9 +11,7 @@ class YourClubTile extends StatelessWidget {
   final String locationLabel;
   final String memberLabel;
   final String? avatarPath;
-  final bool isOwner;
   final VoidCallback onTap;
-  final VoidCallback? onActionTap;
 
   const YourClubTile({
     super.key,
@@ -25,8 +23,6 @@ class YourClubTile extends StatelessWidget {
     required this.memberLabel,
     required this.onTap,
     this.avatarPath,
-    this.isOwner = false,
-    this.onActionTap,
   });
 
   @override
@@ -115,52 +111,25 @@ class YourClubTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            if (isOwner)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: Styles.surfaceElevated,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Styles.borderStrong),
-                ),
-                child: const Text(
-                  'Open',
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                    color: Styles.textPrimary,
-                  ),
-                ),
-              )
-            else
-              Material(
-                color: Colors.transparent,
-                child: Ink(
-                  width: 54,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    gradient: Styles.linearGradient(
-                      colors: const [Styles.primary, Styles.primaryLight],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: Styles.glow(intensity: 0.3, blur: 12),
-                  ),
-                  child: InkWell(
-                    onTap: onActionTap,
-                    borderRadius: BorderRadius.circular(10),
-                    child: const Icon(
-                      Icons.check,
-                      size: 18,
-                      color: Styles.textPrimary,
-                    ),
-                  ),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 7,
+              ),
+              decoration: BoxDecoration(
+                color: Styles.surfaceElevated,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Styles.borderStrong),
+              ),
+              child: const Text(
+                'Open',
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: Styles.textPrimary,
                 ),
               ),
+            ),
           ],
         ),
       ),

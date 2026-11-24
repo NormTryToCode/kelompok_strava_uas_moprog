@@ -29,30 +29,43 @@ class ClubOverviewPage extends ConsumerStatefulWidget {
 }
 
 class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
-  bool _deleting = false;
+  bool _processing = false;
 
-  Future<void> _onDeleteClub(Club club) async {
-    if (_deleting) return;
+  Future<void> _onDeleteOrLeaveClub(Club club) async {
+    if (_processing) return;
 
+    final isOwner = club.isOwner;
     final confirmed = await showConfirmDeleteDialog(
       context,
-      title: 'Delete club?',
-      message: '"${club.name}" will be permanently removed from your clubs.',
+      title: isOwner ? 'Delete club?' : 'Leave club?',
+      message: isOwner
+          ? '"${club.name}" will be permanently removed from your clubs.'
+          : 'You will no longer be a member of "${club.name}".',
+      confirmLabel: isOwner ? 'Delete' : 'Leave',
     );
 
     if (!confirmed || !mounted) return;
-    setState(() => _deleting = true);
+    setState(() => _processing = true);
 
     try {
-      await ref.read(clubsProvider.notifier).deleteClub(club.id);
+      final notifier = ref.read(clubsProvider.notifier);
+      if (isOwner) {
+        await notifier.deleteClub(club.id);
+      } else {
+        await notifier.leaveClub(club.id);
+      }
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } catch (_) {
       if (!mounted) return;
-      setState(() => _deleting = false);
+      setState(() => _processing = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not delete club. Please try again.'),
+        SnackBar(
+          content: Text(
+            isOwner
+                ? 'Could not delete club. Please try again.'
+                : 'Could not leave club. Please try again.',
+          ),
         ),
       );
     }
@@ -78,13 +91,14 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
       (c) => c.id == widget.club.id,
       orElse: () => widget.club,
     );
+    final isOwner = club.isOwner;
 
     return Scaffold(
       backgroundColor: Styles.canvas,
       appBar: AppBar(
         backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
-        foregroundColor: Colors.white,
+        foregroundColor: Styles.textPrimary,
         title: const Text(
           'Overview',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
@@ -95,7 +109,10 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
         children: [
           ClubOverviewSummaryCard(club: club),
           const SizedBox(height: 24),
-          SectionTitle('Members', trailing: CountPill(count: club.memberCount)),
+          SectionTitle(
+            'Members',
+            trailing: CountPill(count: club.memberCount),
+          ),
           const SizedBox(height: 12),
           ClubMembersCard(
             club: club,
@@ -121,7 +138,7 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
                         style: TextStyle(
                           fontSize: 15.5,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: Styles.textPrimary,
                         ),
                       ),
                       SizedBox(height: 2),
@@ -129,13 +146,13 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
                         'View guidelines for clubs and members',
                         style: TextStyle(
                           fontSize: 13,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right, color: Styles.surfaceHighlight),
+                Icon(Icons.chevron_right, color: Styles.textSecondary),
               ],
             ),
           ),
@@ -144,20 +161,26 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
             width: double.infinity,
             height: 54,
             child: ElevatedButton.icon(
-              onPressed: _deleting ? null : () => _onDeleteClub(club),
+              onPressed: _processing ? null : () => _onDeleteOrLeaveClub(club),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Styles.accent,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Styles.accent.withAlpha(110),
-                disabledForegroundColor: Colors.white70,
+                backgroundColor: isOwner ? Styles.danger : Styles.accent,
+                foregroundColor: Styles.textPrimary,
+                disabledBackgroundColor:
+                    (isOwner ? Styles.danger : Styles.accent).withAlpha(110),
+                disabledForegroundColor: Styles.textSecondary,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(Radii.button),
                 ),
               ),
-              icon: const Icon(Icons.delete_outline, size: 20),
+              icon: Icon(
+                isOwner ? Icons.delete_outline : Icons.logout,
+                size: 20,
+              ),
               label: Text(
-                _deleting ? 'Deleting club...' : 'Delete Club',
+                _processing
+                    ? (isOwner ? 'Deleting club...' : 'Leaving club...')
+                    : (isOwner ? 'Delete Club' : 'Leave Club'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -176,4 +199,3 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
     );
   }
 }
-

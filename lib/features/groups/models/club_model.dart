@@ -1,4 +1,5 @@
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 class Club {
   final String id;
@@ -13,6 +14,7 @@ class Club {
   final String? coverPath;
   final String? vanityUrl;
   final int memberCount;
+  final bool isOwner;
   final DateTime createdAt;
 
   const Club({
@@ -26,6 +28,7 @@ class Club {
     required this.location,
     required this.memberCount,
     required this.createdAt,
+    this.isOwner = true,
     this.avatarPath,
     this.coverPath,
     this.vanityUrl,
@@ -43,12 +46,37 @@ class Club {
       isGlobal: draft.isGlobal,
       location: draft.isGlobal ? null : draft.location,
       memberCount: 1,
+      isOwner: true,
       createdAt: now,
     );
   }
 
-  String get memberLabel =>
-      memberCount == 1 ? '1 Member' : '$memberCount Members';
+  factory Club.fromSearchClub(SearchClub source) {
+    return Club(
+      id: source.id,
+      name: source.name,
+      description:
+          'Community ${source.sport.label.toLowerCase()} club based in ${source.city}.',
+      sport: ClubSport.byId(source.sport.name),
+      types: [ClubType.option.last],
+      privacy: ClubPrivacy.public,
+      isGlobal: false,
+      location: ClubLocation(name: source.city),
+      memberCount: source.memberCount + 1,
+      isOwner: false,
+      createdAt: DateTime.now(),
+    );
+  }
+
+  String get memberLabel {
+    if (memberCount >= 1000000) {
+      return '${(memberCount / 1000000).toStringAsFixed(1)}M Members';
+    }
+    if (memberCount >= 1000) {
+      return '${(memberCount / 1000).toStringAsFixed(1)}K Members';
+    }
+    return memberCount == 1 ? '1 Member' : '$memberCount Members';
+  }
 
   String get typeLabel => types.map((t) => t.name).join(' \u00b7 ');
 
@@ -75,6 +103,7 @@ class Club {
     String? vanityUrl,
     bool clearVanityUrl = false,
     int? memberCount,
+    bool? isOwner,
     DateTime? createdAt,
   }) {
     return Club(
@@ -90,6 +119,7 @@ class Club {
       coverPath: clearCover ? null : (coverPath ?? this.coverPath),
       vanityUrl: clearVanityUrl ? null : (vanityUrl ?? this.vanityUrl),
       memberCount: memberCount ?? this.memberCount,
+      isOwner: isOwner ?? this.isOwner,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -116,6 +146,7 @@ class Club {
       'coverPath': coverPath,
       'vanityUrl': vanityUrl,
       'memberCount': memberCount,
+      'isOwner': isOwner,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -151,6 +182,7 @@ class Club {
       coverPath: json['coverPath'] as String?,
       vanityUrl: json['vanityUrl'] as String?,
       memberCount: (json['memberCount'] as num?)?.toInt() ?? 1,
+      isOwner: json['isOwner'] as bool? ?? true,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
     );
