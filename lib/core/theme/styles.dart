@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/core/extensions/gradient_extensions.dart';
 
 class Styles {
   Styles._();

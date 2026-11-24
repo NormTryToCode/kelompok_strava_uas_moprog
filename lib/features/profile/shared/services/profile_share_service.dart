@@ -16,20 +16,20 @@ class ProfileShareHelper {
   static Future<String> shareAthleteProfile(String athleteName) async {
     final String profileUrl = buildProfileUrl(athleteName);
     final String shareText =
-      'Lihat profil atlet ${AppBrand.name} $athleteName di sini: $profileUrl';
+      'Check out $athleteName\'s ${AppBrand.name} Athlete Pass: $profileUrl';
 
     await Clipboard.setData(ClipboardData(text: profileUrl));
 
     final ShareResult result = await SharePlus.instance.share(
       ShareParams(
         text: shareText,
-        subject: 'Profil ${AppBrand.name} $athleteName',
+        subject: '${AppBrand.name} Athlete Pass — $athleteName',
       ),
     );
 
     if (result.status == ShareResultStatus.success) {
-      return 'Profil $athleteName berhasil dibagikan!';
+      return 'Athlete Pass shared successfully!';
     }
-    return 'Tautan profil disalin ke papan klip';
+    return 'Profile link copied to clipboard';
   }
 }
