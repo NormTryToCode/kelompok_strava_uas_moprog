@@ -3,6 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/widgets/checkbox_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -13,8 +14,6 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
-  bool _obscurePassword = true;
-
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -78,54 +77,22 @@ class _LoginWidgetState extends State<LoginWidget> {
 
               const SizedBox(height: 24),
 
-              // Full Name Input
-              TextField(
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  hintText: "Enter your full name",
-                  prefixIcon: const Icon(Icons.person_outline),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+              const AuthTextField(
+                hintText: "Enter your full name",
+                prefixIcon: Icons.person_outline,
               ),
 
               const SizedBox(height: 14),
 
-              TextField(
-                obscureText: _obscurePassword,
-                decoration: InputDecoration(
-                  hintText: "Enter your password",
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+              const AuthTextField(
+                hintText: "Enter your password",
+                prefixIcon: Icons.lock_outline,
+                isPassword: true,
+                textInputAction: TextInputAction.done,
               ),
 
               const SizedBox(height: 8),
 
-              // Compact Checkboxes
               Theme(
                 data: Theme.of(context)
                     .copyWith(visualDensity: VisualDensity.compact),
@@ -159,7 +126,6 @@ class _LoginWidgetState extends State<LoginWidget> {
 
               const SizedBox(height: 20),
 
-              // Primary CTA: Login
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -188,7 +154,6 @@ class _LoginWidgetState extends State<LoginWidget> {
 
               const SizedBox(height: 12),
 
-              // Secondary CTA: Register
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
