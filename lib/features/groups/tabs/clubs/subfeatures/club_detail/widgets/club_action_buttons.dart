@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class ClubActionButtons extends StatelessWidget {
+  final bool canManage;
+  final bool showActivities;
+  final bool showStats;
   final VoidCallback onTap;
   final VoidCallback? onInviteTap;
   final VoidCallback? onEditDetailsTap;
@@ -13,6 +16,9 @@ class ClubActionButtons extends StatelessWidget {
   const ClubActionButtons({
     super.key,
     required this.onTap,
+    this.canManage = false,
+    this.showActivities = true,
+    this.showStats = true,
     this.onInviteTap,
     this.onEditDetailsTap,
     this.onShareTap,
@@ -23,16 +29,21 @@ class ClubActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = [
+    final items = <(IconData, String, VoidCallback)>[
       (Icons.person_add_alt, 'Invite', onInviteTap ?? onTap),
-      (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
+      if (canManage)
+        (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
       (Icons.share_outlined, 'Share', onShareTap ?? onTap),
       (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
       (Icons.info_outline, 'Overview', onOverviewTap ?? onTap),
       (Icons.article_outlined, 'Posts', onPostsTap ?? onTap),
-      (Icons.insights_outlined, 'Insights', onTap),
-      (Icons.monitor_heart_outlined, 'Activities', onTap),
-      (Icons.leaderboard_outlined, 'Stats', onTap),
+      if (canManage) ...[
+        (Icons.insights_outlined, 'Insights', onTap),
+        if (showActivities)
+          (Icons.monitor_heart_outlined, 'Activities', onTap),
+        if (showStats)
+          (Icons.leaderboard_outlined, 'Stats', onTap),
+      ],
     ];
 
     return SizedBox(
@@ -51,7 +62,7 @@ class ClubActionButtons extends StatelessWidget {
                 Material(
                   color: Styles.surface,
                   shape: const CircleBorder(
-                    side: BorderSide(color: Styles.cardBorder),
+                    side: BorderSide(color: Styles.border),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
@@ -60,7 +71,7 @@ class ClubActionButtons extends StatelessWidget {
                     child: SizedBox(
                       width: 50,
                       height: 50,
-                      child: Icon(item.$1, size: 22, color: Colors.white),
+                      child: Icon(item.$1, size: 22, color: Styles.textPrimary),
                     ),
                   ),
                 ),
@@ -73,7 +84,7 @@ class ClubActionButtons extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
               ],
@@ -84,4 +95,3 @@ class ClubActionButtons extends StatelessWidget {
     );
   }
 }
-

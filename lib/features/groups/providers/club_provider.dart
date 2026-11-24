@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_firestore_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
 
@@ -11,7 +12,8 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
 
   @override
   Future<List<Club>> build() async {
-    return _repository.getClubs();
+    final stored = await _repository.getClubs();
+    return GroupsFirestoreSeeder.seedMissingClubs(existing: stored);
   }
 
   Future<void> addClub(Club club) async {
@@ -20,8 +22,6 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     final filtered = current.where((c) => c.id != club.id).toList();
     state = AsyncData([club, ...filtered]);
   }
-
-  Future<void> joinClub(Club club) => addClub(club.copyWith(isOwner: false));
 
   Future<void> updateClub(Club updated) async {
     await _repository.updateClub(updated);
@@ -32,13 +32,50 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     ]);
   }
 
+  Future<void> joinClub(String clubId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || match.first.isJoined) return;
+
+    final updated = match.first.copyWith(
+      isJoined: true,
+      memberCount: match.first.memberCount + 1,
+    );
+    await updateClub(updated);
+  }
+
+  Future<void> leaveClub(String clubId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || match.first.isOwner) return;
+
+    final club = match.first;
+    final updated = club.copyWith(
+      isJoined: false,
+      isAdmin: false,
+      memberCount: club.memberCount > 0 ? club.memberCount - 1 : 0,
+    );
+    await updateClub(updated);
+  }
+
+  Future<void> toggleMemberAdmin(String clubId, String memberId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || !match.first.isOwner) return;
+
+    final club = match.first;
+    final nextAdmins = List<String>.of(club.adminIds);
+    if (!nextAdmins.remove(memberId)) {
+      nextAdmins.add(memberId);
+    }
+    await updateClub(club.copyWith(adminIds: nextAdmins));
+  }
+
   Future<void> deleteClub(String clubId) async {
     await _repository.deleteClub(clubId);
     final current = state.valueOrNull ?? const <Club>[];
     state = AsyncData(current.where((c) => c.id != clubId).toList());
   }
-
-  Future<void> leaveClub(String clubId) => deleteClub(clubId);
 }
 
 final clubsProvider = AsyncNotifierProvider<ClubsNotifier, List<Club>>(

@@ -8,9 +8,6 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/create_club_bar.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/popular_club_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/your_club_tile.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 
 enum _ClubCategoryFilter { all, running, cycling, multisport }
@@ -23,7 +20,6 @@ class ClubsTab extends ConsumerStatefulWidget {
 }
 
 class _ClubsTabState extends ConsumerState<ClubsTab> {
-  final List<SearchClub> _popularClubs = buildDummyClubs();
   _ClubCategoryFilter _filter = _ClubCategoryFilter.all;
 
   Future<void> _onCreateClub() async {
@@ -35,21 +31,17 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
     );
   }
 
-  Future<void> _onTapJoinPopular(
-    SearchClub popular,
-    Club? existingClub,
-  ) async {
-    if (existingClub != null) {
-      await ClubDetailPage.open(context, existingClub);
+  Future<void> _onTapPopularJoin(Club club) async {
+    if (club.isJoined) {
+      await ClubDetailPage.open(context, club);
       return;
     }
 
-    final joinedClub = Club.fromSearchClub(popular);
-    await ref.read(clubsProvider.notifier).joinClub(joinedClub);
+    await ref.read(clubsProvider.notifier).joinClub(club.id);
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Joined ${popular.name}')),
+      SnackBar(content: Text('Joined ${club.name}')),
     );
   }
 
@@ -69,23 +61,14 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
     }
   }
 
-  String _initials(String name) {
-    final words = name
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((w) => w.isNotEmpty)
-        .toList();
-    if (words.isEmpty) return '?';
-    if (words.length == 1) return words.first[0].toUpperCase();
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-
   @override
   Widget build(BuildContext context) {
     final clubsAsync = ref.watch(clubsProvider);
-    final userClubs = clubsAsync.valueOrNull ?? const <Club>[];
-    final clubsById = {for (final club in userClubs) club.id: club};
-    final visibleClubs = userClubs.where(_matchesFilter).toList();
+    final allClubs = clubsAsync.valueOrNull ?? const <Club>[];
+
+    final popularClubs = allClubs.where((c) => !c.isOwner).toList();
+    final yourClubs =
+        allClubs.where((c) => c.isJoined && _matchesFilter(c)).toList();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(0, 6, 0, 28),
@@ -140,35 +123,31 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
           ),
         ),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 232,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: _popularClubs.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (_, index) {
-              final popular = _popularClubs[index];
-              final existing = clubsById[popular.id];
-              return PopularClubCard(
-                club: popular,
-                isJoined: existing != null,
-                onTap: () {
-                  if (existing != null) {
-                    ClubDetailPage.open(context, existing);
-                  } else {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => SearchClubDetailPage(club: popular),
-                      ),
-                    );
-                  }
-                },
-                onToggleJoin: () => _onTapJoinPopular(popular, existing),
-              );
-            },
+        if (clubsAsync.isLoading && !clubsAsync.hasValue)
+          const SizedBox(
+            height: 232,
+            child: Center(
+              child: CircularProgressIndicator(color: Styles.primary),
+            ),
+          )
+        else
+          SizedBox(
+            height: 232,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: popularClubs.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 12),
+              itemBuilder: (_, index) {
+                final club = popularClubs[index];
+                return PopularClubCard(
+                  club: club,
+                  onTap: () => ClubDetailPage.open(context, club),
+                  onJoinTap: () => _onTapPopularJoin(club),
+                );
+              },
+            ),
           ),
-        ),
         const SizedBox(height: 26),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -222,7 +201,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
         const SizedBox(height: 14),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: visibleClubs.isEmpty
+          child: yourClubs.isEmpty
               ? _EmptyYourClubs(
                   isFiltered: _filter != _ClubCategoryFilter.all,
                   onResetFilter: () =>
@@ -233,7 +212,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: [
-                      for (var i = 0; i < visibleClubs.length; i++) ...[
+                      for (var i = 0; i < yourClubs.length; i++) ...[
                         if (i > 0)
                           const Divider(
                             height: 1,
@@ -242,16 +221,17 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
                             color: Styles.divider,
                           ),
                         YourClubTile(
-                          seedId: visibleClubs[i].id,
-                          name: visibleClubs[i].name,
-                          initials: _initials(visibleClubs[i].name),
-                          sportLabel: visibleClubs[i].sport.name,
-                          locationLabel: visibleClubs[i].locationLabel,
-                          memberLabel: visibleClubs[i].memberLabel,
-                          avatarPath: visibleClubs[i].avatarPath,
+                          seedId: yourClubs[i].id,
+                          name: yourClubs[i].name,
+                          initials: yourClubs[i].initials,
+                          sportLabel: yourClubs[i].sport.name,
+                          locationLabel: yourClubs[i].locationLabel,
+                          memberLabel: yourClubs[i].memberLabel,
+                          avatarPath: yourClubs[i].avatarPath,
+                          coverPath: yourClubs[i].coverPath,
                           onTap: () => ClubDetailPage.open(
                             context,
-                            visibleClubs[i],
+                            yourClubs[i],
                           ),
                         ),
                       ],
