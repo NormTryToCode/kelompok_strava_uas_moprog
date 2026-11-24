@@ -15,58 +15,69 @@ class UnsavedChangesDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Styles.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Radii.card),
+        side: const BorderSide(color: Styles.borderStrong, width: 1.2),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(22.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Perubahan Belum Disimpan',
-              style: TextStyle(fontSize: 16, color: Styles.primaryLight),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Styles.textPrimary,
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 8),
+            const Text(
+              'Simpan perubahan profil Anda sebelum meninggalkan halaman ini?',
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.4,
+                color: Styles.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 22),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                    onSave();
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 4.0,
-                    ),
-                    child: Text(
-                      'Simpan',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Styles.accent,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: () {
+                TextButton(
+                  onPressed: () {
                     Navigator.pop(context);
                     onDiscard();
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.0,
-                      vertical: 4.0,
+                  child: const Text(
+                    'Buang',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Styles.danger,
                     ),
-                    child: Text(
-                      'Buang',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Styles.accent,
-                      ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Styles.primary,
+                    foregroundColor: Styles.textPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Radii.chip),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    onSave();
+                  },
+                  child: const Text(
+                    'Simpan',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -84,18 +95,26 @@ class SavingProfileDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Dialog(
+    return Dialog(
       backgroundColor: Styles.surface,
-      child: Padding(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Radii.card),
+        side: const BorderSide(color: Styles.borderStrong, width: 1.2),
+      ),
+      child: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(color: Styles.accent),
-            SizedBox(width: 24),
+            CircularProgressIndicator(color: Styles.primaryLight),
+            SizedBox(width: 22),
             Text(
               'Menyimpan...',
-              style: TextStyle(fontSize: 16, color: Styles.primaryLight),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Styles.textPrimary,
+              ),
             ),
           ],
         ),
@@ -103,4 +122,3 @@ class SavingProfileDialog extends StatelessWidget {
     );
   }
 }
-
