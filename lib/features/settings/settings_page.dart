@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/notification_preferences_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/widgets/settings_section_label.dart';
@@ -43,13 +43,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  void _goToLogin() {
-    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-      MaterialPageRoute<void>(builder: (_) => const LoginPage()),
-      (route) => false,
-    );
-  }
-
   Future<void> _confirmLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -81,12 +74,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
     if (confirmed != true || !mounted) return;
 
+    try {
+      await ref.read(authServiceProvider).signOut();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to log out. Please try again.')),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
     final handler = widget.onLogout;
     if (handler != null) {
       handler();
       return;
     }
-    _goToLogin();
+
+    Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
   }
 
   @override
@@ -152,4 +158,3 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 }
-
