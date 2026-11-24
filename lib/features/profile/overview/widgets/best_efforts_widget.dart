@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class BestEffortsWidget extends StatelessWidget {
@@ -16,139 +17,61 @@ class BestEffortsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (viewMode == 1) {
+      final double weeklyGoalRatio = (runSessions / 4).clamp(0.0, 1.0);
       return Padding(
-        padding: const EdgeInsets.all(14.0),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              decoration: Styles.cardDecoration(radius: Radii.field),
-              padding: const EdgeInsets.all(15.0),
+              decoration: Styles.cardDecoration(
+                radius: Radii.card,
+                withGlow: true,
+              ),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Usaha Terbaik',
-                    style: TextStyle(
-                      fontSize: 16.5,
-                      fontWeight: FontWeight.w800,
-                      color: Styles.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: Styles.primaryGradient,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Icon(
-                                Icons.workspace_premium,
-                                color: Styles.canvas,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'RP 5K',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: Styles.textPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Nov 3, 2026',
-                                    style: TextStyle(
-                                      fontSize: 12.5,
-                                      color: Styles.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        '26:54',
+                      Text(
+                        'Peak Records',
                         style: TextStyle(
                           fontSize: 16.5,
                           fontWeight: FontWeight.w800,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        'ALL-TIME',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.0,
                           color: Styles.primaryLight,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 14),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Styles.surfaceElevated,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Styles.borderStrong),
-                              ),
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Icon(
-                                Icons.military_tech,
-                                color: Styles.textSecondary,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Waktu 5K tercepat ke-2',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 14.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: Styles.textPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Nov 3, 2025',
-                                    style: TextStyle(
-                                      fontSize: 12.5,
-                                      color: Styles.textSecondary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        '30:12',
-                        style: TextStyle(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w700,
-                          color: Styles.textSecondary,
-                        ),
-                      ),
-                    ],
+                  _RecordRow(
+                    icon: Icons.workspace_premium_rounded,
+                    title: '5K Personal Best',
+                    subtitle: 'Nov 3, 2026  •  5:22 /km',
+                    timeText: '26:54',
+                    isPrimary: true,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Divider(height: 1, color: Styles.divider),
+                  ),
+                  const _RecordRow(
+                    icon: Icons.military_tech_rounded,
+                    title: '2nd Fastest 5K Split',
+                    subtitle: 'Nov 3, 2025  •  6:02 /km',
+                    timeText: '30:12',
+                    isPrimary: false,
                   ),
                 ],
               ),
@@ -158,40 +81,58 @@ class BestEffortsWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                    decoration: Styles.cardDecoration(radius: Radii.field),
-                    padding: const EdgeInsets.all(14.0),
+                    decoration: Styles.cardDecoration(radius: Radii.card),
+                    padding: const EdgeInsets.all(15.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Target',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: Styles.textPrimary,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Weekly Goal',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Styles.textPrimary,
+                              ),
+                            ),
+                            Icon(
+                              Icons.flag_rounded,
+                              size: 18,
+                              color: weeklyGoalRatio >= 1.0
+                                ? Styles.success
+                                : Styles.primaryLight,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          '$runSessions / 4',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                            color: Styles.success,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        const Icon(
-                          Icons.directions_run,
-                          color: Styles.success,
-                          size: 28,
-                        ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 2),
                         const Text(
-                          'Target Berlari Mingguan',
+                          'Sessions target',
                           style: TextStyle(
-                            fontSize: 12.5,
+                            fontSize: 12,
                             color: Styles.textSecondary,
                           ),
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          '$runSessions/4 lari',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: Styles.success,
+                        const SizedBox(height: 10),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: weeklyGoalRatio,
+                            minHeight: 6,
+                            backgroundColor: Styles.canvas,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Styles.success,
+                            ),
                           ),
                         ),
                       ],
@@ -201,49 +142,52 @@ class BestEffortsWidget extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Container(
-                    decoration: Styles.cardDecoration(radius: Radii.field),
-                    padding: const EdgeInsets.all(14.0),
+                    decoration: Styles.cardDecoration(radius: Radii.card),
+                    padding: const EdgeInsets.all(15.0),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Usaha Relatif',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                            color: Styles.textPrimary,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Effort Index',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Styles.textPrimary,
+                              ),
+                            ),
+                            Icon(
+                              Icons.local_fire_department_rounded,
+                              size: 18,
+                              color: Styles.primaryLight,
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 6),
+                        SizedBox(height: 8),
                         Text(
                           '89',
                           style: TextStyle(
-                            fontSize: 21,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
                             color: Styles.primaryLight,
                           ),
                         ),
                         Text(
-                          'Nov 2 - Nov 8, 2026',
+                          'This week  •  Peak',
                           style: TextStyle(
                             fontSize: 12,
                             color: Styles.textSecondary,
                           ),
                         ),
-                        SizedBox(height: 6),
+                        SizedBox(height: 8),
                         Text(
-                          '22',
+                          'Prior week: 22 pts',
                           style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                             color: Styles.secondary,
-                          ),
-                        ),
-                        Text(
-                          'Okt 26 - Nov 1, 2026',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Styles.textSecondary,
                           ),
                         ),
                       ],
@@ -257,104 +201,130 @@ class BestEffortsWidget extends StatelessWidget {
       );
     }
 
+    const List<({String day, double height, String tag, bool highlight})>
+        weekBars = [
+      (day: 'M', height: 0.16, tag: '', highlight: false),
+      (day: 'T', height: 0.36, tag: '1.8k', highlight: false),
+      (day: 'W', height: 0.18, tag: '', highlight: false),
+      (day: 'T', height: 0.62, tag: '3.7k', highlight: true),
+      (day: 'F', height: 0.96, tag: '6.4k', highlight: true),
+      (day: 'S', height: 0.25, tag: '', highlight: false),
+      (day: 'S', height: 0.42, tag: '2.1k', highlight: false),
+    ];
+
     return Padding(
-      padding: const EdgeInsets.all(14.0),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            decoration: Styles.cardDecoration(radius: Radii.field),
-            padding: const EdgeInsets.all(15.0),
+            decoration: Styles.cardDecoration(
+              radius: Radii.card,
+              withGlow: true,
+            ),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Catatan Latihan',
-                  style: TextStyle(
-                    fontSize: 16.5,
-                    fontWeight: FontWeight.w800,
-                    color: Styles.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 6),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Nov 2 - Nov 8, 2026',
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        color: Styles.textSecondary,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '7-Day Activity Pulse',
+                          style: TextStyle(
+                            fontSize: 16.5,
+                            fontWeight: FontWeight.w800,
+                            color: Styles.textPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Nov 2 – Nov 8, 2026',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: Styles.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                     Text(
-                      '10,9 km',
+                      '10.9 km',
                       style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
                         color: Styles.primaryLight,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text('S', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                    Text('S', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                    Text('R', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                    Text('K', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                    Text('J', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                    Text('S', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                    Text('M', style: TextStyle(fontSize: 13, color: Styles.textSecondary)),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const SizedBox(width: 16),
-                    const Icon(Icons.circle, size: 12, color: Styles.success),
-                    const SizedBox(width: 16),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Styles.success,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 5,
-                      ),
-                      child: const Text(
-                        '3,7 km',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Styles.canvas,
+                const SizedBox(height: 18),
+                SizedBox(
+                  height: 112,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: weekBars.map((item) {
+                      return Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (item.tag.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Text(
+                                  item.tag,
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: item.highlight
+                                      ? Styles.primaryLight
+                                      : Styles.textSecondary,
+                                  ),
+                                ),
+                              ),
+                            Container(
+                              width: 18,
+                              height: 66 * item.height,
+                              decoration: BoxDecoration(
+                                gradient: item.highlight
+                                  ? Styles.linearGradient(
+                                    colors: const [
+                                        Styles.primaryLight,
+                                        Styles.primary,
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    )
+                                  : null,
+                                color: item.highlight
+                                  ? null
+                                  : Styles.surfaceHighlight,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: item.highlight
+                                  ? Styles.glow(intensity: 0.35, blur: 10)
+                                  : null,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              item.day,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: item.highlight
+                                  ? FontWeight.w800
+                                  : FontWeight.w500,
+                                color: item.highlight
+                                  ? Styles.textPrimary
+                                  : Styles.textSecondary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Styles.success,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      child: const Text(
-                        '6,4 km',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Styles.canvas,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+                      );
+                    }).toList(),
+                  ),
                 ),
               ],
             ),
@@ -362,20 +332,53 @@ class BestEffortsWidget extends StatelessWidget {
           const SizedBox(height: 12),
           Container(
             width: double.infinity,
-            decoration: Styles.buttonDecoration(radius: Radii.button),
-            padding: const EdgeInsets.symmetric(vertical: 13.0),
-            child: const Center(
-              child: Text(
-                'Mulai Percobaan Gratis',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: Styles.canvas,
+            decoration: Styles.cardDecoration(
+              radius: Radii.card,
+              highlighted: true,
+            ),
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: Styles.primaryGradient,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.auto_awesome_rounded,
+                    color: Styles.canvas,
+                    size: 20,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${AppBrand.name} Pro Insights',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Unlock AI pace splits & deep recovery telemetry.',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: Styles.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           Container(
             decoration: Styles.cardDecoration(radius: Radii.field),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -383,13 +386,26 @@ class BestEffortsWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Expanded(
-                  child: Text(
-                    'Tertarik berbagi masukan Anda?',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Styles.textPrimary,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Help Shape ${AppBrand.name}',
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w700,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Share thoughts on your athlete dashboard.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Styles.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -404,7 +420,7 @@ class BestEffortsWidget extends StatelessWidget {
                   ),
                   onPressed: onOpenFeedback,
                   child: const Text(
-                    'Beri Masukan',
+                    'Feedback',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -413,6 +429,79 @@ class BestEffortsWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _RecordRow extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String timeText;
+  final bool isPrimary;
+
+  const _RecordRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.timeText,
+    required this.isPrimary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: isPrimary ? Styles.primaryGradient : null,
+            color: isPrimary ? null : Styles.surfaceElevated,
+            borderRadius: BorderRadius.circular(12),
+            border: isPrimary ? null : Border.all(color: Styles.borderStrong),
+          ),
+          padding: const EdgeInsets.all(9.0),
+          child: Icon(
+            icon,
+            color: isPrimary ? Styles.canvas : Styles.textSecondary,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Styles.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  color: Styles.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          timeText,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w800,
+            color: isPrimary ? Styles.primaryLight : Styles.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }
