@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 
-class ForgetPasswordWidget extends StatefulWidget {
+class ForgetPasswordWidget extends ConsumerStatefulWidget {
   const ForgetPasswordWidget({super.key});
 
   @override
-  State<ForgetPasswordWidget> createState() => _ForgetPasswordWidgetState();
+  ConsumerState<ForgetPasswordWidget> createState() =>
+      _ForgetPasswordWidgetState();
 }
 
-class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
+class _ForgetPasswordWidgetState extends ConsumerState<ForgetPasswordWidget> {
   final TextEditingController _emailController = TextEditingController();
   bool _isSent = false;
+  bool _isLoading = false;
+
+  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   @override
   void dispose() {
@@ -20,22 +27,39 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
     super.dispose();
   }
 
-  void _handleResetPassword() {
-    final email = _emailController.text.trim();
-
-    if (email.isEmpty || !email.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please enter a valid email address."),
+  void _showErrorSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
           backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
         ),
       );
+  }
+
+  Future<void> _handleResetPassword() async {
+    FocusScope.of(context).unfocus();
+    final email = _emailController.text.trim();
+
+    if (email.isEmpty || !_emailRegex.hasMatch(email)) {
+      _showErrorSnackBar("Please enter a valid email address.");
       return;
     }
 
-    setState(() {
-      _isSent = true;
-    });
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(authServiceProvider).sendPasswordResetEmail(email);
+      if (mounted) {
+        setState(() => _isSent = true);
+      }
+    } on AuthException catch (e) {
+      _showErrorSnackBar(e.message);
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   void _goToLogin() {
@@ -86,9 +110,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                     color: Colors.white,
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
                 Text(
                   _isSent ? "Check Your Email" : "Forgot Password?",
                   textAlign: TextAlign.center,
@@ -99,9 +121,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                     letterSpacing: 0.3,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   _isSent
                       ? "We've sent a password reset link to\n${_emailController.text.trim()}. Check your spam folder if it does not appear."
@@ -114,9 +134,7 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                     height: 1.4,
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
                 if (!_isSent) ...[
                   AuthTextField(
                     controller: _emailController,
@@ -125,11 +143,9 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.done,
                   ),
-
                   const SizedBox(height: 20),
-
                   ElevatedButton(
-                    onPressed: _handleResetPassword,
+                    onPressed: _isLoading ? null : _handleResetPassword,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Styles.primaryDark,
                       foregroundColor: Colors.white,
@@ -138,13 +154,22 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      "Send Reset Link",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            "Send Reset Link",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ),
                 ] else ...[
                   ElevatedButton(
@@ -170,11 +195,9 @@ class _ForgetPasswordWidgetState extends State<ForgetPasswordWidget> {
                     ),
                   ),
                 ],
-
                 const SizedBox(height: 16),
-
                 OutlinedButton.icon(
-                  onPressed: _goToLogin,
+                  onPressed: _isLoading ? null : _goToLogin,
                   icon: const Icon(Icons.arrow_back_rounded, size: 18),
                   label: const Text(
                     "Back to Login",
