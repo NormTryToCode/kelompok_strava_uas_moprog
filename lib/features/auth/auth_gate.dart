@@ -16,7 +16,7 @@ class AuthGate extends ConsumerWidget {
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
-      error: (_, __) => Scaffold(
+      error: (_, _) => Scaffold(
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),

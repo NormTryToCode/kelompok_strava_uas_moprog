@@ -6,12 +6,16 @@ class CheckBoxWidget extends StatefulWidget {
   final String checkBoxText;
   final String? linkText;
   final VoidCallback? onLinkTap;
+  final bool? value;
+  final ValueChanged<bool>? onChanged;
 
   const CheckBoxWidget({
     super.key,
     required this.checkBoxText,
     this.linkText,
     this.onLinkTap,
+    this.value,
+    this.onChanged,
   });
 
   @override
@@ -44,14 +48,18 @@ class _CheckBoxWidgetState extends State<CheckBoxWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final checked = widget.value ?? isChecked;
+
     return Row(
       children: [
         Checkbox(
-          value: isChecked,
+          value: checked,
           onChanged: (value) {
+            final next = value ?? false;
             setState(() {
-              isChecked = value ?? false;
+              isChecked = next;
             });
+            widget.onChanged?.call(next);
           },
           activeColor: Styles.primaryDark,
           side: const BorderSide(color: Colors.white),
