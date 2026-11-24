@@ -16,7 +16,7 @@ class NotificationsPage extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppHeader(
         title: 'Notifications',
         showBackButton: true,
@@ -32,7 +32,7 @@ class NotificationsPage extends ConsumerWidget {
           ? const Center(
               child: Text(
                 'No notifications yet',
-                style: TextStyle(color: Styles.tabActive, fontSize: 18),
+                style: TextStyle(color: Styles.primaryLight, fontSize: 18),
               ),
             )
           : ListView.builder(
@@ -48,7 +48,7 @@ class NotificationsPage extends ConsumerWidget {
                     color: Styles.accent,
                     child: const Icon(
                       Icons.delete_outline,
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                     ),
                   ),
                   onDismissed: (_) {
@@ -75,3 +75,4 @@ class NotificationsPage extends ConsumerWidget {
     );
   }
 }
+

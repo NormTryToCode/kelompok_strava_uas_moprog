@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../../gear/providers/athlete_gear_provider.dart';
+import '../../shared/services/profile_url_service.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
+import '../../trophies/providers/trophy_provider.dart';
+import '../providers/profile_activity_provider.dart';
 
 class _TrophyPreviewItem {
   final String id;
@@ -17,9 +22,7 @@ class _TrophyPreviewItem {
   });
 }
 
-class LainnyaTab extends StatefulWidget {
-  final int currentActivities;
-  final Set<String> claimedTrophyIds;
+class LainnyaTab extends ConsumerStatefulWidget {
   final VoidCallback onOpenTrophyCase;
   final VoidCallback onOpenGearCatalog;
   final VoidCallback onOpenSegments;
@@ -27,8 +30,6 @@ class LainnyaTab extends StatefulWidget {
 
   const LainnyaTab({
     super.key,
-    required this.currentActivities,
-    this.claimedTrophyIds = const {},
     required this.onOpenTrophyCase,
     required this.onOpenGearCatalog,
     required this.onOpenSegments,
@@ -36,11 +37,12 @@ class LainnyaTab extends StatefulWidget {
   });
 
   @override
-  State<LainnyaTab> createState() => _LainnyaTabState();
+  ConsumerState<LainnyaTab> createState() => _LainnyaTabState();
 }
 
-class _LainnyaTabState extends State<LainnyaTab> {
+class _LainnyaTabState extends ConsumerState<LainnyaTab> {
   bool joinedChallenge = false;
+  final ProfileUrlService _urlService = ProfileUrlService();
 
   static const List<_TrophyPreviewItem> _previewItems = [
     _TrophyPreviewItem(
@@ -69,86 +71,136 @@ class _LainnyaTabState extends State<LainnyaTab> {
     ),
   ];
 
-  bool _isPreviewUnlocked(_TrophyPreviewItem item) {
-    return widget.currentActivities >= item.requiredActivities ||
-      widget.claimedTrophyIds.contains(item.id);
+  bool _isPreviewUnlocked(
+    _TrophyPreviewItem item,
+    int currentActivities,
+    Set<String> claimedTrophyIds,
+  ) {
+    return currentActivities >= item.requiredActivities ||
+      claimedTrophyIds.contains(item.id);
+  }
+
+  Future<void> _openExternalPortal() async {
+    try {
+      await _urlService.openUrl('https://www.strava.com/features');
+    } catch (e) {
+      if (!mounted) return;
+      ProfileSnackbarHelper.showError(context, '$e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final int unlockedCount = _previewItems.where(_isPreviewUnlocked).length;
+    final int currentActivities = ref.watch(runSessionsProvider);
+    final Set<String> claimedTrophyIds = ref.watch(claimedTrophiesProvider);
+    final int activeGearCount = ref.watch(activeGearCountProvider);
+
+    final int unlockedCount = _previewItems
+      .where(
+        (item) =>
+          _isPreviewUnlocked(item, currentActivities, claimedTrophyIds),
+      )
+      .length;
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _LainnyaMenuTile(
-            icon: Icons.list_alt,
+            icon: Icons.bar_chart_rounded,
             title: 'Statistik',
             onTap: widget.onOpenStatistics,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           _LainnyaMenuTile(
             icon: Icons.location_on_outlined,
             title: 'Segmen',
             onTap: widget.onOpenSegments,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           _LainnyaMenuTile(
             icon: Icons.pedal_bike,
             title: 'Perlengkapan',
             onTap: widget.onOpenGearCatalog,
-            trailingWidget: Consumer(
-              builder: (context, ref, child) {
-                final int activeCount = ref.watch(activeGearCountProvider);
-                if (activeCount == 0) {
-                  return const SizedBox.shrink();
-                }
-                return Padding(
+            trailingWidget: activeGearCount == 0
+              ? null
+              : Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Badge(
-                    backgroundColor: Styles.accent,
-                    label: Text(
-                      '$activeCount aktif',
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Styles.primary.withValues(alpha: 0.22),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Styles.primaryLight),
+                    ),
+                    child: Text(
+                      '$activeGearCount aktif',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Styles.primaryLight,
                         fontSize: 11,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
+          _LainnyaMenuTile(
+            icon: Icons.open_in_new_rounded,
+            title: 'Portal Web & Panduan ${AppBrand.name}',
+            onTap: _openExternalPortal,
+          ),
+          const SizedBox(height: 20),
           const Text(
-            "Tantangan",
+            'Tantangan',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: Styles.tabActive,
+              color: Styles.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Container(
             width: double.infinity,
-            decoration: BoxDecoration(
-              color: Styles.surface,
-              borderRadius: BorderRadius.circular(Radii.chip),
-              border: Border.all(color: Palette.cardBorder),
+            decoration: Styles.cardDecoration(
+              radius: Radii.field,
+              highlighted: true,
             ),
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(14.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Ikuti Tantangan untuk menemukan motivasi, membangun kebiasaan, dan mendapatkan hadiah.",
-                  style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                  'Ikuti Tantangan untuk menemukan motivasi, membangun kebiasaan, dan mendapatkan hadiah.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.4,
+                    color: Styles.textSecondary,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Center(
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: joinedChallenge
+                        ? Styles.success.withValues(alpha: 0.2)
+                        : Styles.primary,
+                      foregroundColor: joinedChallenge
+                        ? Styles.success
+                        : Styles.textPrimary,
+                      side: joinedChallenge
+                        ? const BorderSide(color: Styles.success)
+                        : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Radii.button),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                     onPressed: () {
                       setState(() {
                         joinedChallenge = !joinedChallenge;
@@ -156,46 +208,53 @@ class _LainnyaTabState extends State<LainnyaTab> {
                     },
                     child: Text(
                       joinedChallenge
-                        ? "Tantangan Diikuti!"
-                        : "Temukan Tantangan baru",
-                      style: const TextStyle(color: Styles.accent),
+                        ? 'Tantangan Diikuti!'
+                        : 'Temukan Tantangan Baru',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Tempat Trofi",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Tempat Trofi',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Styles.textPrimary,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "$unlockedCount dari ${_previewItems.length} tonggak utama terbuka",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: unlockedCount > 0
-                        ? Styles.active
-                        : Styles.tabInactive,
+                    const SizedBox(height: 2),
+                    Text(
+                      '$unlockedCount dari ${_previewItems.length} tonggak utama terbuka',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: unlockedCount > 0
+                          ? Styles.success
+                          : Styles.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              ElevatedButton(
+              TextButton(
                 onPressed: widget.onOpenTrophyCase,
+                style: TextButton.styleFrom(
+                  foregroundColor: Styles.primaryLight,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
                 child: const Text(
-                  "Semua trofi >",
-                  style: TextStyle(color: Styles.accent),
+                  'Semua trofi >',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -204,7 +263,11 @@ class _LainnyaTabState extends State<LainnyaTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: _previewItems.map((item) {
-              final bool isUnlocked = _isPreviewUnlocked(item);
+              final bool isUnlocked = _isPreviewUnlocked(
+                item,
+                currentActivities,
+                claimedTrophyIds,
+              );
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -215,19 +278,23 @@ class _LainnyaTabState extends State<LainnyaTab> {
                       children: [
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
                           decoration: isUnlocked
                             ? BoxDecoration(
-                                gradient: Palette.primaryGradient,
+                                gradient: Styles.primaryGradient,
                                 borderRadius:
                                   BorderRadius.circular(Radii.chip),
+                                boxShadow: Styles.glow(
+                                  intensity: 0.25,
+                                  blur: 12,
+                                ),
                               )
                             : BoxDecoration(
-                                color: Styles.surface,
+                                color: Styles.surfaceElevated,
                                 borderRadius:
                                   BorderRadius.circular(Radii.chip),
                                 border: Border.all(
-                                  color: Palette.cardBorder,
+                                  color: Styles.borderStrong,
                                 ),
                               ),
                           child: Column(
@@ -239,19 +306,19 @@ class _LainnyaTabState extends State<LainnyaTab> {
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: isUnlocked
-                                    ? Styles.background
-                                    : Styles.inactive,
+                                    ? Styles.canvas
+                                    : Styles.textSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 3),
                               Icon(
                                 isUnlocked
                                   ? Icons.emoji_events
                                   : Icons.lock_outline,
                                 size: 22,
                                 color: isUnlocked
-                                  ? Styles.background
-                                  : Styles.tabActive,
+                                  ? Styles.canvas
+                                  : Styles.primaryLight,
                               ),
                             ],
                           ),
@@ -263,10 +330,10 @@ class _LainnyaTabState extends State<LainnyaTab> {
                             fontSize: 11,
                             fontWeight: isUnlocked
                               ? FontWeight.bold
-                              : FontWeight.normal,
+                              : FontWeight.w500,
                             color: isUnlocked
-                              ? Styles.accent
-                              : Styles.tabInactive,
+                              ? Styles.primaryLight
+                              : Styles.textSecondary,
                           ),
                         ),
                       ],
@@ -311,31 +378,44 @@ class _LainnyaMenuTile extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Radii.chip),
-            border: Border.all(color: Palette.cardBorder),
+            border: Border.all(color: Styles.borderStrong),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Icon(icon, color: Styles.tabActive),
-                  const SizedBox(width: 14),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Styles.tabActive,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Styles.surfaceHighlight,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(icon, color: Styles.primaryLight, size: 19),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    Flexible(
+                      child: Text(
+                        title,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  ?trailingWidget,
+                  if (trailingWidget != null) trailingWidget!,
                   const Icon(
                     Icons.chevron_right,
-                    color: Styles.tabInactive,
+                    color: Styles.textSecondary,
                   ),
                 ],
               ),

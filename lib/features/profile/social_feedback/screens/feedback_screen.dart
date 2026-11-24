@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../edit_profile/providers/athlete_profile_provider.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
 import '../widgets/feedback_thank_you_dialog.dart';
 
-class FeedbackView extends StatefulWidget {
+class FeedbackView extends ConsumerStatefulWidget {
   final VoidCallback onSubmitFeedback;
 
   const FeedbackView({
@@ -14,10 +18,10 @@ class FeedbackView extends StatefulWidget {
   });
 
   @override
-  State<FeedbackView> createState() => _FeedbackViewState();
+  ConsumerState<FeedbackView> createState() => _FeedbackViewState();
 }
 
-class _FeedbackViewState extends State<FeedbackView> {
+class _FeedbackViewState extends ConsumerState<FeedbackView> {
   int _selectedOption = -1;
   final TextEditingController _controller = TextEditingController();
 
@@ -45,6 +49,12 @@ class _FeedbackViewState extends State<FeedbackView> {
     _loadSavedDraft();
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _loadSavedDraft() async {
     try {
       final file = await _localFile;
@@ -55,16 +65,37 @@ class _FeedbackViewState extends State<FeedbackView> {
           _controller.text = savedText;
         });
       }
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   Future<void> _handleSendFeedback() async {
     FocusManager.instance.primaryFocus?.unfocus();
+
+    final String athleteName = ref.read(athleteProfileProvider).fullName;
+    final String ratingLabel =
+      _selectedOption >= 0 ? _options[_selectedOption] : 'Tidak memilih';
+    final String comment = _controller.text.trim();
+
     try {
       final file = await _localFile;
-      await file.writeAsString(_controller.text);
+      await file.writeAsString(comment);
+    } catch (_) {}
+
+    try {
+      final String docId = 'fb_${DateTime.now().millisecondsSinceEpoch}';
+      await DatabaseService.instance.save('athlete_feedbacks', docId, {
+        'athleteName': athleteName,
+        'rating': ratingLabel,
+        'comment': comment,
+        'submittedAt': DateTime.now().toIso8601String(),
+      });
     } catch (_) {
+      if (mounted) {
+        ProfileSnackbarHelper.showInfo(
+          context,
+          'Umpan balik disimpan lokal (sedang offline).',
+        );
+      }
     }
 
     if (!mounted) return;
@@ -99,7 +130,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       onTap: widget.onSubmitFeedback,
                       child: const Icon(
                         Icons.arrow_back,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -108,7 +139,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        color: Styles.textPrimary,
                       ),
                     ),
                   ],
@@ -121,9 +152,9 @@ class _FeedbackViewState extends State<FeedbackView> {
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: (_selectedOption != -1 ||
-                              _controller.text.trim().isNotEmpty)
+                        _controller.text.trim().isNotEmpty)
                           ? Styles.accent
-                          : Styles.tabInactive,
+                          : Styles.textSecondary,
                     ),
                   ),
                 ),
@@ -135,7 +166,7 @@ class _FeedbackViewState extends State<FeedbackView> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Styles.tabActive,
+                color: Styles.textPrimary,
               ),
             ),
             const SizedBox(height: 24),
@@ -156,14 +187,14 @@ class _FeedbackViewState extends State<FeedbackView> {
                         _options[index],
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Styles.tabActive,
+                          color: Styles.textPrimary,
                         ),
                       ),
                       Icon(
                         isSelected
-                            ? Icons.radio_button_checked
-                            : Icons.radio_button_off,
-                        color: isSelected ? Styles.accent : Styles.tabActive,
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_off,
+                        color: isSelected ? Styles.accent : Styles.textPrimary,
                         size: 24,
                       ),
                     ],
@@ -176,7 +207,7 @@ class _FeedbackViewState extends State<FeedbackView> {
               "Komentar Tambahan",
               style: TextStyle(
                 fontSize: 16,
-                color: Styles.tabActive,
+                color: Styles.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -194,15 +225,15 @@ class _FeedbackViewState extends State<FeedbackView> {
                 placeholder: 'Apa yang membantu? Tidak membantu?',
                 placeholderStyle: const TextStyle(
                   fontSize: 15,
-                  color: Styles.inactive,
+                  color: Styles.textMuted,
                 ),
                 padding: EdgeInsets.zero,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
                 decoration: const BoxDecoration(
-                  color: Styles.background,
+                  color: Styles.canvas,
                 ),
               ),
             ),

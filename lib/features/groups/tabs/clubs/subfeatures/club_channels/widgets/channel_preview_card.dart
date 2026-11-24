@@ -29,7 +29,7 @@ class ChannelPreviewCard extends StatelessWidget {
         : description.trim();
     final accentColor = category == ChannelCategory.announcement
         ? Styles.accent
-        : Palette.teal;
+        : Styles.teal;
 
     return SoftCard(
       padding: const EdgeInsets.all(16),
@@ -77,7 +77,7 @@ class ChannelPreviewCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13.5,
               height: 1.35,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
           const SizedBox(height: 12),
@@ -94,3 +94,4 @@ class ChannelPreviewCard extends StatelessWidget {
     );
   }
 }
+

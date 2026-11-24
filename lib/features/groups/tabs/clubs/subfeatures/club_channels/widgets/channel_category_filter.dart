@@ -57,12 +57,12 @@ class _FilterChipItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? Palette.selectedFill : Styles.surface,
+      color: selected ? Styles.selectedFill : Styles.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Radii.chip),
         side: BorderSide(
-          color: selected ? Palette.teal : Palette.cardBorder,
+          color: selected ? Styles.teal : Styles.cardBorder,
           width: selected ? 1.5 : 1,
         ),
       ),
@@ -76,7 +76,7 @@ class _FilterChipItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: selected ? Palette.teal : Styles.tabInactive,
+                color: selected ? Styles.teal : Styles.surfaceHighlight,
               ),
               const SizedBox(width: 6),
               Text(
@@ -84,7 +84,7 @@ class _FilterChipItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
-                  color: selected ? Colors.white : Styles.tabInactive,
+                  color: selected ? Colors.white : Styles.surfaceHighlight,
                 ),
               ),
             ],
@@ -94,3 +94,4 @@ class _FilterChipItem extends StatelessWidget {
     );
   }
 }
+

@@ -31,7 +31,7 @@ class QrCodeTab extends StatelessWidget {
             const Text(
               'Your QR code',
               style: TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
@@ -63,3 +63,4 @@ class QrCodeTab extends StatelessWidget {
     );
   }
 }
+

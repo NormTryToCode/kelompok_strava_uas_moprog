@@ -34,7 +34,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Styles.badge, width: 2),
+        borderSide: BorderSide(color: Styles.primaryDark, width: 2),
       ),
     );
   }
@@ -184,7 +184,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Styles.badge,
+                    backgroundColor: Styles.primaryDark,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -210,7 +210,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Styles.badge,
+                    backgroundColor: Styles.primaryDark,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -224,21 +224,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                 ),
               ),
 
-
-
-
-              const Divider(
-                color: Colors.white,
-                thickness: 1,
-              ),
+              const Divider(color: Colors.white, thickness: 1),
 
               const SizedBox(height: 16),
 
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                   icon: const Text(
                     "G",
                     style: TextStyle(
@@ -249,10 +242,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   ),
                   label: const Text(
                     "Register With Google",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -264,8 +254,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   ),
                 ),
               ),
-
-
             ],
           ),
         ),

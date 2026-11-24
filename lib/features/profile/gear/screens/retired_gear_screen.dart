@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../../shared/utils/profile_page_route.dart';
 import '../models/athlete_gear.dart';
 import '../providers/athlete_gear_provider.dart';
 import '../widgets/gear_detail_sheet.dart';
@@ -19,15 +20,16 @@ class RetiredGearScreen extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => GearDetailSheet(
-        gearId: gear.id,
-        onEdit: (selectedGear) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => GearFormScreen(existingGear: selectedGear),
-            ),
-          );
-        },
+      builder: (_) => Theme(
+        data: buildProfileDarkTheme(),
+        child: GearDetailSheet(
+          gearId: gear.id,
+          onEdit: (selectedGear) {
+            Navigator.of(context).push(
+              buildProfileRoute(GearFormScreen(existingGear: selectedGear)),
+            );
+          },
+        ),
       ),
     );
   }
@@ -40,109 +42,110 @@ class RetiredGearScreen extends ConsumerWidget {
       .toList();
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
-        foregroundColor: Styles.tabActive,
+        backgroundColor: Styles.canvas,
+        foregroundColor: Styles.textPrimary,
+        surfaceTintColor: Colors.transparent,
         title: Text(
           category.retiredLabel,
           style: const TextStyle(
             fontSize: 19,
             fontWeight: FontWeight.bold,
-            color: Styles.tabActive,
+            color: Styles.textPrimary,
           ),
         ),
       ),
       body: SafeArea(
         child: retiredItems.isEmpty
           ? Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    category.icon,
-                    size: 48,
-                    color: Styles.inactive,
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Tidak ada perlengkapan yang dipensiunkan pada kategori ini.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Styles.tabInactive,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      category.icon,
+                      size: 48,
+                      color: Styles.textSecondary,
                     ),
-                  ),
-                ],
-              ),
-            ),
-          )
-          : ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: retiredItems.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (context, index) {
-              final gear = retiredItems[index];
-              return Material(
-                color: Styles.surface,
-                borderRadius: BorderRadius.circular(Radii.chip),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(Radii.chip),
-                  onTap: () => _openDetailSheet(context, gear),
-                  child: Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(Radii.chip),
-                      border: Border.all(color: Palette.cardBorder),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Tidak ada perlengkapan yang dipensiunkan pada kategori ini.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Styles.textSecondary,
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          category.icon,
-                          color: Styles.tabInactive,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                gear.displayName,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Styles.tabActive,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                gear.brandModelSubtitle,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Styles.tabInactive,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          gear.formattedDistance,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Styles.tabInactive,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: retiredItems.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final gear = retiredItems[index];
+                return Material(
+                  color: Styles.surface,
+                  borderRadius: BorderRadius.circular(Radii.field),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(Radii.field),
+                    onTap: () => _openDetailSheet(context, gear),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Radii.field),
+                        border: Border.all(color: Styles.borderStrong),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            category.icon,
+                            color: Styles.textSecondary,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  gear.displayName,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Styles.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  gear.brandModelSubtitle,
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    color: Styles.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            gear.formattedDistance,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Styles.primaryLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
       ),
     );
   }

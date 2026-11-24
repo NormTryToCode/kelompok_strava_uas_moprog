@@ -53,7 +53,7 @@ class _CheckBoxWidgetState extends State<CheckBoxWidget> {
               isChecked = value ?? false;
             });
           },
-          activeColor: Styles.badge,
+          activeColor: Styles.primaryDark,
           side: const BorderSide(color: Colors.white),
         ),
         Expanded(

@@ -24,7 +24,7 @@ class StepHeading extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.4,
-            color: Palette.teal,
+            color: Styles.teal,
           ),
         ),
         const SizedBox(height: 8),
@@ -44,7 +44,7 @@ class StepHeading extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               height: 1.4,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
         ],

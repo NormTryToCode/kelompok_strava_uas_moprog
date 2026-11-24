@@ -43,18 +43,15 @@ class ClubDetailHeader extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: hasCover
                   ? [
-                      Styles.background.withAlpha(120),
-                      Styles.background.withAlpha(205),
-                      Styles.background,
+                      Styles.canvas.withAlpha(120),
+                      Styles.canvas.withAlpha(205),
+                      Styles.canvas,
                     ]
-                  : const [
-                      Styles.surface,
-                      Styles.background,
-                    ],
+                  : const [Styles.surface, Styles.canvas],
               stops: hasCover ? const [0, 0.65, 1] : const [0, 1],
             ),
             border: const Border(
-              bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
+              bottom: BorderSide(color: Styles.cardBorder, width: 0.8),
             ),
           ),
           child: Column(
@@ -63,7 +60,10 @@ class ClubDetailHeader extends StatelessWidget {
                 children: [
                   _RoundButton(icon: Icons.arrow_back, onTap: onBack),
                   const Spacer(),
-                  _RoundButton(icon: Icons.settings_outlined, onTap: onSettings),
+                  _RoundButton(
+                    icon: Icons.settings_outlined,
+                    onTap: onSettings,
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -106,7 +106,7 @@ class ClubDetailHeader extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14.5,
                     height: 1.4,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
               ],
@@ -141,3 +141,4 @@ class _RoundButton extends StatelessWidget {
     );
   }
 }
+

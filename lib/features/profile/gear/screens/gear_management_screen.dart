@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../../shared/utils/profile_page_route.dart';
 import '../models/athlete_gear.dart';
 import '../providers/athlete_gear_provider.dart';
 import '../widgets/gear_detail_sheet.dart';
@@ -17,9 +18,7 @@ class GearManagementView extends ConsumerWidget {
 
   void _openAddGearScreen(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const GearFormScreen(),
-      ),
+      buildProfileRoute(const GearFormScreen()),
     );
   }
 
@@ -28,24 +27,23 @@ class GearManagementView extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => GearDetailSheet(
-        gearId: gear.id,
-        onEdit: (selectedGear) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => GearFormScreen(existingGear: selectedGear),
-            ),
-          );
-        },
+      builder: (_) => Theme(
+        data: buildProfileDarkTheme(),
+        child: GearDetailSheet(
+          gearId: gear.id,
+          onEdit: (selectedGear) {
+            Navigator.of(context).push(
+              buildProfileRoute(GearFormScreen(existingGear: selectedGear)),
+            );
+          },
+        ),
       ),
     );
   }
 
   void _openRetiredScreen(BuildContext context, GearCategory category) {
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => RetiredGearScreen(category: category),
-      ),
+      buildProfileRoute(RetiredGearScreen(category: category)),
     );
   }
 
@@ -71,7 +69,7 @@ class GearManagementView extends ConsumerWidget {
                     onPressed: onBack,
                     icon: const Icon(
                       Icons.arrow_back,
-                      color: Styles.tabActive,
+                      color: Styles.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -80,7 +78,7 @@ class GearManagementView extends ConsumerWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+                      color: Styles.textPrimary,
                     ),
                   ),
                 ],
@@ -91,224 +89,234 @@ class GearManagementView extends ConsumerWidget {
                 icon: const Icon(
                   Icons.add,
                   size: 28,
-                  color: Styles.tabActive,
+                  color: Styles.primaryLight,
                 ),
               ),
             ],
           ),
         ),
-        const Divider(height: 1, color: Styles.inactive),
+        const Divider(height: 1, color: Styles.border),
         Expanded(
           child: allGear.isEmpty
             ? _EmptyGearState(
                 onAddGear: () => _openAddGearScreen(context),
               )
             : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Styles.surface,
-                    borderRadius: BorderRadius.circular(Radii.field),
-                    border: Border.all(color: Palette.cardBorder),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Perlengkapan Aktif',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Styles.tabInactive,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '$activeTotal unit',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Styles.tabActive,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Text(
-                            'Total Jarak Terlacak',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Styles.tabInactive,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '${totalTrackedKm.toStringAsFixed(0)} km',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Styles.accent,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 18),
-                ...GearCategory.values.map((category) {
-                  final activeInCat = allGear
-                    .where(
-                      (g) => g.category == category && !g.isRetired,
-                    )
-                    .toList();
-                  final retiredInCat = allGear
-                    .where(
-                      (g) => g.category == category && g.isRetired,
-                    )
-                    .toList();
-
-                  if (activeInCat.isEmpty && retiredInCat.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: Styles.cardDecoration(
+                      radius: Radii.card,
+                      highlighted: true,
+                      withGlow: true,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  category.icon,
-                                  size: 16,
-                                  color: Styles.accent,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  category.sectionHeader,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.8,
-                                    color: Styles.tabInactive,
-                                  ),
-                                ),
-                              ],
+                            const Text(
+                              'Perlengkapan Aktif',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: Styles.textSecondary,
+                              ),
                             ),
+                            const SizedBox(height: 4),
                             Text(
-                              '${activeInCat.length}',
+                              '$activeTotal unit',
                               style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Styles.tabInactive,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: Styles.textPrimary,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        ...activeInCat.map(
-                          (gear) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: _GearListItemCard(
-                              gear: gear,
-                              onTap: () => _openDetailSheet(context, gear),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'Total Jarak Terlacak',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: Styles.textSecondary,
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${totalTrackedKm.toStringAsFixed(0)} km',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: Styles.primaryLight,
+                              ),
+                            ),
+                          ],
                         ),
-                        if (retiredInCat.isNotEmpty)
-                          Material(
-                            color: Palette.fieldFill,
-                            borderRadius: BorderRadius.circular(Radii.chip),
-                            child: InkWell(
-                              borderRadius:
-                                BorderRadius.circular(Radii.chip),
-                              onTap: () =>
-                                _openRetiredScreen(context, category),
-                              child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 14,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius:
-                                    BorderRadius.circular(Radii.chip),
-                                  border: Border.all(
-                                    color: Palette.cardBorder,
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ...GearCategory.values.map((category) {
+                    final activeInCat = allGear
+                      .where(
+                        (g) => g.category == category && !g.isRetired,
+                      )
+                      .toList();
+                    final retiredInCat = allGear
+                      .where(
+                        (g) => g.category == category && g.isRetired,
+                      )
+                      .toList();
+
+                    if (activeInCat.isEmpty && retiredInCat.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    category.icon,
+                                    size: 17,
+                                    color: Styles.primaryLight,
                                   ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      category.retiredLabel,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Styles.tabInactive,
-                                      ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    category.sectionHeader,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.9,
+                                      color: Styles.textSecondary,
                                     ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '${retiredInCat.length}',
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Styles.tabInactive,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 4),
-                                        const Icon(
-                                          Icons.chevron_right,
-                                          color: Styles.tabInactive,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                '${activeInCat.length}',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Styles.primaryLight,
                                 ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          ...activeInCat.map(
+                            (gear) => Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: _GearListItemCard(
+                                gear: gear,
+                                onTap: () => _openDetailSheet(context, gear),
                               ),
                             ),
                           ),
-                      ],
-                    ),
-                  );
-                }),
-                const SizedBox(height: 6),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Styles.accent,
-                      side: const BorderSide(color: Styles.accent),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(Radii.button),
+                          if (retiredInCat.isNotEmpty)
+                            Material(
+                              color: Styles.surfaceElevated,
+                              borderRadius: BorderRadius.circular(Radii.chip),
+                              child: InkWell(
+                                borderRadius:
+                                  BorderRadius.circular(Radii.chip),
+                                onTap: () =>
+                                  _openRetiredScreen(context, category),
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 14,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                      BorderRadius.circular(Radii.chip),
+                                    border: Border.all(
+                                      color: Styles.borderStrong,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        category.retiredLabel,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Styles.textSecondary,
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '${retiredInCat.length}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Styles.textPrimary,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Icon(
+                                            Icons.chevron_right,
+                                            color: Styles.textSecondary,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                    ),
-                    onPressed: () => _openAddGearScreen(context),
-                    icon: const Icon(Icons.add),
-                    label: const Text(
-                      'Tambahkan Perlengkapan',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                    );
+                  }),
+                  const SizedBox(height: 6),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Styles.primaryDark, Styles.primary],
+                        ),
+                        borderRadius: BorderRadius.circular(Radii.button),
+                        boxShadow: Styles.glow(intensity: 0.3, blur: 16),
+                      ),
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Styles.textPrimary,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(Radii.button),
+                          ),
+                        ),
+                        onPressed: () => _openAddGearScreen(context),
+                        icon: const Icon(Icons.add),
+                        label: const Text(
+                          'Tambahkan Perlengkapan',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
         ),
       ],
     );
@@ -329,16 +337,17 @@ class _EmptyGearState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                color: Styles.surface,
+                color: Styles.surfaceElevated,
                 shape: BoxShape.circle,
-                border: Border.all(color: Palette.cardBorder),
+                border: Border.all(color: Styles.borderStrong),
+                boxShadow: Styles.ambientGlow(),
               ),
               child: const Icon(
                 Icons.pedal_bike,
                 size: 44,
-                color: Styles.accent,
+                color: Styles.primaryLight,
               ),
             ),
             const SizedBox(height: 20),
@@ -347,26 +356,38 @@ class _EmptyGearState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
-                height: 1.4,
-                color: Styles.tabInactive,
+                height: 1.45,
+                color: Styles.textSecondary,
               ),
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Styles.accent,
-                  foregroundColor: Styles.tabActive,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: const StadiumBorder(),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Styles.primaryDark, Styles.primary],
+                  ),
+                  borderRadius: BorderRadius.circular(Radii.button),
+                  boxShadow: Styles.glow(intensity: 0.35, blur: 18),
                 ),
-                onPressed: onAddGear,
-                child: const Text(
-                  'Tambahkan Perlengkapan',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Styles.textPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Radii.button),
+                    ),
+                  ),
+                  onPressed: onAddGear,
+                  child: const Text(
+                    'Tambahkan Perlengkapan',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -393,16 +414,16 @@ class _GearListItemCard extends StatelessWidget {
 
     return Material(
       color: Styles.surface,
-      borderRadius: BorderRadius.circular(Radii.chip),
+      borderRadius: BorderRadius.circular(Radii.field),
       child: InkWell(
-        borderRadius: BorderRadius.circular(Radii.chip),
+        borderRadius: BorderRadius.circular(Radii.field),
         onTap: onTap,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Radii.chip),
-            border: Border.all(color: Palette.cardBorder),
+            borderRadius: BorderRadius.circular(Radii.field),
+            border: Border.all(color: Styles.borderStrong),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,27 +439,28 @@ class _GearListItemCard extends StatelessWidget {
                           gear.displayName,
                           style: const TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Styles.tabActive,
+                            fontWeight: FontWeight.w700,
+                            color: Styles.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 3),
                         Text(
                           gear.brandModelSubtitle,
                           style: const TextStyle(
-                            fontSize: 12,
-                            color: Styles.tabInactive,
+                            fontSize: 12.5,
+                            color: Styles.textSecondary,
                           ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 10),
                   Text(
                     gear.formattedDistance,
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Styles.tabActive,
+                      fontWeight: FontWeight.w800,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ],
@@ -450,20 +472,20 @@ class _GearListItemCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: wearRatio,
                     minHeight: 5,
-                    backgroundColor: Styles.background,
+                    backgroundColor: Styles.canvas,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      gear.isReplacementDue ? Colors.redAccent : Styles.accent,
+                      gear.isReplacementDue ? Styles.danger : Styles.primary,
                     ),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 5),
                 Text(
                   'Target maksimal: ${gear.maxDistanceKm} km',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 11.5,
                     color: gear.isReplacementDue
-                      ? Colors.redAccent
-                      : Styles.tabInactive,
+                      ? Styles.danger
+                      : Styles.textSecondary,
                   ),
                 ),
               ],

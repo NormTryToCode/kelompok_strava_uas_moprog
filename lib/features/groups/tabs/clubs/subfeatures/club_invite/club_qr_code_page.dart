@@ -11,9 +11,10 @@ class ClubQrCodePage extends StatelessWidget {
   const ClubQrCodePage({super.key, required this.club});
 
   static Future<void> open(BuildContext context, Club club) {
-    return Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(builder: (_) => ClubQrCodePage(club: club)),
-    );
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute<void>(builder: (_) => ClubQrCodePage(club: club)));
   }
 
   Future<void> _copyLink(BuildContext context) async {
@@ -31,9 +32,9 @@ class ClubQrCodePage extends StatelessWidget {
     final clubUrl = ClubShareService.clubUrl(club);
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -79,14 +80,14 @@ class ClubQrCodePage extends StatelessWidget {
                       painter: ClubQrPainter(
                         seed: clubUrl,
                         foregroundColor: Styles.accent,
-                        backgroundColor: Styles.background,
+                        backgroundColor: Styles.canvas,
                       ),
                     ),
                     Container(
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Styles.background,
+                        color: Styles.canvas,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       alignment: Alignment.center,
@@ -112,10 +113,7 @@ class ClubQrCodePage extends StatelessWidget {
                   ),
                   child: const Text(
                     'Copy Link',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                   ),
                 ),
               ],
@@ -126,3 +124,4 @@ class ClubQrCodePage extends StatelessWidget {
     );
   }
 }
+

@@ -30,19 +30,20 @@ class ProfileLabeledField extends StatelessWidget {
     final bool isSelector = onTap != null;
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Styles.background,
+          color: Styles.fieldFill,
           border: Border.all(
-            color: Styles.inactive,
+            color: Styles.borderStrong,
             width: 1.2,
           ),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(Radii.field),
         ),
         padding: const EdgeInsets.symmetric(
-          horizontal: 12.0,
-          vertical: 8.0,
+          horizontal: 14.0,
+          vertical: 10.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,25 +51,31 @@ class ProfileLabeledField extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                fontSize: 11,
-                color: Styles.tabInactive,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: Styles.textSecondary,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 5),
             if (isSelector)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    valueText ?? '',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Styles.tabActive,
+                  Expanded(
+                    child: Text(
+                      valueText ?? '',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Styles.textPrimary,
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Styles.tabActive,
+                    Icons.keyboard_arrow_down_rounded,
+                    color: Styles.primaryLight,
                     size: 20,
                   ),
                 ],
@@ -82,16 +89,17 @@ class ProfileLabeledField extends StatelessWidget {
                 inputFormatters: inputFormatters,
                 placeholderStyle: const TextStyle(
                   fontSize: 14,
-                  color: Styles.inactive,
+                  color: Styles.textMuted,
                 ),
                 padding: EdgeInsets.zero,
                 autocorrect: false,
+                cursorColor: Styles.primaryLight,
                 style: const TextStyle(
                   fontSize: 15,
-                  color: Styles.tabActive,
+                  color: Styles.textPrimary,
                 ),
                 decoration: const BoxDecoration(
-                  color: Styles.background,
+                  color: Colors.transparent,
                 ),
               ),
           ],

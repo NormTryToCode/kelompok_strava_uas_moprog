@@ -22,10 +22,10 @@ class WeeklyRunCounter extends StatelessWidget {
     final int elevationMeters = runSessions * 12;
 
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(14.0),
       child: Container(
-        color: Styles.surface,
-        padding: const EdgeInsets.all(12.0),
+        decoration: Styles.cardDecoration(radius: Radii.field, withGlow: true),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -33,25 +33,40 @@ class WeeklyRunCounter extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Minggu ini",
+                  'Minggu ini',
                   style: TextStyle(
                     fontSize: 18,
-                    color: Styles.tabActive,
+                    fontWeight: FontWeight.bold,
+                    color: Styles.textPrimary,
                   ),
                 ),
                 Row(
                   children: [
                     IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: Styles.surfaceHighlight,
+                        foregroundColor: Styles.textPrimary,
+                      ),
                       onPressed: onDecrement,
                       icon: const Icon(Icons.remove, size: 16),
                     ),
                     const SizedBox(width: 6),
                     IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: Styles.surfaceHighlight,
+                        foregroundColor: Styles.textPrimary,
+                      ),
                       onPressed: onReset,
                       icon: const Icon(Icons.exposure_zero, size: 16),
                     ),
                     const SizedBox(width: 6),
                     IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: Styles.primary,
+                        foregroundColor: Styles.textPrimary,
+                        disabledBackgroundColor: Styles.surfaceElevated,
+                        disabledForegroundColor: Styles.textMuted,
+                      ),
                       onPressed: onIncrement,
                       icon: const Icon(Icons.add, size: 16),
                     ),
@@ -59,154 +74,184 @@ class WeeklyRunCounter extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Jarak",
-                      style: TextStyle(fontSize: 12, color: Styles.tabInactive),
-                    ),
-                    Text(
-                      "$distanceKm km",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Styles.tabActive,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Jarak',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Styles.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        '$distanceKm km',
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 28),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Waktu",
-                      style: TextStyle(fontSize: 12, color: Styles.tabInactive),
-                    ),
-                    Text(
-                      "${durationMinutes}m",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Styles.tabActive,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Waktu',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Styles.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        '${durationMinutes}m',
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 28),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Kenaikan Elev",
-                      style: TextStyle(fontSize: 12, color: Styles.tabInactive),
-                    ),
-                    Text(
-                      "$elevationMeters m",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Styles.tabActive,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Kenaikan Elev',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Styles.textSecondary,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        '$elevationMeters m',
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             const Text(
-              "12 Minggu Terakhir",
-              style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+              '12 Minggu Terakhir',
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: Styles.textSecondary,
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 260,
-                      height: 1,
-                      color: Styles.inactive,
-                    ),
-                    const SizedBox(height: 22),
-                    Container(
-                      width: 260,
-                      height: 1,
-                      color: Styles.inactive,
-                    ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        ...List.generate(11, (index) {
-                          return const Padding(
-                            padding: EdgeInsets.all(3.0),
-                            child: Icon(
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: Styles.borderStrong,
+                      ),
+                      const SizedBox(height: 22),
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: Styles.borderStrong,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ...List.generate(
+                            11,
+                            (_) => const Icon(
                               Icons.circle_outlined,
-                              size: 10,
-                              color: Styles.accent,
+                              size: 11,
+                              color: Styles.primaryLight,
                             ),
-                          );
-                        }),
-                        const Icon(
-                          Icons.circle,
-                          size: 14,
-                          color: Styles.accent,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const Row(
-                      children: [
-                        SizedBox(width: 36),
-                        Text(
-                          "SEP",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Styles.tabInactive,
                           ),
-                        ),
-                        SizedBox(width: 72),
-                        Text(
-                          "OKT",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Styles.tabInactive,
+                          const Icon(
+                            Icons.circle,
+                            size: 14,
+                            color: Styles.primary,
                           ),
-                        ),
-                        SizedBox(width: 72),
-                        Text(
-                          "NOV",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Styles.tabActive,
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'SEP',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Styles.textSecondary,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          Text(
+                            'OKT',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Styles.textSecondary,
+                            ),
+                          ),
+                          Text(
+                            'NOV',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Styles.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     const Text(
-                      "6 km",
-                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                      '6 km',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Styles.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     const Text(
-                      "3 km",
-                      style: TextStyle(fontSize: 11, color: Styles.tabInactive),
+                      '3 km',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Styles.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      "$distanceKm km",
+                      '$distanceKm km',
                       style: const TextStyle(
-                        fontSize: 11,
-                        color: Styles.accent,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Styles.primaryLight,
                       ),
                     ),
                   ],
@@ -215,10 +260,14 @@ class WeeklyRunCounter extends StatelessWidget {
             ),
             if (runSessions >= 10)
               const Padding(
-                padding: EdgeInsets.all(4.0),
+                padding: EdgeInsets.only(top: 10.0),
                 child: Text(
-                  "Target Maksimal (10 Sesi) Minggu Ini Tercapai!",
-                  style: TextStyle(fontSize: 12, color: Styles.active),
+                  'Target Maksimal (10 Sesi) Minggu Ini Tercapai!',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Styles.success,
+                  ),
                 ),
               ),
           ],

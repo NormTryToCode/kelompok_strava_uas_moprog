@@ -23,7 +23,7 @@ class NotificationPreferencesPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: const AppHeader(title: 'Notifications', showBackButton: true),
       body: Theme(
         data: Theme.of(context).copyWith(switchTheme: _switchTheme),
@@ -39,7 +39,7 @@ class NotificationPreferencesPage extends ConsumerWidget {
                 title: Text(
                   pref.label,
                   style: const TextStyle(
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
                   ),
@@ -51,3 +51,4 @@ class NotificationPreferencesPage extends ConsumerWidget {
     );
   }
 }
+

@@ -56,7 +56,7 @@ class Step1SportSelection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline, size: 18, color: Palette.teal),
+                const Icon(Icons.info_outline, size: 18, color: Styles.teal),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -64,7 +64,7 @@ class Step1SportSelection extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Styles.tabInactive,
+                      color: Styles.surfaceHighlight,
                     ),
                   ),
                 ),

@@ -30,15 +30,15 @@ class ClubMembersCard extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Palette.selectedFill,
-                    border: Border.all(color: Palette.teal, width: 1.5),
+                    color: Styles.selectedFill,
+                    border: Border.all(color: Styles.teal, width: 1.5),
                   ),
                   child: const Text(
                     'Y',
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: Palette.teal,
+                      color: Styles.teal,
                     ),
                   ),
                 ),
@@ -68,10 +68,10 @@ class ClubMembersCard extends StatelessWidget {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: Palette.teal.withAlpha(30),
+                              color: Styles.teal.withAlpha(30),
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
-                                color: Palette.teal.withAlpha(110),
+                                color: Styles.teal.withAlpha(110),
                               ),
                             ),
                             child: const Text(
@@ -80,7 +80,7 @@ class ClubMembersCard extends StatelessWidget {
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 0.7,
-                                color: Palette.teal,
+                                color: Styles.teal,
                               ),
                             ),
                           ),
@@ -93,7 +93,7 @@ class ClubMembersCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -102,7 +102,7 @@ class ClubMembersCard extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: Palette.cardBorder),
+          const Divider(height: 1, color: Styles.cardBorder),
           InkWell(
             onTap: onViewAll,
             borderRadius: const BorderRadius.vertical(
@@ -122,7 +122,7 @@ class ClubMembersCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Icon(Icons.chevron_right, color: Styles.tabInactive),
+                  Icon(Icons.chevron_right, color: Styles.surfaceHighlight),
                 ],
               ),
             ),
@@ -132,3 +132,4 @@ class ClubMembersCard extends StatelessWidget {
     );
   }
 }
+

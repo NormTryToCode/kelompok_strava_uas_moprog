@@ -26,10 +26,10 @@ class StatisticsSummaryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Container(
-        decoration: BoxDecoration(
-          color: Styles.surface,
-          borderRadius: BorderRadius.circular(12.0),
-          border: Border.all(color: Styles.inactive),
+        decoration: Styles.cardDecoration(
+          radius: Radii.card,
+          highlighted: true,
+          withGlow: true,
         ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -38,47 +38,51 @@ class StatisticsSummaryCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Analitik ${stats.sportLabel}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Analitik ${stats.sportLabel}',
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: Styles.textPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Status: ${stats.athleteLevelBadge}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Styles.active,
+                      const SizedBox(height: 3),
+                      Text(
+                        'Status: ${stats.athleteLevelBadge}',
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.success,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Consumer(
                   builder: (context, ref, child) {
                     final int activeGearCount =
-                        ref.watch(activeGearCountProvider);
+                      ref.watch(activeGearCountProvider);
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0,
-                        vertical: 4.0,
+                        horizontal: 11.0,
+                        vertical: 5.0,
                       ),
                       decoration: BoxDecoration(
-                        color: Styles.background,
-                        borderRadius: BorderRadius.circular(12.0),
-                        border: Border.all(color: Styles.accent),
+                        color: Styles.canvas.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(20.0),
+                        border: Border.all(color: Styles.primaryLight),
                       ),
                       child: Text(
                         '$activeGearCount Gear Aktif',
                         style: const TextStyle(
-                          fontSize: 11,
+                          fontSize: 11.5,
                           fontWeight: FontWeight.bold,
-                          color: Styles.accent,
+                          color: Styles.primaryLight,
                         ),
                       ),
                     );
@@ -86,23 +90,27 @@ class StatisticsSummaryCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Target Tahunan (${stats.yearlyDistanceText} / ${stats.annualTargetDistance.withThousands} ${stats.distanceUnit})',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Styles.tabInactive,
+                Expanded(
+                  child: Text(
+                    'Target Tahunan (${stats.yearlyDistanceText} / ${stats.annualTargetDistance.withThousands} ${stats.distanceUnit})',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      color: Styles.textSecondary,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 Text(
                   '$percent%',
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Styles.accent,
+                    color: Styles.primaryLight,
                   ),
                 ),
               ],
@@ -111,62 +119,100 @@ class StatisticsSummaryCard extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 final double barWidth =
-                    constraints.maxWidth * stats.annualProgressRatio;
+                  constraints.maxWidth * stats.annualProgressRatio;
                 return Container(
                   width: constraints.maxWidth,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: Styles.background,
-                    borderRadius: BorderRadius.circular(4.0),
+                    color: Styles.canvas,
+                    borderRadius: BorderRadius.circular(6.0),
                   ),
                   alignment: Alignment.centerLeft,
                   child: Container(
                     width: barWidth,
                     height: 8,
                     decoration: BoxDecoration(
-                      gradient: Palette.primaryGradient,
-                      borderRadius: BorderRadius.circular(4.0),
+                      gradient: Styles.primaryGradient,
+                      borderRadius: BorderRadius.circular(6.0),
+                      boxShadow: Styles.glow(intensity: 0.35, blur: 10),
                     ),
                   ),
                 );
               },
             ),
             const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: Styles.canvas.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(Radii.chip),
+                border: Border.all(color: Styles.borderStrong),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.local_fire_department_rounded,
+                    color: Styles.primaryLight,
+                    size: 19,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Estimasi Kalori: ${stats.estimatedCaloriesBurned.withThousands} kcal',
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: Styles.textPrimary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.local_fire_department,
-                      color: Styles.accent,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Estimasi Kalori: ${stats.estimatedCaloriesBurned.withThousands} kcal',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Styles.tabActive,
-                      ),
-                    ),
-                  ],
+                const Text(
+                  'Atur Sesi Mingguan',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: Styles.textSecondary,
+                  ),
                 ),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: Styles.surfaceElevated,
+                        foregroundColor: Styles.textPrimary,
+                        minimumSize: const Size(36, 36),
+                      ),
                       onPressed: onDecrement,
-                      icon: const Icon(Icons.remove, size: 15),
+                      icon: const Icon(Icons.remove, size: 16),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: Styles.surfaceElevated,
+                        foregroundColor: Styles.textPrimary,
+                        minimumSize: const Size(36, 36),
+                      ),
                       onPressed: onReset,
-                      icon: const Icon(Icons.exposure_zero, size: 15),
+                      icon: const Icon(Icons.exposure_zero, size: 16),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     IconButton.filled(
+                      style: IconButton.styleFrom(
+                        backgroundColor: Styles.primary,
+                        foregroundColor: Styles.textPrimary,
+                        minimumSize: const Size(36, 36),
+                      ),
                       onPressed: onIncrement,
-                      icon: const Icon(Icons.add, size: 15),
+                      icon: const Icon(Icons.add, size: 16),
                     ),
                   ],
                 ),

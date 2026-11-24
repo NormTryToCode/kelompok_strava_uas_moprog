@@ -26,7 +26,7 @@ class PostCommentTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Palette.cardBorder),
+        border: Border.all(color: Styles.cardBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,15 +37,15 @@ class PostCommentTile extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Palette.selectedFill,
-              border: Border.all(color: Palette.teal.withAlpha(140)),
+              color: Styles.selectedFill,
+              border: Border.all(color: Styles.teal.withAlpha(140)),
             ),
             child: Text(
               initial,
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
-                color: Palette.teal,
+                color: Styles.teal,
               ),
             ),
           ),
@@ -70,13 +70,13 @@ class PostCommentTile extends StatelessWidget {
                     ),
                     const Text(
                       ' \u00b7 ',
-                      style: TextStyle(color: Styles.tabInactive),
+                      style: TextStyle(color: Styles.surfaceHighlight),
                     ),
                     Text(
                       comment.createdAt.timeAgo(),
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Styles.tabInactive,
+                        color: Styles.surfaceHighlight,
                       ),
                     ),
                   ],
@@ -106,7 +106,7 @@ class PostCommentTile extends StatelessWidget {
                           size: 16,
                           color: comment.isLikedByMe
                               ? Styles.accent
-                              : Styles.tabInactive,
+                              : Styles.surfaceHighlight,
                         ),
                         if (comment.likeCount > 0) ...[
                           const SizedBox(width: 5),
@@ -117,7 +117,7 @@ class PostCommentTile extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color: comment.isLikedByMe
                                   ? Styles.accent
-                                  : Styles.tabInactive,
+                                  : Styles.surfaceHighlight,
                             ),
                           ),
                         ],
@@ -137,7 +137,7 @@ class PostCommentTile extends StatelessWidget {
               icon: const Icon(
                 Icons.delete_outline,
                 size: 18,
-                color: Styles.tabInactive,
+                color: Styles.surfaceHighlight,
               ),
               tooltip: 'Delete comment',
             ),
@@ -146,3 +146,4 @@ class PostCommentTile extends StatelessWidget {
     );
   }
 }
+

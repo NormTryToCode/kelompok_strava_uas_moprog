@@ -28,27 +28,78 @@ class ProfileHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "${profileData.city}, ${profileData.country}  •  ${profileData.primarySport.toUpperCase()}",
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: Styles.accent,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Styles.surfaceHighlight,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Styles.primary.withValues(alpha: 0.45),
+                    ),
+                  ),
+                  child: Text(
+                    '${profileData.city}, ${profileData.country}  •  ${profileData.primarySport.toUpperCase()}',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Styles.primaryLight,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: onEditProfile,
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Styles.surfaceElevated,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Styles.borderStrong),
+                      ),
+                      child: const Icon(
+                        Icons.settings_outlined,
+                        color: Styles.textPrimary,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: onTapAvatar,
-                child: AthleteAvatarWidget(
-                  avatarPath: profileData.avatarPath,
-                  size: 68,
+                child: Container(
+                  padding: const EdgeInsets.all(2.5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: Styles.primaryGradient,
+                    boxShadow: Styles.glow(intensity: 0.3, blur: 14),
+                  ),
+                  child: AthleteAvatarWidget(
+                    avatarPath: profileData.avatarPath,
+                    size: 68,
+                  ),
                 ),
               ),
               const SizedBox(width: 14),
@@ -60,16 +111,16 @@ class ProfileHeaderWidget extends StatelessWidget {
                       profileData.fullName,
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
+                        fontWeight: FontWeight.w800,
+                        color: Styles.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "$activityCount aktivitas  •  ${profileData.gender} (${profileData.weightKg} kg)",
+                      '$activityCount aktivitas  •  ${profileData.gender} (${profileData.weightKg} kg)',
                       style: const TextStyle(
-                        fontSize: 14,
-                        color: Styles.tabInactive,
+                        fontSize: 13.5,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ],
@@ -83,8 +134,8 @@ class ProfileHeaderWidget extends StatelessWidget {
               child: Text(
                 profileData.bio,
                 style: const TextStyle(
-                  fontSize: 15,
-                  color: Styles.tabActive,
+                  fontSize: 14.5,
+                  color: Styles.textPrimary,
                 ),
               ),
             ),
@@ -94,53 +145,79 @@ class ProfileHeaderWidget extends StatelessWidget {
               GestureDetector(
                 onTap: onTapFollowers,
                 child: const Text(
-                  "0 pengikut",
+                  '0 pengikut',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Styles.tabActive,
+                    fontWeight: FontWeight.w600,
+                    color: Styles.secondary,
                   ),
                 ),
               ),
               const Text(
-                "  •  ",
+                '  •  ',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Styles.tabActive,
+                  color: Styles.textSecondary,
                 ),
               ),
               GestureDetector(
                 onTap: onTapFollowing,
                 child: Text(
-                  "$followingCount mengikuti",
+                  '$followingCount mengikuti',
                   style: const TextStyle(
                     fontSize: 14,
-                    color: Styles.tabActive,
+                    fontWeight: FontWeight.w600,
+                    color: Styles.secondary,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                width: 170,
-                child: ElevatedButton(
-                  onPressed: onEditProfile,
-                  child: const Text(
-                    "Edit profil",
-                    style: TextStyle(color: Styles.background),
+              Expanded(
+                child: Container(
+                  decoration: Styles.buttonDecoration(
+                    radius: Radii.button,
+                    withGlow: true,
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: onEditProfile,
+                    icon: const Icon(Icons.edit_outlined, size: 17),
+                    label: const Text(
+                      'Edit profil',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: Styles.canvas,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(Radii.button),
+                      ),
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                width: 170,
-                child: ElevatedButton(
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
                   onPressed: onShareProfile,
-                  child: const Text(
-                    "Bagikan profil",
-                    style: TextStyle(color: Styles.background),
+                  icon: const Icon(Icons.share_outlined, size: 17),
+                  label: const Text(
+                    'Bagikan profil',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Styles.surfaceElevated,
+                    foregroundColor: Styles.textPrimary,
+                    side: const BorderSide(color: Styles.borderStrong),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Radii.button),
+                    ),
                   ),
                 ),
               ),

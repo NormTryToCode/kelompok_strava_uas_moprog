@@ -23,63 +23,68 @@ class StatisticsSectionTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: double.infinity,
-          color: Styles.background,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 10.0,
-          ),
-          child: Text(
-            sectionTitle,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-              color: Styles.tabActive,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 14.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+            child: Text(
+              sectionTitle,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.9,
+                color: Styles.primaryLight,
+              ),
             ),
           ),
-        ),
-        Container(
-          width: double.infinity,
-          color: Styles.surface,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 6.0,
-          ),
-          child: Column(
-            children: List.generate(items.length, (index) {
-              final item = items[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Container(
+            width: double.infinity,
+            decoration: Styles.cardDecoration(radius: Radii.field),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 4.0,
+            ),
+            child: Column(
+              children: List.generate(items.length, (index) {
+                final item = items[index];
+                final bool isLast = index == items.length - 1;
+                return Column(
                   children: [
-                    Text(
-                      item.label,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Styles.tabActive,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item.label,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Styles.textSecondary,
+                            ),
+                          ),
+                          Text(
+                            item.value,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              color: Styles.textPrimary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      item.value,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Styles.tabActive,
-                      ),
-                    ),
+                    if (!isLast)
+                      const Divider(height: 1, color: Styles.divider),
                   ],
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

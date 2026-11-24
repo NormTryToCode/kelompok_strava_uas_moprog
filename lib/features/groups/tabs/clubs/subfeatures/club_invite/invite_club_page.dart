@@ -17,9 +17,10 @@ class InviteClubPage extends ConsumerStatefulWidget {
   const InviteClubPage({super.key, required this.club});
 
   static Future<void> open(BuildContext context, Club club) {
-    return Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(builder: (_) => InviteClubPage(club: club)),
-    );
+    return Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute<void>(builder: (_) => InviteClubPage(club: club)));
   }
 
   @override
@@ -110,9 +111,9 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
     final canInvite = _selectedIds.isNotEmpty && !_sending;
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -124,14 +125,14 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
             onPressed: canInvite ? () => _sendInvites(club, allFriends) : null,
             style: TextButton.styleFrom(
               foregroundColor: Styles.accent,
-              disabledForegroundColor: Styles.tabInactive.withAlpha(90),
+              disabledForegroundColor: Styles.surfaceHighlight.withAlpha(90),
             ),
             child: Text(
               _sending
                   ? 'SENDING'
                   : _selectedIds.isEmpty
-                      ? 'INVITE'
-                      : 'INVITE (${_selectedIds.length})',
+                  ? 'INVITE'
+                  : 'INVITE (${_selectedIds.length})',
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
@@ -177,10 +178,10 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
               style: const TextStyle(fontSize: 15.5, color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Search people who follow you',
-                hintStyle: const TextStyle(color: Styles.tabInactive),
+                hintStyle: const TextStyle(color: Styles.surfaceHighlight),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: Styles.tabInactive,
+                  color: Styles.surfaceHighlight,
                   size: 21,
                 ),
                 suffixIcon: _query.isEmpty
@@ -192,7 +193,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                         },
                         icon: const Icon(
                           Icons.close,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                           size: 19,
                         ),
                       ),
@@ -201,7 +202,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: const BorderSide(color: Palette.cardBorder),
+                  borderSide: const BorderSide(color: Styles.cardBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -213,7 +214,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
               ),
             ),
           ),
-          const Divider(height: 1, color: Palette.cardBorder),
+          const Divider(height: 1, color: Styles.cardBorder),
           Expanded(
             child: friendsAsync.when(
               loading: () => const Center(
@@ -231,12 +232,12 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                 final filtered = needle.isEmpty
                     ? friends
                     : friends
-                        .where(
-                          (f) =>
-                              f.name.toLowerCase().contains(needle) ||
-                              f.username.toLowerCase().contains(needle),
-                        )
-                        .toList();
+                          .where(
+                            (f) =>
+                                f.name.toLowerCase().contains(needle) ||
+                                f.username.toLowerCase().contains(needle),
+                          )
+                          .toList();
 
                 if (filtered.isEmpty) {
                   return Center(
@@ -249,7 +250,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 14.5,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ),
@@ -264,7 +265,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                   separatorBuilder: (_, _) => const Divider(
                     height: 1,
                     indent: 72,
-                    color: Palette.cardBorder,
+                    color: Styles.cardBorder,
                   ),
                   itemBuilder: (_, index) {
                     final friend = filtered[index];
@@ -311,7 +312,7 @@ class _QuickInviteAction extends StatelessWidget {
           Material(
             color: Styles.surface,
             shape: const CircleBorder(
-              side: BorderSide(color: Palette.cardBorder),
+              side: BorderSide(color: Styles.cardBorder),
             ),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
@@ -373,11 +374,9 @@ class _InvitableFriendTile extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: selected
-                    ? Styles.accent.withAlpha(32)
-                    : Styles.surface,
+                color: selected ? Styles.accent.withAlpha(32) : Styles.surface,
                 border: Border.all(
-                  color: selected ? Styles.accent : Palette.cardBorder,
+                  color: selected ? Styles.accent : Styles.cardBorder,
                 ),
               ),
               child: Text(
@@ -411,7 +410,7 @@ class _InvitableFriendTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Styles.tabInactive,
+                      color: Styles.surfaceHighlight,
                     ),
                   ),
                 ],
@@ -427,24 +426,22 @@ class _InvitableFriendTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Styles.surface,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Palette.cardBorder),
+                  border: Border.all(color: Styles.cardBorder),
                 ),
                 child: const Text(
                   'Invited',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Styles.tabInactive,
+                    color: Styles.surfaceHighlight,
                   ),
                 ),
               )
             else
               Icon(
-                selected
-                    ? Icons.check_circle
-                    : Icons.radio_button_unchecked,
+                selected ? Icons.check_circle : Icons.radio_button_unchecked,
                 size: 22,
-                color: selected ? Styles.accent : Styles.tabInactive,
+                color: selected ? Styles.accent : Styles.surfaceHighlight,
               ),
           ],
         ),
@@ -452,3 +449,4 @@ class _InvitableFriendTile extends StatelessWidget {
     );
   }
 }
+

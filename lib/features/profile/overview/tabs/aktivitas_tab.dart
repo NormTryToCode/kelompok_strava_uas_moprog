@@ -14,52 +14,59 @@ class AktivitasTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            color: Styles.surface,
+            decoration: Styles.cardDecoration(radius: Radii.field),
             padding: const EdgeInsets.all(14.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.timeline,
-                      color: Styles.tabActive,
-                      size: 28,
-                    ),
-                    SizedBox(width: 14),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Rekam aktivitas pertama Anda",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Styles.tabActive,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          "Saat merekam aktivitas, Anda akan\nmelihatnya di sini.",
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Styles.tabInactive,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                IconButton.filled(
-                  onPressed: onAddFirstActivity,
-                  icon: const Icon(
-                    Icons.chevron_right,
-                    color: Styles.tabActive,
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Styles.surfaceHighlight,
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  child: const Icon(
+                    Icons.timeline_rounded,
+                    color: Styles.primaryLight,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Rekam aktivitas pertama Anda',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Saat merekam aktivitas, Anda akan melihatnya di sini.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Styles.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton.filled(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Styles.primary,
+                    foregroundColor: Styles.textPrimary,
+                  ),
+                  onPressed: onAddFirstActivity,
+                  icon: const Icon(Icons.chevron_right),
                 ),
               ],
             ),
@@ -67,43 +74,52 @@ class AktivitasTab extends StatelessWidget {
           const SizedBox(height: 12),
           if (activityCount > 0)
             Container(
-              color: Styles.surface,
+              decoration: Styles.cardDecoration(
+                radius: Radii.field,
+                highlighted: true,
+              ),
               padding: const EdgeInsets.all(14.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.directions_run,
-                        color: Styles.active,
-                        size: 28,
-                      ),
-                      const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Lari Pagi Jakarta ($activityCount Sesi)",
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Styles.tabActive,
-                            ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Styles.success.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.directions_run,
+                      color: Styles.success,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Lari Pagi Jakarta ($activityCount Sesi)',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Styles.textPrimary,
                           ),
-                          Text(
-                            "Total Jarak: ${activityCount * 3} km • Waktu: ${activityCount * 20}m",
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Styles.active,
-                            ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Total Jarak: ${activityCount * 3} km • Waktu: ${activityCount * 20}m',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Styles.success,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                   const Icon(
                     Icons.check_circle,
-                    color: Styles.active,
+                    color: Styles.success,
                   ),
                 ],
               ),

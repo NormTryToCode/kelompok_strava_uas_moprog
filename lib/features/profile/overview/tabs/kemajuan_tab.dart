@@ -26,63 +26,55 @@ class KemajuanTab extends StatefulWidget {
 class _KemajuanTabState extends State<KemajuanTab> {
   int _subSection = 0;
 
+  Widget _buildChip(int index, String label) {
+    final bool isSelected = _subSection == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _subSection = index;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: isSelected ? Styles.primaryGradient : null,
+            color: isSelected ? null : Styles.surfaceElevated,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? Styles.primaryLight : Styles.borderStrong,
+            ),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: isSelected ? Styles.canvas : Styles.textPrimary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 6),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _subSection = 0;
-                  });
-                },
-                child: Text(
-                  "Berlari",
-                  style: TextStyle(
-                    color: (_subSection == 0)
-                      ? Styles.accent
-                      : Styles.background,
-                  ),
-                ),
-              ),
+              _buildChip(0, 'Berlari'),
               const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _subSection = 1;
-                  });
-                },
-                child: Text(
-                  "Usaha & Target",
-                  style: TextStyle(
-                    color: (_subSection == 1)
-                      ? Styles.accent
-                      : Styles.background,
-                  ),
-                ),
-              ),
+              _buildChip(1, 'Usaha & Target'),
               const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _subSection = 2;
-                  });
-                },
-                child: Text(
-                  "Catatan",
-                  style: TextStyle(
-                    color: (_subSection == 2)
-                      ? Styles.accent
-                      : Styles.background,
-                  ),
-                ),
-              ),
+              _buildChip(2, 'Catatan'),
             ],
           ),
         ),

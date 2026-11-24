@@ -71,14 +71,14 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
       _nameController.text.trim().isNotEmpty && _types.isNotEmpty && !_saving;
 
   Club get _previewClub => widget.club.copyWith(
-        name: _nameController.text.trim().isEmpty
-            ? widget.club.name
-            : _nameController.text.trim(),
-        avatarPath: _avatarPath,
-        clearAvatar: _avatarPath == null,
-        coverPath: _coverPath,
-        clearCover: _coverPath == null,
-      );
+    name: _nameController.text.trim().isEmpty
+        ? widget.club.name
+        : _nameController.text.trim(),
+    avatarPath: _avatarPath,
+    clearAvatar: _avatarPath == null,
+    coverPath: _coverPath,
+    clearCover: _coverPath == null,
+  );
 
   String get _locationDisplay {
     final loc = _location;
@@ -190,26 +190,32 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
     Widget? suffixIcon,
   }) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(Radii.field),
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: BorderRadius.circular(Radii.field),
+      borderSide: BorderSide(color: color, width: width),
+    );
 
     return InputDecoration(
       labelText: label,
       hintText: hint,
       prefixText: prefixText,
-      prefixStyle: const TextStyle(fontSize: 15, color: Styles.tabInactive),
-      labelStyle: const TextStyle(color: Styles.tabInactive),
-      floatingLabelStyle: const TextStyle(color: Palette.teal),
-      hintStyle: const TextStyle(color: Styles.tabInactive),
+      prefixStyle: const TextStyle(
+        fontSize: 15,
+        color: Styles.surfaceHighlight,
+      ),
+      labelStyle: const TextStyle(color: Styles.surfaceHighlight),
+      floatingLabelStyle: const TextStyle(color: Styles.teal),
+      hintStyle: const TextStyle(color: Styles.surfaceHighlight),
       alignLabelWithHint: true,
       filled: true,
-      fillColor: Palette.fieldFill,
-      counterStyle: const TextStyle(color: Styles.tabInactive, fontSize: 12),
+      fillColor: Styles.fieldFill,
+      counterStyle: const TextStyle(
+        color: Styles.surfaceHighlight,
+        fontSize: 12,
+      ),
       suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      enabledBorder: border(Palette.cardBorder, 1.2),
-      focusedBorder: border(Palette.teal, 1.8),
+      enabledBorder: border(Styles.cardBorder, 1.2),
+      focusedBorder: border(Styles.teal, 1.8),
     );
   }
 
@@ -218,7 +224,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
     final typeLabel = _types.map((t) => t.name).join(' \u00b7 ');
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: Column(
         children: [
           _Header(
@@ -247,7 +253,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                     controller: _nameController,
                     maxLength: 40,
                     textCapitalization: TextCapitalization.words,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     style: const TextStyle(fontSize: 16, color: Colors.white),
                     decoration: _inputDecoration(label: 'Club Name'),
                     onChanged: (_) => setState(() {}),
@@ -273,7 +279,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                     minLines: 3,
                     maxLines: 5,
                     textCapitalization: TextCapitalization.sentences,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     style: const TextStyle(fontSize: 15.5, color: Colors.white),
                     decoration: _inputDecoration(
                       label: 'Description',
@@ -298,7 +304,8 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                           if (i > 0) const SizedBox(width: 12),
                           Expanded(
                             child: ChoiceCard(
-                              icon: ClubPrivacy.option[i].id ==
+                              icon:
+                                  ClubPrivacy.option[i].id ==
                                       ClubPrivacy.private.id
                                   ? Icons.lock_outline
                                   : Icons.public,
@@ -318,12 +325,13 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                   _PickerField(
                     label: 'Location',
                     value: _locationDisplay,
-                    leadingIcon:
-                        _isGlobal ? Icons.public : Icons.place_outlined,
+                    leadingIcon: _isGlobal
+                        ? Icons.public
+                        : Icons.place_outlined,
                     trailing: _isGlobal
                         ? const Icon(
                             Icons.search,
-                            color: Styles.tabInactive,
+                            color: Styles.surfaceHighlight,
                             size: 20,
                           )
                         : IconButton(
@@ -332,7 +340,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                             visualDensity: VisualDensity.compact,
                             icon: const Icon(
                               Icons.cancel_outlined,
-                              color: Styles.tabInactive,
+                              color: Styles.surfaceHighlight,
                               size: 20,
                             ),
                             tooltip: 'Reset to Global',
@@ -343,7 +351,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                   TextField(
                     controller: _vanityUrlController,
                     maxLength: 32,
-                    cursorColor: Palette.teal,
+                    cursorColor: Styles.teal,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
                         RegExp(r'[a-zA-Z0-9_-]'),
@@ -363,7 +371,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                               },
                               icon: const Icon(
                                 Icons.cancel_outlined,
-                                color: Styles.tabInactive,
+                                color: Styles.surfaceHighlight,
                                 size: 20,
                               ),
                             ),
@@ -376,8 +384,8 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
           ),
           Container(
             decoration: const BoxDecoration(
-              color: Styles.background,
-              border: Border(top: BorderSide(color: Palette.cardBorder)),
+              color: Styles.canvas,
+              border: Border(top: BorderSide(color: Styles.cardBorder)),
             ),
             child: SafeArea(
               top: false,
@@ -413,9 +421,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Styles.background,
+        color: Styles.canvas,
         border: Border(
-          bottom: BorderSide(color: Palette.cardBorder, width: 0.8),
+          bottom: BorderSide(color: Styles.cardBorder, width: 0.8),
         ),
       ),
       child: SafeArea(
@@ -443,7 +451,9 @@ class _Header extends StatelessWidget {
                 onPressed: canSave ? onSave : null,
                 style: TextButton.styleFrom(
                   foregroundColor: Styles.accent,
-                  disabledForegroundColor: Styles.tabInactive.withAlpha(90),
+                  disabledForegroundColor: Styles.surfaceHighlight.withAlpha(
+                    90,
+                  ),
                 ),
                 child: Text(
                   saving ? 'SAVING' : 'SAVE',
@@ -491,16 +501,16 @@ class _PickerField extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
         ),
         Material(
-          color: Palette.fieldFill,
+          color: Styles.fieldFill,
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Radii.field),
-            side: const BorderSide(color: Palette.cardBorder, width: 1.2),
+            side: const BorderSide(color: Styles.cardBorder, width: 1.2),
           ),
           child: InkWell(
             onTap: onTap,
@@ -511,7 +521,7 @@ class _PickerField extends StatelessWidget {
                 child: Row(
                   children: [
                     if (leadingIcon != null) ...[
-                      Icon(leadingIcon, size: 20, color: Palette.teal),
+                      Icon(leadingIcon, size: 20, color: Styles.teal),
                       const SizedBox(width: 12),
                     ],
                     Expanded(
@@ -521,14 +531,16 @@ class _PickerField extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 16,
-                          color: placeholder ? Styles.tabInactive : Colors.white,
+                          color: placeholder
+                              ? Styles.surfaceHighlight
+                              : Colors.white,
                         ),
                       ),
                     ),
                     trailing ??
                         const Icon(
                           Icons.keyboard_arrow_down,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                   ],
                 ),
@@ -540,3 +552,4 @@ class _PickerField extends StatelessWidget {
     );
   }
 }
+

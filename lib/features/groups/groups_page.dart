@@ -21,7 +21,7 @@ class GroupsPage extends StatelessWidget {
       length: 3,
       initialIndex: initialTab,
       child: Scaffold(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         appBar: AppHeader(
           title: 'Groups',
           actions: [
@@ -59,3 +59,4 @@ class GroupsPage extends StatelessWidget {
     );
   }
 }
+

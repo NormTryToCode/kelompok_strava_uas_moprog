@@ -30,13 +30,10 @@ class ShareActionTile extends StatelessWidget {
               ? Image.memory(
                   target.iconBytes,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => const Icon(
-                    Icons.apps,
-                    color: Palette.teal,
-                    size: 26,
-                  ),
+                  errorBuilder: (_, _, _) =>
+                      const Icon(Icons.apps, color: Styles.teal, size: 26),
                 )
-              : const Icon(Icons.apps, color: Palette.teal, size: 26),
+              : const Icon(Icons.apps, color: Styles.teal, size: 26),
         ),
       ),
     );
@@ -58,7 +55,7 @@ class ShareActionTile extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Styles.surface,
-          border: Border.all(color: Palette.cardBorder, width: 1.2),
+          border: Border.all(color: Styles.cardBorder, width: 1.2),
         ),
         child: busy
             ? const SizedBox(
@@ -66,7 +63,7 @@ class ShareActionTile extends StatelessWidget {
                 height: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.2,
-                  color: Palette.teal,
+                  color: Styles.teal,
                 ),
               )
             : Icon(icon, color: Colors.white, size: 24),
@@ -110,3 +107,4 @@ class ShareActionTile extends StatelessWidget {
     );
   }
 }
+

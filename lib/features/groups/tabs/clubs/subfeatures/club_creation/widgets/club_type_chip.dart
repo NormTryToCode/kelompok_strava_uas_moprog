@@ -23,12 +23,12 @@ class ClubTypeChip extends StatelessWidget {
     return Opacity(
       opacity: tappable ? 1 : 0.4,
       child: Material(
-        color: selected ? Palette.selectedFill : Styles.surface,
+        color: selected ? Styles.selectedFill : Styles.surface,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Radii.chip + 2),
           side: BorderSide(
-            color: selected ? Palette.teal : Palette.cardBorder,
+            color: selected ? Styles.teal : Styles.cardBorder,
             width: selected ? 1.6 : 1,
           ),
         ),
@@ -42,7 +42,7 @@ class ClubTypeChip extends StatelessWidget {
                 Icon(
                   selected ? Icons.check : type.icon,
                   size: 18,
-                  color: selected ? Palette.teal : Styles.tabInactive,
+                  color: selected ? Styles.teal : Styles.surfaceHighlight,
                 ),
                 const SizedBox(width: 8),
                 Text(

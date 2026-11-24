@@ -4,31 +4,6 @@ import 'package:kelompok_strava_uas_moprog/core/extensions/gradient_extensions.d
 class Styles {
   Styles._();
 
-  static const background = Color(0xFF060B14);
-  static const deepTeal = Color(0xFF12403C);
-  static const champagne = Color(0xFFEFD7AB);
-  static const silver = Color(0xFFD8DADB);
-  static const accent = Color(0xFFC04E01);
-
-  static const tabActive = Colors.white;
-  static const tabInactive = silver;
-  static const divider = deepTeal;
-  static const badge = accent;
-
-  static const surface = Color(0xFF0B161E);
-  static const active = Color(0xFF8CD45B);
-  static const inactive = Color(0xFF233238);
-
-  static final gradientOrangeBright = [champagne, accent].toBottom();
-
-  static final gradientGrayToDark = [silver, background].toBottom();
-
-  static final gradientDarkDeep = [deepTeal, background].toBottom();
-}
-
-class Palette {
-  Palette._();
-
   // --- Surfaces (Obsidian Dark) ---
   static const canvas = Color(0xFF07060C);
   static const surface = Color(0xFF110E1B);
@@ -232,4 +207,3 @@ class Radii {
   static const chip = 14.0;
   static const button = 14.0;
 }
-

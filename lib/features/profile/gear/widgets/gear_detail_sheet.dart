@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
 import '../models/athlete_gear.dart';
 import '../providers/athlete_gear_provider.dart';
 
@@ -28,6 +29,9 @@ class GearDetailSheet extends ConsumerWidget {
       decoration: const BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.card)),
+        border: Border(
+          top: BorderSide(color: Styles.borderStrong, width: 1.2),
+        ),
       ),
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
       child: SingleChildScrollView(
@@ -37,10 +41,10 @@ class GearDetailSheet extends ConsumerWidget {
           children: [
             Center(
               child: Container(
-                width: 40,
+                width: 42,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Styles.inactive,
+                  color: Styles.borderStrong,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -53,15 +57,17 @@ class GearDetailSheet extends ConsumerWidget {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
-                          color: Palette.fieldFill,
+                          color: Styles.surfaceHighlight,
                           borderRadius: BorderRadius.circular(Radii.chip),
-                          border: Border.all(color: Palette.cardBorder),
+                          border: Border.all(
+                            color: Styles.primary.withValues(alpha: 0.45),
+                          ),
                         ),
                         child: Icon(
                           gear.category.icon,
-                          color: Styles.accent,
+                          color: Styles.primaryLight,
                           size: 24,
                         ),
                       ),
@@ -74,19 +80,21 @@ class GearDetailSheet extends ConsumerWidget {
                               gear.displayName,
                               style: const TextStyle(
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Styles.tabActive,
+                                fontWeight: FontWeight.w800,
+                                color: Styles.textPrimary,
                               ),
                             ),
+                            const SizedBox(height: 2),
                             Text(
                               gear.isRetired
                                 ? '${gear.category.label} • Dipensiunkan'
                                 : '${gear.category.label} • Aktif',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
                                 color: gear.isRetired
-                                  ? Styles.tabInactive
-                                  : Styles.active,
+                                  ? Styles.textSecondary
+                                  : Styles.success,
                               ),
                             ),
                           ],
@@ -97,7 +105,7 @@ class GearDetailSheet extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: Styles.tabInactive),
+                  icon: const Icon(Icons.close, color: Styles.textSecondary),
                 ),
               ],
             ),
@@ -139,9 +147,9 @@ class GearDetailSheet extends ConsumerWidget {
                 child: LinearProgressIndicator(
                   value: wearRatio,
                   minHeight: 8,
-                  backgroundColor: Styles.background,
+                  backgroundColor: Styles.canvas,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    gear.isReplacementDue ? Colors.redAccent : Styles.accent,
+                    gear.isReplacementDue ? Styles.danger : Styles.primary,
                   ),
                 ),
               ),
@@ -153,28 +161,35 @@ class GearDetailSheet extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 12,
                   color: gear.isReplacementDue
-                    ? Colors.redAccent
-                    : Styles.tabInactive,
+                    ? Styles.danger
+                    : Styles.textSecondary,
                 ),
               ),
               const SizedBox(height: 12),
             ],
             if (!gear.isRetired) ...[
               const SizedBox(height: 4),
-              Row(
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   const Text(
                     'Catat Jarak Cepat:',
-                    style: TextStyle(fontSize: 12, color: Styles.tabInactive),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: Styles.textSecondary,
+                    ),
                   ),
-                  const SizedBox(width: 10),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Styles.accent,
-                      side: const BorderSide(color: Styles.accent),
+                      backgroundColor: Styles.surfaceElevated,
+                      foregroundColor: Styles.primaryLight,
+                      side: const BorderSide(color: Styles.primary),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
+                        horizontal: 14,
+                        vertical: 6,
                       ),
                       minimumSize: Size.zero,
                     ),
@@ -183,16 +198,19 @@ class GearDetailSheet extends ConsumerWidget {
                         .read(athleteGearProvider.notifier)
                         .addDistance(gear.id, 5.0);
                     },
-                    child: const Text('+5 km'),
+                    child: const Text(
+                      '+5 km',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  const SizedBox(width: 8),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Styles.accent,
-                      side: const BorderSide(color: Styles.accent),
+                      backgroundColor: Styles.surfaceElevated,
+                      foregroundColor: Styles.primaryLight,
+                      side: const BorderSide(color: Styles.primary),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
+                        horizontal: 14,
+                        vertical: 6,
                       ),
                       minimumSize: Size.zero,
                     ),
@@ -201,11 +219,14 @@ class GearDetailSheet extends ConsumerWidget {
                         .read(athleteGearProvider.notifier)
                         .addDistance(gear.id, 25.0);
                     },
-                    child: const Text('+25 km'),
+                    child: const Text(
+                      '+25 km',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
             ],
             if (gear.notes.trim().isNotEmpty)
               _DetailRow(label: 'Catatan', value: gear.notes.trim()),
@@ -218,40 +239,45 @@ class GearDetailSheet extends ConsumerWidget {
             const SizedBox(height: 18),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Styles.accent,
-                  foregroundColor: Styles.tabActive,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(Radii.button),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Styles.primaryDark, Styles.primary],
                   ),
+                  borderRadius: BorderRadius.circular(Radii.button),
+                  boxShadow: Styles.glow(intensity: 0.35, blur: 18),
                 ),
-                onPressed: () async {
-                  await ref
-                    .read(athleteGearProvider.notifier)
-                    .toggleRetireGear(gear.id);
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Styles.surface,
-                      content: Text(
-                        gear.isRetired
-                          ? '${gear.displayName} berhasil diaktifkan kembali.'
-                          : '${gear.displayName} dipindahkan ke daftar pensiun.',
-                        style: const TextStyle(color: Styles.tabActive),
-                      ),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    foregroundColor: Styles.textPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(Radii.button),
                     ),
-                  );
-                },
-                child: Text(
-                  gear.isRetired
-                    ? 'Aktifkan Kembali ${gear.category.label}'
-                    : 'Pensiunkan ${gear.category.label}',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                  ),
+                  onPressed: () async {
+                    await ref
+                      .read(athleteGearProvider.notifier)
+                      .toggleRetireGear(gear.id);
+                    if (!context.mounted) return;
+                    Navigator.of(context).pop();
+                    ProfileSnackbarHelper.showSuccess(
+                      context,
+                      gear.isRetired
+                        ? '${gear.displayName} berhasil diaktifkan kembali.'
+                        : '${gear.displayName} dipindahkan ke daftar pensiun.',
+                    );
+                  },
+                  child: Text(
+                    gear.isRetired
+                      ? 'Aktifkan Kembali ${gear.category.label}'
+                      : 'Pensiunkan ${gear.category.label}',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -261,8 +287,9 @@ class GearDetailSheet extends ConsumerWidget {
               width: double.infinity,
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Styles.tabActive,
-                  side: const BorderSide(color: Palette.cardBorder),
+                  backgroundColor: Styles.surfaceElevated,
+                  foregroundColor: Styles.textPrimary,
+                  side: const BorderSide(color: Styles.borderStrong),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(Radii.button),
@@ -308,16 +335,17 @@ class _DetailRow extends StatelessWidget {
             label,
             style: const TextStyle(
               fontSize: 12,
-              color: Styles.tabInactive,
+              fontWeight: FontWeight.w500,
+              color: Styles.textSecondary,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Styles.tabActive,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w600,
+              color: Styles.textPrimary,
             ),
           ),
         ],

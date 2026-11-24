@@ -103,10 +103,7 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
       if (_draft.locationFilter == value) {
         _draft = _draft.copyWith(clearLocation: true);
       } else {
-        _draft = _draft.copyWith(
-          locationFilter: value,
-          clearPickedCity: true,
-        );
+        _draft = _draft.copyWith(locationFilter: value, clearPickedCity: true);
       }
     });
   }
@@ -135,9 +132,9 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         title: const Text(
@@ -200,7 +197,8 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
                     ),
                     _FilterOptionChip(
                       icon: Icons.search,
-                      label: _draft.locationFilter == EventLocationFilter.city &&
+                      label:
+                          _draft.locationFilter == EventLocationFilter.city &&
                               _draft.pickedCity != null
                           ? _draft.pickedCity!
                           : 'Pick a City',
@@ -257,7 +255,7 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     activeTrackColor: Styles.accent,
-                    inactiveTrackColor: Styles.inactive,
+                    inactiveTrackColor: Styles.surfaceHighlight,
                     thumbColor: Colors.white,
                     overlayColor: Styles.accent.withAlpha(40),
                     trackHeight: 4,
@@ -289,14 +287,14 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
                         '${_draft.minDistanceKm.round()} km',
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                       Text(
                         '${_draft.maxDistanceKm.round()} km',
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ],
@@ -307,8 +305,8 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
           ),
           Container(
             decoration: const BoxDecoration(
-              color: Styles.background,
-              border: Border(top: BorderSide(color: Palette.cardBorder)),
+              color: Styles.canvas,
+              border: Border(top: BorderSide(color: Styles.cardBorder)),
             ),
             child: SafeArea(
               top: false,
@@ -324,8 +322,8 @@ class _EventFiltersPageState extends State<EventFiltersPage> {
                             _draft = _draft.resetSecondaryFilters();
                           }),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Styles.tabInactive,
-                            side: const BorderSide(color: Palette.cardBorder),
+                            foregroundColor: Styles.surfaceHighlight,
+                            side: const BorderSide(color: Styles.cardBorder),
                             shape: const StadiumBorder(),
                           ),
                           child: const Text(
@@ -407,7 +405,7 @@ class _FilterOptionChip extends StatelessWidget {
       color: selected ? Styles.accent.withAlpha(28) : Styles.surface,
       shape: StadiumBorder(
         side: BorderSide(
-          color: selected ? Styles.accent : Palette.cardBorder,
+          color: selected ? Styles.accent : Styles.cardBorder,
           width: selected ? 1.4 : 1,
         ),
       ),
@@ -442,3 +440,4 @@ class _FilterOptionChip extends StatelessWidget {
     );
   }
 }
+

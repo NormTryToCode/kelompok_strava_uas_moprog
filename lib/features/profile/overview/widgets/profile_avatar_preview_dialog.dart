@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import '../../edit_profile/models/athlete_profile_data.dart';
+import '../../shared/services/profile_share_service.dart';
+import '../../shared/services/profile_url_service.dart';
+import '../../shared/utils/profile_snackbar_helper.dart';
 import '../../shared/widgets/custom_image_network.dart';
 
 class ProfileAvatarPreviewDialog extends StatelessWidget {
@@ -13,15 +16,16 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
   });
 
   static const String _defaultAvatarUrl =
-      'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+    'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
 
   @override
   Widget build(BuildContext context) {
     final bool hasLocalFile = profileData.avatarPath.isNotEmpty &&
-        File(profileData.avatarPath).existsSync();
+      File(profileData.avatarPath).existsSync();
     final String displayFirstName = profileData.firstName.trim().isNotEmpty
       ? profileData.firstName.trim()
       : 'Atlet';
+    final ProfileUrlService urlService = ProfileUrlService();
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -36,7 +40,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
               color: Styles.surface,
               borderRadius: BorderRadius.circular(Radii.card),
               border: Border.all(
-                color: Palette.cardBorder,
+                color: Styles.cardBorder,
                 width: 2.0,
               ),
             ),
@@ -81,7 +85,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Styles.tabActive,
+                              color: Styles.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -89,7 +93,7 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
                             '${profileData.city}, ${profileData.country} • ${profileData.primarySport}',
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Styles.tabInactive,
+                              color: Styles.textSecondary,
                             ),
                           ),
                         ],
@@ -101,21 +105,50 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Styles.surface,
-              foregroundColor: Styles.tabActive,
-              side: const BorderSide(color: Palette.cardBorder),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 10.0,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Styles.surface,
+                  foregroundColor: Styles.textPrimary,
+                  side: const BorderSide(color: Styles.cardBorder),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 10.0,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.close, size: 18),
+                label: const Text('Tutup'),
               ),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: const Icon(Icons.close, size: 18),
-            label: const Text('Tutup'),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Styles.accent,
+                  foregroundColor: Styles.textPrimary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 10.0,
+                  ),
+                ),
+                onPressed: () async {
+                  final String url = ProfileShareHelper.buildProfileUrl(
+                    profileData.fullName,
+                  );
+                  try {
+                    await urlService.openUrl(url);
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    ProfileSnackbarHelper.showError(context, '$e');
+                  }
+                },
+                icon: const Icon(Icons.link, size: 18),
+                label: const Text('Buka Web'),
+              ),
+            ],
           ),
         ],
       ),
