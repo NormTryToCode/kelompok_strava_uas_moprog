@@ -298,7 +298,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                     ),
                     FlDotData(
                       show: true,
-                      getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+                      getDotPainter: (_, _, _, _) => FlDotCirclePainter(
                         radius: 6,
                         color: Styles.textPrimary,
                         strokeWidth: 2.5,
