@@ -1,5 +1,4 @@
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 class Club {
   final String id;
@@ -15,6 +14,10 @@ class Club {
   final String? vanityUrl;
   final int memberCount;
   final bool isOwner;
+  final bool isAdmin;
+  final bool isJoined;
+  final List<String> memberIds;
+  final List<String> adminIds;
   final DateTime createdAt;
 
   const Club({
@@ -29,6 +32,10 @@ class Club {
     required this.memberCount,
     required this.createdAt,
     this.isOwner = true,
+    this.isAdmin = false,
+    this.isJoined = true,
+    this.memberIds = const [],
+    this.adminIds = const [],
     this.avatarPath,
     this.coverPath,
     this.vanityUrl,
@@ -47,25 +54,24 @@ class Club {
       location: draft.isGlobal ? null : draft.location,
       memberCount: 1,
       isOwner: true,
+      isAdmin: true,
+      isJoined: true,
       createdAt: now,
     );
   }
 
-  factory Club.fromSearchClub(SearchClub source) {
-    return Club(
-      id: source.id,
-      name: source.name,
-      description:
-          'Community ${source.sport.label.toLowerCase()} club based in ${source.city}.',
-      sport: ClubSport.byId(source.sport.name),
-      types: [ClubType.option.last],
-      privacy: ClubPrivacy.public,
-      isGlobal: false,
-      location: ClubLocation(name: source.city),
-      memberCount: source.memberCount + 1,
-      isOwner: false,
-      createdAt: DateTime.now(),
-    );
+  /// True jika user saat ini adalah pembuat klub atau sudah diangkat jadi admin.
+  bool get canManage => isOwner || isAdmin;
+
+  String get initials {
+    final words = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
+    if (words.isEmpty) return '?';
+    if (words.length == 1) return words.first[0].toUpperCase();
+    return (words[0][0] + words[1][0]).toUpperCase();
   }
 
   String get memberLabel {
@@ -104,6 +110,10 @@ class Club {
     bool clearVanityUrl = false,
     int? memberCount,
     bool? isOwner,
+    bool? isAdmin,
+    bool? isJoined,
+    List<String>? memberIds,
+    List<String>? adminIds,
     DateTime? createdAt,
   }) {
     return Club(
@@ -120,6 +130,10 @@ class Club {
       vanityUrl: clearVanityUrl ? null : (vanityUrl ?? this.vanityUrl),
       memberCount: memberCount ?? this.memberCount,
       isOwner: isOwner ?? this.isOwner,
+      isAdmin: isAdmin ?? this.isAdmin,
+      isJoined: isJoined ?? this.isJoined,
+      memberIds: memberIds ?? this.memberIds,
+      adminIds: adminIds ?? this.adminIds,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -147,6 +161,10 @@ class Club {
       'vanityUrl': vanityUrl,
       'memberCount': memberCount,
       'isOwner': isOwner,
+      'isAdmin': isAdmin,
+      'isJoined': isJoined,
+      'memberIds': memberIds,
+      'adminIds': adminIds,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -155,6 +173,7 @@ class Club {
     final typeIds =
         (json['types'] as List?)?.whereType<String>().toSet() ?? <String>{};
     final place = json['location'];
+    final isOwner = json['isOwner'] as bool? ?? true;
 
     return Club(
       id: json['id'] as String? ?? '',
@@ -182,7 +201,13 @@ class Club {
       coverPath: json['coverPath'] as String?,
       vanityUrl: json['vanityUrl'] as String?,
       memberCount: (json['memberCount'] as num?)?.toInt() ?? 1,
-      isOwner: json['isOwner'] as bool? ?? true,
+      isOwner: isOwner,
+      isAdmin: json['isAdmin'] as bool? ?? isOwner,
+      isJoined: json['isJoined'] as bool? ?? true,
+      memberIds:
+          (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [],
+      adminIds:
+          (json['adminIds'] as List?)?.whereType<String>().toList() ?? const [],
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
     );
