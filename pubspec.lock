@@ -318,6 +318,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.3.2"
+  flutter_material_design_icons:
+    dependency: "direct main"
+    description:
+      name: flutter_material_design_icons
+      sha256: "9a7b6308736e328f9ce2249c3727a56a289c915a65ebf1b1b5f237c8232e92b7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0+7447"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -864,6 +872,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.1.0"
+  phosphoricons_flutter:
+    dependency: "direct main"
+    description:
+      name: phosphoricons_flutter
+      sha256: "44e70a09de3027e40484d900089a8ee20ceade0b3cb9d39b9f3be649a9eadb20"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   platform:
     dependency: transitive
     description:

@@ -6,6 +6,7 @@ import 'package:kelompok_strava_uas_moprog/features/home/widgets/badges_section.
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/daily_stats_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/streak_chart_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/welcome_banner_widget.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/widgets/daily_challenges_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
@@ -14,7 +15,6 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -58,6 +58,10 @@ class HomePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: WelcomeBannerWidget(),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: DailyChallengeWidget(),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
