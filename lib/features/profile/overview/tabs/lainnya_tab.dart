@@ -412,7 +412,7 @@ class _LainnyaMenuTile extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (trailingWidget != null) trailingWidget!,
+                  ?trailingWidget,
                   const Icon(
                     Icons.chevron_right,
                     color: Styles.textSecondary,
