@@ -13,12 +13,7 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
   @override
   Future<List<Event>> build() async {
     final stored = await _repository.getEvents();
-    final now = DateTime.now();
-    final hasUpcoming = stored.any((e) => !e.startsAt.isBefore(now));
-    if (hasUpcoming) return stored;
-
-    await GroupsFirestoreSeeder.forceReseedEvents();
-    return GroupsFirestoreSeeder.seedEventsIfEmpty();
+    return GroupsFirestoreSeeder.seedMissingEvents(existing: stored);
   }
 
   Future<void> addEvent(Event event) async {

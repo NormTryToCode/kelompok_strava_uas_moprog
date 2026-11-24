@@ -13,9 +13,7 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
   @override
   Future<List<Club>> build() async {
     final stored = await _repository.getClubs();
-    final hasSeeded = stored.any((c) => c.id.startsWith('club'));
-    if (hasSeeded) return stored;
-    return GroupsFirestoreSeeder.seedClubsIfEmpty();
+    return GroupsFirestoreSeeder.seedMissingClubs(existing: stored);
   }
 
   Future<void> addClub(Club club) async {

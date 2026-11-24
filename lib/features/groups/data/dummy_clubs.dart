@@ -2,6 +2,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 List<Club> buildDummyGroupClubs() {
   final sourceClubs = buildDummyClubs();
@@ -26,32 +27,26 @@ List<Club> buildDummyGroupClubs() {
 }
 
 Club _toGroupClub({
-  required dynamic source,
+  required SearchClub source,
   required int index,
   required bool isOwner,
   required List<String> memberIds,
   required DateTime createdAt,
 }) {
-  final id = source.id as String;
-  final name = source.name as String;
-  final city = source.city as String;
-  final memberCount = source.memberCount as int;
-  final sportId = source.sport.name as String;
-
   return Club(
-    id: id,
-    name: name,
+    id: source.id,
+    name: source.name,
     description:
-        'Official community sessions by $name in $city. Open for athletes looking to train and connect together.',
-    sport: ClubSport.byId(sportId),
+        'Official community sessions by ${source.name} in${source.city}. Open for athletes looking to train and connect together.',
+    sport: ClubSport.byId(source.sport.name),
     types: [
       ClubType.option[index % ClubType.option.length],
       ClubType.option.last,
     ],
     privacy: ClubPrivacy.public,
     isGlobal: false,
-    location: ClubLocation(name: city, detail: 'Indonesia'),
-    memberCount: memberCount,
+    location: ClubLocation(name: source.city, detail: 'Indonesia'),
+    memberCount: source.memberCount,
     isOwner: isOwner,
     isAdmin: isOwner,
     isJoined: isOwner,
