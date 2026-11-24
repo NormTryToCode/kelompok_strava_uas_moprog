@@ -17,49 +17,49 @@ class ProfileTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Styles.canvas,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              _TabItem(
-                icon: Icons.assessment_rounded,
-                label: 'Kemajuan',
-                isActive: activeTab == 0,
-                onTap: onTapKemajuan,
-              ),
-              _TabItem(
-                icon: Icons.timeline_rounded,
-                label: 'Aktivitas',
-                isActive: activeTab == 1,
-                onTap: onTapAktivitas,
-              ),
-              _TabItem(
-                icon: Icons.menu_rounded,
-                label: 'Lainnya',
-                isActive: activeTab == 2,
-                onTap: onTapLainnya,
-              ),
-            ],
-          ),
-          Container(
-            height: 1,
-            color: Styles.border,
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Styles.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Styles.borderStrong),
+        ),
+        child: Row(
+          children: [
+            _DockPill(
+              icon: Icons.speed_rounded,
+              label: 'Pulse',
+              isActive: activeTab == 0,
+              onTap: onTapKemajuan,
+            ),
+            _DockPill(
+              icon: Icons.auto_stories_rounded,
+              label: 'Journal',
+              isActive: activeTab == 1,
+              onTap: onTapAktivitas,
+            ),
+            _DockPill(
+              icon: Icons.grid_view_rounded,
+              label: 'Vault',
+              isActive: activeTab == 2,
+              onTap: onTapLainnya,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _TabItem extends StatelessWidget {
+class _DockPill extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
 
-  const _TabItem({
+  const _DockPill({
     required this.icon,
     required this.label,
     required this.isActive,
@@ -72,34 +72,38 @@ class _TabItem extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        child: Column(
-          children: [
-            const SizedBox(height: 6),
-            Icon(
-              icon,
-              size: 22,
-              color: isActive ? Styles.primaryLight : Styles.textSecondary,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                color: isActive ? Styles.textPrimary : Styles.textSecondary,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+          decoration: BoxDecoration(
+            gradient: isActive ? Styles.primaryGradient : null,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: isActive ? Styles.glow(intensity: 0.25, blur: 12) : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: isActive ? Styles.canvas : Styles.textSecondary,
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              height: 3,
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                gradient: isActive ? Styles.primaryGradient : null,
-                color: isActive ? null : Colors.transparent,
-                borderRadius: BorderRadius.circular(2),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                    color: isActive ? Styles.canvas : Styles.textSecondary,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
