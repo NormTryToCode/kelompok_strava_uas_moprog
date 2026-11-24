@@ -11,6 +11,8 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_4_club_privacy.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_5_club_location.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_indicator.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
 class ClubCreationPage extends ConsumerStatefulWidget {
@@ -30,6 +32,8 @@ class ClubCreationPage extends ConsumerStatefulWidget {
 }
 
 class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
+  final _picker = ImagePicker();
+
   ClubCreationModel _draft = const ClubCreationModel();
   int _step = 1;
   bool _saving = false;
@@ -60,10 +64,92 @@ class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
     setState(() => _draft = _draft.copyWith(types: updated));
   }
 
-  void _onPickPhoto() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Photo upload is coming soon')),
+  Future<void> _onPickPhoto() async {
+    final hasPhoto =
+        _draft.avatarPath != null && _draft.avatarPath!.isNotEmpty;
+
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Styles.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SheetHandle(margin: EdgeInsets.only(bottom: 12)),
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library_outlined,
+                  color: Styles.primaryLight,
+                ),
+                title: const Text(
+                  'Choose from gallery',
+                  style: TextStyle(
+                    color: Styles.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () => Navigator.of(sheetContext).pop('gallery'),
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_camera_outlined,
+                  color: Styles.primaryLight,
+                ),
+                title: const Text(
+                  'Take a photo',
+                  style: TextStyle(
+                    color: Styles.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () => Navigator.of(sheetContext).pop('camera'),
+              ),
+              if (hasPhoto)
+                ListTile(
+                  leading: const Icon(
+                    Icons.delete_outline,
+                    color: Styles.danger,
+                  ),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(
+                      color: Styles.danger,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () => Navigator.of(sheetContext).pop('remove'),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
+
+    if (action == null || !mounted) return;
+    if (action == 'remove') {
+      setState(() => _draft = _draft.copyWith(clearAvatar: true));
+      return;
+    }
+
+    try {
+      final picked = await _picker.pickImage(
+        source: action == 'camera' ? ImageSource.camera : ImageSource.gallery,
+        maxWidth: 1024,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+      setState(() => _draft = _draft.copyWith(avatarPath: picked.path));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not pick photo right now.')),
+      );
+    }
   }
 
   Future<void> _onPickLocation() async {
@@ -90,6 +176,7 @@ class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
         return Step3ClubDetails(
           name: _draft.name,
           description: _draft.description,
+          avatarPath: _draft.avatarPath,
           onNameChanged: (value) =>
               setState(() => _draft = _draft.copyWith(name: value)),
           onDescriptionChanged: (value) =>

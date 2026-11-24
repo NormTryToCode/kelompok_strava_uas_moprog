@@ -57,6 +57,7 @@ class Club {
       isAdmin: true,
       isJoined: true,
       createdAt: now,
+      avatarPath: draft.avatarPath,
     );
   }
 

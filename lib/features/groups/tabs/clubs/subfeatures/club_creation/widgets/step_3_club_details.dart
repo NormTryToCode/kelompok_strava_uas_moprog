@@ -7,6 +7,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dar
 class Step3ClubDetails extends StatelessWidget {
   final String name;
   final String description;
+  final String? avatarPath;
   final ValueChanged<String> onNameChanged;
   final ValueChanged<String> onDescriptionChanged;
   final VoidCallback onPickPhoto;
@@ -18,6 +19,7 @@ class Step3ClubDetails extends StatelessWidget {
     required this.onNameChanged,
     required this.onDescriptionChanged,
     required this.onPickPhoto,
+    this.avatarPath,
   });
 
   InputDecoration _decoration(String label) {
@@ -54,7 +56,12 @@ class Step3ClubDetails extends StatelessWidget {
             subtitle: 'Add a name, a photo, and a short description.',
           ),
           const SizedBox(height: 28),
-          Center(child: ClubPhotoPicker(onTap: onPickPhoto)),
+          Center(
+            child: ClubPhotoPicker(
+              imagePath: avatarPath,
+              onTap: onPickPhoto,
+            ),
+          ),
           const SizedBox(height: 28),
           TextFormField(
             initialValue: name,
