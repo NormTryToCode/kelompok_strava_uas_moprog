@@ -17,6 +17,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_share/share_club_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_invite/invite_club_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_settings/club_settings_page.dart';
 
 class ClubDetailPage extends ConsumerStatefulWidget {
   final Club club;
@@ -98,29 +99,32 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
       (c) => c.id == widget.club.id,
       orElse: () => widget.club,
     );
+    final canPost = club.canManage || !club.settings.onlyAdminsCanPost;
 
     return Scaffold(
       backgroundColor: Styles.canvas,
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _createPost(club),
-        backgroundColor: Styles.accent,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Radii.button),
-        ),
-        icon: const Icon(Icons.edit_outlined),
-        label: const Text(
-          'New post',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-      ),
+      floatingActionButton: canPost
+          ? FloatingActionButton.extended(
+              onPressed: () => _createPost(club),
+              backgroundColor: Styles.accent,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(Radii.button),
+              ),
+              icon: const Icon(Icons.edit_outlined),
+              label: const Text(
+                'New post',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            )
+          : null,
       body: SingleChildScrollView(
         child: Column(
           children: [
             ClubDetailHeader(
               club: club,
               onBack: () => Navigator.of(context).pop(),
-              onSettings: _comingSoon,
+              onSettings: () => ClubSettingsPage.open(context, club),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 96),
@@ -131,6 +135,8 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                   const SizedBox(height: 12),
                   ClubActionButtons(
                     canManage: club.canManage,
+                    showActivities: club.settings.showActivityFeed,
+                    showStats: club.settings.showLeaderboardAndStats,
                     onTap: _comingSoon,
                     onInviteTap: () => InviteClubPage.open(context, club),
                     onEditDetailsTap: () => _editClub(club),

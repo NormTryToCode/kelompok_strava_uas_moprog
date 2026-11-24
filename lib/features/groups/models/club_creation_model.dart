@@ -227,6 +227,7 @@ class ClubCreationModel {
   final List<ClubType> types;
   final String name;
   final String description;
+  final String? avatarPath;
   final ClubPrivacy privacy;
   final bool isGlobal;
   final ClubLocation? location;
@@ -236,6 +237,7 @@ class ClubCreationModel {
     this.types = const [],
     this.name = '',
     this.description = '',
+    this.avatarPath,
     this.privacy = ClubPrivacy.public,
     this.isGlobal = true,
     this.location,
@@ -246,6 +248,8 @@ class ClubCreationModel {
     List<ClubType>? types,
     String? name,
     String? description,
+    String? avatarPath,
+    bool clearAvatar = false,
     ClubPrivacy? privacy,
     bool? isGlobal,
     ClubLocation? location,
@@ -255,6 +259,7 @@ class ClubCreationModel {
       types: types ?? this.types,
       name: name ?? this.name,
       description: description ?? this.description,
+      avatarPath: clearAvatar ? null : (avatarPath ?? this.avatarPath),
       privacy: privacy ?? this.privacy,
       isGlobal: isGlobal ?? this.isGlobal,
       location: location ?? this.location,

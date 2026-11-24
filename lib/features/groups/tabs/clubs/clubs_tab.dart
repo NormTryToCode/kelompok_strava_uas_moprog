@@ -228,6 +228,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
                           locationLabel: yourClubs[i].locationLabel,
                           memberLabel: yourClubs[i].memberLabel,
                           avatarPath: yourClubs[i].avatarPath,
+                          coverPath: yourClubs[i].coverPath,
                           onTap: () => ClubDetailPage.open(
                             context,
                             yourClubs[i],
