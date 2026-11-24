@@ -43,11 +43,13 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
   }
 
   Future<void> _editClub(Club club) async {
-    final updated = await EditClubPage.open(context, club);
-    if (updated == null || !mounted) return;
+    if(!club.canManage) return;
+    final updated  = await EditClubPage.open(context, club);
+    if(updated == null || !mounted) return;
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Club details updated')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Club details updated')),
+    );
   }
 
   Future<void> _createEvent(Club club) async {
@@ -128,6 +130,7 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                   const SectionTitle('Quick actions'),
                   const SizedBox(height: 12),
                   ClubActionButtons(
+                    canManage: club.canManage,
                     onTap: _comingSoon,
                     onInviteTap: () => InviteClubPage.open(context, club),
                     onEditDetailsTap: () => _editClub(club),

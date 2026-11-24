@@ -1,35 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 
 class PopularClubCard extends StatelessWidget {
-  final SearchClub club;
-  final bool isJoined;
+  final Club club;
   final VoidCallback onTap;
-  final VoidCallback onToggleJoin;
+  final VoidCallback onJoinTap;
 
   const PopularClubCard({
     super.key,
     required this.club,
-    required this.isJoined,
     required this.onTap,
-    required this.onToggleJoin,
+    required this.onJoinTap,
   });
-
-  String _formatMembers(int count) {
-    if (count >= 1000000) {
-      return '${(count / 1000000).toStringAsFixed(1)}M members';
-    }
-    if (count >= 1000) {
-      return '${(count / 1000).toStringAsFixed(1)}K members';
-    }
-    return count == 1 ? '1 member' : '$count members';
-  }
 
   @override
   Widget build(BuildContext context) {
     final coverColors = Styles.coverColors(club.id);
-    final displayCount = isJoined ? club.memberCount + 1 : club.memberCount;
+    final isJoined = club.isJoined;
 
     return Container(
       width: 244,
@@ -81,7 +69,7 @@ class PopularClubCard extends StatelessWidget {
                         border: Border.all(color: Styles.borderStrong),
                       ),
                       child: Text(
-                        club.sport.label,
+                        club.sport.name,
                         style: const TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -113,7 +101,7 @@ class PopularClubCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        club.city,
+                        club.location?.name ?? club.locationLabel,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -131,7 +119,7 @@ class PopularClubCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        _formatMembers(displayCount),
+                        club.memberLabel.toLowerCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -163,7 +151,7 @@ class PopularClubCard extends StatelessWidget {
                               withGlow: true,
                             ),
                       child: InkWell(
-                        onTap: onToggleJoin,
+                        onTap: onJoinTap,
                         borderRadius: BorderRadius.circular(Radii.chip),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
