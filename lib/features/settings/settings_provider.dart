@@ -55,7 +55,7 @@ class SettingsState {
 }
 
 final settingsStoreProvider = Provider<SettingsStore>((ref) {
-  return PrefsSettingsStore();
+  return FirestoreSettingsStore();
 });
 
 class SettingsNotifier extends Notifier<SettingsState> {
