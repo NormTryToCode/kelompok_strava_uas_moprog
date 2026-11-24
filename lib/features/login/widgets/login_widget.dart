@@ -161,13 +161,10 @@ class _LoginWidgetState extends State<LoginWidget> {
 
                 ElevatedButton.icon(
                   onPressed: () {},
-                  icon: const Text(
-                    "G",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFFDB4437),
-                    ),
+                  icon: Image.asset(
+                    'asset/images/google.png',
+                    height: 20,
+                    width: 20,
                   ),
                   label: const Text(
                     "Login with Google",
