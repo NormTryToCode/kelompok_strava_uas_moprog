@@ -11,10 +11,15 @@ abstract class SpotRepository {
 class AssetSpotRepository implements SpotRepository {
   @override
   Future<List<PlaceSpot>> getSpots() async {
-    final raw = await rootBundle.loadString('asset/spots.json');
-    final list = jsonDecode(raw) as List<dynamic>;
-    return list
-        .map((e) => PlaceSpot.fromJson(e as Map<String, dynamic>))
+    final raw = await rootBundle.loadString('asset/overpass_snapshot.json');
+    final data = jsonDecode(raw) as Map<String, dynamic>;
+    final elements = data['elements'] as List<dynamic>;
+        final spots = elements
+        .map((e) => PlaceSpot.fromOverpass(e as Map<String, dynamic>))
+        .whereType<PlaceSpot>()
         .toList();
+
+    final seen = <String>{};
+    return spots.where((s) => seen.add('${s.type.name}:${s.name}')).toList();
   }
 }

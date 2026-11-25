@@ -56,7 +56,7 @@ class _MapPageState extends State<MapPage> {
     if (_userPosition != null) {
       spots.sort((a, b) => _distanceTo(a)!.compareTo(_distanceTo(b)!));
     }
-    return spots;
+    return spots.take(15).toList();
   }
 
   void _focusSpot(PlaceSpot spot) {
