@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_firestore_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
 
@@ -11,10 +10,7 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
   ClubRepository get _repository => ref.read(clubRepositoryProvider);
 
   @override
-  Future<List<Club>> build() async {
-    final stored = await _repository.getClubs();
-    return GroupsFirestoreSeeder.seedMissingClubs(existing: stored);
-  }
+  Future<List<Club>> build() => _repository.getClubs();
 
   Future<void> addClub(Club club) async {
     await _repository.addClub(club);

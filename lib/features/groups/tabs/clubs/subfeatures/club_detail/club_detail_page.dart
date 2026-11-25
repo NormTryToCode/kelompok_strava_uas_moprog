@@ -135,9 +135,6 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                   const SizedBox(height: 12),
                   ClubActionButtons(
                     canManage: club.canManage,
-                    showActivities: club.settings.showActivityFeed,
-                    showStats: club.settings.showLeaderboardAndStats,
-                    onTap: _comingSoon,
                     onInviteTap: () => InviteClubPage.open(context, club),
                     onEditDetailsTap: () => _editClub(club),
                     onShareTap: () => ShareClubPage.open(context, club),

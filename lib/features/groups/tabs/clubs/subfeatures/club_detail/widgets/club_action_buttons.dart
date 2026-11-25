@@ -3,47 +3,34 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class ClubActionButtons extends StatelessWidget {
   final bool canManage;
-  final bool showActivities;
-  final bool showStats;
-  final VoidCallback onTap;
-  final VoidCallback? onInviteTap;
-  final VoidCallback? onEditDetailsTap;
-  final VoidCallback? onShareTap;
-  final VoidCallback? onEventsTap;
-  final VoidCallback? onOverviewTap;
-  final VoidCallback? onPostsTap;
+  final VoidCallback onInviteTap;
+  final VoidCallback onEditDetailsTap;
+  final VoidCallback onShareTap;
+  final VoidCallback onEventsTap;
+  final VoidCallback onOverviewTap;
+  final VoidCallback onPostsTap;
 
   const ClubActionButtons({
     super.key,
-    required this.onTap,
+    required this.onInviteTap,
+    required this.onEditDetailsTap,
+    required this.onShareTap,
+    required this.onEventsTap,
+    required this.onOverviewTap,
+    required this.onPostsTap,
     this.canManage = false,
-    this.showActivities = true,
-    this.showStats = true,
-    this.onInviteTap,
-    this.onEditDetailsTap,
-    this.onShareTap,
-    this.onEventsTap,
-    this.onOverviewTap,
-    this.onPostsTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final items = <(IconData, String, VoidCallback)>[
-      (Icons.person_add_alt, 'Invite', onInviteTap ?? onTap),
+      (Icons.person_add_alt, 'Invite', onInviteTap),
       if (canManage)
-        (Icons.edit_outlined, 'Edit details', onEditDetailsTap ?? onTap),
-      (Icons.share_outlined, 'Share', onShareTap ?? onTap),
-      (Icons.event_available_outlined, 'Events', onEventsTap ?? onTap),
-      (Icons.info_outline, 'Overview', onOverviewTap ?? onTap),
-      (Icons.article_outlined, 'Posts', onPostsTap ?? onTap),
-      if (canManage) ...[
-        (Icons.insights_outlined, 'Insights', onTap),
-        if (showActivities)
-          (Icons.monitor_heart_outlined, 'Activities', onTap),
-        if (showStats)
-          (Icons.leaderboard_outlined, 'Stats', onTap),
-      ],
+        (Icons.edit_outlined, 'Edit details', onEditDetailsTap),
+      (Icons.share_outlined, 'Share', onShareTap),
+      (Icons.event_available_outlined, 'Events', onEventsTap),
+      (Icons.info_outline, 'Overview', onOverviewTap),
+      (Icons.article_outlined, 'Posts', onPostsTap),
     ];
 
     return SizedBox(
