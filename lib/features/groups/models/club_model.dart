@@ -107,6 +107,7 @@ class Club {
   final List<String> adminIds;
   final ClubSettings settings;
   final DateTime createdAt;
+  final List<String> pendingRequestIds;
 
   const Club({
     required this.id,
@@ -128,6 +129,7 @@ class Club {
     this.avatarPath,
     this.coverPath,
     this.vanityUrl,
+    this.pendingRequestIds = const [],
   });
 
   factory Club.fromCreation(ClubCreationModel draft) {
@@ -181,6 +183,8 @@ class Club {
           ? location!.name
           : '${location!.name}, ${location!.detail}';
 
+  bool get isPrivate => privacy.id == ClubPrivacy.private.id;
+
   Club copyWith({
     String? id,
     String? name,
@@ -205,6 +209,7 @@ class Club {
     List<String>? adminIds,
     ClubSettings? settings,
     DateTime? createdAt,
+    List<String>? pendingRequestIds,
   }) {
     return Club(
       id: id ?? this.id,
@@ -226,6 +231,7 @@ class Club {
       adminIds: adminIds ?? this.adminIds,
       settings: settings ?? this.settings,
       createdAt: createdAt ?? this.createdAt,
+      pendingRequestIds: pendingRequestIds ?? this.pendingRequestIds,
     );
   }
 
@@ -258,6 +264,7 @@ class Club {
       'adminIds': adminIds,
       'settings': settings.toJson(),
       'createdAt': createdAt.toIso8601String(),
+      'pendingRequestIds' : pendingRequestIds,
     };
   }
 
@@ -308,6 +315,8 @@ class Club {
       createdAt: json['createdAt'] is String
           ? (DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now())
           : DateTime.now(),
+      pendingRequestIds: 
+          (json['pendingRequestIds'] as List?)?.whereType<String>().toList() ?? const [],
     );
   }
 }

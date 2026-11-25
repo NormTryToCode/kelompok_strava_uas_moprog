@@ -72,6 +72,43 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     final current = state.valueOrNull ?? const <Club>[];
     state = AsyncData(current.where((c) => c.id != clubId).toList());
   }
+
+  Future<void> approveJoinRequest(String clubId, String userId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || !match.first.canManage) return;
+
+    final club = match.first;
+    if (!club.pendingRequestIds.contains(userId)) return;
+
+    final nextPending = club.pendingRequestIds
+        .where((id) => id != userId)
+        .toList();
+    final nextMembers = club.memberIds.contains(userId)
+        ? club.memberIds
+        : [...club.memberIds, userId];
+
+    await updateClub(
+      club.copyWith(
+        pendingRequestIds: nextPending,
+        memberIds: nextMembers,
+        memberCount: nextMembers.length + (club.isJoined ? 1 : 0),
+      ),
+    );
+  }
+
+  Future<void> declineJoinRequest(String clubId, String userId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || !match.first.canManage) return;
+
+    final club = match.first;
+    final nextPending = club.pendingRequestIds
+        .where((id) => id != userId)
+        .toList();
+
+    await updateClub(club.copyWith(pendingRequestIds: nextPending));
+  }
 }
 
 final clubsProvider = AsyncNotifierProvider<ClubsNotifier, List<Club>>(

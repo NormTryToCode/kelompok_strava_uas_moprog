@@ -18,6 +18,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_invite/invite_club_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_settings/club_settings_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/club_members_page.dart';
 
 class ClubDetailPage extends ConsumerStatefulWidget {
   final Club club;
@@ -37,11 +38,6 @@ class ClubDetailPage extends ConsumerStatefulWidget {
 
 class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
   final _postsSectionKey = GlobalKey();
-
-  void _comingSoon() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Coming soon')));
-  }
 
   Future<void> _editClub(Club club) async {
     if(!club.canManage) return;
@@ -124,7 +120,9 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
             ClubDetailHeader(
               club: club,
               onBack: () => Navigator.of(context).pop(),
-              onSettings: () => ClubSettingsPage.open(context, club),
+              onSettings: club.isJoined
+                  ? () => ClubSettingsPage.open(context, club)
+                  : null,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 96),
@@ -135,14 +133,17 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                   const SizedBox(height: 12),
                   ClubActionButtons(
                     canManage: club.canManage,
+                    showPendingRequests: club.isPrivate,
+                    pendingRequestCount: club.pendingRequestIds.length,
+                    onPendingRequestsTap: () =>
+                        ClubMembersPage.open(context, club),
                     onInviteTap: () => InviteClubPage.open(context, club),
                     onEditDetailsTap: () => _editClub(club),
                     onShareTap: () => ShareClubPage.open(context, club),
                     onEventsTap: () => ClubEventsPage.open(context, club),
                     onOverviewTap: () => _openOverview(club),
                     onPostsTap: _scrollToPosts,
-                  ),
-                  const SizedBox(height: 28),
+                  ),                  const SizedBox(height: 28),
                   ClubChannelsSection(
                     clubId: club.id,
                     onTap: () => ClubChannelsPage.open(context, club),
