@@ -15,8 +15,31 @@ class RecordWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: 20),
-            Text("Walk", style: TextStyle(color: Styles.textSecondary)),
+
+            TextButton(
+              onPressed: () {},
+              child: Column(
+                children: [
+                  Text("Walk", style: TextStyle(color: Styles.textPrimary)),
+                  SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Start",
+                      style: TextStyle(color: Styles.textPrimary),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Styles.primary),
+                    ),
+                  ),
+                ],
+              ),
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(Styles.canvas),
+              ),
+            ),
             SizedBox(height: 10),
+
             Text("Run", style: TextStyle(color: Styles.textSecondary)),
             SizedBox(height: 10),
             Text("Ride", style: TextStyle(color: Styles.textSecondary)),
