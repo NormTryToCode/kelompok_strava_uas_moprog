@@ -43,10 +43,10 @@ class ProfileOptionDialog extends StatelessWidget {
               final bool isSelected = (option == selectedValue);
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 4.0),
+                padding: const EdgeInsets.only(bottom: 6.0),
                 child: Material(
                   color: isSelected
-                    ? Styles.surfaceHighlight.withValues(alpha: 0.7)
+                    ? Styles.surfaceHighlight.withValues(alpha: 0.75)
                     : Colors.transparent,
                   borderRadius: BorderRadius.circular(Radii.chip),
                   child: InkWell(
@@ -55,28 +55,36 @@ class ProfileOptionDialog extends StatelessWidget {
                       onSelected(option);
                       Navigator.pop(context);
                     },
-                    child: Padding(
+                    child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0,
+                        horizontal: 12.0,
                         vertical: 12.0,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Radii.chip),
+                        border: Border.all(
+                          color: isSelected
+                            ? Styles.primary.withValues(alpha: 0.6)
+                            : Colors.transparent,
+                        ),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             isSelected
-                              ? Icons.radio_button_checked
-                              : Icons.radio_button_off,
+                              ? Icons.radio_button_checked_rounded
+                              : Icons.radio_button_off_rounded,
                             color: isSelected
                               ? Styles.primaryLight
                               : Styles.textSecondary,
-                            size: 23,
+                            size: 22,
                           ),
                           const SizedBox(width: 14),
                           Expanded(
                             child: Text(
                               option,
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 15.5,
                                 fontWeight: isSelected
                                   ? FontWeight.w700
                                   : FontWeight.w500,

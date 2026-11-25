@@ -1,39 +1,41 @@
 import 'dart:convert';
 import '../models/trophy_badge.dart';
 
-const String _stravaMilestonesJson = '''
+const String _strideMilestonesJson = '''
 {
   "milestones": [
-    {"id": "m1", "title": "Aktivitas Pertama", "watermarkNumber": "1", "requiredActivities": 1, "description": "Menyelesaikan rekaman aktivitas olahraga pertama Anda di Stride."},
-    {"id": "m3", "title": "Aktivitas Ketiga", "watermarkNumber": "3", "requiredActivities": 3, "description": "Konsistensi awal! Menyelesaikan 3 aktivitas olahraga."},
-    {"id": "m5", "title": "Aktivitas Kelima", "watermarkNumber": "5", "requiredActivities": 5, "description": "Membangun kebiasaan sehat dengan 5 aktivitas tercatat."},
-    {"id": "m10", "title": "Aktivitas Ke10", "watermarkNumber": "10", "requiredActivities": 10, "description": "Mencapai dua digit pertama dengan total 10 aktivitas."},
-    {"id": "m20", "title": "Aktivitas Ke20", "watermarkNumber": "20", "requiredActivities": 20, "description": "Dedikasi penuh! Menyelesaikan 20 sesi latihan."},
-    {"id": "m30", "title": "Aktivitas Ke30", "watermarkNumber": "30", "requiredActivities": 30, "description": "Satu bulan penuh konsistensi dengan 30 aktivitas."},
-    {"id": "m40", "title": "Aktivitas Ke40", "watermarkNumber": "40", "requiredActivities": 40, "description": "Melampaui batas dengan 40 aktivitas olahraga tercatat."},
-    {"id": "m50", "title": "Aktivitas Ke50", "watermarkNumber": "50", "requiredActivities": 50, "description": "Setengah jalan menuju seratus! 50 aktivitas selesai."},
-    {"id": "m75", "title": "Aktivitas Ke75", "watermarkNumber": "75", "requiredActivities": 75, "description": "Atlet disiplin dengan 75 rekaman aktivitas."},
-    {"id": "m100", "title": "Aktivitas Ke100", "watermarkNumber": "100", "requiredActivities": 100, "description": "Klub Seratus! Mencapai tonggak bersejarah 100 aktivitas."},
-    {"id": "m150", "title": "Aktivitas Ke150", "watermarkNumber": "150", "requiredActivities": 150, "description": "Ketahanan luar biasa dengan total 150 aktivitas."},
-    {"id": "m200", "title": "Aktivitas Ke200", "watermarkNumber": "200", "requiredActivities": 200, "description": "Dua ratus sesi latihan berhasil ditaklukkan."},
-    {"id": "m250", "title": "Aktivitas Ke250", "watermarkNumber": "250", "requiredActivities": 250, "description": "Seperempat ribu aktivitas tercatat di profil Anda."},
-    {"id": "m300", "title": "Aktivitas Ke300", "watermarkNumber": "300", "requiredActivities": 300, "description": "Level atlet veteran dengan 300 aktivitas olahraga."},
-    {"id": "m400", "title": "Aktivitas Ke400", "watermarkNumber": "400", "requiredActivities": 400, "description": "Empat ratus aktivitas! Inspirasi bagi komunitas lari."},
-    {"id": "m500", "title": "Aktivitas Ke500", "watermarkNumber": "500", "requiredActivities": 500, "description": "Setengah ribu aktivitas! Pencapaian elit Stride."},
-    {"id": "m600", "title": "Aktivitas Ke600", "watermarkNumber": "600", "requiredActivities": 600, "description": "Enam ratus sesi latihan tanpa kenal lelah."},
-    {"id": "m700", "title": "Aktivitas Ke700", "watermarkNumber": "700", "requiredActivities": 700, "description": "Legenda Stride! Menuntaskan 700 aktivitas olahraga."}
+    {"id": "m1", "title": "First Spark", "watermarkNumber": "1", "requiredActivities": 1, "tier": "Initiate", "description": "Completed your inaugural tracked session and ignited your Stride journey."},
+    {"id": "m3", "title": "Rhythm Starter", "watermarkNumber": "3", "requiredActivities": 3, "tier": "Initiate", "description": "Built early velocity by logging 3 dedicated athletic sessions."},
+    {"id": "m5", "title": "Habit Forged", "watermarkNumber": "5", "requiredActivities": 5, "tier": "Initiate", "description": "Locked in a lasting training routine across 5 completed sessions."},
+    {"id": "m10", "title": "Double Digits", "watermarkNumber": "10", "requiredActivities": 10, "tier": "Initiate", "description": "Entered double-digit territory with 10 workouts etched in your journal."},
+    {"id": "m20", "title": "Stride Regular", "watermarkNumber": "20", "requiredActivities": 20, "tier": "Momentum", "description": "Demonstrated unwavering consistency across 20 training sessions."},
+    {"id": "m30", "title": "30-Session Flow", "watermarkNumber": "30", "requiredActivities": 30, "tier": "Momentum", "description": "Mastered a full monthly rhythm with 30 completed workouts."},
+    {"id": "m40", "title": "Trail Blazer", "watermarkNumber": "40", "requiredActivities": 40, "tier": "Momentum", "description": "Pushed past every comfort zone with 40 logged sessions."},
+    {"id": "m50", "title": "Half-Century", "watermarkNumber": "50", "requiredActivities": 50, "tier": "Momentum", "description": "Reached the 50-session mark—halfway to the iconic Century Club."},
+    {"id": "m75", "title": "Iron Discipline", "watermarkNumber": "75", "requiredActivities": 75, "tier": "Vanguard", "description": "Showcased elite grit and consistency across 75 sessions."},
+    {"id": "m100", "title": "Centurion Crest", "watermarkNumber": "100", "requiredActivities": 100, "tier": "Vanguard", "description": "Joined the Centurion ranks by completing 100 tracked sessions."},
+    {"id": "m150", "title": "Endurance Core", "watermarkNumber": "150", "requiredActivities": 150, "tier": "Vanguard", "description": "Forged unstoppable stamina across 150 training workouts."},
+    {"id": "m200", "title": "Double Century", "watermarkNumber": "200", "requiredActivities": 200, "tier": "Vanguard", "description": "Conquered 200 athletic sessions of pure forward momentum."},
+    {"id": "m250", "title": "Quarter Millennial", "watermarkNumber": "250", "requiredActivities": 250, "tier": "Titan", "description": "Etched 250 completed sessions into your permanent Stride Passport."},
+    {"id": "m300", "title": "Veteran Pulse", "watermarkNumber": "300", "requiredActivities": 300, "tier": "Titan", "description": "Achieved veteran athlete standing with 300 logged workouts."},
+    {"id": "m400", "title": "Peak Vanguard", "watermarkNumber": "400", "requiredActivities": 400, "tier": "Titan", "description": "Four hundred sessions strong—setting the pace for the entire pack."},
+    {"id": "m500", "title": "Titan 500", "watermarkNumber": "500", "requiredActivities": 500, "tier": "Mythic", "description": "Half a thousand sessions logged! Reserved for true Stride titans."},
+    {"id": "m600", "title": "Relentless Force", "watermarkNumber": "600", "requiredActivities": 600, "tier": "Mythic", "description": "Six hundred sessions conquered without ever losing your edge."},
+    {"id": "m700", "title": "Stride Legend", "watermarkNumber": "700", "requiredActivities": 700, "tier": "Mythic", "description": "Immortalized in the Trophy Vault with 700 completed sessions."}
   ]
 }
 ''';
 
 Future<List<TrophyBadge>> fetchTrophyBadgeData() async {
-  return parseTrophyBadges(_stravaMilestonesJson);
+  return parseTrophyBadges(_strideMilestonesJson);
 }
 
 List<TrophyBadge> parseTrophyBadges(String responseBody) {
   final parsed = jsonDecode(responseBody) as Map<String, dynamic>;
 
   return (parsed['milestones'] as List<dynamic>)
-    .map<TrophyBadge>((json) => TrophyBadge.fromJson(json as Map<String, dynamic>))
+    .map<TrophyBadge>(
+      (json) => TrophyBadge.fromJson(json as Map<String, dynamic>),
+    )
     .toList();
 }

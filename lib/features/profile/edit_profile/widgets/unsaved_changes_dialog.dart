@@ -26,7 +26,7 @@ class UnsavedChangesDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Perubahan Belum Disimpan',
+              'Unsaved Passport Changes',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
@@ -35,7 +35,7 @@ class UnsavedChangesDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Simpan perubahan profil Anda sebelum meninggalkan halaman ini?',
+              'Save your Athlete Passport updates before leaving this screen?',
               style: TextStyle(
                 fontSize: 14,
                 height: 1.4,
@@ -52,9 +52,9 @@ class UnsavedChangesDialog extends StatelessWidget {
                     onDiscard();
                   },
                   child: const Text(
-                    'Buang',
+                    'Discard',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 14.5,
                       fontWeight: FontWeight.w700,
                       color: Styles.danger,
                     ),
@@ -74,9 +74,9 @@ class UnsavedChangesDialog extends StatelessWidget {
                     onSave();
                   },
                   child: const Text(
-                    'Simpan',
+                    'Save',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 14.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -107,12 +107,12 @@ class SavingProfileDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(color: Styles.primaryLight),
-            SizedBox(width: 22),
+            SizedBox(width: 20),
             Text(
-              'Menyimpan...',
+              'Syncing Passport...',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: 15.5,
+                fontWeight: FontWeight.w700,
                 color: Styles.textPrimary,
               ),
             ),

@@ -24,16 +24,23 @@ class GearDetailSheet extends ConsumerWidget {
     }
     final AthleteGear gear = matches.first;
     final double? wearRatio = gear.wearProgressRatio;
+    final List<String> sports = gear.displayDefaultSports;
+
+    final Color healthColor = gear.isReplacementDue
+      ? Styles.danger
+      : gear.isHighWear
+        ? Styles.warning
+        : Styles.primaryLight;
 
     return Container(
       decoration: const BoxDecoration(
         color: Styles.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.card)),
         border: Border(
-          top: BorderSide(color: Styles.borderStrong, width: 1.2),
+          top: BorderSide(color: Styles.borderStrong, width: 1.3),
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 26),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -41,7 +48,7 @@ class GearDetailSheet extends ConsumerWidget {
           children: [
             Center(
               child: Container(
-                width: 42,
+                width: 44,
                 height: 4,
                 decoration: BoxDecoration(
                   color: Styles.borderStrong,
@@ -57,13 +64,14 @@ class GearDetailSheet extends ConsumerWidget {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(11),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: Styles.surfaceHighlight,
-                          borderRadius: BorderRadius.circular(Radii.chip),
+                          borderRadius: BorderRadius.circular(Radii.field),
                           border: Border.all(
-                            color: Styles.primary.withValues(alpha: 0.45),
+                            color: Styles.primary.withValues(alpha: 0.55),
                           ),
+                          boxShadow: Styles.glow(intensity: 0.2, blur: 12),
                         ),
                         child: Icon(
                           gear.category.icon,
@@ -78,24 +86,46 @@ class GearDetailSheet extends ConsumerWidget {
                           children: [
                             Text(
                               gear.displayName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w800,
                                 color: Styles.textPrimary,
                               ),
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              gear.isRetired
-                                ? '${gear.category.label} • Dipensiunkan'
-                                : '${gear.category.label} • Aktif',
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: gear.isRetired
-                                  ? Styles.textSecondary
-                                  : Styles.success,
-                              ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: gear.isRetired
+                                      ? Styles.textSecondary
+                                      : gear.isReplacementDue
+                                        ? Styles.danger
+                                        : Styles.success,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    '${gear.category.label}  •  ${gear.wearStatusLabel}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: gear.isRetired
+                                        ? Styles.textSecondary
+                                        : gear.isReplacementDue
+                                          ? Styles.danger
+                                          : Styles.success,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -105,138 +135,245 @@ class GearDetailSheet extends ConsumerWidget {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: Styles.textSecondary),
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    color: Styles.textSecondary,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 18),
-            _DetailRow(
-              label: gear.category.subTypeFieldLabel,
-              value: gear.subType.isNotEmpty ? gear.subType : '-',
-            ),
-            _DetailRow(
-              label: 'Merek',
-              value: gear.brand.isNotEmpty ? gear.brand : '-',
-            ),
-            _DetailRow(
-              label: 'Model',
-              value: gear.model.isNotEmpty ? gear.model : '-',
-            ),
-            if (gear.category == GearCategory.bike && gear.weightKg != null)
-              _DetailRow(
-                label: 'Berat',
-                value:
-                  '${gear.weightKg!.toStringAsFixed(1).replaceAll('.', ',')} kg',
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(15),
+              decoration: Styles.cardDecoration(
+                radius: Radii.field,
+                highlighted: true,
               ),
-            if (gear.category == GearCategory.wearable &&
-                gear.batteryHours != null)
-              _DetailRow(
-                label: 'Daya Tahan Baterai',
-                value: '${gear.batteryHours} jam',
-              ),
-            _DetailRow(
-              label: 'Jarak tempuh',
-              value: gear.maxDistanceKm != null
-                ? '${gear.formattedDistance} / ${gear.maxDistanceKm} km'
-                : gear.formattedDistance,
-            ),
-            if (wearRatio != null) ...[
-              const SizedBox(height: 4),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  value: wearRatio,
-                  minHeight: 8,
-                  backgroundColor: Styles.canvas,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    gear.isReplacementDue ? Styles.danger : Styles.primary,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                gear.isReplacementDue
-                  ? 'Target batas pemakaian tercapai — pertimbangkan ganti perlengkapan.'
-                  : 'Terpakai ${(wearRatio * 100).round()}% dari batas target ${gear.maxDistanceKm} km',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: gear.isReplacementDue
-                    ? Styles.danger
-                    : Styles.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-            if (!gear.isRetired) ...[
-              const SizedBox(height: 4),
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Catat Jarak Cepat:',
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: Styles.textSecondary,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'MILEAGE & WEAR TELEMETRY',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.9,
+                          color: Styles.primaryLight,
+                        ),
+                      ),
+                      Text(
+                        gear.maxDistanceKm != null
+                          ? '${gear.formattedDistance} / ${gear.maxDistanceKm} km'
+                          : gear.formattedDistance,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (wearRatio != null) ...[
+                    const SizedBox(height: 12),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double fillW =
+                          (constraints.maxWidth * wearRatio).clamp(
+                            wearRatio > 0 ? 12.0 : 0.0,
+                            constraints.maxWidth,
+                        );
+                        return Container(
+                          width: constraints.maxWidth,
+                          height: 9,
+                          decoration: BoxDecoration(
+                            color: Styles.canvas,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            width: fillW,
+                            height: 9,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: gear.isReplacementDue
+                                  ? const [Styles.danger, Color(0xFFFF9EB0)]
+                                  : gear.isHighWear
+                                    ? const [
+                                        Styles.warning,
+                                        Color(0xFFFDE68A),
+                                      ]
+                                    : const [
+                                        Styles.primary,
+                                        Styles.primaryLight,
+                                      ],
+                              ),
+                              borderRadius: BorderRadius.circular(6),
+                              boxShadow: Styles.glow(
+                                color: healthColor,
+                                intensity: 0.4,
+                                blur: 10,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      gear.isReplacementDue
+                        ? 'Recommended lifespan reached — consider replacing this equipment.'
+                        : '${(wearRatio * 100).round()}% used • ${gear.remainingDistanceKm!.round()} km remaining before threshold.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: gear.isReplacementDue
+                          ? Styles.danger
+                          : Styles.textSecondary,
+                      ),
+                    ),
+                  ],
+                  if (!gear.isRetired) ...[
+                    const SizedBox(height: 14),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        const Text(
+                          'Quick Log:',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: Styles.textSecondary,
+                          ),
+                        ),
+                        _QuickKmChip(
+                          label: '+5 km',
+                          onTap: () => ref
+                            .read(athleteGearProvider.notifier)
+                            .addDistance(gear.id, 5.0),
+                        ),
+                        _QuickKmChip(
+                          label: '+10 km',
+                          onTap: () => ref
+                            .read(athleteGearProvider.notifier)
+                            .addDistance(gear.id, 10.0),
+                        ),
+                        _QuickKmChip(
+                          label: '+25 km',
+                          onTap: () => ref
+                            .read(athleteGearProvider.notifier)
+                            .addDistance(gear.id, 25.0),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _SpecBox(
+                    label: gear.category.subTypeFieldLabel,
+                    value: gear.displaySubType.isNotEmpty
+                      ? gear.displaySubType
+                      : '-',
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _SpecBox(
+                    label: 'Brand',
+                    value: gear.brand.isNotEmpty ? gear.brand : '-',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _SpecBox(
+                    label: 'Model',
+                    value: gear.model.isNotEmpty ? gear.model : '-',
+                  ),
+                ),
+                if (gear.category == GearCategory.bike &&
+                    gear.weightKg != null) ...[
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _SpecBox(
+                      label: 'Frame Weight',
+                      value: '${gear.weightKg!.toStringAsFixed(1)} kg',
                     ),
                   ),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Styles.surfaceElevated,
-                      foregroundColor: Styles.primaryLight,
-                      side: const BorderSide(color: Styles.primary),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 6,
-                      ),
-                      minimumSize: Size.zero,
-                    ),
-                    onPressed: () {
-                      ref
-                        .read(athleteGearProvider.notifier)
-                        .addDistance(gear.id, 5.0);
-                    },
-                    child: const Text(
-                      '+5 km',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Styles.surfaceElevated,
-                      foregroundColor: Styles.primaryLight,
-                      side: const BorderSide(color: Styles.primary),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 6,
-                      ),
-                      minimumSize: Size.zero,
-                    ),
-                    onPressed: () {
-                      ref
-                        .read(athleteGearProvider.notifier)
-                        .addDistance(gear.id, 25.0);
-                    },
-                    child: const Text(
-                      '+25 km',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                ] else if (gear.category == GearCategory.wearable &&
+                    gear.batteryHours != null) ...[
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _SpecBox(
+                      label: 'Battery Life',
+                      value: '${gear.batteryHours} hours',
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 14),
-            ],
-            if (gear.notes.trim().isNotEmpty)
-              _DetailRow(label: 'Catatan', value: gear.notes.trim()),
-            _DetailRow(
-              label: 'Olahraga Default',
-              value: gear.defaultSports.isEmpty
-                ? 'Tidak ada'
-                : gear.defaultSports.join(', '),
+              ],
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 14),
+            const Text(
+              'ASSIGNED SPORTS',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.9,
+                color: Styles.primaryLight,
+              ),
+            ),
+            const SizedBox(height: 8),
+            if (sports.isEmpty)
+              const Text(
+                'No default sports assigned',
+                style: TextStyle(fontSize: 13.5, color: Styles.textSecondary),
+              )
+            else
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: sports
+                  .map(
+                    (s) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Styles.surfaceElevated,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Styles.borderStrong),
+                      ),
+                      child: Text(
+                        s,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+              ),
+            if (gear.notes.trim().isNotEmpty) ...[
+              const SizedBox(height: 14),
+              _SpecBox(label: 'Maintenance Notes', value: gear.notes.trim()),
+            ],
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: Container(
@@ -245,9 +382,9 @@ class GearDetailSheet extends ConsumerWidget {
                     colors: [Styles.primaryDark, Styles.primary],
                   ),
                   borderRadius: BorderRadius.circular(Radii.button),
-                  boxShadow: Styles.glow(intensity: 0.35, blur: 18),
+                  boxShadow: Styles.glow(intensity: 0.32, blur: 16),
                 ),
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -266,17 +403,23 @@ class GearDetailSheet extends ConsumerWidget {
                     ProfileSnackbarHelper.showSuccess(
                       context,
                       gear.isRetired
-                        ? '${gear.displayName} berhasil diaktifkan kembali.'
-                        : '${gear.displayName} dipindahkan ke daftar pensiun.',
+                        ? '"${gear.displayName}" restored to Active Gear Locker.'
+                        : '"${gear.displayName}" moved to Retired Archive.',
                     );
                   },
-                  child: Text(
+                  icon: Icon(
                     gear.isRetired
-                      ? 'Aktifkan Kembali ${gear.category.label}'
-                      : 'Pensiunkan ${gear.category.label}',
+                      ? Icons.restore_rounded
+                      : Icons.inventory_2_outlined,
+                    size: 18,
+                  ),
+                  label: Text(
+                    gear.isRetired
+                      ? 'Restore to Active Locker'
+                      : 'Archive ${gear.category.label}',
                     style: const TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
@@ -285,7 +428,7 @@ class GearDetailSheet extends ConsumerWidget {
             const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
-              child: OutlinedButton(
+              child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Styles.surfaceElevated,
                   foregroundColor: Styles.textPrimary,
@@ -299,11 +442,12 @@ class GearDetailSheet extends ConsumerWidget {
                   Navigator.of(context).pop();
                   onEdit(gear);
                 },
-                child: Text(
-                  'Edit ${gear.category.label}',
-                  style: const TextStyle(
+                icon: const Icon(Icons.edit_outlined, size: 18),
+                label: const Text(
+                  'Edit Specifications',
+                  style: TextStyle(
                     fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -315,36 +459,72 @@ class GearDetailSheet extends ConsumerWidget {
   }
 }
 
-class _DetailRow extends StatelessWidget {
+class _QuickKmChip extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _QuickKmChip({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Styles.canvas.withValues(alpha: 0.7),
+        foregroundColor: Styles.primaryLight,
+        side: const BorderSide(color: Styles.primary),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        minimumSize: Size.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      onPressed: onTap,
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800),
+      ),
+    );
+  }
+}
+
+class _SpecBox extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow({
+  const _SpecBox({
     required this.label,
     required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Styles.canvas.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(Radii.field),
+        border: Border.all(color: Styles.border),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
               color: Styles.textSecondary,
             ),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 4),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 15.5,
-              fontWeight: FontWeight.w600,
+              fontSize: 14.5,
+              fontWeight: FontWeight.w700,
               color: Styles.textPrimary,
             ),
           ),

@@ -21,14 +21,38 @@ class TrophyCheckBox extends ConsumerWidget {
       onTap: () {
         ref.read(claimedTrophiesProvider.notifier).toggleClaim(badge.id);
       },
-      child: Container(
-        alignment: Alignment.topLeft,
-        margin: const EdgeInsets.all(4),
-        child: Icon(
-          isClaimed
-            ? Icons.check_box_outlined
-            : Icons.check_box_outline_blank,
-          color: isClaimed ? Styles.accent : Styles.textSecondary,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isClaimed
+            ? Styles.success.withValues(alpha: 0.18)
+            : Styles.surfaceElevated,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isClaimed ? Styles.success : Styles.borderStrong,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isClaimed
+                ? Icons.check_box_rounded
+                : Icons.check_box_outline_blank_rounded,
+              size: 18,
+              color: isClaimed ? Styles.success : Styles.textSecondary,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              isClaimed ? 'Claimed' : 'Manual',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isClaimed ? Styles.success : Styles.textSecondary,
+              ),
+            ),
+          ],
         ),
       ),
     );
