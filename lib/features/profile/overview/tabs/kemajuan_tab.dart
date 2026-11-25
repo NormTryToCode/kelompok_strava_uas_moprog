@@ -26,7 +26,7 @@ class KemajuanTab extends StatefulWidget {
 class _KemajuanTabState extends State<KemajuanTab> {
   int _subSection = 0;
 
-  Widget _buildChip(int index, String label) {
+  Widget _buildModeChip(int index, String label) {
     final bool isSelected = _subSection == index;
     return Expanded(
       child: GestureDetector(
@@ -35,15 +35,18 @@ class _KemajuanTabState extends State<KemajuanTab> {
             _subSection = index;
           });
         },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            gradient: isSelected ? Styles.primaryGradient : null,
-            color: isSelected ? null : Styles.surfaceElevated,
-            borderRadius: BorderRadius.circular(20),
+            color: isSelected
+              ? Styles.surfaceHighlight
+              : Styles.surface,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? Styles.primaryLight : Styles.borderStrong,
+              color: isSelected ? Styles.primaryLight : Styles.border,
+              width: isSelected ? 1.3 : 1.0,
             ),
           ),
           child: Text(
@@ -52,8 +55,8 @@ class _KemajuanTabState extends State<KemajuanTab> {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: isSelected ? Styles.canvas : Styles.textPrimary,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected ? Styles.primaryLight : Styles.textSecondary,
             ),
           ),
         ),
@@ -67,14 +70,14 @@ class _KemajuanTabState extends State<KemajuanTab> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 6),
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
           child: Row(
             children: [
-              _buildChip(0, 'Berlari'),
+              _buildModeChip(0, 'Momentum'),
               const SizedBox(width: 8),
-              _buildChip(1, 'Usaha & Target'),
+              _buildModeChip(1, 'Records'),
               const SizedBox(width: 8),
-              _buildChip(2, 'Catatan'),
+              _buildModeChip(2, 'Cadence'),
             ],
           ),
         ),

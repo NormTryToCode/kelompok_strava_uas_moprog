@@ -13,12 +13,12 @@ class AthleteAvatarWidget extends StatelessWidget {
   });
 
   static const String _defaultAvatarUrl =
-      'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
+    'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
 
   @override
   Widget build(BuildContext context) {
     final bool hasLocalFile =
-        avatarPath.isNotEmpty && File(avatarPath).existsSync();
+      avatarPath.isNotEmpty && File(avatarPath).existsSync();
 
     return ClipOval(
       child: SizedBox(
