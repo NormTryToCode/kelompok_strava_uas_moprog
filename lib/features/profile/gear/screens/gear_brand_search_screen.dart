@@ -64,7 +64,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
 
     ProfileSnackbarHelper.showInfo(
       context,
-      'Merek "$brandName" berhasil dihapus.',
+      'Custom brand "$brandName" deleted.',
     );
   }
 
@@ -90,7 +90,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Edit Nama Merek',
+                  'Rename Custom Brand',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -99,7 +99,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                 ),
                 const SizedBox(height: 6),
                 const Text(
-                  'Perbaiki ejaan merek yang ditambahkan sebelumnya.',
+                  'Update the spelling of your saved custom brand.',
                   style: TextStyle(
                     fontSize: 13.5,
                     color: Styles.textSecondary,
@@ -116,7 +116,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                     fontSize: 15.5,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Masukkan nama merek yang benar',
+                    hintText: 'Enter corrected brand name',
                     hintStyle: TextStyle(
                       color: Styles.textSecondary.withValues(alpha: 0.72),
                     ),
@@ -142,7 +142,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                     TextButton(
                       onPressed: () => Navigator.of(dialogContext).pop(),
                       child: const Text(
-                        'Batalkan',
+                        'Cancel',
                         style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
@@ -164,7 +164,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                           .pop(editController.text.trim());
                       },
                       child: const Text(
-                        'Simpan',
+                        'Save',
                         style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.bold,
@@ -199,7 +199,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
 
     ProfileSnackbarHelper.showSuccess(
       context,
-      'Merek diubah menjadi "$updatedName".',
+      'Brand renamed to "$updatedName".',
     );
   }
 
@@ -229,9 +229,9 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
         .toList();
 
     final bool hasExactMatch = trimmedQuery.isNotEmpty &&
-        allBrands.any(
-          (brand) => brand.toLowerCase() == trimmedQuery.toLowerCase(),
-        );
+      allBrands.any(
+        (brand) => brand.toLowerCase() == trimmedQuery.toLowerCase(),
+      );
 
     return PopScope(
       canPop: false,
@@ -246,11 +246,14 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
           foregroundColor: Styles.textPrimary,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Styles.textPrimary),
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Styles.textPrimary,
+            ),
             onPressed: () => Navigator.of(context).pop(_selectedBrand),
           ),
           title: Text(
-            'Merek ${widget.category.label}',
+            '${widget.category.label} Brands',
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -278,7 +281,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                     });
                   },
                   decoration: InputDecoration(
-                    hintText: 'Cari merek atau ketik merek baru...',
+                    hintText: 'Search directory or add a custom brand...',
                     hintStyle: TextStyle(
                       fontSize: 14.5,
                       color: Styles.textSecondary.withValues(alpha: 0.78),
@@ -304,11 +307,11 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                     filled: true,
                     fillColor: Styles.fieldFill,
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderRadius: BorderRadius.circular(Radii.field),
                       borderSide: const BorderSide(color: Styles.borderStrong),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderRadius: BorderRadius.circular(Radii.field),
                       borderSide: const BorderSide(
                         color: Styles.primaryLight,
                         width: 1.5,
@@ -322,9 +325,9 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                   child: Material(
                     color: Styles.surfaceHighlight,
-                    borderRadius: BorderRadius.circular(Radii.chip),
+                    borderRadius: BorderRadius.circular(Radii.field),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(Radii.chip),
+                      borderRadius: BorderRadius.circular(Radii.field),
                       onTap: () => _selectCustomBrand(trimmedQuery),
                       child: Container(
                         width: double.infinity,
@@ -333,8 +336,9 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                           vertical: 14,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(Radii.chip),
+                          borderRadius: BorderRadius.circular(Radii.field),
                           border: Border.all(color: Styles.primaryLight),
+                          boxShadow: Styles.glow(intensity: 0.18, blur: 10),
                         ),
                         child: Row(
                           children: [
@@ -345,10 +349,10 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                'Tambahkan merek "$trimmedQuery"',
+                                'Add custom brand "$trimmedQuery"',
                                 style: const TextStyle(
-                                  fontSize: 15.5,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
                                   color: Styles.textPrimary,
                                 ),
                               ),
@@ -365,7 +369,7 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: Text(
-                          'Merek "$trimmedQuery" belum terdaftar.\nKetuk tombol di atas untuk menambahkannya.',
+                          '"$trimmedQuery" is not in the directory yet.\nTap the card above to save it as a custom brand.',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 14.5,
@@ -375,82 +379,106 @@ class _GearBrandSearchScreenState extends ConsumerState<GearBrandSearchScreen> {
                         ),
                       ),
                     )
-                    : ListView.separated(
-                        itemCount: filteredBrands.length,
-                        separatorBuilder: (_, _) => const Divider(
-                          height: 1,
-                          color: Styles.divider,
-                        ),
-                        itemBuilder: (context, index) {
-                          final brand = filteredBrands[index];
-                          final bool isCustom = !presetLowerSet.contains(
-                            brand.toLowerCase(),
-                          );
-                          final bool isSelected = brand.toLowerCase() ==
-                            _selectedBrand.trim().toLowerCase();
-
-                          return ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 2,
-                            ),
-                            onTap: () => Navigator.of(context).pop(brand),
-                            title: Text(
-                              brand,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                                color: isSelected
-                                  ? Styles.primaryLight
-                                  : Styles.textPrimary,
-                              ),
-                            ),
-                            subtitle: isCustom
-                              ? const Text(
-                                  'Merek kustom',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: Styles.secondary,
-                                  ),
-                                )
-                              : null,
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isCustom) ...[
-                                  IconButton(
-                                    tooltip: 'Edit ejaan merek',
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      size: 20,
-                                      color: Styles.textSecondary,
-                                    ),
-                                    onPressed: () =>
-                                      _showEditCustomBrandDialog(brand),
-                                  ),
-                                  IconButton(
-                                    tooltip: 'Hapus merek kustom',
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      size: 20,
-                                      color: Styles.danger,
-                                    ),
-                                    onPressed: () => _deleteCustomBrand(brand),
-                                  ),
-                                ],
-                                if (isSelected)
-                                  const Icon(
-                                    Icons.check_rounded,
-                                    color: Styles.primaryLight,
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
+                  : ListView.separated(
+                      itemCount: filteredBrands.length,
+                      separatorBuilder: (_, _) => const Divider(
+                        height: 1,
+                        color: Styles.divider,
                       ),
+                      itemBuilder: (context, index) {
+                        final brand = filteredBrands[index];
+                        final bool isCustom = !presetLowerSet.contains(
+                          brand.toLowerCase(),
+                        );
+                        final bool isSelected = brand.toLowerCase() ==
+                          _selectedBrand.trim().toLowerCase();
+
+                        return ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 2,
+                          ),
+                          onTap: () => Navigator.of(context).pop(brand),
+                          title: Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  brand,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                    color: isSelected
+                                      ? Styles.primaryLight
+                                      : Styles.textPrimary,
+                                  ),
+                                ),
+                              ),
+                              if (isCustom) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 7,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Styles.primary.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Styles.primaryLight,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'CUSTOM',
+                                    style: TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.6,
+                                      color: Styles.primaryLight,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isCustom) ...[
+                                IconButton(
+                                  tooltip: 'Rename custom brand',
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                    color: Styles.textSecondary,
+                                  ),
+                                  onPressed: () =>
+                                    _showEditCustomBrandDialog(brand),
+                                ),
+                                IconButton(
+                                  tooltip: 'Delete custom brand',
+                                  icon: const Icon(
+                                    Icons.delete_outline_rounded,
+                                    size: 20,
+                                    color: Styles.danger,
+                                  ),
+                                  onPressed: () => _deleteCustomBrand(brand),
+                                ),
+                              ],
+                              if (isSelected)
+                                const Icon(
+                                  Icons.check_rounded,
+                                  color: Styles.primaryLight,
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
               ),
             ],
           ),

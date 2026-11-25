@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/extensions/int_extensions.dart';
 
 enum GearCategory {
   bike,
@@ -11,78 +12,91 @@ extension GearCategoryExtension on GearCategory {
   String get label {
     switch (this) {
       case GearCategory.bike:
-        return 'Sepeda';
+        return 'Bike';
       case GearCategory.shoes:
-        return 'Sepatu';
+        return 'Footwear';
       case GearCategory.wearable:
-        return 'Jam GPS & Sensor';
+        return 'GPS & Sensor';
       case GearCategory.swim:
-        return 'Perlengkapan Renang';
+        return 'Swim Kit';
+    }
+  }
+
+  String get pluralLabel {
+    switch (this) {
+      case GearCategory.bike:
+        return 'Bikes';
+      case GearCategory.shoes:
+        return 'Footwear';
+      case GearCategory.wearable:
+        return 'GPS & Sensors';
+      case GearCategory.swim:
+        return 'Swim Kit';
     }
   }
 
   String get sectionHeader {
     switch (this) {
       case GearCategory.bike:
-        return 'SEPEDA';
+        return 'BIKES';
       case GearCategory.shoes:
-        return 'SEPATU';
+        return 'FOOTWEAR';
       case GearCategory.wearable:
-        return 'JAM GPS & SENSOR';
+        return 'GPS & SENSORS';
       case GearCategory.swim:
-        return 'PERLENGKAPAN RENANG';
+        return 'SWIM KIT';
     }
   }
 
   String get retiredLabel {
     switch (this) {
       case GearCategory.bike:
-        return 'Sepeda yang Dipensiunkan';
+        return 'Retired Bikes';
       case GearCategory.shoes:
-        return 'Sepatu Pensiun';
+        return 'Retired Footwear';
       case GearCategory.wearable:
-        return 'Perangkat yang Dipensiunkan';
+        return 'Retired Devices';
       case GearCategory.swim:
-        return 'Alat Renang yang Dipensiunkan';
+        return 'Retired Swim Kit';
     }
   }
 
   String get subTypeFieldLabel {
     switch (this) {
       case GearCategory.bike:
-        return 'Jenis Sepeda';
+        return 'Bike Discipline';
       case GearCategory.shoes:
-        return 'Jenis Sepatu';
+        return 'Footwear Category';
       case GearCategory.wearable:
-        return 'Jenis Perangkat';
+        return 'Device Type';
       case GearCategory.swim:
-        return 'Jenis Alat Renang';
+        return 'Swim Gear Type';
     }
   }
 
   String get sportFilterGroupTitle {
     switch (this) {
       case GearCategory.bike:
-        return 'Olahraga Sepeda';
+        return 'Cycling Disciplines';
       case GearCategory.shoes:
-        return 'Olahraga Lari & Jalan';
+        return 'Running & Trail';
       case GearCategory.wearable:
-        return 'Olahraga Multi-Sensor';
+        return 'Multi-Sport Telemetry';
       case GearCategory.swim:
-        return 'Olahraga Air & Renang';
+        return 'Aquatics & Open Water';
     }
   }
 
   IconData get icon {
     switch (this) {
       case GearCategory.bike:
-        return Icons.pedal_bike;
+        return Icons.pedal_bike_rounded;
       case GearCategory.shoes:
-        return Icons.directions_run;
+        return Icons.directions_run_rounded;
       case GearCategory.wearable:
-        return Icons.watch;
+        return Icons.watch_rounded;
       case GearCategory.swim:
-        return Icons.pool;
+        return Icons.pool_rounded;
     }
   }
 
@@ -90,39 +104,39 @@ extension GearCategoryExtension on GearCategory {
     switch (this) {
       case GearCategory.bike:
         return const [
-          'Bersepeda',
-          'Bersepeda Gunung',
-          'Medan Kerikil',
-          'Bersepeda Virtual',
-          'Bersepeda E-Bike',
-          'Perjalanan Sepeda Elektrik Gunung',
-          'Handcycle',
+          'Road Cycling',
+          'Mountain Biking',
+          'Gravel Riding',
+          'Virtual Cycling',
+          'E-Bike Ride',
+          'E-MTB Trail',
+          'Handcycling',
           'Velomobile',
         ];
-        case GearCategory.shoes:
+      case GearCategory.shoes:
         return const [
-          'Berlari',
-          'Lari Trail',
-          'Lari Virtual',
-          'Berjalan',
-          'Mendaki',
+          'Road Running',
+          'Trail Running',
+          'Virtual Run',
+          'Brisk Walking',
+          'Alpine Hiking',
         ];
-        case GearCategory.wearable:
+      case GearCategory.wearable:
         return const [
-          'Berlari',
-          'Bersepeda',
-          'Berenang',
-          'Lari Trail',
-          'Mendaki',
+          'Running',
+          'Cycling',
+          'Swimming',
+          'Trail Running',
+          'Hiking',
           'Triathlon',
-          'Latihan Kebugaran',
+          'Strength & Conditioning',
         ];
-        case GearCategory.swim:
+      case GearCategory.swim:
         return const [
-          'Berenang',
-          'Renang Perairan Terbuka',
+          'Pool Swimming',
+          'Open Water Swim',
           'Triathlon',
-          'Akuatlon',
+          'Aquathlon',
         ];
     }
   }
@@ -131,37 +145,37 @@ extension GearCategoryExtension on GearCategory {
     switch (this) {
       case GearCategory.bike:
         return const [
-          'Sepeda Gunung',
-          'Sepeda Cross',
-          'Sepeda Balap',
-          'Sepeda TT',
-          'Bersepeda Medan Kerikil',
-          'Sepeda E-Bike',
-          'Sepeda Lipat / Kota',
+          'Mountain Bike',
+          'Cyclocross Bike',
+          'Road Race Bike',
+          'Time Trial / Aero',
+          'Gravel Bike',
+          'Electric Bike (E-Bike)',
+          'Folding / Urban Bike',
         ];
-        case GearCategory.shoes:
+      case GearCategory.shoes:
         return const [
-          'Lari Jalan Raya (Road)',
-          'Lari Trail',
-          'Sepatu Lomba (Carbon / Racing)',
-          'Latihan Harian (Daily Trainer)',
-          'Jalan Santai & Mendaki',
+          'Road Trainer',
+          'Trail Runner',
+          'Carbon Race Super-Shoe',
+          'Daily Cushion Trainer',
+          'Walking & Light Hike',
         ];
-        case GearCategory.wearable:
+      case GearCategory.wearable:
         return const [
-          'Jam Tangan GPS',
-          'Sensor Detak Jantung (HRM)',
-          'Bike Computer GPS',
+          'GPS Sports Watch',
+          'Heart Rate Strap (HRM)',
+          'GPS Bike Computer',
           'Power Meter',
           'Running Dynamics Pod',
         ];
-        case GearCategory.swim:
+      case GearCategory.swim:
         return const [
-          'Kacamata Renang (Goggles)',
-          'Wetsuit Open Water',
-          'Sirip Renang (Fins)',
+          'Hydrodynamic Goggles',
+          'Open Water Wetsuit',
+          'Training Fins',
           'Hand Paddles & Pull Buoy',
-          'Jam / Pelampung Renang',
+          'Swim Buoy / Watch',
         ];
     }
   }
@@ -199,7 +213,7 @@ extension GearCategoryExtension on GearCategory {
           'Wilier',
           'Wimcycle',
         ];
-        case GearCategory.shoes:
+      case GearCategory.shoes:
         return const [
           '+8000',
           '361°',
@@ -235,7 +249,7 @@ extension GearCategoryExtension on GearCategory {
           'Specs',
           'Under Armour',
         ];
-        case GearCategory.wearable:
+      case GearCategory.wearable:
         return const [
           'Amazfit',
           'Apple',
@@ -257,7 +271,7 @@ extension GearCategoryExtension on GearCategory {
           'Whoop',
           'Xiaomi',
         ];
-        case GearCategory.swim:
+      case GearCategory.swim:
         return const [
           '2XU',
           'Arena',
@@ -275,6 +289,7 @@ extension GearCategoryExtension on GearCategory {
         ];
     }
   }
+
   List<int> get maxDistancePresets {
     switch (this) {
       case GearCategory.shoes:
@@ -286,6 +301,47 @@ extension GearCategoryExtension on GearCategory {
         return const [];
     }
   }
+}
+
+const Map<String, String> _legacyTermMap = {
+  'sepeda gunung': 'Mountain Bike',
+  'sepeda cross': 'Cyclocross Bike',
+  'sepeda balap': 'Road Race Bike',
+  'sepeda tt': 'Time Trial / Aero',
+  'bersepeda medan kerikil': 'Gravel Bike',
+  'sepeda e-bike': 'Electric Bike (E-Bike)',
+  'sepeda lipat / kota': 'Folding / Urban Bike',
+  'lari jalan raya (road)': 'Road Trainer',
+  'lari trail': 'Trail Running',
+  'sepatu lomba (carbon / racing)': 'Carbon Race Super-Shoe',
+  'latihan harian (daily trainer)': 'Daily Cushion Trainer',
+  'jalan santai & mendaki': 'Walking & Light Hike',
+  'jam tangan gps': 'GPS Sports Watch',
+  'sensor detak jantung (hrm)': 'Heart Rate Strap (HRM)',
+  'kacamata renang (goggles)': 'Hydrodynamic Goggles',
+  'sirip renang (fins)': 'Training Fins',
+  'jam / pelampung renang': 'Swim Buoy / Watch',
+  'bersepeda': 'Road Cycling',
+  'bersepeda gunung': 'Mountain Biking',
+  'medan kerikil': 'Gravel Riding',
+  'bersepeda virtual': 'Virtual Cycling',
+  'bersepeda e-bike': 'E-Bike Ride',
+  'perjalanan sepeda elektrik gunung': 'E-MTB Trail',
+  'handcycle': 'Handcycling',
+  'berlari': 'Road Running',
+  'lari virtual': 'Virtual Run',
+  'berjalan': 'Brisk Walking',
+  'mendaki': 'Alpine Hiking',
+  'berenang': 'Pool Swimming',
+  'renang perairan terbuka': 'Open Water Swim',
+  'latihan kebugaran': 'Strength & Conditioning',
+  'akuatlon': 'Aquathlon',
+};
+
+String translateLegacyGearTerm(String raw) {
+  final trimmed = raw.trim();
+  if (trimmed.isEmpty) return '';
+  return _legacyTermMap[trimmed.toLowerCase()] ?? trimmed;
 }
 
 @immutable
@@ -330,19 +386,24 @@ class AthleteGear {
     return combined.isNotEmpty ? combined : category.label;
   }
 
+  String get displaySubType => translateLegacyGearTerm(subType);
+
+  List<String> get displayDefaultSports =>
+    defaultSports.map(translateLegacyGearTerm).toList();
+
   String get brandModelSubtitle {
     final parts = [
       if (brand.trim().isNotEmpty) brand.trim(),
       if (model.trim().isNotEmpty) model.trim(),
     ];
-    return parts.isEmpty ? subType : parts.join(' • ');
+    return parts.isEmpty ? displaySubType : parts.join(' • ');
   }
 
   String get formattedDistance {
     if (currentDistanceKm == currentDistanceKm.roundToDouble()) {
-      return '${currentDistanceKm.toInt()} km';
+      return '${currentDistanceKm.toInt().withThousands} km';
     }
-    return '${currentDistanceKm.toStringAsFixed(1).replaceAll('.', ',')} km';
+    return '${currentDistanceKm.toStringAsFixed(1)} km';
   }
 
   double? get wearProgressRatio {
@@ -353,6 +414,28 @@ class AthleteGear {
   bool get isReplacementDue {
     if (maxDistanceKm == null || maxDistanceKm! <= 0) return false;
     return currentDistanceKm >= maxDistanceKm!;
+  }
+
+  bool get isHighWear {
+    final ratio = wearProgressRatio;
+    if (ratio == null) return false;
+    return ratio >= 0.8 && !isReplacementDue;
+  }
+
+  double? get remainingDistanceKm {
+    if (maxDistanceKm == null || maxDistanceKm! <= 0) return null;
+    return (maxDistanceKm! - currentDistanceKm).clamp(
+      0.0,
+      maxDistanceKm!.toDouble(),
+    );
+  }
+
+  String get wearStatusLabel {
+    if (isRetired) return 'Archived';
+    if (isReplacementDue) return 'Replace Soon';
+    if (isHighWear) return 'High Wear';
+    if (maxDistanceKm != null) return 'Optimal';
+    return 'Active';
   }
 
   AthleteGear copyWith({
@@ -441,6 +524,3 @@ class AthleteGear {
     );
   }
 }
-
-
-

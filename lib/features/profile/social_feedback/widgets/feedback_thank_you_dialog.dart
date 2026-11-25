@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class FeedbackThankYouDialog extends StatelessWidget {
@@ -23,13 +24,13 @@ class FeedbackThankYouDialog extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(9),
                   decoration: BoxDecoration(
                     color: Styles.success.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
-                    Icons.check_circle_outline_rounded,
+                    Icons.verified_rounded,
                     color: Styles.success,
                     size: 24,
                   ),
@@ -37,7 +38,7 @@ class FeedbackThankYouDialog extends StatelessWidget {
                 const SizedBox(width: 12),
                 const Expanded(
                   child: Text(
-                    'Terima Kasih',
+                    'Feedback Received',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -49,9 +50,9 @@ class FeedbackThankYouDialog extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             const Text(
-              'Terima kasih, ulasanmu sangat berarti bagi pengembangan aplikasi kami.',
+              'Thank you for sharing your Pulse! Your insights directly help us refine ${AppBrand.name} for every athlete.',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 14.5,
                 height: 1.45,
                 color: Styles.textSecondary,
               ),
@@ -60,19 +61,16 @@ class FeedbackThankYouDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Styles.primaryDark, Styles.primary],
-                  ),
-                  borderRadius: BorderRadius.circular(Radii.button),
-                  boxShadow: Styles.glow(intensity: 0.25, blur: 12),
+                decoration: Styles.buttonDecoration(
+                  radius: Radii.button,
+                  withGlow: true,
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    foregroundColor: Styles.textPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    foregroundColor: Styles.canvas,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(Radii.button),
                     ),
@@ -82,10 +80,10 @@ class FeedbackThankYouDialog extends StatelessWidget {
                     onConfirmOk();
                   },
                   child: const Text(
-                    'Oke',
+                    'Back to Profile',
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),

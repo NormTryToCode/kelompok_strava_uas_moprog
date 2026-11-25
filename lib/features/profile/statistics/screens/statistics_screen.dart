@@ -27,9 +27,9 @@ class _StatisticsViewState extends ConsumerState<StatisticsView> {
   Widget build(BuildContext context) {
     final SportSessionsState sessionsState = ref.watch(sportStatisticsProvider);
     final double athleteWeightKg =
-        ref.watch(athleteProfileProvider).parsedWeightKg;
+      ref.watch(athleteProfileProvider).parsedWeightKg;
     final int activeSessionCount =
-        sessionsState.sessionsForSport(_selectedSportIndex);
+      sessionsState.sessionsForSport(_selectedSportIndex);
 
     final stats = SportStatisticsData(
       sportIndex: _selectedSportIndex,
@@ -46,26 +46,46 @@ class _StatisticsViewState extends ConsumerState<StatisticsView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 14.0,
-          ),
+          padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 10.0),
           child: Row(
             children: [
               GestureDetector(
                 onTap: widget.onBack,
-                child: const Icon(
-                  Icons.arrow_back,
-                  color: Styles.textPrimary,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Styles.surfaceElevated,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Styles.borderStrong),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Styles.textPrimary,
+                    size: 20,
+                  ),
                 ),
               ),
-              const SizedBox(width: 24),
-              const Text(
-                'Statistik',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Styles.textPrimary,
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Performance Lab',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Styles.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'Multi-Sport Telemetry & Targets',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Styles.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -103,58 +123,70 @@ class _StatisticsViewState extends ConsumerState<StatisticsView> {
                     ),
                 ),
                 StatisticsSectionTable(
-                  sectionTitle: 'AKTIVITAS MINGGUAN RATA2',
+                  sectionTitle: 'WEEKLY CADENCE',
                   items: [
                     StatisticMetricItem(
-                      label: stats.sportLabel,
+                      label: 'Weekly ${stats.sessionPluralLabel}',
                       value: stats.weeklyActivityCount,
+                      icon: Icons.repeat_rounded,
                     ),
                     StatisticMetricItem(
-                      label: 'Waktu',
+                      label: 'Active Time',
                       value: stats.weeklyDurationText,
+                      icon: Icons.timer_outlined,
                     ),
                     StatisticMetricItem(
-                      label: 'Jarak',
+                      label: 'Weekly Distance',
                       value: stats.weeklyDistanceText,
+                      icon: Icons.straighten_rounded,
+                      highlight: true,
                     ),
                   ],
                 ),
                 StatisticsSectionTable(
-                  sectionTitle: 'SETAHUN INI',
+                  sectionTitle: 'SEASON TO DATE',
                   items: [
                     StatisticMetricItem(
-                      label: stats.sportLabel,
+                      label: 'Season ${stats.sessionPluralLabel}',
                       value: stats.yearlyActivityCount,
+                      icon: Icons.calendar_month_rounded,
                     ),
                     StatisticMetricItem(
-                      label: 'Waktu',
+                      label: 'Total Duration',
                       value: stats.yearlyDurationText,
+                      icon: Icons.schedule_rounded,
                     ),
                     StatisticMetricItem(
-                      label: 'Jarak',
+                      label: 'Season Volume',
                       value: stats.yearlyDistanceText,
+                      icon: Icons.trending_up_rounded,
+                      highlight: true,
                     ),
                     if (stats.hasElevation)
                       StatisticMetricItem(
-                        label: 'Kenaikan Elevasi',
+                        label: 'Elevation Gain',
                         value: stats.yearlyElevationText,
+                        icon: Icons.terrain_rounded,
                       ),
                   ],
                 ),
                 StatisticsSectionTable(
-                  sectionTitle: 'SEPANJANG WAKTU',
+                  sectionTitle: 'LIFETIME CAREER',
                   items: [
                     StatisticMetricItem(
-                      label: stats.sportLabel,
+                      label: 'All-Time ${stats.sessionPluralLabel}',
                       value: stats.allTimeActivityCount,
+                      icon: Icons.workspace_premium_rounded,
                     ),
                     StatisticMetricItem(
-                      label: 'Jarak',
+                      label: 'Lifetime Volume',
                       value: stats.allTimeDistanceText,
+                      icon: Icons.public_rounded,
+                      highlight: true,
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
               ],
             ),
           ),
