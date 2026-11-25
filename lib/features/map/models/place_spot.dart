@@ -33,6 +33,8 @@ class PlaceSpot {
     if (name == null || lat == null || lon == null) return null;
 
     final isBike = tags['highway'] == 'cycleway' || tags['route'] == 'bicycle';
+    final leisure = tags['leisure'];
+    if (!isBike && leisure != 'park' && leisure != 'track') return null;
     return PlaceSpot(
       id: '${e['type']}_${e['id']}',
       name: name,
