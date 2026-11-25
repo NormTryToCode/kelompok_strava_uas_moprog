@@ -42,27 +42,13 @@ class ProfileHeaderWidget extends StatelessWidget {
     }
   }
 
-  String _formatGenderLabel(String raw) {
-    switch (raw.trim().toLowerCase()) {
-      case 'pria':
-        return 'Male';
-      case 'wanita':
-        return 'Female';
-      case 'non-biner':
-        return 'Non-binary';
-      case 'memilih tidak mengatakan':
-        return 'Private';
-      default:
-        return raw.trim().isEmpty ? 'Athlete' : raw.trim();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final String sportTag = _formatSportLabel(profileData.primarySport);
-    final String genderTag = _formatGenderLabel(profileData.gender);
+    final String city = profileData.city.trim();
+    final String country = profileData.country.trim();
     final String locationLine =
-      '${profileData.city.trim().isEmpty ? 'Jakarta' : profileData.city.trim()}, ${profileData.country.trim().isEmpty ? 'ID' : profileData.country.trim()}';
+      '${city.isEmpty ? 'Jakarta' : city}, ${country.isEmpty ? 'INDONESIA' : country}';
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
@@ -200,7 +186,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
-                                    '$locationLine  •  $genderTag (${profileData.weightKg} kg)',
+                                    locationLine,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontSize: 12.5,
