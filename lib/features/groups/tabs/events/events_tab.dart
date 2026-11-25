@@ -8,6 +8,10 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/event_det
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/upcoming_event_hero_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/race_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/race_detail_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/races_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/race_showcase_card.dart';
 
 class EventsTab extends ConsumerWidget {
   const EventsTab({super.key});
@@ -17,6 +21,7 @@ class EventsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final eventsAsync = ref.watch(eventsProvider);
+    final races = ref.watch(racesProvider);
     final now = DateTime.now();
 
     return eventsAsync.when(
@@ -210,6 +215,68 @@ class EventsTab extends ConsumerWidget {
                 ),
               ),
             ),
+            
+            if (races.isNotEmpty) ...[
+              const SizedBox(height: 28),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Races',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Styles.textPrimary,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => RacesPage.open(context),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Styles.primaryLight,
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'See all',
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(width: 2),
+                          Icon(Icons.chevron_right, size: 17),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 292,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: races.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 12),
+                  itemBuilder: (_, index) {
+                    final race = races[index];
+                    return RaceShowcaseCard(
+                      width: (screenWidth - 52).clamp(270.0, 330.0),
+                      race: race,
+                      onTap: () => RaceDetailPage.open(context, race),
+                    );
+                  },
+                ),
+              ),
+            ],
           ],
         );
       },
