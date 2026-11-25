@@ -62,7 +62,7 @@ class PostCardItem extends StatelessWidget {
                       post.createdAt.timeAgo(),
                       style: const TextStyle(
                         fontSize: 12.5,
-                        color: Styles.surfaceHighlight,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ],
@@ -75,7 +75,7 @@ class PostCardItem extends StatelessWidget {
                   icon: const Icon(
                     Icons.more_vert,
                     size: 20,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                   color: Styles.surface,
                   onSelected: (value) {
@@ -125,7 +125,7 @@ class PostCardItem extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14.5,
                 height: 1.45,
-                color: Styles.surfaceHighlight,
+                color: Styles.textSecondary,
               ),
             ),
           ],
@@ -145,7 +145,7 @@ class PostCardItem extends StatelessWidget {
                   alignment: Alignment.center,
                   child: const Icon(
                     Icons.broken_image_outlined,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                     size: 32,
                   ),
                 ),
@@ -164,7 +164,7 @@ class PostCardItem extends StatelessWidget {
                       : FontWeight.w400,
                   color: post.hasGivenKudos
                       ? Styles.teal
-                      : Styles.surfaceHighlight,
+                      : Styles.textSecondary,
                 ),
               ),
               const Spacer(),
@@ -173,7 +173,7 @@ class PostCardItem extends StatelessWidget {
                   'Comments off',
                   style: TextStyle(
                     fontSize: 12.5,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 )
               else if (post.commentLabel.isNotEmpty)
@@ -181,7 +181,7 @@ class PostCardItem extends StatelessWidget {
                   post.commentLabel,
                   style: const TextStyle(
                     fontSize: 12.5,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
             ],
@@ -305,7 +305,7 @@ class _ActionPillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = !enabled
-        ? Styles.surfaceHighlight.withAlpha(90)
+        ? Styles.textSecondary.withAlpha(90)
         : (active ? Styles.accent : Colors.white);
 
     return Material(

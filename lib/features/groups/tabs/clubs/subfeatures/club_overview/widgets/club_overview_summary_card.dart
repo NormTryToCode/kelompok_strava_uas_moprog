@@ -81,7 +81,7 @@ class ClubOverviewSummaryCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 height: 1.45,
-                color: Styles.surfaceHighlight,
+                color: Styles.textSecondary,
               ),
             ),
           ],

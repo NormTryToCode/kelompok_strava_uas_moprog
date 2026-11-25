@@ -63,14 +63,14 @@ class EventPickerField extends StatelessWidget {
                             fontSize: 16,
                             color: hasValue
                                 ? Colors.white
-                                : Styles.surfaceHighlight,
+                                : Styles.textSecondary,
                           ),
                         ),
                       ),
                       trailing ??
                           const Icon(
                             Icons.keyboard_arrow_down,
-                            color: Styles.surfaceHighlight,
+                            color: Styles.textSecondary,
                           ),
                     ],
                   ),

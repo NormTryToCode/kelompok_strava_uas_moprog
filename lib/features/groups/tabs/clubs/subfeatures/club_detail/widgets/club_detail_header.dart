@@ -106,7 +106,7 @@ class ClubDetailHeader extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14.5,
                     height: 1.4,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
               ],

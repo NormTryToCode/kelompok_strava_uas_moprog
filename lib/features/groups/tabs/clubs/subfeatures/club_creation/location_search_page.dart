@@ -109,7 +109,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
               padding: EdgeInsets.only(bottom: 12),
               child: Text(
                 'Place data \u00a9 OpenStreetMap contributors',
-                style: TextStyle(fontSize: 11, color: Styles.surfaceHighlight),
+                style: TextStyle(fontSize: 11, color: Styles.textSecondary),
               ),
             ),
           ],
@@ -184,8 +184,8 @@ class _SearchField extends StatelessWidget {
       style: const TextStyle(fontSize: 16, color: Colors.white),
       decoration: InputDecoration(
         hintText: 'Search places',
-        hintStyle: const TextStyle(color: Styles.surfaceHighlight),
-        prefixIcon: const Icon(Icons.search, color: Styles.surfaceHighlight),
+        hintStyle: const TextStyle(color: Styles.textSecondary),
+        prefixIcon: const Icon(Icons.search, color: Styles.textSecondary),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
           builder: (_, value, _) => value.text.isEmpty
@@ -233,7 +233,7 @@ class _Message extends StatelessWidget {
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 15,
-                color: Styles.surfaceHighlight,
+                color: Styles.textSecondary,
               ),
             ),
             if (actionLabel != null)

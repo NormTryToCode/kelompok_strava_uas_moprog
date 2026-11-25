@@ -131,7 +131,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
         body: Center(
           child: Text(
             'Could not load post.',
-            style: TextStyle(color: Styles.surfaceHighlight),
+            style: TextStyle(color: Styles.textSecondary),
           ),
         ),
       ),
@@ -147,7 +147,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
             body: const Center(
               child: Text(
                 'Post no longer exists.',
-                style: TextStyle(color: Styles.surfaceHighlight),
+                style: TextStyle(color: Styles.textSecondary),
               ),
             ),
           );
@@ -238,7 +238,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                                 'Start the conversation below.',
                                 style: TextStyle(
                                   fontSize: 13.5,
-                                  color: Styles.surfaceHighlight,
+                                  color: Styles.textSecondary,
                                 ),
                               ),
                             ],
@@ -290,7 +290,7 @@ class _PostDetailPageState extends ConsumerState<PostDetailPage> {
                               decoration: InputDecoration(
                                 hintText: 'Add a comment...',
                                 hintStyle: const TextStyle(
-                                  color: Styles.surfaceHighlight,
+                                  color: Styles.textSecondary,
                                 ),
                                 filled: true,
                                 fillColor: Styles.fieldFill,

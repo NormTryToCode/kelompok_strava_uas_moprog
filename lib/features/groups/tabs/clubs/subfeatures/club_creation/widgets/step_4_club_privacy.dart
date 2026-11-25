@@ -49,7 +49,7 @@ class Step4ClubPrivacy extends StatelessWidget {
         const SizedBox(height: 16),
         const Text(
           'You can change this later in the club settings.',
-          style: TextStyle(fontSize: 13, color: Styles.surfaceHighlight),
+          style: TextStyle(fontSize: 13, color: Styles.textSecondary),
         ),
       ],
     );
