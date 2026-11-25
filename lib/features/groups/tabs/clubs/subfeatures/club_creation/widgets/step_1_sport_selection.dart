@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/sport_grid_tile.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_heading.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
@@ -56,7 +56,7 @@ class Step1SportSelection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline, size: 18, color: Palette.teal),
+                const Icon(Icons.info_outline, size: 18, color: Styles.teal),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -64,7 +64,7 @@ class Step1SportSelection extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Styles.tabInactive,
+                      color: Styles.surfaceHighlight,
                     ),
                   ),
                 ),

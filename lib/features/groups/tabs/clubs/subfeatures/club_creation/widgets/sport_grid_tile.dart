@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/selectable_card.dart';
 
@@ -26,7 +26,7 @@ class SportGridTile extends StatelessWidget {
           IconBubble(
             sport.icon,
             size: 40,
-            color: selected ? Palette.teal : Styles.tabInactive,
+            color: selected ? Styles.teal : Styles.surfaceHighlight,
           ),
           const SizedBox(width: 10),
           Expanded(

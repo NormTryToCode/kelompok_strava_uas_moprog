@@ -3,6 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/friend_repository.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/widgets/friend_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/pages/chat_page.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -12,7 +13,7 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
-  final FriendRepository _repo = PrefsFriendRepository();
+  final FriendRepository _repo = FriendRepository.instance;
   List<Friend> _friends = [];
   bool _loading = true;
 
@@ -36,7 +37,7 @@ class _FriendsPageState extends State<FriendsPage> {
     await _load();
   }
 
-    Future<void> _showAddDialog() async {
+  Future<void> _showAddDialog() async {
     final nameCtrl = TextEditingController();
     final usernameCtrl = TextEditingController();
 
@@ -44,7 +45,10 @@ class _FriendsPageState extends State<FriendsPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Styles.surface,
-        title: const Text('Tambah teman', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Tambah teman',
+          style: TextStyle(color: Colors.white),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -96,10 +100,10 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: AppBar(
         title: const Text('Teman'),
-        backgroundColor: Styles.background,
+        backgroundColor: Styles.canvas,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -111,16 +115,26 @@ class _FriendsPageState extends State<FriendsPage> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _friends.isEmpty
-              ? const Center(
-                  child: Text('Belum ada teman', style: TextStyle(color: Colors.white70)),
-                )
-              : ListView.builder(
-                  itemCount: _friends.length,
-                  itemBuilder: (context, i) => FriendCard(
-                    friend: _friends[i],
-                    onRemove: () => _remove(_friends[i]),
+          ? const Center(
+              child: Text(
+                'Belum ada teman',
+                style: TextStyle(color: Colors.white70),
+              ),
+            )
+          : ListView.builder(
+              itemCount: _friends.length,
+              itemBuilder: (context, i) => FriendCard(
+                friend: _friends[i],
+                onRemove: () => _remove(_friends[i]),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChatPage(friend: _friends[i]),
                   ),
                 ),
+              ),
+            ),
     );
   }
 }
+

@@ -20,7 +20,7 @@ class PersonTile extends StatelessWidget {
             child: Text(
               person.initials,
               style: const TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -34,7 +34,7 @@ class PersonTile extends StatelessWidget {
                 Text(
                   person.name,
                   style: const TextStyle(
-                    color: Styles.tabActive,
+                    color: Styles.primaryLight,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -57,3 +57,4 @@ class PersonTile extends StatelessWidget {
     );
   }
 }
+

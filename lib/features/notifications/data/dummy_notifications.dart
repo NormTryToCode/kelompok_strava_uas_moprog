@@ -5,9 +5,9 @@ List<NotificationItem> buildDummyNotifications() {
   return [
     NotificationItem(
       id: 'n1',
-      title: 'Next step: connect a device',
+      title: 'Connecting a device to Stride',
       body:
-          'Want to track all your effort? Connecting a device to Strava lets you sync stats like heart rate, power, and more.',
+          'Want to track all your effort? Connecting a device to Stride lets you sync stats like heart rate, power, and more.',
       createdAt: now.subtract(const Duration(days: 11)),
     ),
     NotificationItem(
@@ -18,7 +18,7 @@ List<NotificationItem> buildDummyNotifications() {
     ),
     NotificationItem(
       id: 'n3',
-      title: 'Welcome to Strava',
+      title: 'Welcome to Stride',
       body: 'Record your first activity to start your weekly streak.',
       createdAt: now.subtract(const Duration(hours: 5)),
     ),

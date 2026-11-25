@@ -1,375 +1,158 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/shared/controllers/follow_controller.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'models/athlete_profile_data.dart';
-import 'models/gear_bag.dart';
-import 'models/gear_catalog.dart';
-import 'tabs/aktivitas_tab.dart';
-import 'tabs/kemajuan_tab.dart';
-import 'tabs/lainnya_tab.dart';
-import 'views/edit_profile_view.dart';
-import 'views/feedback_view.dart';
-import 'views/followers_following_view.dart';
-import 'views/gear_bag_view.dart';
-import 'views/gear_catalog_view.dart';
-import 'views/segment_location_view.dart';
-import 'views/statistics_view.dart';
-import 'views/trophy_case_view.dart';
-import 'widgets/profile_header_widget.dart';
-import 'widgets/profile_tab_bar.dart';
-import 'widgets/share_profile_sheet.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
+import 'edit_profile/models/athlete_profile_data.dart';
+import 'edit_profile/providers/athlete_profile_provider.dart';
+import 'edit_profile/screens/edit_profile_screen.dart';
+import 'gear/screens/gear_management_screen.dart';
+import 'overview/providers/profile_activity_provider.dart';
+import 'overview/tabs/aktivitas_tab.dart';
+import 'overview/tabs/kemajuan_tab.dart';
+import 'overview/tabs/lainnya_tab.dart';
+import 'overview/widgets/profile_avatar_preview_dialog.dart';
+import 'overview/widgets/profile_header_widget.dart';
+import 'overview/widgets/profile_tab_bar.dart';
+import 'shared/services/profile_share_service.dart';
+import 'shared/utils/profile_page_route.dart';
+import 'shared/utils/profile_snackbar_helper.dart';
+import 'social_feedback/screens/feedback_screen.dart';
+import 'social_feedback/screens/followers_following_screen.dart';
+import 'social_feedback/screens/segment_location_screen.dart';
+import 'statistics/providers/sport_statistics_provider.dart';
+import 'statistics/screens/statistics_screen.dart';
+import 'trophies/screens/trophy_case_screen.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  int _activeScreen = 0;
-  int _activeTab = 0;
-  int _followInitialTab = 0;
-  int _runSessions = 0;
-  String _shareStatusMessage = '';
-  int _shareMessageToken = 0;
-
-  AthleteProfileData _profileData = const AthleteProfileData(
-    firstName: 'Michael',
-    lastName: 'Respati Sanjaya Ho',
-    city: 'Jakarta',
-    country: 'INDONESIA',
-    primarySport: 'Berlari',
-    bio: 'I LIKE RUNNN',
-    birthDate: '30/08/2007',
-    gender: 'Pria',
-    weightKg: '74,0',
-  );
-
-  final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedProfileData();
-  }
-
-  void _loadSavedProfileData() async {
-    final String firstName =
-        await _asyncPrefs.getString('first_name') ?? _profileData.firstName;
-    final String lastName =
-        await _asyncPrefs.getString('last_name') ?? _profileData.lastName;
-    final String city =
-        await _asyncPrefs.getString('city') ?? _profileData.city;
-    final String country =
-        await _asyncPrefs.getString('country') ?? _profileData.country;
-    final String sport =
-        await _asyncPrefs.getString('sport') ?? _profileData.primarySport;
-    final String savedBio =
-        await _asyncPrefs.getString('text') ?? _profileData.bio;
-    final String birthDate =
-        await _asyncPrefs.getString('birth_date') ?? _profileData.birthDate;
-    final String gender =
-        await _asyncPrefs.getString('gender') ?? _profileData.gender;
-    final String weight =
-        await _asyncPrefs.getString('weight_kg') ?? _profileData.weightKg;
-    final String avatarPath =
-        await _asyncPrefs.getString('avatar_path') ?? _profileData.avatarPath;
-
-    if (!mounted) return;
-    setState(() {
-      _profileData = AthleteProfileData(
-        firstName: firstName,
-        lastName: lastName,
-        city: city,
-        country: country,
-        primarySport: sport,
-        bio: savedBio,
-        birthDate: birthDate,
-        gender: gender,
-        weightKg: weight,
-        avatarPath: avatarPath,
-      );
-    });
-  }
-
-  void _showTemporaryShareMessage(String message) async {
-    final int currentToken = ++_shareMessageToken;
-    setState(() {
-      _shareStatusMessage = message;
-    });
-
-    await Future.delayed(const Duration(seconds: 3));
-    if (!mounted || currentToken != _shareMessageToken) return;
-
-    setState(() {
-      _shareStatusMessage = '';
-    });
-  }
-
-  void _handleShareProfile() async {
-    final String status =
-        await ProfileShareHelper.shareAthleteProfile(_profileData.fullName);
-    if (!mounted) return;
-    _showTemporaryShareMessage(status);
-  }
-
-  double get _parsedWeightKg {
-    final normalized = _profileData.weightKg.replaceAll(',', '.');
-    return double.tryParse(normalized) ?? 74.0;
-  }
-
-  Widget _buildActiveScreenContent() {
-    if (_activeScreen == 1) {
-      return EditProfileView(
-        initialData: _profileData,
-        onCancel: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-        onSaveProfile: (AthleteProfileData updatedData) {
-          setState(() {
-            _profileData = updatedData;
-            _activeScreen = 0;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 2) {
-      return TrophyCaseView(
-        currentActivities: _runSessions,
-        onBack: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 3) {
-      return FeedbackView(
-        onSubmitFeedback: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 4) {
-      return FollowersFollowingView(
-        initialTabIndex: _followInitialTab,
-        onBack: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 5) {
-      return GearCatalogView(
-        onBack: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-        onOpenBag: () {
-          setState(() {
-            _activeScreen = 6;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 6) {
-      return GearBagView(
-        onBack: () {
-          setState(() {
-            _activeScreen = 5;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 7) {
-      return SegmentLocationView(
-        onBack: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-      );
-    }
-    if (_activeScreen == 8) {
-      return StatisticsView(
-        initialRunSessions: _runSessions,
-        athleteWeightKg: _parsedWeightKg,
-        onRunSessionsChanged: (int updatedRuns) {
-          setState(() {
-            _runSessions = updatedRuns;
-          });
-        },
-        onBack: () {
-          setState(() {
-            _activeScreen = 0;
-          });
-        },
-      );
-    }
-
-    return ListenableBuilder(
-      listenable: FollowController.instance,
-      builder: (context, _) {
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ProfileHeaderWidget(
-                profileData: _profileData,
-                activityCount: _runSessions,
-                followingCount: FollowController.instance.followingCount,
-                onEditProfile: () {
-                  setState(() {
-                    _activeScreen = 1;
-                  });
-                },
-                onShareProfile: _handleShareProfile,
-                onTapFollowers: () {
-                  setState(() {
-                    _followInitialTab = 1;
-                    _activeScreen = 4;
-                  });
-                },
-                onTapFollowing: () {
-                  setState(() {
-                    _followInitialTab = 0;
-                    _activeScreen = 4;
-                  });
-                },
-              ),
-              if (_shareStatusMessage.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12.0,
-                    vertical: 4.0,
-                  ),
-                  child: Text(
-                    _shareStatusMessage,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Styles.active,
-                    ),
-                  ),
-                ),
-              ProfileTabBar(
-                activeTab: _activeTab,
-                onTapKemajuan: () {
-                  setState(() {
-                    _activeTab = 0;
-                  });
-                },
-                onTapAktivitas: () {
-                  setState(() {
-                    _activeTab = 1;
-                  });
-                },
-                onTapLainnya: () {
-                  setState(() {
-                    _activeTab = 2;
-                  });
-                },
-              ),
-              if (_activeTab == 0)
-                KemajuanTab(
-                  runSessions: _runSessions,
-                  onDecrement: () {
-                    setState(() {
-                      if (_runSessions > 0) {
-                        _runSessions--;
-                      }
-                    });
-                  },
-                  onReset: () {
-                    setState(() {
-                      _runSessions = 0;
-                    });
-                  },
-                  onIncrement: (_runSessions < 10)
-                      ? () {
-                          setState(() {
-                            _runSessions = _runSessions + 1;
-                          });
-                        }
-                      : null,
-                  onOpenFeedback: () {
-                    setState(() {
-                      _activeScreen = 3;
-                    });
-                  },
-                ),
-              if (_activeTab == 1)
-                AktivitasTab(
-                  activityCount: _runSessions,
-                  onAddFirstActivity: () {
-                    setState(() {
-                      _runSessions++;
-                    });
-                  },
-                ),
-              if (_activeTab == 2)
-                LainnyaTab(
-                  onOpenTrophyCase: () {
-                    setState(() {
-                      _activeScreen = 2;
-                    });
-                  },
-                  onOpenGearCatalog: () {
-                    setState(() {
-                      _activeScreen = 5;
-                    });
-                  },
-                  onOpenSegments: () {
-                    setState(() {
-                      _activeScreen = 7;
-                    });
-                  },
-                  onOpenStatistics: () {
-                    setState(() {
-                      _activeScreen = 8;
-                    });
-                  },
-                ),
-            ],
-          ),
+  void _openAvatarPreviewDialog(
+    BuildContext context,
+    AthleteProfileData profileData,
+  ) {
+    showDialog(
+      context: context,
+      barrierColor: const Color.fromARGB(210, 7, 6, 12),
+      builder: (BuildContext context) {
+        return Theme(
+          data: buildProfileDarkTheme(),
+          child: ProfileAvatarPreviewDialog(profileData: profileData),
         );
       },
     );
   }
 
+  Future<void> _handleShareProfile(
+    BuildContext context,
+    String fullName,
+  ) async {
+    final String status =
+      await ProfileShareHelper.shareAthleteProfile(fullName);
+    if (!context.mounted) return;
+    ProfileSnackbarHelper.showSuccess(context, status);
+  }
+
+  Widget _buildActiveScreenContent(BuildContext context, WidgetRef ref) {
+    final ProfileNavigationState navState =
+      ref.watch(profileNavigationProvider);
+    final navNotifier = ref.read(profileNavigationProvider.notifier);
+
+    switch (navState.activeScreen) {
+      case ProfileSubScreen.editProfile:
+        return EditProfileView(onDone: navNotifier.backToOverview);
+      case ProfileSubScreen.trophyCase:
+        return TrophyCaseView(onBack: navNotifier.backToOverview);
+      case ProfileSubScreen.feedback:
+        return FeedbackView(onSubmitFeedback: navNotifier.backToOverview);
+      case ProfileSubScreen.followersFollowing:
+        return FollowersFollowingView(
+          initialTabIndex: navState.followInitialTab,
+          onBack: navNotifier.backToOverview,
+        );
+      case ProfileSubScreen.gearManagement:
+        return GearManagementView(onBack: navNotifier.backToOverview);
+      case ProfileSubScreen.segments:
+        return SegmentLocationView(onBack: navNotifier.backToOverview);
+      case ProfileSubScreen.statistics:
+        return StatisticsView(onBack: navNotifier.backToOverview);
+      case ProfileSubScreen.overview:
+        break;
+    }
+
+    final AthleteProfileData profileData = ref.watch(athleteProfileProvider);
+    final int runSessions = ref.watch(runSessionsProvider);
+    final int followingCount = ref.watch(followingCountProvider);
+    final statsNotifier = ref.read(sportStatisticsProvider.notifier);
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProfileHeaderWidget(
+            profileData: profileData,
+            activityCount: runSessions,
+            followingCount: followingCount,
+            onTapAvatar: () => _openAvatarPreviewDialog(context, profileData),
+            onEditProfile: () =>
+              navNotifier.openScreen(ProfileSubScreen.editProfile),
+            onShareProfile: () =>
+              _handleShareProfile(context, profileData.fullName),
+            onTapFollowers: () =>
+              navNotifier.openFollowersFollowing(initialTab: 1),
+            onTapFollowing: () =>
+              navNotifier.openFollowersFollowing(initialTab: 0),
+          ),
+          ProfileTabBar(
+            activeTab: navState.activeTab,
+            onTapKemajuan: () => navNotifier.selectTab(0),
+            onTapAktivitas: () => navNotifier.selectTab(1),
+            onTapLainnya: () => navNotifier.selectTab(2),
+          ),
+          IndexedStack(
+            index: navState.activeTab,
+            children: [
+              KemajuanTab(
+                runSessions: runSessions,
+                onDecrement: () => statsNotifier.decrementRun(),
+                onReset: () => statsNotifier.resetRun(),
+                onIncrement: (runSessions < 10)
+                  ? () => statsNotifier.incrementRun(maxLimit: 10)
+                  : null,
+                onOpenFeedback: () =>
+                  navNotifier.openScreen(ProfileSubScreen.feedback),
+              ),
+              AktivitasTab(
+                activityCount: runSessions,
+                onAddFirstActivity: () => statsNotifier.incrementRun(),
+              ),
+              LainnyaTab(
+                onOpenTrophyCase: () =>
+                  navNotifier.openScreen(ProfileSubScreen.trophyCase),
+                onOpenGearCatalog: () =>
+                  navNotifier.openScreen(ProfileSubScreen.gearManagement),
+                onOpenSegments: () =>
+                  navNotifier.openScreen(ProfileSubScreen.segments),
+                onOpenStatistics: () =>
+                  navNotifier.openScreen(ProfileSubScreen.statistics),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(create: (context) => GearCatalogModel()),
-        ChangeNotifierProxyProvider<GearCatalogModel, GearBagModel>(
-          create: (context) => GearBagModel(),
-          update: (context, catalog, bag) {
-            if (bag == null) throw ArgumentError.notNull('bag');
-            bag.catalog = catalog;
-            return bag;
-          },
-        ),
-      ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Theme(
+      data: buildProfileDarkTheme(),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Animate(
-          effects: const [FadeEffect()],
-          child: Scaffold(
-            backgroundColor: Styles.background,
-            body: SafeArea(
-              child: _buildActiveScreenContent(),
-            ),
+        child: Scaffold(
+          backgroundColor: Styles.canvas,
+          body: SafeArea(
+            child: _buildActiveScreenContent(context, ref),
           ),
         ),
       ),

@@ -5,20 +5,23 @@ import 'package:kelompok_strava_uas_moprog/features/search/tabs/friends_tab.dart
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
 class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+  final int initialTab;
+
+  const SearchPage({super.key, this.initialTab = 0});
 
   @override
   Widget build(BuildContext context) {
-    return const DefaultTabController(
+    return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        backgroundColor: Styles.background,
+      initialIndex: initialTab,
+      child: const Scaffold(
+        backgroundColor: Styles.canvas,
         appBar: AppHeader(title: 'Search', showBackButton: true),
         body: Column(
           children: [
             TabBar(
               indicatorColor: Styles.accent,
-              labelColor: Styles.tabActive,
+              labelColor: Styles.primaryLight,
               unselectedLabelColor: Colors.white54,
               labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               tabs: [
@@ -30,7 +33,7 @@ class SearchPage extends StatelessWidget {
               child: TabBarView(
                 children: [
                   FriendsTab(),
-                  ClubsTab(),
+                  SearchClubsTab(),
                 ],
               ),
             ),
@@ -40,3 +43,4 @@ class SearchPage extends StatelessWidget {
     );
   }
 }
+

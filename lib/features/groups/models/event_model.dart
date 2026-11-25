@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
 
 class EventKind {
@@ -172,7 +172,12 @@ class Event {
   final bool clubMembersOnly;
   final int? capacity;
   final int attendeeCount;
+  final bool isAttending;
   final DateTime createdAt;
+  final int? clubMemberCount;
+  final String? clubDescription;
+  final String? organizerName;
+  final List<String> participantIds;
 
   const Event({
     required this.id,
@@ -197,10 +202,55 @@ class Event {
     required this.capacity,
     required this.attendeeCount,
     required this.createdAt,
+    this.isAttending = true,
+    this.clubMemberCount,
+    this.clubDescription,
+    this.organizerName,
+    this.participantIds = const [],
   });
 
   String get attendeeLabel =>
       attendeeCount == 1 ? '1 going' : '$attendeeCount going';
+
+  String get rsvpLabel => '$attendeeCount RSVP\'d';
+
+  String get placeLabel =>
+      isVirtual ? 'Virtual' : (location?.name ?? 'Location TBA');
+
+  Event copyWith({
+    int? attendeeCount,
+    bool? isAttending,
+  }) {
+    return Event(
+      id: id,
+      clubId: clubId,
+      clubName: clubName,
+      name: name,
+      sport: sport,
+      startsAt: startsAt,
+      recurrence: recurrence,
+      isVirtual: isVirtual,
+      location: location,
+      description: description,
+      isDiscoverable: isDiscoverable,
+      kind: kind,
+      paceUnit: paceUnit,
+      paceRanges: paceRanges,
+      distance: distance,
+      distanceUnit: distanceUnit,
+      surface: surface,
+      womenOnly: womenOnly,
+      clubMembersOnly: clubMembersOnly,
+      capacity: capacity,
+      attendeeCount: attendeeCount ?? this.attendeeCount,
+      isAttending: isAttending ?? this.isAttending,
+      createdAt: createdAt,
+      clubMemberCount: clubMemberCount,
+      clubDescription: clubDescription,
+      organizerName: organizerName,
+      participantIds: participantIds,
+    );
+  }
 
   DateTime? nextOccurrence(DateTime now) {
     if (!startsAt.isBefore(now)) return startsAt;
@@ -227,6 +277,7 @@ class Event {
       'startsAt': startsAt.toIso8601String(),
       'recurrence': recurrence?.toJson(),
       'isVirtual': isVirtual,
+      'isAttending': isAttending,
       'location': place == null
           ? null
           : {
@@ -250,6 +301,10 @@ class Event {
       'capacity': capacity,
       'attendeeCount': attendeeCount,
       'createdAt': createdAt.toIso8601String(),
+      'clubMemberCount': clubMemberCount,
+      'clubDescription': clubDescription,
+      'organizerName': organizerName,
+      'participantIds': participantIds,
     };
   }
 
@@ -324,6 +379,14 @@ class Event {
       attendeeCount: (json['attendeeCount'] as num?)?.toInt() ?? 1,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
+      isAttending: json['isAttending'] as bool? ?? true,
+      clubMemberCount: (json['clubMemberCount'] as num?)?.toInt(),
+      clubDescription: json['clubDescription'] as String?,
+      organizerName: json['organizerName'] as String?,
+      participantIds: (json['participantIds'] as List?)
+              ?.whereType<String>()
+              .toList() ??
+          const [],
     );
   }
 }

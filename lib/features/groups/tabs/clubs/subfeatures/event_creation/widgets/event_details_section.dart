@@ -46,7 +46,10 @@ class EventDetailsSection extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 4, bottom: 4),
                   child: Text(
                     kindError,
-                    style: const TextStyle(fontSize: 13, color: eventErrorColor),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: eventErrorColor,
+                    ),
                   ),
                 ),
               const SizedBox(height: 6),
@@ -64,7 +67,10 @@ class EventDetailsSection extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 6, left: 4),
                     child: Text(
                       paceError,
-                      style: const TextStyle(fontSize: 13, color: eventErrorColor),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: eventErrorColor,
+                      ),
                     ),
                   ),
               ],
@@ -97,7 +103,7 @@ class _KindCard extends StatelessWidget {
           IconBubble(
             kind.icon,
             size: 42,
-            color: selected ? Palette.teal : Styles.tabInactive,
+            color: selected ? Styles.teal : Styles.surfaceHighlight,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -119,7 +125,7 @@ class _KindCard extends StatelessWidget {
                     kind.description,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Styles.tabInactive,
+                      color: Styles.surfaceHighlight,
                     ),
                   ),
                 ],

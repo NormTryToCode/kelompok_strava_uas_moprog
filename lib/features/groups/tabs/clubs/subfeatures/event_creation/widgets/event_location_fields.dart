@@ -28,9 +28,13 @@ class EventLocationFields extends StatelessWidget {
               value: controller.location?.name,
               placeholder: 'Choose a location',
               enabled: !controller.isVirtual,
-              trailing: const Icon(Icons.search, color: Styles.tabInactive),
-              errorText:
-                  controller.showErrors ? controller.locationError : null,
+              trailing: const Icon(
+                Icons.search,
+                color: Styles.surfaceHighlight,
+              ),
+              errorText: controller.showErrors
+                  ? controller.locationError
+                  : null,
               onTap: () async {
                 final picked = await LocationSearchPage.open(context);
                 if (picked != null) {

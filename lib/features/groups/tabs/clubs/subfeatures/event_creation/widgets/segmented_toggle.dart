@@ -21,9 +21,9 @@ class SegmentedToggle<T> extends StatelessWidget {
       height: 48,
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Palette.fieldFill,
+        color: Styles.fieldFill,
         borderRadius: BorderRadius.circular(Radii.field),
-        border: Border.all(color: Palette.cardBorder),
+        border: Border.all(color: Styles.cardBorder),
       ),
       child: Row(
         children: [
@@ -37,12 +37,12 @@ class SegmentedToggle<T> extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: option == selected
-                        ? Palette.selectedFill
+                        ? Styles.selectedFill
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(Radii.chip - 2),
                     border: Border.all(
                       color: option == selected
-                          ? Palette.teal
+                          ? Styles.teal
                           : Colors.transparent,
                       width: 1.2,
                     ),
@@ -54,7 +54,7 @@ class SegmentedToggle<T> extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: option == selected
                           ? Colors.white
-                          : Styles.tabInactive,
+                          : Styles.surfaceHighlight,
                     ),
                   ),
                 ),

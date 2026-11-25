@@ -3,16 +3,16 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
-class ClubDetailPage extends StatefulWidget {
-  final Club club;
+class SearchClubDetailPage extends StatefulWidget {
+  final SearchClub club;
 
-  const ClubDetailPage({super.key, required this.club});
+  const SearchClubDetailPage({super.key, required this.club});
 
   @override
-  State<ClubDetailPage> createState() => _ClubDetailPageState();
+  State<SearchClubDetailPage> createState() => _SearchClubDetailPageState();
 }
 
-class _ClubDetailPageState extends State<ClubDetailPage> {
+class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
   bool _joined = false;
 
   @override
@@ -22,7 +22,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
         : widget.club;
 
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       appBar: const AppHeader(title: 'Club', showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -32,7 +32,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
             Text(
               club.name,
               style: const TextStyle(
-                color: Styles.tabActive,
+                color: Styles.primaryLight,
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
               ),
@@ -55,7 +55,7 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
                 onPressed: () => setState(() => _joined = !_joined),
                 style: FilledButton.styleFrom(
                   backgroundColor: _joined ? Colors.white12 : Styles.accent,
-                  foregroundColor: Styles.tabActive,
+                  foregroundColor: Styles.primaryLight,
                   shape: const StadiumBorder(),
                 ),
                 child: Text(
@@ -73,3 +73,4 @@ class _ClubDetailPageState extends State<ClubDetailPage> {
     );
   }
 }
+

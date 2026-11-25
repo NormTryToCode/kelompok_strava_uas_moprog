@@ -9,21 +9,23 @@ class IconBubble extends StatelessWidget {
   const IconBubble(
     this.icon, {
     super.key,
-    this.color = Palette.teal,
+    this.color = Colors.white,
     this.size = 44,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isNeutral = color == Colors.white || color == Styles.surfaceHighlight;
+
     return Container(
       width: size,
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: color.withAlpha(34),
-        borderRadius: BorderRadius.circular(size * 0.3),
+        color: isNeutral ? Colors.white.withAlpha(16) : color.withAlpha(28),
+        borderRadius: BorderRadius.circular(size * 0.28),
       ),
-      child: Icon(icon, size: size * 0.5, color: color),
+      child: Icon(icon, size: size * 0.48, color: color),
     );
   }
 }

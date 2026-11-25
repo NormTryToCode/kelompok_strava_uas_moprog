@@ -24,7 +24,9 @@ class StepIndicator extends StatelessWidget {
                 height: 2,
                 margin: const EdgeInsets.symmetric(horizontal: 6),
                 decoration: BoxDecoration(
-                  color: step < currentStep ? Palette.teal : Styles.inactive,
+                  color: step < currentStep
+                      ? Styles.teal
+                      : Styles.surfaceHighlight,
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
@@ -54,21 +56,21 @@ class _Node extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: done
-            ? Palette.teal
-            : (current ? Palette.selectedFill : Colors.transparent),
+            ? Styles.teal
+            : (current ? Styles.selectedFill : Colors.transparent),
         border: Border.all(
-          color: done || current ? Palette.teal : Styles.inactive,
+          color: done || current ? Styles.teal : Styles.surfaceHighlight,
           width: 2,
         ),
       ),
       child: done
-          ? const Icon(Icons.check, size: 16, color: Styles.background)
+          ? const Icon(Icons.check, size: 16, color: Styles.canvas)
           : Text(
               '$step',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
-                color: current ? Palette.teal : Styles.tabInactive,
+                color: current ? Styles.teal : Styles.surfaceHighlight,
               ),
             ),
     );

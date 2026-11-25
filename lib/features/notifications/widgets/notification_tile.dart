@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/extensions/date_time_extensions.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/models/notification_item.dart';
 
@@ -18,15 +19,21 @@ class NotificationTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              radius: 28,
-              backgroundColor: Styles.accent,
-              child: Text(
-                'STRAVA',
+            Container(
+              width: 52,
+              height: 52,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                gradient: Styles.primaryGradient,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Text(
+                AppBrand.wordmark,
                 style: TextStyle(
-                  color: Styles.tabActive,
-                  fontSize: 9,
+                  color: Styles.canvas,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
+                  letterSpacing: 0.8,
                 ),
               ),
             ),
@@ -38,17 +45,18 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     item.title,
                     style: TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 17,
-                      fontWeight:
-                          item.isRead ? FontWeight.w500 : FontWeight.w700,
+                      fontWeight: item.isRead
+                          ? FontWeight.w500
+                          : FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.body,
                     style: const TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 15,
                     ),
                   ),
@@ -71,3 +79,4 @@ class NotificationTile extends StatelessWidget {
     );
   }
 }
+

@@ -3,7 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 class ClubTile extends StatelessWidget {
-  final Club club;
+  final SearchClub club;
   final VoidCallback? onTap;
 
   const ClubTile({super.key, required this.club, this.onTap});
@@ -44,7 +44,7 @@ class ClubTile extends StatelessWidget {
                   child: Text(
                     club.initials,
                     style: const TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                     ),
@@ -68,7 +68,7 @@ class ClubTile extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: Styles.tabActive,
+                      color: Styles.primaryLight,
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
                     ),
@@ -89,3 +89,4 @@ class ClubTile extends StatelessWidget {
     );
   }
 }
+

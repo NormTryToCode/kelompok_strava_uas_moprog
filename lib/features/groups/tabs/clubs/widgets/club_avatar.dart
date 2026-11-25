@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
@@ -25,20 +27,8 @@ class ClubAvatar extends StatelessWidget {
     return (words[0].substring(0, 1) + words[1].substring(0, 1)).toUpperCase();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: Palette.coverFor(club.id),
-        border: Border.all(
-          color: ringColor ?? Styles.surface,
-          width: size * 0.07,
-        ),
-      ),
+  Widget _buildInitials() {
+    return Center(
       child: Text(
         _initials,
         style: TextStyle(
@@ -49,4 +39,35 @@ class ClubAvatar extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final path = club.avatarPath;
+    final hasImage = path != null && path.isNotEmpty;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: Styles.coverFor(club.id),
+        border: Border.all(
+          color: ringColor ?? Styles.surface,
+          width: size * 0.07,
+        ),
+      ),
+      child: ClipOval(
+        child: hasImage
+            ? Image.file(
+                File(path),
+                fit: BoxFit.cover,
+                width: size,
+                height: size,
+                errorBuilder: (_, _, _) => _buildInitials(),
+              )
+            : _buildInitials(),
+      ),
+    );
+  }
 }
+

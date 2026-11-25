@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/club_type_chip.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_heading.dart';
 
@@ -28,7 +28,8 @@ class Step2ClubType extends StatelessWidget {
         StepHeading(
           eyebrow: 'Type',
           title: 'What is your club about?',
-          subtitle: 'Choose up to $maxSelection tags so people know what to expect.',
+          subtitle:
+              'Choose up to $maxSelection tags so people know what to expect.',
         ),
         const SizedBox(height: 16),
         Align(
@@ -67,7 +68,7 @@ class _CounterPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: active ? Palette.teal.withAlpha(34) : Styles.surface,
+        color: active ? Styles.teal.withAlpha(34) : Styles.surface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -75,7 +76,7 @@ class _CounterPill extends StatelessWidget {
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w700,
-          color: active ? Palette.teal : Styles.tabInactive,
+          color: active ? Styles.teal : Styles.surfaceHighlight,
         ),
       ),
     );

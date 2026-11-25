@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
-const String inviteLink = 'https://strava.app.link/EZFTnGxgX7b';
+const String inviteLink = AppBrand.inviteLink;
 
 class InviteButton extends StatelessWidget {
   const InviteButton({super.key});
@@ -10,9 +11,8 @@ class InviteButton extends StatelessWidget {
   Future<void> _copyLink(BuildContext context) async {
     await Clipboard.setData(const ClipboardData(text: inviteLink));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Invite link copied')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Invite link copied')));
   }
 
   @override
@@ -26,8 +26,10 @@ class InviteButton extends StatelessWidget {
           onPressed: () => _copyLink(context),
           style: FilledButton.styleFrom(
             backgroundColor: Styles.accent,
-            foregroundColor: Styles.tabActive,
-            shape: const StadiumBorder(),
+            foregroundColor: Styles.primaryLight,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Radii.button),
+            ),
           ),
           child: const Text(
             'Invite Friends',
@@ -38,3 +40,4 @@ class InviteButton extends StatelessWidget {
     );
   }
 }
+

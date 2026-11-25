@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_heading.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/choice_card.dart';
 
@@ -49,7 +49,7 @@ class Step4ClubPrivacy extends StatelessWidget {
         const SizedBox(height: 16),
         const Text(
           'You can change this later in the club settings.',
-          style: TextStyle(fontSize: 13, color: Styles.tabInactive),
+          style: TextStyle(fontSize: 13, color: Styles.surfaceHighlight),
         ),
       ],
     );

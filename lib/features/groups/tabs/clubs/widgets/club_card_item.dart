@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
@@ -13,6 +15,9 @@ class ClubCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final coverPath = club.coverPath;
+    final hasCover = coverPath != null && coverPath.isNotEmpty;
+
     return SoftCard(
       padding: EdgeInsets.zero,
       onTap: onTap,
@@ -22,13 +27,23 @@ class ClubCardItem extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              Container(
-                height: 68,
-                decoration: BoxDecoration(
-                  gradient: Palette.coverFor(club.id),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(Radii.card - 1),
-                  ),
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(Radii.card - 1),
+                ),
+                child: Container(
+                  height: 68,
+                  width: double.infinity,
+                  decoration: BoxDecoration(gradient: Styles.coverFor(club.id)),
+                  child: hasCover
+                      ? Image.file(
+                          File(coverPath),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 68,
+                          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                        )
+                      : null,
                 ),
               ),
               Positioned(
@@ -57,7 +72,11 @@ class ClubCardItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(club.sport.icon, size: 14, color: Styles.tabInactive),
+                    Icon(
+                      club.sport.icon,
+                      size: 14,
+                      color: Styles.surfaceHighlight,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -66,7 +85,7 @@ class ClubCardItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 12.5,
-                          color: Styles.tabInactive,
+                          color: Styles.surfaceHighlight,
                         ),
                       ),
                     ),
@@ -82,3 +101,4 @@ class ClubCardItem extends StatelessWidget {
     );
   }
 }
+

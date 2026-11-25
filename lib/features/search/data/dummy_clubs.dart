@@ -1,15 +1,15 @@
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
-List<Club> buildDummyClubs() {
+List<SearchClub> buildDummyClubs() {
   return const [
-    Club(
+    SearchClub(
       id: 'club1',
       name: 'Jakarta Sunrise Runners',
       sport: SportType.running,
       memberCount: 46090,
       city: 'Jakarta',
     ),
-    Club(
+    SearchClub(
       id: 'club2',
       name: 'Nusantara Cycling Club',
       sport: SportType.cycling,
@@ -17,21 +17,21 @@ List<Club> buildDummyClubs() {
       city: 'Jakarta',
       isVerified: true,
     ),
-    Club(
+    SearchClub(
       id: 'club3',
       name: 'Bandung Trail Society',
       sport: SportType.running,
       memberCount: 15290,
       city: 'Bandung',
     ),
-    Club(
+    SearchClub(
       id: 'club4',
       name: 'Surabaya Pedal Crew',
       sport: SportType.cycling,
       memberCount: 11786,
       city: 'Surabaya',
     ),
-    Club(
+    SearchClub(
       id: 'club5',
       name: 'Bali Open Water Swimmers',
       sport: SportType.swimming,
@@ -39,21 +39,21 @@ List<Club> buildDummyClubs() {
       city: 'Denpasar',
       isVerified: true,
     ),
-    Club(
+    SearchClub(
       id: 'club6',
       name: 'Yogyakarta Walking Group',
       sport: SportType.walking,
       memberCount: 6310,
       city: 'Yogyakarta',
     ),
-    Club(
+    SearchClub(
       id: 'club7',
       name: 'Medan Road Riders',
       sport: SportType.cycling,
       memberCount: 5875,
       city: 'Medan',
     ),
-    Club(
+    SearchClub(
       id: 'club8',
       name: 'Semarang Morning Run',
       sport: SportType.running,
@@ -61,14 +61,14 @@ List<Club> buildDummyClubs() {
       city: 'Semarang',
       isVerified: true,
     ),
-    Club(
+    SearchClub(
       id: 'club9',
       name: 'Makassar Harbor Swim',
       sport: SportType.swimming,
       memberCount: 2140,
       city: 'Makassar',
     ),
-    Club(
+    SearchClub(
       id: 'club10',
       name: 'Malang Hill Walkers',
       sport: SportType.walking,

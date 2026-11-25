@@ -13,21 +13,28 @@ class UpgradePill extends StatelessWidget {
       child: OutlinedButton.icon(
         onPressed: onTap,
         icon: const Icon(
-          Icons.local_fire_department_outlined,
-          size: 18,
-          color: Styles.accent,
+          Icons.auto_awesome_outlined,
+          size: 16,
+          color: Styles.primaryLight,
         ),
         label: const Text(
           'Upgrade',
-          style: TextStyle(fontWeight: FontWeight.w700),
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Styles.primaryLight,
+          ),
         ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: Styles.tabActive,
-          shape: const StadiumBorder(),
-          side: const BorderSide(color: Styles.accent),
+          backgroundColor: Styles.deepTeal.withAlpha(110),
+          foregroundColor: Styles.primaryLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(Radii.chip),
+          ),
+          side: const BorderSide(color: Styles.primaryLight),
           padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
       ),
     );
   }
 }
+

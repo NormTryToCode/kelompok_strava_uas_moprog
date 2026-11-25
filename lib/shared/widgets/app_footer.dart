@@ -8,7 +8,9 @@ class AppFooter extends StatelessWidget {
   const AppFooter({super.key, required this.currentIndex, required this.onTap});
 
   static Color _color(Set<WidgetState> states) =>
-      states.contains(WidgetState.selected) ? Styles.accent : Styles.tabInactive;
+      states.contains(WidgetState.selected)
+      ? Styles.primaryLight
+      : Styles.surfaceHighlight;
 
   @override
   Widget build(BuildContext context) {
@@ -18,28 +20,57 @@ class AppFooter extends StatelessWidget {
       ),
       child: NavigationBarTheme(
         data: NavigationBarThemeData(
-          backgroundColor: Styles.background,
+          backgroundColor: Styles.canvas,
           surfaceTintColor: Colors.transparent,
-          indicatorColor: Colors.transparent,
+          indicatorColor: Styles.deepTeal,
+          indicatorShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
           iconTheme: WidgetStateProperty.resolveWith(
             (s) => IconThemeData(color: _color(s)),
           ),
           labelTextStyle: WidgetStateProperty.resolveWith(
-            (s) => TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: _color(s)),
+            (s) => TextStyle(
+              fontSize: 12,
+              fontWeight: s.contains(WidgetState.selected)
+                  ? FontWeight.w700
+                  : FontWeight.w500,
+              color: _color(s),
+            ),
           ),
         ),
         child: NavigationBar(
           selectedIndex: currentIndex,
           onDestinationSelected: onTap,
           destinations: const [
-            NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-            NavigationDestination(icon: Icon(Icons.map_outlined), selectedIcon: Icon(Icons.map), label: 'Maps'),
-            NavigationDestination(icon: Icon(Icons.radio_button_checked), label: 'Record'),
-            NavigationDestination(icon: Icon(Icons.groups_outlined), selectedIcon: Icon(Icons.groups), label: 'Groups'),
-            NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'You'),
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.map_outlined),
+              selectedIcon: Icon(Icons.map_rounded),
+              label: 'Maps',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.radio_button_checked),
+              label: 'Record',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.groups_outlined),
+              selectedIcon: Icon(Icons.groups_rounded),
+              label: 'Groups',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person_rounded),
+              label: 'You',
+            ),
           ],
         ),
       ),
     );
   }
 }
+

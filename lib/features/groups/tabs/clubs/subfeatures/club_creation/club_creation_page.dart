@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/models/club_creation_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/location_search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_1_sport_selection.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_2_club_type.dart';
@@ -10,9 +11,11 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeature
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_4_club_privacy.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_5_club_location.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_creation/widgets/step_indicator.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/widgets/sheet_handle.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/app_buttons.dart';
 
-class ClubCreationPage extends StatefulWidget {
+class ClubCreationPage extends ConsumerStatefulWidget {
   const ClubCreationPage({super.key});
 
   static const totalSteps = 5;
@@ -25,10 +28,12 @@ class ClubCreationPage extends StatefulWidget {
   }
 
   @override
-  State<ClubCreationPage> createState() => _ClubCreationPageState();
+  ConsumerState<ClubCreationPage> createState() => _ClubCreationPageState();
 }
 
-class _ClubCreationPageState extends State<ClubCreationPage> {
+class _ClubCreationPageState extends ConsumerState<ClubCreationPage> {
+  final _picker = ImagePicker();
+
   ClubCreationModel _draft = const ClubCreationModel();
   int _step = 1;
   bool _saving = false;
@@ -59,10 +64,92 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
     setState(() => _draft = _draft.copyWith(types: updated));
   }
 
-  void _onPickPhoto() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Photo upload is coming soon')),
+  Future<void> _onPickPhoto() async {
+    final hasPhoto =
+        _draft.avatarPath != null && _draft.avatarPath!.isNotEmpty;
+
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Styles.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SheetHandle(margin: EdgeInsets.only(bottom: 12)),
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library_outlined,
+                  color: Styles.primaryLight,
+                ),
+                title: const Text(
+                  'Choose from gallery',
+                  style: TextStyle(
+                    color: Styles.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () => Navigator.of(sheetContext).pop('gallery'),
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_camera_outlined,
+                  color: Styles.primaryLight,
+                ),
+                title: const Text(
+                  'Take a photo',
+                  style: TextStyle(
+                    color: Styles.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () => Navigator.of(sheetContext).pop('camera'),
+              ),
+              if (hasPhoto)
+                ListTile(
+                  leading: const Icon(
+                    Icons.delete_outline,
+                    color: Styles.danger,
+                  ),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(
+                      color: Styles.danger,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () => Navigator.of(sheetContext).pop('remove'),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
+
+    if (action == null || !mounted) return;
+    if (action == 'remove') {
+      setState(() => _draft = _draft.copyWith(clearAvatar: true));
+      return;
+    }
+
+    try {
+      final picked = await _picker.pickImage(
+        source: action == 'camera' ? ImageSource.camera : ImageSource.gallery,
+        maxWidth: 1024,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+      setState(() => _draft = _draft.copyWith(avatarPath: picked.path));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not pick photo right now.')),
+      );
+    }
   }
 
   Future<void> _onPickLocation() async {
@@ -89,6 +176,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
         return Step3ClubDetails(
           name: _draft.name,
           description: _draft.description,
+          avatarPath: _draft.avatarPath,
           onNameChanged: (value) =>
               setState(() => _draft = _draft.copyWith(name: value)),
           onDescriptionChanged: (value) =>
@@ -128,14 +216,16 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
 
     try {
       final club = Club.fromCreation(_draft);
-      await ClubRepository.instance.addClub(club);
+      await ref.read(clubsProvider.notifier).addClub(club);
       if (!mounted) return;
       Navigator.of(context).pop(club);
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not save the club. Please try again.')),
+        const SnackBar(
+          content: Text('Could not save the club. Please try again.'),
+        ),
       );
     }
   }
@@ -151,7 +241,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Styles.background,
+      backgroundColor: Styles.canvas,
       body: SafeArea(
         child: Column(
           children: [
@@ -170,10 +260,7 @@ class _ClubCreationPageState extends State<ClubCreationPage> {
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 220),
-                child: KeyedSubtree(
-                  key: ValueKey(_step),
-                  child: _buildStep(),
-                ),
+                child: KeyedSubtree(key: ValueKey(_step), child: _buildStep()),
               ),
             ),
             _BottomBar(
@@ -226,7 +313,7 @@ class _TopBar extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Styles.tabInactive,
+              color: Styles.surfaceHighlight,
             ),
           ),
         ],
@@ -253,7 +340,7 @@ class _BottomBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
       decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Palette.cardBorder)),
+        border: Border(top: BorderSide(color: Styles.cardBorder)),
       ),
       child: Row(
         children: [

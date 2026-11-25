@@ -4,7 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 
 class SearchResults {
   final List<Person> people;
-  final List<Club> clubs;
+  final List<SearchClub> clubs;
 
   const SearchResults({required this.people, required this.clubs});
 
@@ -16,7 +16,7 @@ class SearchResults {
 SearchResults searchAll(
   String query, {
   required List<Person> people,
-  required List<Club> clubs,
+  required List<SearchClub> clubs,
 }) {
   final needle = query.trim().toLowerCase();
   if (needle.isEmpty) return const SearchResults(people: [], clubs: []);

@@ -28,11 +28,11 @@ class SearchField extends StatelessWidget {
         onSubmitted: onSubmitted,
         textInputAction: TextInputAction.search,
         cursorColor: Styles.accent,
-        style: const TextStyle(color: Styles.tabActive),
+        style: const TextStyle(color: Styles.primaryLight),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(color: Colors.white54),
-          prefixIcon: const Icon(Icons.search, color: Styles.tabActive),
+          prefixIcon: const Icon(Icons.search, color: Styles.primaryLight),
           filled: true,
           fillColor: const Color(0xFF3A3A3A),
           contentPadding: EdgeInsets.zero,
@@ -45,3 +45,4 @@ class SearchField extends StatelessWidget {
     );
   }
 }
+

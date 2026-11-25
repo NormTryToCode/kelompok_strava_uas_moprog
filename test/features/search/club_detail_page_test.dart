@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
-const _club = Club(
+const _club = SearchClub(
   id: 'c1',
   name: 'Jakarta Sunrise Runners',
   sport: SportType.running,
@@ -11,7 +11,7 @@ const _club = Club(
   city: 'Jakarta',
 );
 
-Widget _page() => const MaterialApp(home: ClubDetailPage(club: _club));
+Widget _page() => const MaterialApp(home: SearchClubDetailPage(club: _club));
 
 void main() {
   testWidgets('menampilkan informasi klub', (tester) async {

@@ -15,15 +15,26 @@ class HeaderIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Badge(
-        isLabelVisible: badgeCount > 0,
-        backgroundColor: Styles.accent,
-        textColor: Styles.tabActive,
-        label: Text('$badgeCount'),
-        child: Icon(icon),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: IconButton(
+        style: IconButton.styleFrom(
+          backgroundColor: Styles.surface,
+          foregroundColor: Styles.primaryLight,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Styles.cardBorder),
+          ),
+        ),
+        icon: Badge(
+          isLabelVisible: badgeCount > 0,
+          backgroundColor: Styles.primaryDark,
+          textColor: Styles.primaryLight,
+          label: Text('$badgeCount'),
+          child: Icon(icon, size: 21),
+        ),
+        onPressed: onPressed,
       ),
-      onPressed: onPressed,
     );
   }
 }

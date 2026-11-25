@@ -20,7 +20,7 @@ class SoftCard extends StatelessWidget {
     this.gradient,
     this.borderColor,
     this.borderWidth = 1,
-    this.radius = Radii.card,
+    this.radius = 14,
   });
 
   @override
@@ -35,7 +35,7 @@ class SoftCard extends StatelessWidget {
           gradient: gradient,
           borderRadius: shape,
           border: Border.all(
-            color: borderColor ?? Palette.cardBorder,
+            color: borderColor ?? Styles.cardBorder,
             width: borderWidth,
           ),
         ),
