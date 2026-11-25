@@ -35,7 +35,7 @@ class GearCategoryPickerSheet extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           const Text(
-            'Jenis Perlengkapan',
+            'Select Equipment Category',
             style: TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.w800,
@@ -80,7 +80,7 @@ class GearCategoryPickerSheet extends StatelessWidget {
                         const SizedBox(width: 14),
                         Expanded(
                           child: Text(
-                            category.label,
+                            category.pluralLabel,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: isSelected
@@ -131,7 +131,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
   @override
   void initState() {
     super.initState();
-    _selected = widget.initialSelected.toSet();
+    _selected = widget.initialSelected.map(translateLegacyGearTerm).toSet();
   }
 
   @override
@@ -169,9 +169,9 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
             children: [
               const Expanded(
                 child: Text(
-                  'Filter berdasarkan Olahraga',
+                  'Assign Default Sports',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.5,
                     fontWeight: FontWeight.w800,
                     color: Styles.textPrimary,
                   ),
@@ -188,7 +188,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                   });
                 },
                 child: Text(
-                  isAllSelected ? 'Hapus Semua' : 'Pilih Semua',
+                  isAllSelected ? 'Clear All' : 'Select All',
                   style: const TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w700,
@@ -293,7 +293,7 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text(
-                    'Batal',
+                    'Cancel',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -319,9 +319,9 @@ class _DefaultSportsFilterSheetState extends State<DefaultSportsFilterSheet> {
                       ),
                     ),
                     onPressed: () =>
-                        Navigator.of(context).pop(_selected.toList()),
+                      Navigator.of(context).pop(_selected.toList()),
                     child: Text(
-                      'Terapkan (${_selected.length})',
+                      'Apply (${_selected.length})',
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -350,6 +350,8 @@ class GearSubTypeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final normalizedSelection = translateLegacyGearTerm(selectedSubType);
+
     return Container(
       decoration: const BoxDecoration(
         color: Styles.surface,
@@ -387,7 +389,7 @@ class GearSubTypeSheet extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: category.subTypeOptions.map((option) {
-                  final bool isSelected = option == selectedSubType;
+                  final bool isSelected = option == normalizedSelection;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Material(
@@ -484,7 +486,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           const Text(
-            'Target Batas Penggantian',
+            'Wear-Life Threshold',
             style: TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.w800,
@@ -493,7 +495,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           const Text(
-            'Atur target kilometer maksimal untuk memantau masa pakai perlengkapan.',
+            'Set a target mileage lifespan to receive timely replacement alerts.',
             style: TextStyle(
               fontSize: 13.5,
               height: 1.35,
@@ -518,7 +520,7 @@ class GearDistanceLimitSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Tidak diatur',
+                      'No limit (Unlimited)',
                       style: TextStyle(
                         fontSize: 15.5,
                         fontStyle: FontStyle.italic,
