@@ -6,6 +6,8 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/map_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/profile_page.dart';
 import "package:kelompok_strava_uas_moprog/features/record/record_page.dart";
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/user_repository.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -16,6 +18,13 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _index = 0;
+  
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) UserRepository.instance.ensureProfile(user);
+  }
 
   static const _pages = [
     HomePage(),
