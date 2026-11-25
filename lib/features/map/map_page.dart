@@ -9,6 +9,7 @@ import 'package:kelompok_strava_uas_moprog/features/map/repositories/spot_reposi
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_marker.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_filter_bar.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/repositories/overpass_spot_service.dart';
 import 'dart:async';
 
 class MapPage extends StatefulWidget {
@@ -26,6 +27,22 @@ class _MapPageState extends State<MapPage> {
 
   List<PlaceSpot> _spots = [];
     SpotType? _filter; // null = semua
+  final _spotService = OverpassSpotService();
+  bool _nearbyRequested = false;
+
+  Future<void> _loadNearby(LatLng center) async {
+    if (_nearbyRequested) return;
+    _nearbyRequested = true;
+    debugPrint('Overpass: fetching near $center');
+    try {
+      final nearby = await _spotService.fetchNearby(center);
+      debugPrint('Overpass: got ${nearby.length} spots');
+      if (!mounted || nearby.isEmpty) return;
+      setState(() => _spots = nearby);
+    } catch (e) {
+      debugPrint('Overpass FAILED: $e');
+    }
+  }
 
   double? _distanceTo(PlaceSpot spot) {
     final user = _userPosition;
@@ -39,7 +56,7 @@ class _MapPageState extends State<MapPage> {
     if (_userPosition != null) {
       spots.sort((a, b) => _distanceTo(a)!.compareTo(_distanceTo(b)!));
     }
-    return spots;
+    return spots.take(15).toList();
   }
 
   void _focusSpot(PlaceSpot spot) {
@@ -90,6 +107,7 @@ class _MapPageState extends State<MapPage> {
         if (!mounted) return;
         final latLng = LatLng(pos.latitude, pos.longitude);
         setState(() => _userPosition = latLng);
+        _loadNearby(latLng);
         if (_follow) {
           _mapController.move(latLng, _mapController.camera.zoom);
         }
