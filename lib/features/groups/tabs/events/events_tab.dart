@@ -12,6 +12,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/providers/race_provid
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/race_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/races_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/race_showcase_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/races_3d_carousel.dart';
 
 class EventsTab extends ConsumerWidget {
   const EventsTab({super.key});
@@ -259,22 +260,9 @@ class EventsTab extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              SizedBox(
-                height: 292,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: races.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 12),
-                  itemBuilder: (_, index) {
-                    final race = races[index];
-                    return RaceShowcaseCard(
-                      width: (screenWidth - 52).clamp(270.0, 330.0),
-                      race: race,
-                      onTap: () => RaceDetailPage.open(context, race),
-                    );
-                  },
-                ),
+              Races3DCarousel(
+                races: races,
+                onRaceTap: (race) => RaceDetailPage.open(context, race),
               ),
             ],
           ],
