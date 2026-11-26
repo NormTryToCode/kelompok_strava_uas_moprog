@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kelompok_strava_uas_moprog/features/home/home_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/groups_page.dart';
-import 'package:kelompok_strava_uas_moprog/shared/widgets/app_footer.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/groups_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/home_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/map_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/profile_page.dart';
-import "package:kelompok_strava_uas_moprog/features/record/record_page.dart";
-
+import 'package:kelompok_strava_uas_moprog/features/record/record_page.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/app_footer.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -40,4 +39,3 @@ class _MainShellState extends State<MainShell> {
     );
   }
 }
-

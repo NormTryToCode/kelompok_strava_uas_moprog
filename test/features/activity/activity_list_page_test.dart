@@ -114,4 +114,94 @@ void main() {
     expect(container.read(activityProvider).count, 0);
     expect(find.text('No activities yet'), findsOneWidget);
   });
+  testWidgets('filter jenis olahraga menyaring daftar dan total jarak',
+      (tester) async {
+    final container = _container();
+    final notifier = container.read(activityProvider.notifier);
+    await notifier.add(
+      ManualActivity(
+        id: 'a1',
+        title: 'City Run',
+        type: ActivityType.run,
+        date: DateTime(2026, 11, 20),
+        duration: const Duration(minutes: 30),
+        distanceKm: 5,
+      ),
+    );
+    await notifier.add(
+      ManualActivity(
+        id: 'a2',
+        title: 'Sunday Ride',
+        type: ActivityType.ride,
+        date: DateTime(2026, 11, 21),
+        duration: const Duration(hours: 1),
+        distanceKm: 20,
+      ),
+    );
+
+    await tester.pumpWidget(_wrap(container));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ride'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Sunday Ride'), findsOneWidget);
+    expect(find.text('City Run'), findsNothing);
+    expect(find.text('20 km'), findsNWidgets(2));
+  });
+
+  testWidgets('Undo pada snackbar mengembalikan aktivitas yang dihapus',
+      (tester) async {
+    final container = _container();
+    await container.read(activityProvider.notifier).add(
+          ManualActivity(
+            id: 'a1',
+            title: 'Tempo Run',
+            type: ActivityType.run,
+            date: DateTime(2026, 11, 20),
+            duration: const Duration(minutes: 25),
+            distanceKm: 5,
+          ),
+        );
+
+    await tester.pumpWidget(_wrap(container));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Delete Tempo Run'));
+    await tester.pumpAndSettle();
+    expect(container.read(activityProvider).count, 0);
+
+    await tester.tap(find.text('Undo'));
+    await tester.pumpAndSettle();
+    expect(container.read(activityProvider).count, 1);
+    expect(find.text('Tempo Run'), findsOneWidget);
+  });
+
+  testWidgets('mengetuk kartu aktivitas membuka mode edit dan memperbarui data',
+      (tester) async {
+    final container = _container();
+    await container.read(activityProvider.notifier).add(
+          ManualActivity(
+            id: 'a1',
+            title: 'Old Title',
+            type: ActivityType.run,
+            date: DateTime(2026, 11, 20),
+            duration: const Duration(minutes: 30),
+            distanceKm: 5,
+          ),
+        );
+
+    await tester.pumpWidget(_wrap(container));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Old Title'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit Activity'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'Updated Run');
+    await tester.tap(find.text('Update'));
+    await tester.pumpAndSettle();
+
+    expect(container.read(activityProvider).items.single.title, 'Updated Run');
+  });
 }

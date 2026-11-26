@@ -5,15 +5,20 @@ import 'package:kelompok_strava_uas_moprog/features/activity/activity_list_page.
 import 'package:kelompok_strava_uas_moprog/features/activity/activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activity.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/utils/activity_format.dart';
-import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
-import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 
 class ManualActivityPage extends ConsumerStatefulWidget {
   final DateTime? initialDate;
+  final ManualActivity? existing;
 
-  const ManualActivityPage({super.key, this.initialDate});
+  const ManualActivityPage({
+    super.key,
+    this.initialDate,
+    this.existing,
+  });
 
   @override
   ConsumerState<ManualActivityPage> createState() => _ManualActivityPageState();
@@ -21,12 +26,39 @@ class ManualActivityPage extends ConsumerStatefulWidget {
 
 class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _title = TextEditingController();
-  final TextEditingController _duration = TextEditingController();
-  final TextEditingController _distance = TextEditingController();
-  final TextEditingController _notes = TextEditingController();
-  late DateTime _date = widget.initialDate ?? DateTime.now();
-  ActivityType _type = ActivityType.run;
+  late final TextEditingController _title;
+  late final TextEditingController _duration;
+  late final TextEditingController _distance;
+  late final TextEditingController _notes;
+  late DateTime _date;
+  late ActivityType _type;
+
+  bool get _isEditing => widget.existing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = widget.existing;
+    _title = TextEditingController(text: existing?.title ?? '');
+    _duration = TextEditingController(
+      text: existing == null ? '' : _formatDurationInput(existing.duration),
+    );
+    _distance = TextEditingController(
+      text: existing == null ? '' : existing.distanceKm.toString(),
+    );
+    _notes = TextEditingController(text: existing?.notes ?? '');
+    _date = existing?.date ?? widget.initialDate ?? DateTime.now();
+    _type = existing?.type ?? ActivityType.run;
+  }
+
+  String _formatDurationInput(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    if (hours > 0) {
+      return '$hours:${minutes.toString().padLeft(2, '0')}';
+    }
+    return '${duration.inMinutes}';
+  }
 
   @override
   void dispose() {
@@ -41,13 +73,21 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      labelStyle: const TextStyle(color: Colors.white70),
-      hintStyle: const TextStyle(color: Colors.white38),
+      labelStyle: const TextStyle(color: Styles.textSecondary),
+      hintStyle: const TextStyle(color: Styles.textMuted),
       filled: true,
       fillColor: Styles.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.white24),
+        borderSide: const BorderSide(color: Styles.border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Styles.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Styles.primary),
       ),
     );
   }
@@ -68,7 +108,8 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final activity = ManualActivity(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      id: widget.existing?.id ??
+          DateTime.now().microsecondsSinceEpoch.toString(),
       title: _title.text.trim(),
       type: _type,
       date: _date,
@@ -78,17 +119,20 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
     );
 
     await ref.read(activityProvider.notifier).add(activity);
-    final unit = ref.read(settingsProvider).unit;
-    ref
-        .read(notificationsProvider.notifier)
-        .notifyActivityLogged(
-          title: activity.title,
-          distanceLabel: formatDistanceWithUnit(activity.distanceKm, unit),
-        );
+    if (!_isEditing) {
+      final unit = ref.read(settingsProvider).unit;
+      ref.read(notificationsProvider.notifier).notifyActivityLogged(
+            title: activity.title,
+            distanceLabel: formatDistanceWithUnit(activity.distanceKm, unit),
+          );
+    }
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Activity saved')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_isEditing ? 'Activity updated' : 'Activity saved'),
+      ),
+    );
     Navigator.of(context).maybePop();
   }
 
@@ -97,15 +141,18 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
     return Scaffold(
       backgroundColor: Styles.canvas,
       appBar: AppHeader(
-        title: 'Manual Activity',
+        title: _isEditing ? 'Edit Activity' : 'Manual Activity',
         showBackButton: true,
         actions: [
-          HeaderIconButton(
-            icon: Icons.history,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const ActivityListPage()),
+          if (!_isEditing)
+            HeaderIconButton(
+              icon: Icons.history,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const ActivityListPage(),
+                ),
+              ),
             ),
-          ),
         ],
       ),
       body: Form(
@@ -115,7 +162,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
           children: [
             TextFormField(
               controller: _title,
-              style: const TextStyle(color: Styles.primaryLight),
+              style: const TextStyle(color: Styles.textPrimary),
               decoration: _decoration('Title', hint: 'Morning run'),
               validator: (value) =>
                   (value ?? '').trim().isEmpty ? 'Enter a title' : null,
@@ -128,8 +175,14 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
                   ChoiceChip(
                     label: Text(type.label),
                     selected: _type == type,
-                    selectedColor: Styles.accent,
-                    labelStyle: const TextStyle(color: Styles.primaryLight),
+                    selectedColor: Styles.primary,
+                    backgroundColor: Styles.surface,
+                    labelStyle: TextStyle(
+                      color: _type == type
+                          ? Styles.textPrimary
+                          : Styles.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
                     onSelected: (_) => setState(() => _type = type),
                   ),
               ],
@@ -137,23 +190,24 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
             const SizedBox(height: 16),
             ListTile(
               onTap: _pickDate,
+              tileColor: Styles.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: Colors.white24),
+                side: const BorderSide(color: Styles.border),
               ),
               leading: const Icon(
                 Icons.calendar_today_outlined,
-                color: Colors.white70,
+                color: Styles.primaryLight,
               ),
               title: Text(
                 formatDate(_date),
-                style: const TextStyle(color: Styles.primaryLight),
+                style: const TextStyle(color: Styles.textPrimary),
               ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _duration,
-              style: const TextStyle(color: Styles.primaryLight),
+              style: const TextStyle(color: Styles.textPrimary),
               decoration: _decoration('Duration', hint: '45 or 1:30'),
               validator: (value) => parseDuration(value ?? '') == null
                   ? 'Use minutes or h:mm, e.g. 45 or 1:30'
@@ -165,7 +219,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              style: const TextStyle(color: Styles.primaryLight),
+              style: const TextStyle(color: Styles.textPrimary),
               decoration: _decoration('Distance (km)', hint: '5.2'),
               validator: (value) => parseDistance(value ?? '') == null
                   ? 'Enter a distance greater than 0'
@@ -175,21 +229,24 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
             TextFormField(
               controller: _notes,
               maxLines: 3,
-              style: const TextStyle(color: Styles.primaryLight),
+              style: const TextStyle(color: Styles.textPrimary),
               decoration: _decoration('Notes'),
             ),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _save,
               style: FilledButton.styleFrom(
-                backgroundColor: Styles.accent,
-                foregroundColor: Styles.primaryLight,
+                backgroundColor: Styles.primary,
+                foregroundColor: Styles.textPrimary,
                 minimumSize: const Size.fromHeight(52),
                 shape: const StadiumBorder(),
               ),
-              child: const Text(
-                'Save',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+              child: Text(
+                _isEditing ? 'Update' : 'Save',
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
           ],
