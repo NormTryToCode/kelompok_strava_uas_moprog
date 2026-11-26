@@ -11,7 +11,6 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.d
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/race_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/race_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/races_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/race_showcase_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/races_3d_carousel.dart';
 
 class EventsTab extends ConsumerWidget {
