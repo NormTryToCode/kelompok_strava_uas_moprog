@@ -3,7 +3,6 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/friend_repository.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/widgets/friend_card.dart';
-import 'package:kelompok_strava_uas_moprog/features/relationship/pages/chat_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/conversation_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/new_chat_page.dart';
 
