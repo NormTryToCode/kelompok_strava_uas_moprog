@@ -19,15 +19,15 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
       ref.read(authStateProvider).valueOrNull?.uid ?? _fallbackDocId;
 
   static const AthleteProfileData _defaultProfile = AthleteProfileData(
-    firstName: 'Michael',
-    lastName: 'Respati Sanjaya Ho',
-    city: 'Jakarta',
-    country: 'INDONESIA',
+    firstName: 'Atlet Stride',
+    lastName: '',
+    city: '',
+    country: '',
     primarySport: 'Berlari',
-    bio: 'I Like Runnn',
-    birthDate: '30/08/2007',
-    gender: 'Pria',
-    weightKg: '74,0',
+    bio: '',
+    birthDate: '01/01/2000',
+    gender: 'Memilih tidak mengatakan',
+    weightKg: '65,0',
   );
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
@@ -37,15 +37,20 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   @override
   AthleteProfileData build() {
     _isDisposed = false;
-    ref.watch(authStateProvider);
+    final authUser = ref.watch(authStateProvider).valueOrNull;
     ref.onDispose(() {
       _isDisposed = true;
       _firestoreSub?.cancel();
     });
 
+    final displayName = authUser?.displayName?.trim();
+    final initialFirstName = (displayName != null && displayName.isNotEmpty)
+        ? displayName.split(' ').first
+        : (authUser?.email?.split('@').first ?? _defaultProfile.firstName);
+
     _loadLocalCache();
     _listenFirestore();
-    return _defaultProfile;
+    return _defaultProfile.copyWith(firstName: initialFirstName);
   }
 
   Future<void> _loadLocalCache() async {
