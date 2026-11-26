@@ -27,7 +27,8 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
 
   bool get _isBusy => _isRegisterLoading || _isGoogleLoading;
 
-  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final _emailRegex =
+      RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
   @override
   void dispose() {
@@ -52,14 +53,82 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
   }
 
   void _goToLogin() {
-    if (Navigator.canPop(context)) {
-      Navigator.pop(context);
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
+
+  void _showTermsSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Styles.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Stride Terms & Services',
+                style: TextStyle(
+                  color: Styles.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'By creating a Stride account, you agree to:',
+                style: TextStyle(
+                  color: Styles.textSecondary,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 6),
+                child: Text(
+                  '• Provide accurate account details and keep your credentials secure.',
+                  style: TextStyle(color: Styles.textPrimary, fontSize: 14),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 6),
+                child: Text(
+                  '• Allow Stride to store your activity logs, GPS routes, and profile preferences in Firebase.',
+                  style: TextStyle(color: Styles.textPrimary, fontSize: 14),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 6),
+                child: Text(
+                  '• Follow community guidelines when posting in clubs and challenges.',
+                  style: TextStyle(color: Styles.textPrimary, fontSize: 14),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Styles.primary,
+                    foregroundColor: Styles.textPrimary,
+                  ),
+                  child: const Text('Close'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _handleRegister() async {
@@ -115,15 +184,21 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             decoration: BoxDecoration(
-              color: Styles.accent,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF6D4AFF), Color(0xFF432C85)],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.16),
+                width: 1.2,
+              ),
+              boxShadow: Styles.ambientGlow(
+                color: Styles.primary,
+                intensity: 0.35,
+                blur: 36,
+              ),
             ),
             child: Form(
               key: _formKey,
@@ -169,6 +244,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     hintText: "Email (e.g. cake@gmail.com)",
                     prefixIcon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
+                    autofillHints: const [AutofillHints.email],
                     validator: (value) {
                       final email = value?.trim() ?? '';
                       if (email.isEmpty) return 'Please enter your email';
@@ -183,6 +259,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     controller: _nameController,
                     hintText: "Full Name",
                     prefixIcon: Icons.person_outline,
+                    autofillHints: const [AutofillHints.name],
                     validator: (value) {
                       if ((value?.trim() ?? '').isEmpty) {
                         return 'Please enter your full name';
@@ -196,6 +273,7 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     hintText: "Password",
                     prefixIcon: Icons.lock_outline,
                     isPassword: true,
+                    autofillHints: const [AutofillHints.newPassword],
                     validator: (value) {
                       final password = value ?? '';
                       if (password.isEmpty) return 'Please enter a password';
@@ -212,6 +290,10 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     prefixIcon: Icons.lock_reset_outlined,
                     isPassword: true,
                     textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.newPassword],
+                    onFieldSubmitted: (_) {
+                      if (!_isBusy) _handleRegister();
+                    },
                     validator: (value) {
                       if ((value ?? '').isEmpty) {
                         return 'Please confirm your password';
@@ -227,7 +309,9 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     data: Theme.of(context)
                         .copyWith(visualDensity: VisualDensity.compact),
                     child: CheckBoxWidget(
-                      checkBoxText: "I agree to the Terms & Services",
+                      checkBoxText: "I agree to the ",
+                      linkText: "Terms & Services",
+                      onLinkTap: _showTermsSheet,
                       value: _agreedToTerms,
                       onChanged: (value) {
                         setState(() => _agreedToTerms = value);
@@ -238,9 +322,13 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                   ElevatedButton(
                     onPressed: _isBusy ? null : _handleRegister,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Styles.primaryDark,
+                      backgroundColor: const Color(0xFF191136),
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
+                      disabledBackgroundColor:
+                          const Color(0xFF191136).withValues(alpha: 0.6),
+                      disabledForegroundColor: Colors.white70,
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -293,13 +381,18 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.black87,
+                              color: Color(0xFF110E1B),
                             ),
                           )
                         : Image.asset(
                             'asset/images/google.png',
                             height: 20,
                             width: 20,
+                            errorBuilder: (_, _, _) => const Icon(
+                              Icons.g_mobiledata_rounded,
+                              size: 24,
+                              color: Color(0xFF110E1B),
+                            ),
                           ),
                     label: const Text(
                       "Register with Google",
@@ -310,8 +403,12 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      minimumSize: const Size(double.infinity, 48),
+                      foregroundColor: const Color(0xFF110E1B),
+                      disabledBackgroundColor:
+                          Colors.white.withValues(alpha: 0.8),
+                      disabledForegroundColor: Colors.black54,
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -322,7 +419,11 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                     onPressed: _isBusy ? null : _goToLogin,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.white70, width: 1.2),
+                      backgroundColor: Colors.white.withValues(alpha: 0.08),
+                      side: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.45),
+                        width: 1.2,
+                      ),
                       minimumSize: const Size(double.infinity, 44),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
