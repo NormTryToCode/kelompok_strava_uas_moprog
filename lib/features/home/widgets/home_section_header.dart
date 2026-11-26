@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
 class HomeSectionHeader extends StatelessWidget {
   final String title;
@@ -21,33 +22,43 @@ class HomeSectionHeader extends StatelessWidget {
             children: [
               Container(
                 width: 4,
-                height: 18,
+                height: 20,
                 decoration: BoxDecoration(
-                  color: Colors.deepOrange,
+                  gradient: Styles.linearGradient(
+                    colors: const [Styles.primaryLight, Styles.primary],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                   borderRadius: BorderRadius.circular(2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Styles.primary.withValues(alpha: 0.45),
+                      blurRadius: 8,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 19,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: Styles.textPrimary,
                   letterSpacing: -0.3,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
           Padding(
-            padding: const EdgeInsets.only(left: 12),
+            padding: const EdgeInsets.only(left: 14),
             child: Text(
               subtitle,
-              style: TextStyle(
-                fontSize: 13,
+              style: const TextStyle(
+                fontSize: 12.5,
                 fontWeight: FontWeight.w500,
-                color: Colors.white.withValues(alpha: 0.55),
+                color: Styles.textSecondary,
               ),
             ),
           ),
