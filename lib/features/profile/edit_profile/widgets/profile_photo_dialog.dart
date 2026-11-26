@@ -26,94 +26,114 @@ class ProfilePhotoDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Edit Foto Profil',
+              'Update Passport Photo',
               style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w800,
                 color: Styles.textPrimary,
               ),
             ),
-            const SizedBox(height: 16),
-            Material(
-              color: Styles.surfaceElevated,
-              borderRadius: BorderRadius.circular(Radii.chip),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(Radii.chip),
-                onTap: () {
-                  Navigator.pop(context);
-                  onTakePhoto();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14.0,
-                    vertical: 14.0,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Radii.chip),
-                    border: Border.all(color: Styles.borderStrong),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.camera_alt_outlined,
-                        color: Styles.primaryLight,
-                        size: 21,
-                      ),
-                      SizedBox(width: 14),
-                      Text(
-                        'Ambil Foto',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Styles.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            const SizedBox(height: 4),
+            const Text(
+              'Choose how you want to capture your athlete portrait.',
+              style: TextStyle(
+                fontSize: 13,
+                color: Styles.textSecondary,
               ),
+            ),
+            const SizedBox(height: 16),
+            _PhotoActionTile(
+              icon: Icons.camera_alt_rounded,
+              title: 'Take Photo',
+              subtitle: 'Capture a fresh portrait with camera',
+              onTap: () {
+                Navigator.pop(context);
+                onTakePhoto();
+              },
             ),
             const SizedBox(height: 10),
-            Material(
-              color: Styles.surfaceElevated,
-              borderRadius: BorderRadius.circular(Radii.chip),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(Radii.chip),
-                onTap: () {
-                  Navigator.pop(context);
-                  onPickFromGallery();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14.0,
-                    vertical: 14.0,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Radii.chip),
-                    border: Border.all(color: Styles.borderStrong),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.photo_library_outlined,
-                        color: Styles.primaryLight,
-                        size: 21,
-                      ),
-                      SizedBox(width: 14),
-                      Text(
-                        'Pilih Dari Galeri',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Styles.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            _PhotoActionTile(
+              icon: Icons.photo_library_rounded,
+              title: 'Choose from Gallery',
+              subtitle: 'Import an existing photo from device',
+              onTap: () {
+                Navigator.pop(context);
+                onPickFromGallery();
+              },
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PhotoActionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _PhotoActionTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Styles.surfaceElevated,
+      borderRadius: BorderRadius.circular(Radii.field),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(Radii.field),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14.0,
+            vertical: 13.0,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Radii.field),
+            border: Border.all(color: Styles.borderStrong),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: Styles.surfaceHighlight,
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: Icon(icon, color: Styles.primaryLight, size: 20),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Styles.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

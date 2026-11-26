@@ -45,8 +45,8 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     final existing = widget.existingGear;
     if (existing != null) {
       _category = existing.category;
-      _defaultSports = List<String>.from(existing.defaultSports);
-      _subType = existing.subType;
+      _defaultSports = existing.displayDefaultSports;
+      _subType = existing.displaySubType;
       _brand = existing.brand;
       _maxDistanceKm = existing.maxDistanceKm;
       _nicknameController.text = existing.nickname;
@@ -180,21 +180,21 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     if (_subType.trim().isEmpty) {
       ProfileSnackbarHelper.showError(
         context,
-        'Pilih ${_category.subTypeFieldLabel} terlebih dahulu.',
+        'Please select a ${_category.subTypeFieldLabel.toLowerCase()} first.',
       );
       return;
     }
     if (_brand.trim().isEmpty) {
       ProfileSnackbarHelper.showError(
         context,
-        'Pilih atau tambahkan Merek terlebih dahulu.',
+        'Please choose or add a brand first.',
       );
       return;
     }
     if (_modelController.text.trim().isEmpty) {
       ProfileSnackbarHelper.showError(
         context,
-        'Masukkan nama Model perlengkapan terlebih dahulu.',
+        'Please enter the equipment model name.',
       );
       return;
     }
@@ -206,7 +206,7 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
       if (parsedWeight == null || parsedWeight <= 0) {
         ProfileSnackbarHelper.showError(
           context,
-          'Berat sepeda (kg) wajib diisi dengan angka valid.',
+          'Please enter a valid frame weight (kg).',
         );
         return;
       }
@@ -214,8 +214,8 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
 
     int? parsedBattery;
     if (_category == GearCategory.wearable &&
-        _batteryController.text.trim().isNotEmpty) {
-      parsedBattery = int.tryParse(_batteryController.text.trim());
+      _batteryController.text.trim().isNotEmpty) {
+        parsedBattery = int.tryParse(_batteryController.text.trim());
     }
 
     final notifier = ref.read(athleteGearProvider.notifier);
@@ -236,6 +236,11 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
         notes: _notesController.text.trim(),
       );
       await notifier.updateGear(updated);
+      if (!mounted) return;
+      ProfileSnackbarHelper.showSuccess(
+        context,
+        '"${updated.displayName}" updated in Gear Locker.',
+      );
     } else {
       final newGear = AthleteGear(
         id: 'gear_${DateTime.now().millisecondsSinceEpoch}',
@@ -252,6 +257,11 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
         createdAt: DateTime.now(),
       );
       await notifier.addGear(newGear);
+      if (!mounted) return;
+      ProfileSnackbarHelper.showSuccess(
+        context,
+        '"${newGear.displayName}" registered in Gear Locker!',
+      );
     }
 
     if (!mounted) return;
@@ -269,28 +279,29 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
         return Dialog(
           backgroundColor: Styles.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Radii.field),
-            side: const BorderSide(color: Styles.borderStrong),
+            borderRadius: BorderRadius.circular(Radii.card),
+            side: const BorderSide(color: Styles.borderStrong, width: 1.2),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(22),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Anda yakin ingin menghapus item ini?',
+                  'Delete Equipment?',
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
                     color: Styles.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Data "${existing.displayName}" akan dihapus permanen dari daftar perlengkapan Anda.',
+                  '"${existing.displayName}" and its tracked mileage will be permanently removed from your locker.',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 13.5,
+                    height: 1.4,
                     color: Styles.textSecondary,
                   ),
                 ),
@@ -301,18 +312,29 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                     TextButton(
                       onPressed: () => Navigator.of(dialogContext).pop(false),
                       child: const Text(
-                        'Batalkan',
-                        style: TextStyle(color: Styles.textSecondary),
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: Styles.textSecondary,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    TextButton(
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Styles.danger,
+                        foregroundColor: Styles.textPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Radii.chip),
+                        ),
+                      ),
                       onPressed: () => Navigator.of(dialogContext).pop(true),
                       child: const Text(
-                        'Hapus',
+                        'Delete',
                         style: TextStyle(
+                          fontSize: 14.5,
                           fontWeight: FontWeight.bold,
-                          color: Styles.danger,
                         ),
                       ),
                     ),
@@ -328,12 +350,16 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
     if (confirmed == true) {
       await ref.read(athleteGearProvider.notifier).deleteGear(existing.id);
       if (!mounted) return;
+      ProfileSnackbarHelper.showInfo(
+        context,
+        '"${existing.displayName}" removed from locker.',
+      );
       Navigator.of(context).pop(true);
     }
   }
 
   String get _defaultSportsDisplayText {
-    if (_defaultSports.isEmpty) return 'Pilih olahraga default';
+    if (_defaultSports.isEmpty) return 'Tap to assign default sports';
     return _defaultSports.join(', ');
   }
 
@@ -348,24 +374,37 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
           foregroundColor: Styles.textPrimary,
           surfaceTintColor: Colors.transparent,
           title: Text(
-            _isEditMode
-                ? 'Edit ${_category.label}'
-                : 'Tambahkan Perlengkapan',
+            _isEditMode ? 'Edit ${_category.label}' : 'Register Equipment',
             style: const TextStyle(
               fontSize: 19,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Styles.textPrimary,
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: _handleSave,
-              child: const Text(
-                'SIMPAN',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Styles.primaryLight,
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Styles.surfaceHighlight,
+                  foregroundColor: Styles.primaryLight,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: Styles.primary),
+                  ),
+                ),
+                onPressed: _handleSave,
+                child: const Text(
+                  'SAVE',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.6,
+                  ),
                 ),
               ),
             ),
@@ -377,61 +416,67 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const _SectionHeading(title: '01  •  CLASSIFICATION'),
+                const SizedBox(height: 10),
                 if (!_isEditMode) ...[
                   ProfileLabeledField(
-                    label: 'Jenis Perlengkapan',
+                    label: 'Equipment Category',
                     valueText: _category.label,
                     onTap: _selectCategory,
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                 ],
-                ProfileLabeledField(
-                  label: 'Olahraga Default',
-                  valueText: _defaultSportsDisplayText,
-                  onTap: _selectDefaultSports,
-                ),
-                const SizedBox(height: 14),
-                ProfileLabeledField(
-                  label: 'Nama Panggilan',
-                  controller: _nicknameController,
-                  placeholder: 'Contoh: ${_category == GearCategory.bike
-                      ? 'BMX Saya'
-                      : _category == GearCategory.shoes
-                          ? 'Sepatu Lomba 10K'
-                          : 'Perangkat Utama'}',
-                  textCapitalization: TextCapitalization.words,
-                ),
-                const SizedBox(height: 14),
                 ProfileLabeledField(
                   label: _category.subTypeFieldLabel,
                   valueText: _subType.isEmpty
-                      ? 'Pilih ${_category.subTypeFieldLabel}'
-                      : _subType,
+                    ? 'Select ${_category.subTypeFieldLabel.toLowerCase()}'
+                    : _subType,
                   onTap: _selectSubType,
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 ProfileLabeledField(
-                  label: 'Merek',
-                  valueText: _brand.isEmpty ? 'Cari atau tambah merek' : _brand,
-                  onTap: _selectBrand,
+                  label: 'Assigned Sports',
+                  valueText: _defaultSportsDisplayText,
+                  onTap: _selectDefaultSports,
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 22),
+                const _SectionHeading(title: '02  •  IDENTITY & SPECS'),
+                const SizedBox(height: 10),
                 ProfileLabeledField(
-                  label: 'Model',
-                  controller: _modelController,
-                  placeholder: _category == GearCategory.bike
-                      ? 'Contoh: Cascade 4 / Tarmac SL8'
-                      : _category == GearCategory.shoes
-                          ? 'Contoh: GoWalk / Alphafly 3'
-                          : 'Masukkan model perlengkapan',
+                  label: 'Custom Nickname (Optional)',
+                  controller: _nicknameController,
+                  placeholder: 'e.g. ${_category == GearCategory.bike
+                    ? 'Stealth Aero Rig'
+                    : _category == GearCategory.shoes
+                      ? 'Race Day Carbon'
+                      : 'Primary Tracker'}',
                   textCapitalization: TextCapitalization.words,
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
+                ProfileLabeledField(
+                  label: 'Brand',
+                  valueText: _brand.isEmpty
+                    ? 'Search or add a custom brand'
+                    : _brand,
+                  onTap: _selectBrand,
+                ),
+                const SizedBox(height: 12),
+                ProfileLabeledField(
+                  label: 'Model Name',
+                  controller: _modelController,
+                  placeholder: _category == GearCategory.bike
+                    ? 'e.g. Tarmac SL8 / Aeroad CFR'
+                    : _category == GearCategory.shoes
+                      ? 'e.g. Alphafly 3 / Superblast 2'
+                      : 'Enter model designation',
+                  textCapitalization: TextCapitalization.words,
+                ),
+                const SizedBox(height: 12),
                 if (_category == GearCategory.bike) ...[
                   ProfileLabeledField(
-                    label: 'Berat (kg)',
+                    label: 'Frame Weight (kg)',
                     controller: _weightController,
-                    placeholder: 'Contoh: 12,5',
+                    placeholder: 'e.g. 7.8',
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -439,37 +484,38 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
                     ],
                   ),
-                  const SizedBox(height: 14),
-                ],
-                if (_category == GearCategory.shoes ||
-                    _category == GearCategory.swim) ...[
-                  ProfileLabeledField(
-                    label: _category == GearCategory.shoes
-                        ? 'Beri tahu saya saat mencapai'
-                        : 'Target Jarak Maksimal',
-                    valueText: _maxDistanceKm != null
-                        ? '$_maxDistanceKm km'
-                        : 'Ketuk untuk memilih km',
-                    onTap: _selectMaxDistance,
-                  ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                 ],
                 if (_category == GearCategory.wearable) ...[
                   ProfileLabeledField(
-                    label: 'Daya Tahan Baterai (jam)',
+                    label: 'Battery Life (hours)',
                     controller: _batteryController,
-                    placeholder: 'Contoh: 36',
+                    placeholder: 'e.g. 36',
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
+                ],
+                const SizedBox(height: 10),
+                const _SectionHeading(title: '03  •  WEAR-LIFE & NOTES'),
+                const SizedBox(height: 10),
+                if (_category == GearCategory.shoes ||
+                  _category == GearCategory.swim) ...[
+                    ProfileLabeledField(
+                      label: 'Wear-Life Alert Threshold',
+                      valueText: _maxDistanceKm != null
+                        ? '$_maxDistanceKm km lifespan'
+                        : 'Tap to set mileage alert',
+                      onTap: _selectMaxDistance,
+                    ),
+                    const SizedBox(height: 12),
                 ],
                 ProfileLabeledField(
-                  label: 'Catatan',
+                  label: 'Maintenance Notes',
                   controller: _notesController,
-                  placeholder: 'Tambahkan catatan khusus perlengkapan ini...',
+                  placeholder: 'Tire pressure, chain lube log, or fit notes...',
                   textCapitalization: TextCapitalization.sentences,
                 ),
                 if (_isEditMode) ...[
@@ -487,12 +533,12 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
                         ),
                       ),
                       onPressed: _confirmAndDelete,
-                      icon: const Icon(Icons.delete_outline),
+                      icon: const Icon(Icons.delete_outline_rounded),
                       label: Text(
-                        'Hapus ${_category.label}',
+                        'Delete ${_category.label}',
                         style: const TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -504,6 +550,38 @@ class _GearFormScreenState extends ConsumerState<GearFormScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SectionHeading extends StatelessWidget {
+  final String title;
+
+  const _SectionHeading({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 13,
+          decoration: BoxDecoration(
+            gradient: Styles.primaryGradient,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 11.5,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.0,
+            color: Styles.primaryLight,
+          ),
+        ),
+      ],
     );
   }
 }
