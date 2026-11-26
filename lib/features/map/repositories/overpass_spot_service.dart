@@ -30,7 +30,7 @@ class OverpassSpotService {
             },
             body: {'data': query},
           )
-          .timeout(const Duration(seconds: 12));
+          .timeout(const Duration(seconds: 20));
 
       if (!_retryableStatus.contains(res.statusCode) || attempt == maxAttempts) {
         return res;
@@ -46,16 +46,16 @@ class OverpassSpotService {
     }
   }
 
-  Future<List<PlaceSpot>> fetchNearby(LatLng center, {int radius = 3000}) async {
+  Future<List<PlaceSpot>> fetchNearby(LatLng center, {int radius = 8000}) async {
     final lat = center.latitude;
     final lng = center.longitude;
     final query = '''
-[out:json][timeout:15];
+[out:json][timeout:20];
 (
   nwr(around:$radius,$lat,$lng)["leisure"~"park|track"]["name"];
   nwr(around:$radius,$lat,$lng)["highway"="cycleway"]["name"];
 );
-out center 40;
+out center 100;
 ''';
 
     Object? lastError;
