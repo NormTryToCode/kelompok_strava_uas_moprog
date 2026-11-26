@@ -15,7 +15,7 @@ class OverpassSpotService {
   ];
   static const _retryableStatus = {429, 502, 503, 504};
   static const _userAgent =
-      'StrideMobprog/1.0 (student UAS project; contact: emailkamu@contoh.com)';
+      'StrideMobprog/1.0 (student final project; contact: christoper1177@gmail.com)';
 
   final _random = Random();
 
@@ -30,7 +30,7 @@ class OverpassSpotService {
             headers: {'User-Agent': _userAgent, 'Accept': '*/*'},
             body: {'data': query},
           )
-          .timeout(const Duration(seconds: 20));
+          .timeout(const Duration(seconds: 30));
 
       if (!_retryableStatus.contains(res.statusCode) ||
           attempt == maxAttempts) {
@@ -51,12 +51,16 @@ class OverpassSpotService {
     final lat = center.latitude;
     final lng = center.longitude;
     final query = '''
-[out:json][timeout:20];
+[out:json][timeout:25];
 (
-  nwr(around:$radius,$lat,$lng)["leisure"~"park|track"]["name"];
+  nwr(around:$radius,$lat,$lng)["leisure"~"^(park|track)\$"]["name"];
   nwr(around:$radius,$lat,$lng)["highway"="cycleway"]["name"];
+  nwr(around:$radius,$lat,$lng)["route"="bicycle"]["name"];
+  way(around:$radius,$lat,$lng)["highway"]["name"]["cycleway"~"^(lane|track)\$"];
+  way(around:$radius,$lat,$lng)["highway"]["name"]["cycleway:right"~"^(lane|track)\$"];
+  way(around:$radius,$lat,$lng)["highway"]["name"]["cycleway:left"~"^(lane|track)\$"];
 );
-out center 100;
+out center 400;
 ''';
 
     Object? lastError;
