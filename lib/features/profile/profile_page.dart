@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/activity/add_action_router.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
+import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 import 'edit_profile/models/athlete_profile_data.dart';
 import 'edit_profile/providers/athlete_profile_provider.dart';
 import 'edit_profile/screens/edit_profile_screen.dart';
@@ -145,12 +151,39 @@ class ProfilePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final navState = ref.watch(profileNavigationProvider);
     return Theme(
       data: buildProfileDarkTheme(),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           backgroundColor: Styles.canvas,
+          appBar: navState.activeScreen == ProfileSubScreen.overview
+              ? AppHeader(
+                  title: 'You',
+                  actions: [
+                    AddMenuButton(
+                      onSelected: (action) => openAddAction(context, action),
+                    ),
+                    HeaderIconButton(
+                      icon: Icons.search,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const SearchPage(),
+                        ),
+                      ),
+                    ),
+                    HeaderIconButton(
+                      icon: Icons.settings_outlined,
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const SettingsPage(),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : null,
           body: SafeArea(
             child: _buildActiveScreenContent(context, ref),
           ),
