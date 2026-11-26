@@ -30,7 +30,7 @@ class _MapPageState extends State<MapPage> {
   List<PlaceSpot> _remote = [];
   final _cache = SpotCache();
   static const _refreshDistanceMeters = 5000.0;
-  static const _cacheMaxAge = Duration(days: 7);
+  static const _cacheMaxAge = Duration(days: 30);
 
   // data API (lebih baru) diutamakan, snapshot selalu ikut sebagai cadangan
   List<PlaceSpot> get _allSpots {
@@ -84,10 +84,19 @@ class _MapPageState extends State<MapPage> {
   List<PlaceSpot> get _visibleSpots {
     final spots =
         _allSpots.where((s) => _filter == null || s.type == _filter).toList();
-    if (_userPosition != null) {
-      spots.sort((a, b) => _distanceTo(a)!.compareTo(_distanceTo(b)!));
-    }
-    return spots.take(15).toList();
+
+    int byDistance(PlaceSpot a, PlaceSpot b) =>
+        (_distanceTo(a) ?? 0).compareTo(_distanceTo(b) ?? 0);
+
+    if (_userPosition != null) spots.sort(byDistance);
+    if (_filter != null) return spots.take(15).toList();
+
+    // tampilan "Semua": sisihkan jatah untuk sepeda agar tidak tenggelam
+    final runs = spots.where((s) => s.type == SpotType.run).take(10);
+    final bikes = spots.where((s) => s.type == SpotType.bike).take(5);
+    final mixed = [...runs, ...bikes];
+    if (_userPosition != null) mixed.sort(byDistance);
+    return mixed;
   }
 
   void _focusSpot(PlaceSpot spot) {
