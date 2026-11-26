@@ -14,6 +14,14 @@ class PlaceSpot {
     required this.type,
     required this.position,
   });
+  
+  Map<String, dynamic> toJson() => {
+      'id': id,
+      'name': name,
+      'type': type.name,
+      'lat': position.latitude,
+      'lng': position.longitude,
+    };
 
   Map<String, dynamic> toJson() => {
       'id': id,
