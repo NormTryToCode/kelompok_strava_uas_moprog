@@ -56,4 +56,83 @@ void main() {
 
     expect(find.byType(ManualActivityPage), findsOneWidget);
   });
+
+  testWidgets('menampilkan kartu Walk, Run, Ride dan tombol More sports',
+      (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Walk'), findsOneWidget);
+    expect(find.text('Run'), findsOneWidget);
+    expect(find.text('Ride'), findsOneWidget);
+    expect(find.text('More sports'), findsOneWidget);
+  });
+
+  testWidgets(
+      'menampilkan section Strength intro series dan carousel kartu latihan',
+      (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final verticalScrollable = find.byWidgetPredicate(
+      (widget) =>
+          widget is Scrollable && widget.axisDirection == AxisDirection.down,
+    );
+    final seriesTitle = find.text('Strength intro series');
+    await tester.scrollUntilVisible(
+      seriesTitle,
+      200,
+      scrollable: verticalScrollable,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(seriesTitle, findsOneWidget);
+    expect(
+      find.text(
+        'Build the foundations of strength training across 4 easy-to-follow workouts, gaining confidence and momentum with every session.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Full body'), findsOneWidget);
+    expect(find.text('Lower body'), findsOneWidget);
+    expect(find.text('Weight Training \u00B7 20m \u00B7 Easy'), findsWidgets);
+
+    final horizontalScrollable = find.byWidgetPredicate(
+      (widget) =>
+          widget is Scrollable && widget.axisDirection == AxisDirection.right,
+    );
+    await tester.scrollUntilVisible(
+      find.text('Core'),
+      250,
+      scrollable: horizontalScrollable,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Upper body'), findsOneWidget);
+    expect(find.text('Core'), findsOneWidget);
+  });
+
+  testWidgets('mengetuk kartu latihan membuka preview bottom sheet',
+      (tester) async {
+    await tester.pumpWidget(_wrap());
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final verticalScrollable = find.byWidgetPredicate(
+      (widget) =>
+          widget is Scrollable && widget.axisDirection == AxisDirection.down,
+    );
+    final fullBodyCard = find.text('Full body');
+    await tester.scrollUntilVisible(
+      fullBodyCard,
+      250,
+      scrollable: verticalScrollable,
+    );
+    await tester.ensureVisible(fullBodyCard);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.tap(fullBodyCard);
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('Start Workout'), findsOneWidget);
+  });
 }
