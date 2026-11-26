@@ -7,6 +7,7 @@ import 'package:kelompok_strava_uas_moprog/features/map/map_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/profile_page.dart';
 import "package:kelompok_strava_uas_moprog/features/record/record_page.dart";
 
+
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
