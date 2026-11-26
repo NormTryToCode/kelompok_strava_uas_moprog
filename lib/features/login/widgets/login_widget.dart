@@ -7,6 +7,7 @@ import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_passw
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/checkbox_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginWidget extends ConsumerStatefulWidget {
   const LoginWidget({super.key});
@@ -16,16 +17,56 @@ class LoginWidget extends ConsumerStatefulWidget {
 }
 
 class _LoginWidgetState extends ConsumerState<LoginWidget> {
+  static const _rememberMeKey = 'auth_remember_me';
+  static const _savedEmailKey = 'auth_saved_email';
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isEmailLoading = false;
   bool _isGoogleLoading = false;
+  bool _rememberMe = false;
 
   bool get _isBusy => _isEmailLoading || _isGoogleLoading;
 
-  static final _emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  static final _emailRegex =
+      RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRememberedEmail();
+  }
+
+  Future<void> _loadRememberedEmail() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final remember = prefs.getBool(_rememberMeKey) ?? false;
+      final savedEmail = prefs.getString(_savedEmailKey) ?? '';
+      if (!mounted) return;
+      setState(() {
+        _rememberMe = remember;
+        if (remember &&
+            savedEmail.isNotEmpty &&
+            _emailController.text.isEmpty) {
+          _emailController.text = savedEmail;
+        }
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _persistRememberMe() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_rememberMeKey, _rememberMe);
+      if (_rememberMe) {
+        await prefs.setString(_savedEmailKey, _emailController.text.trim());
+      } else {
+        await prefs.remove(_savedEmailKey);
+      }
+    } catch (_) {}
+  }
 
   @override
   void dispose() {
@@ -57,6 +98,10 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
             email: _emailController.text,
             password: _passwordController.text,
           );
+      await _persistRememberMe();
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } on AuthException catch (e) {
       _showErrorSnackBar(e.message);
     } finally {
@@ -69,7 +114,11 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
 
     setState(() => _isGoogleLoading = true);
     try {
-      await ref.read(authServiceProvider).signInWithGoogle();
+      final credential =
+          await ref.read(authServiceProvider).signInWithGoogle();
+      if (credential != null && mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } on AuthException catch (e) {
       _showErrorSnackBar(e.message);
     } finally {
@@ -81,7 +130,8 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
   Widget build(BuildContext context) {
     final secondaryButtonStyle = OutlinedButton.styleFrom(
       foregroundColor: Colors.white,
-      side: const BorderSide(color: Colors.white70, width: 1.2),
+      backgroundColor: Colors.white.withValues(alpha: 0.08),
+      side: BorderSide(color: Colors.white.withValues(alpha: 0.45), width: 1.2),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -96,15 +146,21 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             decoration: BoxDecoration(
-              color: Styles.accent,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF6D4AFF), Color(0xFF432C85)],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.16),
+                width: 1.2,
+              ),
+              boxShadow: Styles.ambientGlow(
+                color: Styles.primary,
+                intensity: 0.35,
+                blur: 36,
+              ),
             ),
             child: Form(
               key: _formKey,
@@ -113,15 +169,12 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.directions_run_rounded,
-                      size: 36,
-                      color: Colors.white,
-                    ),
+                    child: SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: Image.asset(
+                      'asset/images/Logo.png'
+                    ),),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -149,6 +202,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     hintText: "Enter your email",
                     prefixIcon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
+                    autofillHints: const [AutofillHints.email],
                     validator: (value) {
                       final email = value?.trim() ?? '';
                       if (email.isEmpty) {
@@ -167,6 +221,10 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     prefixIcon: Icons.lock_outline,
                     isPassword: true,
                     textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.password],
+                    onFieldSubmitted: (_) {
+                      if (!_isBusy) _handleEmailLogin();
+                    },
                     validator: (value) {
                       final password = value ?? '';
                       if (password.isEmpty) {
@@ -182,15 +240,23 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                   Theme(
                     data: Theme.of(context)
                         .copyWith(visualDensity: VisualDensity.compact),
-                    child: const CheckBoxWidget(checkBoxText: "Remember Me"),
+                    child: CheckBoxWidget(
+                      checkBoxText: "Remember Me",
+                      value: _rememberMe,
+                      onChanged: (value) => setState(() => _rememberMe = value),
+                    ),
                   ),
                   const SizedBox(height: 18),
                   ElevatedButton(
                     onPressed: _isBusy ? null : _handleEmailLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Styles.primaryDark,
+                      backgroundColor: const Color(0xFF191136),
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
+                      disabledBackgroundColor:
+                          const Color(0xFF191136).withValues(alpha: 0.6),
+                      disabledForegroundColor: Colors.white70,
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -243,13 +309,18 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.black87,
+                              color: Color(0xFF110E1B),
                             ),
                           )
                         : Image.asset(
                             'asset/images/google.png',
                             height: 20,
                             width: 20,
+                            errorBuilder: (_, _, _) => const Icon(
+                              Icons.g_mobiledata_rounded,
+                              size: 24,
+                              color: Color(0xFF110E1B),
+                            ),
                           ),
                     label: const Text(
                       "Login with Google",
@@ -260,8 +331,12 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      minimumSize: const Size(double.infinity, 48),
+                      foregroundColor: const Color(0xFF110E1B),
+                      disabledBackgroundColor:
+                          Colors.white.withValues(alpha: 0.8),
+                      disabledForegroundColor: Colors.black54,
+                      elevation: 0,
+                      minimumSize: const Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -302,13 +377,14 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                           onPressed: _isBusy
                               ? null
                               : () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const RegisterPage(),
-                                    ),
+                                  final route = MaterialPageRoute(
+                                    builder: (context) => const RegisterPage(),
                                   );
+                                  if (Navigator.canPop(context)) {
+                                    Navigator.pushReplacement(context, route);
+                                  } else {
+                                    Navigator.push(context, route);
+                                  }
                                 },
                           style: secondaryButtonStyle,
                           child: const FittedBox(

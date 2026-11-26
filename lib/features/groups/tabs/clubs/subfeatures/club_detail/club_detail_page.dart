@@ -19,6 +19,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_invite/invite_club_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_settings/club_settings_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/club_members_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_challenges/create_challenge_page.dart';
 
 class ClubDetailPage extends ConsumerStatefulWidget {
   final Club club;
@@ -143,7 +144,9 @@ class _ClubDetailPageState extends ConsumerState<ClubDetailPage> {
                     onEventsTap: () => ClubEventsPage.open(context, club),
                     onOverviewTap: () => _openOverview(club),
                     onPostsTap: _scrollToPosts,
-                  ),                  const SizedBox(height: 28),
+                    onCreateChallengeTap: () => CreateChallengePage.open(context, club),
+                  ),                  
+                  const SizedBox(height: 28),
                   ClubChannelsSection(
                     clubId: club.id,
                     onTap: () => ClubChannelsPage.open(context, club),

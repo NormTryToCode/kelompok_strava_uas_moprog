@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 
-enum AddAction { post, photo, manualActivity }
+enum AddAction { post, photo, manualActivity, activityHistory }
 
 class AddMenuButton extends StatelessWidget {
   final ValueChanged<AddAction> onSelected;
@@ -10,8 +11,12 @@ class AddMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<AddAction>(
-      icon: const Icon(Icons.add),
-      color: Colors.grey.shade800,
+      icon: const Icon(Icons.add, color: Styles.textPrimary),
+      color: Styles.surfaceElevated,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: const BorderSide(color: Styles.border),
+      ),
       onSelected: onSelected,
       itemBuilder: (_) => const [
         PopupMenuItem(
@@ -25,6 +30,10 @@ class AddMenuButton extends StatelessWidget {
         PopupMenuItem(
           value: AddAction.manualActivity,
           child: _MenuRow(icon: Icons.show_chart, label: 'Manual Activity'),
+        ),
+        PopupMenuItem(
+          value: AddAction.activityHistory,
+          child: _MenuRow(icon: Icons.history, label: 'My Activities'),
         ),
       ],
     );
@@ -41,9 +50,15 @@ class _MenuRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white),
-        const SizedBox(width: 16),
-        Text(label, style: const TextStyle(color: Colors.white)),
+        Icon(icon, color: Styles.primaryLight, size: 20),
+        const SizedBox(width: 14),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Styles.textPrimary,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ],
     );
   }

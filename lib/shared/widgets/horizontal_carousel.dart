@@ -6,6 +6,7 @@ class HorizontalCarousel<T> extends StatefulWidget {
   final Widget Function(BuildContext context, T item) itemBuilder;
   final double height;
   final double viewportFraction;
+  final bool showArrows;
 
   const HorizontalCarousel({
     super.key,
@@ -13,6 +14,7 @@ class HorizontalCarousel<T> extends StatefulWidget {
     required this.itemBuilder,
     this.height = 240,
     this.viewportFraction = 0.75,
+    this.showArrows = false,
   });
 
   factory HorizontalCarousel.cards({
@@ -22,12 +24,14 @@ class HorizontalCarousel<T> extends StatefulWidget {
     double height = 240,
     double viewportFraction = 0.75,
     bool bordered = false,
+    bool showArrows = false,
   }) {
     return HorizontalCarousel<T>(
       key: key,
       items: items,
       height: height,
       viewportFraction: viewportFraction,
+      showArrows: showArrows,
       itemBuilder: (context, item) {
         final content = cardBuilder(context, item);
         return bordered
@@ -42,6 +46,7 @@ class HorizontalCarousel<T> extends StatefulWidget {
     required List<T> items,
     required Widget Function(BuildContext context, T item) itemBuilder,
     double height = 180,
+    bool showArrows = false,
   }) {
     return HorizontalCarousel<T>(
       key: key,
@@ -49,6 +54,7 @@ class HorizontalCarousel<T> extends StatefulWidget {
       itemBuilder: itemBuilder,
       height: height,
       viewportFraction: 0.92,
+      showArrows: showArrows,
     );
   }
 
@@ -81,7 +87,7 @@ class _HorizontalCarouselState<T> extends State<HorizontalCarousel<T>> {
           child: Container(
             width: 50,
             height: 50,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Styles.accent,
               shape: BoxShape.circle,
             ),
@@ -94,32 +100,33 @@ class _HorizontalCarouselState<T> extends State<HorizontalCarousel<T>> {
 
   @override
   Widget build(BuildContext context) {
+    final pageView = PageView.builder(
+      controller: _controller,
+      itemCount: widget.items.length,
+      itemBuilder: (context, i) => widget.itemBuilder(context, widget.items[i]),
+    );
+
     return SizedBox(
       height: widget.height,
-      child: Stack(
-        children: [
-          PageView.builder(
-            controller: _controller,
-            itemCount: widget.items.length,
-            itemBuilder: (context, i) =>
-                widget.itemBuilder(context, widget.items[i]),
-          ),
-          if (widget.items.length > 1) ...[
-            _arrow(Alignment.centerLeft, Icons.chevron_left, () {
-              _controller.previousPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-              );
-            }),
-            _arrow(Alignment.centerRight, Icons.chevron_right, () {
-              _controller.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-              );
-            }),
-          ],
-        ],
-      ),
+      child: (!widget.showArrows || widget.items.length <= 1)
+          ? pageView
+          : Stack(
+              children: [
+                pageView,
+                _arrow(Alignment.centerLeft, Icons.chevron_left, () {
+                  _controller.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                }),
+                _arrow(Alignment.centerRight, Icons.chevron_right, () {
+                  _controller.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                }),
+              ],
+            ),
     );
   }
 }

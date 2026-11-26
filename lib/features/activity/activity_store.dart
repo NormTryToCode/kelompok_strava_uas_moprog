@@ -1,4 +1,13 @@
+import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+typedef JsonMap = Map<String, dynamic>;
+typedef FirestoreReadAll = Future<List<JsonMap>> Function(String collection);
+typedef FirestoreSaveDoc = Future<void> Function(
+  String collection,
+  String id,
+  JsonMap data,
+);
 
 abstract class ActivityStore {
   Future<String?> read();
@@ -18,6 +27,63 @@ class PrefsActivityStore implements ActivityStore {
 
   @override
   Future<void> write(String json) => _prefs.setString(_key, json);
+}
+
+class FirestoreActivityStore implements ActivityStore {
+  static const String collectionName = 'manual_activities_store';
+  static const String docId = 'default_user';
+
+  final ActivityStore _fallback;
+  final FirestoreReadAll? _readAll;
+  final FirestoreSaveDoc? _saveDoc;
+
+  FirestoreActivityStore({
+    ActivityStore? fallback,
+    FirestoreReadAll? readAll,
+    FirestoreSaveDoc? saveDoc,
+  })  : _fallback = fallback ?? PrefsActivityStore(),
+        _readAll = readAll,
+        _saveDoc = saveDoc;
+
+  Future<List<JsonMap>> _getAll(String collection) {
+    final reader = _readAll ?? DatabaseService.instance.getAll;
+    return reader(collection);
+  }
+
+  Future<void> _save(String collection, String id, JsonMap data) {
+    final writer = _saveDoc ?? DatabaseService.instance.save;
+    return writer(collection, id, data);
+  }
+
+  @override
+  Future<String?> read() async {
+    try {
+      final docs = await _getAll(collectionName);
+      for (final doc in docs) {
+        if (doc['id'] == docId && doc['payload'] is String) {
+          return doc['payload'] as String;
+        }
+      }
+    } catch (_) {
+    }
+    return _fallback.read();
+  }
+
+  @override
+  Future<void> write(String json) async {
+    try {
+      await _fallback.write(json);
+    } catch (_) {
+    }
+    try {
+      await _save(collectionName, docId, {
+        'payload': json,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+    } catch (_) {
+      return;
+    }
+  }
 }
 
 class MemoryActivityStore implements ActivityStore {
