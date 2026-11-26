@@ -10,14 +10,10 @@ class StrideWordmark extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
+        SizedBox(
           width: 28,
           height: 28,
-          decoration: BoxDecoration(
-            gradient: Styles.primaryGradient,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(Icons.bolt_rounded, color: Styles.canvas, size: 18),
+          child: Image.asset('asset/images/Logo.png', width: 200, height: 200,),
         ),
         const SizedBox(width: 8),
         const Text(
