@@ -10,6 +10,7 @@ import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_marker.dart
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/spot_filter_bar.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/repositories/overpass_spot_service.dart';
+import 'package:kelompok_strava_uas_moprog/features/map/repositories/spot_cache.dart';
 import 'dart:async';
 
 class MapPage extends StatefulWidget {
@@ -25,22 +26,52 @@ class _MapPageState extends State<MapPage> {
   StreamSubscription<Position>? _positionSub;
   bool _follow = true;
 
-  List<PlaceSpot> _spots = [];
+  List<PlaceSpot> _snapshot = [];
+  List<PlaceSpot> _remote = [];
+  final _cache = SpotCache();
+  static const _refreshDistanceMeters = 5000.0;
+  static const _cacheMaxAge = Duration(days: 7);
+
+  // data API (lebih baru) diutamakan, snapshot selalu ikut sebagai cadangan
+  List<PlaceSpot> get _allSpots {
+    final seen = <String>{};
+    return [..._remote, ..._snapshot]
+        .where((s) => seen.add('${s.type.name}:${s.name}'))
+        .toList();
+  }
     SpotType? _filter; // null = semua
   final _spotService = OverpassSpotService();
   bool _nearbyRequested = false;
 
-  Future<void> _loadNearby(LatLng center) async {
+    Future<void> _loadNearby(LatLng center) async {
     if (_nearbyRequested) return;
     _nearbyRequested = true;
-    debugPrint('Overpass: fetching near $center');
+
+    final cached = await _cache.load();
+    final cacheUsable = cached != null &&
+        DateTime.now().difference(cached.savedAt) < _cacheMaxAge &&
+        const Distance().as(LengthUnit.Meter, cached.center, center) <
+            _refreshDistanceMeters;
+
+    if (cacheUsable) {
+      debugPrint('Overpass: using cache (${cached!.spots.length} spots)');
+      if (!mounted) return;
+      setState(() => _remote = cached.spots);
+      return; // area masih tercakup, tidak memanggil API
+    }
+
     try {
+      debugPrint('Overpass: fetching near $center');
       final nearby = await _spotService.fetchNearby(center);
       debugPrint('Overpass: got ${nearby.length} spots');
-      if (!mounted || nearby.isEmpty) return;
-      setState(() => _spots = nearby);
+      if (nearby.isEmpty) return;
+      await _cache.save(center, nearby);
+      if (!mounted) return;
+      setState(() => _remote = nearby);
     } catch (e) {
       debugPrint('Overpass FAILED: $e');
+      // cache lama yang basi tetap lebih baik daripada kosong
+      if (cached != null && mounted) setState(() => _remote = cached.spots);
     }
   }
 
@@ -52,7 +83,7 @@ class _MapPageState extends State<MapPage> {
 
   List<PlaceSpot> get _visibleSpots {
     final spots =
-        _spots.where((s) => _filter == null || s.type == _filter).toList();
+        _allSpots.where((s) => _filter == null || s.type == _filter).toList();
     if (_userPosition != null) {
       spots.sort((a, b) => _distanceTo(a)!.compareTo(_distanceTo(b)!));
     }
@@ -73,7 +104,7 @@ class _MapPageState extends State<MapPage> {
   Future<void> _loadSpots() async {
     final spots = await SpotRepository.instance.getSpots();
     if (!mounted) return;
-    setState(() => _spots = spots);
+    setState(() => _snapshot = spots);
   }
 
   Future<bool> _ensurePermission() async {
