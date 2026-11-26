@@ -154,7 +154,7 @@ class UserModel {
   }
 
   static CollectionReference<UserModel> collection(FirebaseFirestore db) {
-    return db.collection('users').withConverter<UserModel>(
+    return db.collection('athlete_profiles').withConverter<UserModel>(
           fromFirestore: (snap, _) => UserModel.fromMap(snap.data() ?? {}, snap.id),
           toFirestore: (model, _) => model.toMap(),
         );

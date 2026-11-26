@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_profile_data.dart';
 
@@ -12,7 +13,10 @@ final athleteProfileProvider =
 
 class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   static const String _collection = 'athlete_profiles';
-  static const String _docId = 'current_athlete';
+  static const String _fallbackDocId = 'current_athlete';
+
+  String get _docId =>
+      ref.read(authStateProvider).valueOrNull?.uid ?? _fallbackDocId;
 
   static const AthleteProfileData _defaultProfile = AthleteProfileData(
     firstName: 'Michael',
@@ -33,6 +37,7 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   @override
   AthleteProfileData build() {
     _isDisposed = false;
+    ref.watch(authStateProvider);
     ref.onDispose(() {
       _isDisposed = true;
       _firestoreSub?.cancel();
@@ -122,6 +127,7 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
         _collection,
         _docId,
         updatedData.toMap(),
+        merge: true,
       );
       return true;
     } catch (_) {

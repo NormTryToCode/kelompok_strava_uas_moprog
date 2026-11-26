@@ -1,27 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+
 import 'models/user_model.dart';
 
 class DatabaseService {
   DatabaseService._();
+
   static final DatabaseService instance = DatabaseService._();
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<List>> getAll(String collection) async {
+  Future<List<Map<String, dynamic>>> getAll(String collection) async {
     final snap = await _db.collection(collection).get();
-    return snap.docs.map((d) => {...d.data(), 'id': d.id}).toList();
+
+    return snap.docs
+        .map((d) => {...d.data(), 'id': d.id})
+        .toList();
   }
 
-  Future<List>> getWhere(
+  Future<List<Map<String, dynamic>>> getWhere(
     String collection,
     String field,
     Object value,
   ) async {
-    final snap =
-        await _db.collection(collection).where(field, isEqualTo: value).get();
-    return snap.docs.map((d) => {...d.data(), 'id': d.id}).toList();
+    final snap = await _db
+        .collection(collection)
+        .where(field, isEqualTo: value)
+        .get();
+
+    return snap.docs
+        .map((d) => {...d.data(), 'id': d.id})
+        .toList();
   }
 
   Future<void> save(
@@ -31,12 +41,14 @@ class DatabaseService {
     bool merge = false,
   }) async {
     debugPrint('Firestore save -> $collection/$id');
+
     try {
       await _db
           .collection(collection)
           .doc(id)
           .set(data, SetOptions(merge: merge))
           .timeout(const Duration(seconds: 10));
+
       debugPrint('Firestore save OK');
     } catch (e) {
       debugPrint('Firestore save FAILED: $e');
@@ -44,13 +56,17 @@ class DatabaseService {
     }
   }
 
-  Future<void> remove(String collection, String id) =>
-      _db.collection(collection).doc(id).delete();
+  Future<void> remove(String collection, String id) async {
+    await _db.collection(collection).doc(id).delete();
+  }
 
-  Stream<List>> watch(String collection) =>
-      _db.collection(collection).snapshots().map(
-            (s) => s.docs.map((d) => {...d.data(), 'id': d.id}).toList(),
-          );
+  Stream<List<Map<String, dynamic>>> watch(String collection) {
+    return _db.collection(collection).snapshots().map(
+          (s) => s.docs
+              .map((d) => {...d.data(), 'id': d.id})
+              .toList(),
+        );
+  }
 
   CollectionReference<UserModel> get users => UserModel.collection(_db);
 
@@ -58,22 +74,26 @@ class DatabaseService {
 
   Future<void> syncUserOnAuth({
     required User firebaseUser,
-    required String authProvider, // "email" | "google"
+    required String authProvider,
     String? username,
   }) async {
-    final rawDoc = _db.collection('users').doc(firebaseUser.uid);
-    debugPrint('Firestore syncUserOnAuth -> users/${firebaseUser.uid}');
+    final rawDoc = _db.collection('athlete_profiles').doc(firebaseUser.uid);
+
+    debugPrint('Firestore syncUserOnAuth -> athlete_profiles/${firebaseUser.uid}');
 
     try {
       await _db.runTransaction((tx) async {
         final snap = await tx.get(rawDoc);
 
         if (!snap.exists) {
+          final displayName = firebaseUser.displayName?.trim();
+
           final fallbackFirstName =
               (username != null && username.trim().isNotEmpty)
                   ? username.trim()
-                  : (firebaseUser.displayName?.trim().split(' ').first ??
-                      (firebaseUser.email?.split('@').first ?? 'Athlete'));
+                  : (displayName != null && displayName.isNotEmpty
+                      ? displayName.split(' ').first
+                      : (firebaseUser.email?.split('@').first ?? 'Athlete'));
 
           tx.set(rawDoc, {
             'email': firebaseUser.email ?? '',
@@ -99,11 +119,13 @@ class DatabaseService {
           });
         } else {
           final existing = snap.data();
+
           tx.set(
             rawDoc,
             {
               'email': firebaseUser.email ?? existing?['email'] ?? '',
-              if (firebaseUser.photoURL != null && existing?['photoUrl'] == null)
+              if (firebaseUser.photoURL != null &&
+                  existing?['photoUrl'] == null)
                 'photoUrl': firebaseUser.photoURL,
               'updatedAt': FieldValue.serverTimestamp(),
             },
@@ -138,6 +160,7 @@ class DatabaseService {
     String? primarySport,
     String? bio,
     DateTime? birthDate,
+    bool clearBirthDate = false,
     String? gender,
     double? weightKg,
   }) async {
@@ -148,42 +171,59 @@ class DatabaseService {
     if (firstName != null && firstName.trim().isNotEmpty) {
       updates['firstName'] = firstName.trim();
     }
+
     if (lastName != null) {
-      updates['lastName'] = lastName.trim().isEmpty ? null : lastName.trim();
+      updates['lastName'] =
+          lastName.trim().isEmpty ? null : lastName.trim();
     }
+
     if (photoUrl != null) {
-      updates['photoUrl'] = photoUrl.trim().isEmpty ? null : photoUrl.trim();
+      updates['photoUrl'] =
+          photoUrl.trim().isEmpty ? null : photoUrl.trim();
     }
+
     if (city != null) {
       updates['city'] = city.trim().isEmpty ? null : city.trim();
     }
+
     if (country != null) {
-      updates['country'] = country.trim().isEmpty ? null : country.trim();
+      updates['country'] =
+          country.trim().isEmpty ? null : country.trim();
     }
+
     if (primarySport != null) {
       updates['primarySport'] =
           primarySport.trim().isEmpty ? null : primarySport.trim();
     }
+
     if (bio != null) {
       updates['bio'] = bio.trim().isEmpty ? null : bio.trim();
     }
-    if (birthDate != null) {
+
+    if (clearBirthDate) {
+      updates['birthDate'] = null;
+    } else if (birthDate != null) {
       updates['birthDate'] = Timestamp.fromDate(birthDate);
     }
+
     if (gender != null) {
-      updates['gender'] = gender.trim().isEmpty ? null : gender.trim();
+      updates['gender'] =
+          gender.trim().isEmpty ? null : gender.trim();
     }
+
     if (weightKg != null) {
       updates['weightKg'] = weightKg;
     }
 
-    debugPrint('Firestore updateProfileFields -> users/$uid');
+    debugPrint('Firestore updateProfileFields -> athlete_profiles/$uid');
+
     try {
       await _db
-          .collection('users')
+          .collection('athlete_profiles')
           .doc(uid)
           .update(updates)
           .timeout(const Duration(seconds: 10));
+
       debugPrint('Firestore updateProfileFields OK');
     } catch (e) {
       debugPrint('Firestore updateProfileFields FAILED: $e');
@@ -191,3 +231,4 @@ class DatabaseService {
     }
   }
 }
+
