@@ -54,7 +54,7 @@ class _MapPageState extends State<MapPage> {
             _refreshDistanceMeters;
 
     if (cacheUsable) {
-      debugPrint('Overpass: using cache (${cached!.spots.length} spots)');
+      debugPrint('Overpass: using cache (${cached.spots.length} spots)');
       if (!mounted) return;
       setState(() => _remote = cached.spots);
       return; // area masih tercakup, tidak memanggil API
@@ -228,7 +228,7 @@ class _MapPageState extends State<MapPage> {
           right: 0,
           bottom: 16,
           child: SizedBox(
-            height: 80,
+            height: 88,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -247,7 +247,7 @@ class _MapPageState extends State<MapPage> {
         ),
         Positioned(
           right: 16,
-          bottom: 108,
+          bottom: 116,
           child: MyLocationButton(following: _follow, onPressed: _recenter),
         ),
       ],
