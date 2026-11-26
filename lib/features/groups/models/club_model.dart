@@ -268,11 +268,15 @@ class Club {
     };
   }
 
-  factory Club.fromJson(Map<String, dynamic> json) {
+factory Club.fromJson(Map<String, dynamic> json) {
     final typeIds =
         (json['types'] as List?)?.whereType<String>().toSet() ?? <String>{};
     final place = json['location'];
     final isOwner = json['isOwner'] as bool? ?? true;
+    final isJoined = json['isJoined'] as bool? ?? true;
+    final memberIds =
+        (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [];
+    final realMemberCount = memberIds.length + (isJoined ? 1 : 0);
 
     return Club(
       id: json['id'] as String? ?? '',
@@ -299,12 +303,11 @@ class Club {
       avatarPath: json['avatarPath'] as String?,
       coverPath: json['coverPath'] as String?,
       vanityUrl: json['vanityUrl'] as String?,
-      memberCount: (json['memberCount'] as num?)?.toInt() ?? 1,
+      memberCount: realMemberCount,
       isOwner: isOwner,
       isAdmin: json['isAdmin'] as bool? ?? isOwner,
-      isJoined: json['isJoined'] as bool? ?? true,
-      memberIds:
-          (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [],
+      isJoined: isJoined,
+      memberIds: memberIds,
       adminIds:
           (json['adminIds'] as List?)?.whereType<String>().toList() ?? const [],
       settings: ClubSettings.fromJson(
