@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
-import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
+
+class _FakeAuthService implements AuthService {
+  int signOutCalls = 0;
+
+  @override
+  Future<void> signOut() async {
+    signOutCalls++;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void _tallScreen(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
@@ -12,17 +25,25 @@ void _tallScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-ProviderContainer _container({SettingsStore? store}) {
+ProviderContainer _container({
+  SettingsStore? store,
+  AuthService? authService,
+}) {
   final container = ProviderContainer(
     overrides: [
       settingsStoreProvider.overrideWithValue(store ?? MemorySettingsStore()),
+      authServiceProvider.overrideWithValue(authService ?? _FakeAuthService()),
     ],
   );
   addTearDown(container.dispose);
   return container;
 }
 
-Widget _page({ProviderContainer? container, VoidCallback? onLogout}) {
+Widget _page({
+  ProviderContainer? container,
+  VoidCallback? onLogout,
+  AuthService? authService,
+}) {
   final app = MaterialApp(home: SettingsPage(onLogout: onLogout));
   if (container != null) {
     return UncontrolledProviderScope(container: container, child: app);
@@ -30,6 +51,7 @@ Widget _page({ProviderContainer? container, VoidCallback? onLogout}) {
   return ProviderScope(
     overrides: [
       settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+      authServiceProvider.overrideWithValue(authService ?? _FakeAuthService()),
     ],
     child: app,
   );
@@ -106,11 +128,15 @@ void main() {
     expect(calls, 0);
   });
 
-  testWidgets('konfirmasi memanggil onLogout satu kali', (tester) async {
+  testWidgets('konfirmasi memanggil signOut dan onLogout satu kali',
+      (tester) async {
     _tallScreen(tester);
+    final fakeAuth = _FakeAuthService();
     var calls = 0;
 
-    await tester.pumpWidget(_page(onLogout: () => calls++));
+    await tester.pumpWidget(
+      _page(onLogout: () => calls++, authService: fakeAuth),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Log out'));
@@ -118,24 +144,50 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Log out'));
     await tester.pumpAndSettle();
 
+    expect(fakeAuth.signOutCalls, 1);
     expect(calls, 1);
   });
 
-  testWidgets('tanpa onLogout, konfirmasi kembali ke halaman login',
+  testWidgets('tanpa onLogout, konfirmasi memanggil signOut dan kembali ke root',
       (tester) async {
     _tallScreen(tester);
+    final fakeAuth = _FakeAuthService();
 
-    await tester.pumpWidget(_page());
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+          authServiceProvider.overrideWithValue(fakeAuth),
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SettingsPage(),
+                  ),
+                ),
+                child: const Text('Open Settings'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Open Settings'));
     await tester.pumpAndSettle();
-
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextButton, 'Log out'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(LoginPage), findsOneWidget);
+    expect(fakeAuth.signOutCalls, 1);
+    expect(find.text('Open Settings'), findsOneWidget);
     expect(find.text('Settings'), findsNothing);
   });
+
   testWidgets('Privacy controls mengubah subtitle sesuai pilihan',
       (tester) async {
     _tallScreen(tester);
