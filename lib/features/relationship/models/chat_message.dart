@@ -1,31 +1,28 @@
-class Message {
+class ChatMessage {
   final String id;
-  final String friendId;
+  final String senderUid;
   final String text;
-  final bool isMine;
   final DateTime sentAt;
 
-  const Message({
+  const ChatMessage({
     required this.id,
-    required this.friendId,
+    required this.senderUid,
     required this.text,
-    required this.isMine,
     required this.sentAt,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) => Message(
+  bool isMine(String myUid) => senderUid == myUid;
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
         id: json['id'] as String,
-        friendId: json['friendId'] as String,
+        senderUid: json['senderUid'] as String,
         text: json['text'] as String,
-        isMine: json['isMine'] as bool,
         sentAt: DateTime.parse(json['sentAt'] as String),
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'friendId': friendId,
+        'senderUid': senderUid,
         'text': text,
-        'isMine': isMine,
         'sentAt': sentAt.toIso8601String(),
       };
 }
