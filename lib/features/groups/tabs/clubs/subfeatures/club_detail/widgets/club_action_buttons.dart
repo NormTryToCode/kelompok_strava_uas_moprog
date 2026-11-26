@@ -12,6 +12,7 @@ class ClubActionButtons extends StatelessWidget {
   final VoidCallback onEventsTap;
   final VoidCallback onOverviewTap;
   final VoidCallback onPostsTap;
+  final VoidCallback? onCreateChallengeTap;
 
   const ClubActionButtons({
     super.key,
@@ -25,11 +26,14 @@ class ClubActionButtons extends StatelessWidget {
     this.showPendingRequests = false,
     this.pendingRequestCount = 0,
     this.onPendingRequestsTap,
+    this.onCreateChallengeTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final items = <(IconData, String, VoidCallback, int)>[
+      if (canManage && onCreateChallengeTap != null)
+        (Icons.emoji_events_outlined, 'Challenge', onCreateChallengeTap!, 0),
       if (canManage && showPendingRequests && onPendingRequestsTap != null)
         (
           Icons.how_to_reg_outlined,
