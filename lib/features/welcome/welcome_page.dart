@@ -84,6 +84,7 @@ class WelcomePage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Styles.canvas,
                         foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white38, width: 1.2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
