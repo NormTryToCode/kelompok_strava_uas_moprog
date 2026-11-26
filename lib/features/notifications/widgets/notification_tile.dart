@@ -45,25 +45,27 @@ class NotificationTile extends StatelessWidget {
                   Text(
                     item.title,
                     style: TextStyle(
-                      color: Styles.primaryLight,
+                      color: Styles.textPrimary,
                       fontSize: 17,
-                      fontWeight: item.isRead
-                          ? FontWeight.w500
-                          : FontWeight.w700,
+                      fontWeight:
+                          item.isRead ? FontWeight.w500 : FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.body,
                     style: const TextStyle(
-                      color: Styles.primaryLight,
+                      color: Styles.textSecondary,
                       fontSize: 15,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     item.createdAt.timeAgo(),
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                    style: const TextStyle(
+                      color: Styles.textMuted,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),
@@ -71,7 +73,7 @@ class NotificationTile extends StatelessWidget {
             if (!item.isRead)
               const Padding(
                 padding: EdgeInsets.only(left: 8, top: 6),
-                child: Icon(Icons.circle, size: 10, color: Styles.accent),
+                child: Icon(Icons.circle, size: 10, color: Styles.primary),
               ),
           ],
         ),
@@ -79,4 +81,3 @@ class NotificationTile extends StatelessWidget {
     );
   }
 }
-
