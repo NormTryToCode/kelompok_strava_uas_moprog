@@ -116,6 +116,7 @@ class AthleteProfileData {
       'gender': gender,
       'weightKg': weightKg,
       'avatarPath': avatarPath,
+      if (avatarPath.isNotEmpty) 'photoUrl': avatarPath,
       'updatedAt': DateTime.now().toIso8601String(),
     };
   }
