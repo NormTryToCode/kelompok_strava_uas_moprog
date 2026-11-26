@@ -207,15 +207,12 @@ class _RegisterWidgetState extends ConsumerState<RegisterWidget> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.directions_run_rounded,
-                      size: 36,
-                      color: Colors.white,
-                    ),
+                    child: SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: Image.asset(
+                      'asset/images/Logo.png'
+                    ),),
                   ),
                   const SizedBox(height: 16),
                   const Text(
