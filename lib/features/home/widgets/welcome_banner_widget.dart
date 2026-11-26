@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
+import 'package:kelompok_strava_uas_moprog/features/profile/edit_profile/models/athlete_profile_data.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/edit_profile/providers/athlete_profile_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/shared/widgets/athlete_avatar_widget.dart';
 
@@ -14,11 +17,36 @@ class WelcomeBannerWidget extends ConsumerWidget {
     return 'Good evening';
   }
 
+  String _resolveDisplayName(AthleteProfileData profile, User? user) {
+    final profileName = profile.firstName.trim();
+    if (profileName.isNotEmpty && profileName != 'Stride Athlete') {
+      return profileName;
+    }
+    final authName = user?.displayName?.trim();
+    if (authName != null && authName.isNotEmpty) {
+      return authName;
+    }
+    final email = user?.email?.trim();
+    if (email != null && email.contains('@')) {
+      return email.split('@').first;
+    }
+    return profileName.isNotEmpty ? profileName : 'Runner';
+  }
+
+  String _resolveAvatarPath(AthleteProfileData profile, User? user) {
+    final profileAvatar = profile.avatarPath.trim();
+    if (profileAvatar.isNotEmpty) {
+      return profileAvatar;
+    }
+    return user?.photoURL?.trim() ?? '';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(athleteProfileProvider);
-    final rawName = profile.firstName.trim();
-    final userName = rawName.isEmpty ? 'Runner' : rawName;
+    final authUser = ref.watch(authStateProvider).valueOrNull;
+    final userName = _resolveDisplayName(profile, authUser);
+    final avatarPath = _resolveAvatarPath(profile, authUser);
 
     return Row(
       children: [
@@ -30,7 +58,7 @@ class WelcomeBannerWidget extends ConsumerWidget {
             boxShadow: Styles.glow(intensity: 0.3, blur: 14),
           ),
           child: AthleteAvatarWidget(
-            avatarPath: profile.avatarPath,
+            avatarPath: avatarPath,
             size: 50,
           ),
         ),

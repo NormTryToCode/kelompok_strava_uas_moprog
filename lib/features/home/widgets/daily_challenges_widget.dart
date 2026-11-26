@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/record/record_page.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 class DailyChallengeWidget extends StatelessWidget {
@@ -58,7 +59,11 @@ class DailyChallengeWidget extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const Record()),
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Styles.primary,
               foregroundColor: Styles.textPrimary,
