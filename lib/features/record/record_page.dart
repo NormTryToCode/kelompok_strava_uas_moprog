@@ -3,7 +3,7 @@ import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/widgets/record_widget.dart';
 
 class Record extends StatefulWidget {
-  const new({super.key});
+  const Record({super.key});
 
   @override
   State<Record> createState() => _RecordState();

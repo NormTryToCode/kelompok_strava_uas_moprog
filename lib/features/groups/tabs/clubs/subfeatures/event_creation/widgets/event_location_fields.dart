@@ -30,7 +30,7 @@ class EventLocationFields extends StatelessWidget {
               enabled: !controller.isVirtual,
               trailing: const Icon(
                 Icons.search,
-                color: Styles.surfaceHighlight,
+                color: Styles.textSecondary,
               ),
               errorText: controller.showErrors
                   ? controller.locationError

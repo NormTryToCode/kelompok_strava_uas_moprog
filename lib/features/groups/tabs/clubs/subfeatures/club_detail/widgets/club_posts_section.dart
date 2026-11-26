@@ -54,7 +54,7 @@ class ClubPostsSection extends ConsumerWidget {
             child: Center(
               child: Text(
                 'Could not load club posts.',
-                style: TextStyle(color: Styles.surfaceHighlight),
+                style: TextStyle(color: Styles.textSecondary),
               ),
             ),
           ),
@@ -82,7 +82,7 @@ class ClubPostsSection extends ConsumerWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 13.5,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ],

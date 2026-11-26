@@ -92,7 +92,7 @@ class _EventDetailSheetBody extends ConsumerWidget {
                 IconBubble(
                   event.sport?.icon ?? event.kind.icon,
                   size: 48,
-                  color: isPast ? Styles.surfaceHighlight : Styles.teal,
+                  color: isPast ? Styles.textSecondary : Styles.teal,
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -112,7 +112,7 @@ class _EventDetailSheetBody extends ConsumerWidget {
                         'Hosted by ${event.clubName}',
                         style: const TextStyle(
                           fontSize: 13.5,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ],
@@ -168,7 +168,7 @@ class _EventDetailSheetBody extends ConsumerWidget {
                 style: const TextStyle(
                   fontSize: 14.5,
                   height: 1.45,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                 ),
               ),
             ],
@@ -228,7 +228,7 @@ class _DetailRow extends StatelessWidget {
                   subtitle!,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
               ],

@@ -22,6 +22,23 @@ class CustomImageNetwork extends StatelessWidget {
       height: height,
       width: width,
       fit: fit,
+      errorBuilder: (
+        BuildContext context,
+        Object error,
+        StackTrace? stackTrace,
+      ) {
+        return Container(
+          height: height,
+          width: width,
+          color: Styles.surfaceElevated,
+          alignment: Alignment.center,
+          child: Icon(
+            Icons.person_rounded,
+            size: (height ?? 48) * 0.5,
+            color: Styles.textSecondary,
+          ),
+        );
+      },
       loadingBuilder: (
         BuildContext context,
         Widget child,

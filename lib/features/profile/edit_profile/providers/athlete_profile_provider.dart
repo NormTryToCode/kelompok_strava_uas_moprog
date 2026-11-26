@@ -1,6 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_profile_data.dart';
 
@@ -11,18 +16,21 @@ final athleteProfileProvider =
 
 class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   static const String _collection = 'athlete_profiles';
-  static const String _docId = 'current_athlete';
+  static const String _fallbackDocId = 'current_athlete';
+
+  String get _docId =>
+      ref.read(authStateProvider).valueOrNull?.uid ?? _fallbackDocId;
 
   static const AthleteProfileData _defaultProfile = AthleteProfileData(
-    firstName: 'Michael',
-    lastName: 'Respati Sanjaya Ho',
-    city: 'Jakarta',
-    country: 'INDONESIA',
+    firstName: 'Stride Athlete',
+    lastName: '',
+    city: '',
+    country: '',
     primarySport: 'Running',
-    bio: 'Chasing steady pace and cleaner splits every week.',
-    birthDate: '30/08/2007',
-    gender: 'Male',
-    weightKg: '74.0',
+    bio: '',
+    birthDate: '01/01/2000',
+    gender: 'Prefer not to say',
+    weightKg: '65.0',
   );
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
@@ -32,14 +40,24 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   @override
   AthleteProfileData build() {
     _isDisposed = false;
+    final authUser = ref.watch(authStateProvider).valueOrNull;
     ref.onDispose(() {
       _isDisposed = true;
       _firestoreSub?.cancel();
     });
 
+    final displayName = authUser?.displayName?.trim();
+    final initialFirstName = (displayName != null && displayName.isNotEmpty)
+        ? displayName.split(' ').first
+        : (authUser?.email?.split('@').first ?? _defaultProfile.firstName);
+    final initialAvatarPath = authUser?.photoURL?.trim() ?? '';
+
     _loadLocalCache();
     _listenFirestore();
-    return _defaultProfile;
+    return _defaultProfile.copyWith(
+      firstName: initialFirstName,
+      avatarPath: initialAvatarPath,
+    );
   }
 
   Future<void> _loadLocalCache() async {
@@ -90,13 +108,16 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
           if (matches.isEmpty) return;
 
           final Map<String, dynamic> remote = matches.first;
-          final String remoteAvatar = remote['avatarPath'] as String? ?? '';
+          final String rawAvatar = (remote['avatarPath'] as String? ?? '').trim();
+          final String rawPhotoUrl = (remote['photoUrl'] as String? ?? '').trim();
+          final String remoteAvatar =
+              rawAvatar.isNotEmpty ? rawAvatar : rawPhotoUrl;
           state = AthleteProfileData.fromMap(
             remote,
             fallback: state,
           ).copyWith(
             avatarPath:
-              remoteAvatar.isNotEmpty ? remoteAvatar : state.avatarPath,
+                remoteAvatar.isNotEmpty ? remoteAvatar : state.avatarPath,
           );
         },
         onError: (_) {},
@@ -104,10 +125,44 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
     } catch (_) {}
   }
 
+  Future<String> _encodeAvatarForDb(String avatarPath) async {
+    final trimmed = avatarPath.trim();
+    if (trimmed.isEmpty ||
+        trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://') ||
+        trimmed.startsWith('data:image/')) {
+      return trimmed;
+    }
+
+    try {
+      final file = File(trimmed);
+      if (!file.existsSync()) return trimmed;
+      final Uint8List rawBytes = await file.readAsBytes();
+      final ui.Codec codec = await ui.instantiateImageCodec(
+        rawBytes,
+        targetWidth: 256,
+      );
+      final ui.FrameInfo frame = await codec.getNextFrame();
+      codec.dispose();
+      final ByteData? pngData = await frame.image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      frame.image.dispose();
+      if (pngData == null) return trimmed;
+      final String base64Str = base64Encode(pngData.buffer.asUint8List());
+      return 'data:image/png;base64,$base64Str';
+    } catch (_) {
+      return trimmed;
+    }
+  }
+
   Future<bool> saveProfile(AthleteProfileData updatedData) async {
+    final String persistedAvatar =
+        await _encodeAvatarForDb(updatedData.avatarPath);
     final normalized = updatedData.copyWith(
       primarySport: normalizeAthleteSport(updatedData.primarySport),
       gender: normalizeAthleteGender(updatedData.gender),
+      avatarPath: persistedAvatar,
     );
     state = normalized;
 
@@ -127,6 +182,7 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
         _collection,
         _docId,
         normalized.toMap(),
+        merge: true,
       );
       return true;
     } catch (_) {

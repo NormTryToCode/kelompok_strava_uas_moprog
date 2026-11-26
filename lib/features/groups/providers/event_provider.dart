@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_firestore_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/event_repository.dart';
 
@@ -11,10 +10,7 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
   EventRepository get _repository => ref.read(eventRepositoryProvider);
 
   @override
-  Future<List<Event>> build() async {
-    final stored = await _repository.getEvents();
-    return GroupsFirestoreSeeder.seedMissingEvents(existing: stored);
-  }
+  Future<List<Event>> build() => _repository.getEvents();
 
   Future<void> addEvent(Event event) async {
     await _repository.addEvent(event);

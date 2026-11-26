@@ -95,7 +95,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
         body: Center(
           child: Text(
             'Unable to open channel.',
-            style: TextStyle(color: Styles.surfaceHighlight),
+            style: TextStyle(color: Styles.textSecondary),
           ),
         ),
       ),
@@ -111,7 +111,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
             body: const Center(
               child: Text(
                 'Channel no longer exists.',
-                style: TextStyle(color: Styles.surfaceHighlight),
+                style: TextStyle(color: Styles.textSecondary),
               ),
             ),
           );
@@ -152,7 +152,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ],
@@ -212,7 +212,7 @@ class _ChannelChatPageState extends ConsumerState<ChannelChatPage> {
                             decoration: InputDecoration(
                               hintText: 'Message #${channel.name}',
                               hintStyle: const TextStyle(
-                                color: Styles.surfaceHighlight,
+                                color: Styles.textSecondary,
                               ),
                               filled: true,
                               fillColor: Styles.fieldFill,
@@ -299,7 +299,7 @@ class _EmptyChatState extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 14,
                   height: 1.4,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                 ),
               ),
             ],
@@ -388,7 +388,7 @@ class _MessageBubble extends StatelessWidget {
                   timeLabel,
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
                 if (isMine) ...[

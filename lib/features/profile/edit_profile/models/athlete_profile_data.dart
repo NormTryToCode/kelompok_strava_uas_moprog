@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 String normalizeAthleteSport(String raw) {
@@ -115,6 +116,7 @@ class AthleteProfileData {
       'gender': gender,
       'weightKg': weightKg,
       'avatarPath': avatarPath,
+      if (avatarPath.isNotEmpty) 'photoUrl': avatarPath,
       'updatedAt': DateTime.now().toIso8601String(),
     };
   }
@@ -123,6 +125,33 @@ class AthleteProfileData {
     Map<String, dynamic> map, {
     required AthleteProfileData fallback,
   }) {
+    final rawBirthDate = map['birthDate'];
+    String parsedBirthDate = fallback.birthDate;
+    if (rawBirthDate is String && rawBirthDate.isNotEmpty) {
+      parsedBirthDate = rawBirthDate;
+    } else if (rawBirthDate is Timestamp) {
+      final dt = rawBirthDate.toDate();
+      final d = dt.day.toString().padLeft(2, '0');
+      final m = dt.month.toString().padLeft(2, '0');
+      parsedBirthDate = '$d/$m/${dt.year}';
+    }
+
+    final rawWeight = map['weightKg'];
+    String parsedWeight = fallback.weightKg;
+    if (rawWeight is String && rawWeight.isNotEmpty) {
+      parsedWeight = rawWeight;
+    } else if (rawWeight is num) {
+      parsedWeight = rawWeight.toStringAsFixed(1).replaceAll('.', ',');
+    }
+
+    final rawAvatar = map['avatarPath'] as String?;
+    final rawPhotoUrl = map['photoUrl'] as String?;
+    final parsedAvatar = (rawAvatar != null && rawAvatar.isNotEmpty)
+        ? rawAvatar
+        : ((rawPhotoUrl != null && rawPhotoUrl.isNotEmpty)
+            ? rawPhotoUrl
+            : fallback.avatarPath);
+
     return AthleteProfileData(
       firstName: map['firstName'] as String? ?? fallback.firstName,
       lastName: map['lastName'] as String? ?? fallback.lastName,
@@ -132,12 +161,12 @@ class AthleteProfileData {
         map['primarySport'] as String? ?? fallback.primarySport,
       ),
       bio: map['bio'] as String? ?? fallback.bio,
-      birthDate: map['birthDate'] as String? ?? fallback.birthDate,
+      birthDate: parsedBirthDate,
       gender: normalizeAthleteGender(
         map['gender'] as String? ?? fallback.gender,
       ),
-      weightKg: map['weightKg'] as String? ?? fallback.weightKg,
-      avatarPath: map['avatarPath'] as String? ?? fallback.avatarPath,
+      weightKg: parsedWeight,
+      avatarPath: parsedAvatar,
     );
   }
 }

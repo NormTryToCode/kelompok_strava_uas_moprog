@@ -76,7 +76,7 @@ class _FilterChipItem extends StatelessWidget {
               Icon(
                 icon,
                 size: 16,
-                color: selected ? Styles.teal : Styles.surfaceHighlight,
+                color: selected ? Styles.teal : Styles.textSecondary,
               ),
               const SizedBox(width: 6),
               Text(
@@ -84,7 +84,7 @@ class _FilterChipItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
-                  color: selected ? Colors.white : Styles.surfaceHighlight,
+                  color: selected ? Colors.white : Styles.textSecondary,
                 ),
               ),
             ],

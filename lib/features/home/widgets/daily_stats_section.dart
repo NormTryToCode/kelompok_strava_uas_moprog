@@ -52,10 +52,12 @@ class DailyStatsSection extends StatelessWidget {
       children: [
         const HomeSectionHeader(
           title: 'Daily Stats',
-          subtitle: 'Todays Stats',
+          subtitle: "Today's highlights",
         ),
         HorizontalCarousel.cards(
           items: _dailyStats,
+          height: 205,
+          viewportFraction: 0.62,
           bordered: true,
           cardBuilder: (context, stat) => _StatCard(
             title: stat['title']!,
@@ -84,7 +86,7 @@ class DailyStatsSection extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: Styles.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -130,7 +132,7 @@ class DailyStatsSection extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Styles.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Styles.border),
+                border: Border.all(color: Styles.borderStrong),
               ),
               child: Column(
                 children: [
@@ -189,27 +191,39 @@ class _StatCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+              padding: const EdgeInsets.fromLTRB(8, 12, 8, 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Center(
-                      child: Image.asset(
-                        image,
-                        fit: BoxFit.contain,
-                      ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 84,
+                          height: 84,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: Styles.radialGlow(
+                              color: Styles.primary,
+                              intensity: 0.24,
+                            ),
+                          ),
+                        ),
+                        Image.asset(image, fit: BoxFit.contain),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     value,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: Styles.primaryLight,
+                      letterSpacing: -0.3,
+                      color: Styles.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -219,34 +233,22 @@ class _StatCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w600,
-                      color: Styles.textSecondary,
+                      color: Styles.primaryLight,
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             top: 6,
             right: 6,
-            child: GestureDetector(
-              onTap: onTap,
-              behavior: HitTestBehavior.opaque,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Styles.surfaceHighlight.withValues(alpha: 0.85),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Styles.borderStrong),
-                ),
-                child: const Icon(
-                  Icons.info_outline_rounded,
-                  size: 14,
-                  color: Styles.primaryLight,
-                ),
-              ),
+            child: Icon(
+              Icons.north_east_rounded,
+              size: 14,
+              color: Styles.textMuted,
             ),
           ),
         ],

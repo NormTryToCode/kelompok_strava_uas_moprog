@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_all.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/club_tile.dart';
@@ -40,8 +41,15 @@ class SearchResultsView extends ConsumerWidget {
               person: person,
               trailing: FollowButton(
                 isFollowing: following.contains(person.id),
-                onPressed: () =>
-                    ref.read(followProvider.notifier).toggle(person.id),
+                onPressed: () {
+                  final wasFollowing = following.contains(person.id);
+                  ref.read(followProvider.notifier).toggle(person.id);
+                  if (!wasFollowing) {
+                    ref
+                        .read(notificationsProvider.notifier)
+                        .notifyFollowing(personName: person.name);
+                  }
+                },
               ),
             ),
         ],
@@ -78,4 +86,3 @@ class _ResultsLabel extends StatelessWidget {
     );
   }
 }
-

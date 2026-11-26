@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
@@ -6,7 +5,7 @@ import '../../edit_profile/models/athlete_profile_data.dart';
 import '../../shared/services/profile_share_service.dart';
 import '../../shared/services/profile_url_service.dart';
 import '../../shared/utils/profile_snackbar_helper.dart';
-import '../../shared/widgets/custom_image_network.dart';
+import '../../shared/widgets/athlete_avatar_widget.dart';
 
 class ProfileAvatarPreviewDialog extends StatelessWidget {
   final AthleteProfileData profileData;
@@ -15,9 +14,6 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
     super.key,
     required this.profileData,
   });
-
-  static const String _defaultAvatarUrl =
-    'https://cdn-icons-png.flaticon.com/512/4140/4140048.png';
 
   String _englishSport(String raw) {
     switch (raw.trim().toLowerCase()) {
@@ -34,8 +30,6 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasLocalFile = profileData.avatarPath.isNotEmpty &&
-      File(profileData.avatarPath).existsSync();
     final String displayFirstName = profileData.firstName.trim().isNotEmpty
       ? profileData.firstName.trim()
       : 'Athlete';
@@ -64,15 +58,10 @@ class ProfileAvatarPreviewDialog extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  hasLocalFile
-                    ? Image.file(
-                        File(profileData.avatarPath),
-                        fit: BoxFit.cover,
-                      )
-                    : const CustomImageNetwork(
-                        imageUrl: _defaultAvatarUrl,
-                        fit: BoxFit.cover,
-                      ),
+                  AthleteAvatarWidget.buildImage(
+                    profileData.avatarPath,
+                    fit: BoxFit.cover,
+                  ),
                   Positioned(
                     top: 12,
                     left: 12,

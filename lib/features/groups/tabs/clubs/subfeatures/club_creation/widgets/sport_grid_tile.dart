@@ -26,7 +26,7 @@ class SportGridTile extends StatelessWidget {
           IconBubble(
             sport.icon,
             size: 40,
-            color: selected ? Styles.teal : Styles.surfaceHighlight,
+            color: selected ? Styles.teal : Styles.primaryDark,
           ),
           const SizedBox(width: 10),
           Expanded(

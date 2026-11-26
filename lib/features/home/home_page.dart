@@ -53,7 +53,7 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.only(top: 12, bottom: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 24,
+          spacing: 22,
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),

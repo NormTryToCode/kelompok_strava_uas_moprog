@@ -93,7 +93,7 @@ class ClubMembersCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ],
@@ -122,7 +122,7 @@ class ClubMembersCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Icon(Icons.chevron_right, color: Styles.surfaceHighlight),
+                  Icon(Icons.chevron_right, color: Styles.textSecondary),
                 ],
               ),
             ),

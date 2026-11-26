@@ -86,7 +86,7 @@ class GhostButton extends StatelessWidget {
     final radius = BorderRadius.circular(12);
     final foreground = enabled
         ? Colors.white
-        : Styles.surfaceHighlight.withAlpha(110);
+        : Styles.textSecondary.withAlpha(110);
 
     return Material(
       color: Colors.transparent,

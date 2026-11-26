@@ -44,7 +44,7 @@ class PostTagPicker extends StatelessWidget {
                       size: 16,
                       color: tag == selected
                           ? Styles.teal
-                          : Styles.surfaceHighlight,
+                          : Styles.textSecondary,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -54,7 +54,7 @@ class PostTagPicker extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: tag == selected
                             ? Colors.white
-                            : Styles.surfaceHighlight,
+                            : Styles.textSecondary,
                       ),
                     ),
                   ],

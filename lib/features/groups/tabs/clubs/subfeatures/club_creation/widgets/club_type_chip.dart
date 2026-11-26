@@ -42,7 +42,7 @@ class ClubTypeChip extends StatelessWidget {
                 Icon(
                   selected ? Icons.check : type.icon,
                   size: 18,
-                  color: selected ? Styles.teal : Styles.surfaceHighlight,
+                  color: selected ? Styles.teal : Styles.primaryDark,
                 ),
                 const SizedBox(width: 8),
                 Text(

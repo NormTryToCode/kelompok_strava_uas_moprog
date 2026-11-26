@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_firestore_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
 
@@ -11,10 +10,7 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
   ClubRepository get _repository => ref.read(clubRepositoryProvider);
 
   @override
-  Future<List<Club>> build() async {
-    final stored = await _repository.getClubs();
-    return GroupsFirestoreSeeder.seedMissingClubs(existing: stored);
-  }
+  Future<List<Club>> build() => _repository.getClubs();
 
   Future<void> addClub(Club club) async {
     await _repository.addClub(club);
@@ -75,6 +71,43 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     await _repository.deleteClub(clubId);
     final current = state.valueOrNull ?? const <Club>[];
     state = AsyncData(current.where((c) => c.id != clubId).toList());
+  }
+
+  Future<void> approveJoinRequest(String clubId, String userId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || !match.first.canManage) return;
+
+    final club = match.first;
+    if (!club.pendingRequestIds.contains(userId)) return;
+
+    final nextPending = club.pendingRequestIds
+        .where((id) => id != userId)
+        .toList();
+    final nextMembers = club.memberIds.contains(userId)
+        ? club.memberIds
+        : [...club.memberIds, userId];
+
+    await updateClub(
+      club.copyWith(
+        pendingRequestIds: nextPending,
+        memberIds: nextMembers,
+        memberCount: nextMembers.length + (club.isJoined ? 1 : 0),
+      ),
+    );
+  }
+
+  Future<void> declineJoinRequest(String clubId, String userId) async {
+    final current = state.valueOrNull ?? const <Club>[];
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty || !match.first.canManage) return;
+
+    final club = match.first;
+    final nextPending = club.pendingRequestIds
+        .where((id) => id != userId)
+        .toList();
+
+    await updateClub(club.copyWith(pendingRequestIds: nextPending));
   }
 }
 

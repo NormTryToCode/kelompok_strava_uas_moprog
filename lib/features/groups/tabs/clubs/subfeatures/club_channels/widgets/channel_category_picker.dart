@@ -62,7 +62,7 @@ class _CategoryOptionChip extends StatelessWidget {
               Icon(
                 category.icon,
                 size: 18,
-                color: selected ? Styles.teal : Styles.surfaceHighlight,
+                color: selected ? Styles.teal : Styles.textSecondary,
               ),
               const SizedBox(width: 8),
               Text(
@@ -70,7 +70,7 @@ class _CategoryOptionChip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: selected ? Colors.white : Styles.surfaceHighlight,
+                  color: selected ? Colors.white : Styles.textSecondary,
                 ),
               ),
             ],
