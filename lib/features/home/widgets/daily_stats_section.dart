@@ -1,51 +1,98 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/models/weekly_activity_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/providers/weekly_activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/home_section_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/horizontal_carousel.dart';
 
-class DailyStatsSection extends StatelessWidget {
+class DailyStatsSection extends ConsumerWidget {
   const DailyStatsSection({super.key});
 
-  static const _dailyStats = [
-    {
-      'title': 'Heart Rate',
-      'image': 'asset/images/heart rate.png',
-      'today': '142 bpm',
-      'average': '138 bpm',
-      'best': '168 bpm',
-    },
-    {
-      'title': 'Pace Speed',
-      'image': 'asset/images/pace.png',
-      'today': '5\'12" /km',
-      'average': '5\'24" /km',
-      'best': '4\'48" /km',
-    },
-    {
-      'title': 'Average Time',
-      'image': 'asset/images/time.png',
-      'today': '42 mins',
-      'average': '38 mins',
-      'best': '1h 15m',
-    },
-    {
-      'title': 'Calories Burn',
-      'image': 'asset/images/calories.png',
-      'today': '340 kcal',
-      'average': '410 kcal',
-      'best': '780 kcal',
-    },
-    {
-      'title': 'Steps Taken',
-      'image': 'asset/images/steps.png',
-      'today': '6,840',
-      'average': '8,120',
-      'best': '14,500',
-    },
-  ];
+  static String _formatWithCommas(int value) {
+    final isNegative = value < 0;
+    final digits = value.abs().toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < digits.length; i++) {
+      final remaining = digits.length - i;
+      if (i > 0 && remaining % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(digits[i]);
+    }
+    return isNegative ? '-${buffer.toString()}' : buffer.toString();
+  }
+
+  static String _formatMinutes(int minutes) {
+    if (minutes >= 60) {
+      return '${minutes ~/ 60}h ${minutes % 60}m';
+    }
+    return '$minutes mins';
+  }
+
+  List<Map<String, String>> _buildDailyStats(
+    WeeklyActivityData week,
+    DateTime refDate,
+  ) {
+    final today = week.entryForWeekday(refDate.weekday);
+    final avgCalories = (week.totalCalories / 7).round();
+    final bestCalories =
+        week.days.fold<int>(0, (m, d) => math.max(m, d.calories));
+    final avgSteps = (week.totalSteps / 7).round();
+    final bestSteps = week.days.fold<int>(0, (m, d) => math.max(m, d.steps));
+    final todayMinutes = (today.distanceKm * 5.4).round();
+    final avgMinutes = ((week.totalDistanceKm / 7) * 5.4).round();
+    final bestDistanceKm =
+        week.days.fold<double>(0.0, (m, d) => math.max(m, d.distanceKm));
+    final bestMinutes = (bestDistanceKm * 5.4).round();
+
+    return [
+      {
+        'title': 'Heart Rate',
+        'image': 'asset/images/heart rate.png',
+        'today': '142 bpm',
+        'average': '138 bpm',
+        'best': '168 bpm',
+      },
+      {
+        'title': 'Pace Speed',
+        'image': 'asset/images/pace.png',
+        'today': '5\'12" /km',
+        'average': '5\'24" /km',
+        'best': '4\'48" /km',
+      },
+      {
+        'title': 'Average Time',
+        'image': 'asset/images/time.png',
+        'today': _formatMinutes(todayMinutes),
+        'average': _formatMinutes(avgMinutes),
+        'best': _formatMinutes(bestMinutes),
+      },
+      {
+        'title': 'Calories Burn',
+        'image': 'asset/images/calories.png',
+        'today': '${today.calories} kcal',
+        'average': '$avgCalories kcal',
+        'best': '$bestCalories kcal',
+      },
+      {
+        'title': 'Steps Taken',
+        'image': 'asset/images/steps.png',
+        'today': _formatWithCommas(today.steps),
+        'average': _formatWithCommas(avgSteps),
+        'best': _formatWithCommas(bestSteps),
+      },
+    ];
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final weeklyState = ref.watch(weeklyActivityProvider);
+    final refDate = ref.watch(weeklyActivityReferenceDateProvider);
+    final stats = _buildDailyStats(weeklyState.week, refDate);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 12,
@@ -55,7 +102,7 @@ class DailyStatsSection extends StatelessWidget {
           subtitle: "Today's highlights",
         ),
         HorizontalCarousel.cards(
-          items: _dailyStats,
+          items: stats,
           height: 205,
           viewportFraction: 0.62,
           bordered: true,
@@ -77,7 +124,7 @@ class DailyStatsSection extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => Padding(
+      builder: (_) => SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -7,6 +7,7 @@ import 'package:kelompok_strava_uas_moprog/features/home/data/weekly_activity_re
 import 'package:kelompok_strava_uas_moprog/features/home/data/weekly_activity_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/models/weekly_activity_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/providers/weekly_activity_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/widgets/daily_stats_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/streak_chart_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -210,5 +211,50 @@ void main() {
     await tester.tap(find.text('Calories'));
     await tester.pumpAndSettle();
     expect(find.text('3030 kcal'), findsOneWidget);
+  });
+
+  testWidgets(
+      'DailyStatsSection displays seeded today calories, steps, averages, and personal bests',
+      (tester) async {
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.physicalSize = const Size(800, 1400);
+    addTearDown(tester.view.reset);
+
+    final repo = MemoryWeeklyActivityRepository();
+    final refDate = DateTime(2026, 11, 26); // Thursday
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          weeklyActivityRepositoryProvider.overrideWithValue(repo),
+          weeklyActivityReferenceDateProvider.overrideWithValue(refDate),
+          authStateProvider.overrideWith((ref) => Stream<User?>.value(null)),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(
+            body: DailyStatsSection(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    tester.widget<PageView>(find.byType(PageView)).controller!.jumpToPage(3);
+    await tester.pumpAndSettle();
+
+    expect(find.text('495 kcal'), findsOneWidget);
+
+    await tester.tap(find.text('Calories Burn'));
+    await tester.pumpAndSettle();
+    expect(find.text('404 kcal'), findsOneWidget);
+    expect(find.text('630 kcal'), findsOneWidget);
+
+    Navigator.of(tester.element(find.text('Recorded Today'))).pop();
+    await tester.pumpAndSettle();
+
+    tester.widget<PageView>(find.byType(PageView)).controller!.jumpToPage(4);
+    await tester.pumpAndSettle();
+
+    expect(find.text('9,400'), findsOneWidget);
   });
 }
