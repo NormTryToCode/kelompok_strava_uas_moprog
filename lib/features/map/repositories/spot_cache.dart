@@ -16,7 +16,7 @@ class CachedSpots {
 }
 
 class SpotCache {
-  static const _key = 'overpass_spot_cache_v1';
+  static const _key = 'overpass_spot_cache_v2';
   final SharedPreferencesAsync _prefs = SharedPreferencesAsync();
 
   Future<CachedSpots?> load() async {
