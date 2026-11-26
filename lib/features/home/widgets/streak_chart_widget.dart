@@ -82,16 +82,42 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
         : '${total.toInt()} ${metric.unit}';
 
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: Styles.cardDecoration(withGlow: true),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      decoration: Styles.cardDecoration(
+        withGlow: true,
+        borderColor: Styles.borderStrong,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          _buildHeader(totalText),
-          const SizedBox(height: 18),
-          _buildMetricSwitcher(),
-          const SizedBox(height: 24),
-          _buildChart(metric),
+          Positioned(
+            top: -70,
+            right: -60,
+            child: IgnorePointer(
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  gradient: Styles.radialGlow(
+                    color: metric.color,
+                    intensity: 0.18,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(totalText),
+                const SizedBox(height: 16),
+                _buildMetricSwitcher(),
+                const SizedBox(height: 22),
+                _buildChart(metric),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -106,31 +132,57 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Weekly Activity',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                'WEEKLY ACTIVITY',
                 style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                  color: Styles.textPrimary,
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.9,
+                  color: Styles.primaryLight,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                '$totalText total  •  +12% vs last week',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Styles.textSecondary,
-                ),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      totalText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                        color: Styles.textPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Styles.success.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      '+12%',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.success,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
         const SizedBox(width: 8),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: Styles.warning.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(20),
@@ -142,13 +194,13 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
               Icon(
                 Icons.local_fire_department_rounded,
                 color: Styles.warning,
-                size: 16,
+                size: 15,
               ),
               SizedBox(width: 4),
               Text(
                 '7-Day Streak',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11.5,
                   fontWeight: FontWeight.bold,
                   color: Styles.warning,
                 ),
@@ -164,7 +216,7 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: Styles.fieldFill,
+        color: Styles.canvas.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(Radii.field),
         border: Border.all(color: Styles.border),
       ),
@@ -185,12 +237,12 @@ class _StreakChartWidgetState extends State<StreakChartWidget> {
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? item.color.withValues(alpha: 0.16)
+                      ? Styles.surfaceHighlight
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isSelected
-                        ? item.color.withValues(alpha: 0.55)
+                        ? item.color.withValues(alpha: 0.5)
                         : Colors.transparent,
                   ),
                 ),

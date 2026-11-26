@@ -52,14 +52,18 @@ class BadgesSection extends StatelessWidget {
       children: [
         const HomeSectionHeader(
           title: 'Badges',
-          subtitle: 'Earn the badges',
+          subtitle: 'Milestones & achievements',
         ),
         HorizontalCarousel.cards(
           items: _badges,
+          height: 220,
+          viewportFraction: 0.62,
           bordered: true,
           cardBuilder: (context, badge) => _BadgeCard(
             title: badge['title']!,
             image: badge['image']!,
+            progress: (double.tryParse(badge['progress'] ?? '0') ?? 0.0)
+                .clamp(0.0, 1.0),
             onTap: () => _showBadgeDetailModal(context, badge),
           ),
         ),
@@ -87,7 +91,7 @@ class BadgesSection extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: Styles.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -204,16 +208,22 @@ class BadgesSection extends StatelessWidget {
 class _BadgeCard extends StatelessWidget {
   final String title;
   final String image;
+  final double progress;
   final VoidCallback onTap;
 
   const _BadgeCard({
     required this.title,
     required this.image,
+    required this.progress,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isUnlocked = progress >= 1.0;
+    final statusColor = isUnlocked ? Styles.success : Styles.primaryLight;
+    final statusText = isUnlocked ? 'Unlocked' : '${(progress * 100).round()}%';
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -221,16 +231,27 @@ class _BadgeCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+              padding: const EdgeInsets.fromLTRB(10, 14, 10, 8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Center(
-                      child: Image.asset(
-                        image,
-                        fit: BoxFit.contain,
-                      ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 92,
+                          height: 92,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: Styles.radialGlow(
+                              color: isUnlocked ? Styles.success : Styles.primary,
+                              intensity: 0.24,
+                            ),
+                          ),
+                        ),
+                        Image.asset(image, fit: BoxFit.contain),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -240,9 +261,21 @@ class _BadgeCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 12.5,
                       fontWeight: FontWeight.w700,
                       color: Styles.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 4,
+                      backgroundColor: Styles.surfaceHighlight,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isUnlocked ? Styles.success : Styles.primary,
+                      ),
                     ),
                   ),
                 ],
@@ -250,22 +283,27 @@ class _BadgeCard extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 6,
-            right: 6,
-            child: GestureDetector(
-              onTap: onTap,
-              behavior: HitTestBehavior.opaque,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Styles.surfaceHighlight.withValues(alpha: 0.85),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Styles.borderStrong),
+            top: 4,
+            right: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: isUnlocked
+                    ? Styles.success.withValues(alpha: 0.16)
+                    : Styles.surfaceHighlight,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isUnlocked
+                      ? Styles.success.withValues(alpha: 0.45)
+                      : Styles.borderStrong,
                 ),
-                child: const Icon(
-                  Icons.info_outline_rounded,
-                  size: 14,
-                  color: Styles.primaryLight,
+              ),
+              child: Text(
+                statusText,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: statusColor,
                 ),
               ),
             ),

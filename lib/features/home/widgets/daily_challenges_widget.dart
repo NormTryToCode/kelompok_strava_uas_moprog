@@ -12,7 +12,7 @@ class DailyChallengeWidget extends StatelessWidget {
       decoration: Styles.cardDecoration(withGlow: true),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 28,
             backgroundColor: Styles.primaryDark,
             child: PhosphorIcon(
@@ -21,39 +21,50 @@ class DailyChallengeWidget extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          SizedBox(width: 16),
-          Expanded(
+          const SizedBox(width: 16),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Today Daily Challenge 🔥',
+                  'DAILY CHALLENGE',
                   style: TextStyle(
-                    color: Styles.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    color: Styles.primaryLight,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.9,
                   ),
                 ),
-                SizedBox(height: 4),
+                SizedBox(height: 3),
                 Text(
-                  'Run 2.5 Km',
+                  'Run 2.5 km',
+                  style: TextStyle(
+                    color: Styles.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Keep your streak alive',
                   style: TextStyle(
                     color: Styles.textSecondary,
-                    fontSize: 13,
+                    fontSize: 12,
                   ),
                 ),
               ],
             ),
           ),
-         ElevatedButton(
+          const SizedBox(width: 10),
+          ElevatedButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: Styles.primary,
               foregroundColor: Styles.textPrimary,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             ),
-            child: Text(
+            child: const Text(
               'Start',
               style: TextStyle(fontWeight: FontWeight.w700),
             ),
