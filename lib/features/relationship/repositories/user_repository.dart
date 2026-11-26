@@ -6,23 +6,23 @@ class UserRepository {
   static UserRepository instance = UserRepository();
   final _db = DatabaseService.instance;
 
-  Future<void> ensureProfile(User user) {
-    final email = user.email ?? '';
-    final handle = email.isNotEmpty
-        ? email.split('@').first.toLowerCase()
-        : user.uid.substring(0, 8);
-    final name = (user.displayName?.trim().isNotEmpty ?? false)
-        ? user.displayName!.trim()
-        : handle;
-    return _db.save('users', user.uid, {'name': name, 'username': handle});
+  Future<List<UserProfile>> getAll() async {
+    final rows = await _db.getAll('athlete_profiles');
+    return rows
+        .where((r) => r['deletedAt'] == null)
+        .map(UserProfile.fromJson)
+        .toList();
   }
 
-  Future<List<UserProfile>> searchByUsername(String username) async {
-    final rows = await _db.getWhere(
-      'users',
-      'username',
-      username.trim().toLowerCase(),
-    );
-    return rows.map(UserProfile.fromJson).toList();
+  Future<List<UserProfile>> search(String query) async {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return [];
+    final me = FirebaseAuth.instance.currentUser?.uid;
+    final all = await getAll();
+    return all
+        .where((u) =>
+            u.uid != me &&
+            (u.name.toLowerCase().contains(q) || u.username.contains(q)))
+        .toList();
   }
 }
