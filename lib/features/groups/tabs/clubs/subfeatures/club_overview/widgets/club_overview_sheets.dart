@@ -90,7 +90,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                             'Owner \u00b7 ${club.locationLabel}',
                             style: const TextStyle(
                               fontSize: 13,
-                              color: Styles.surfaceHighlight,
+                              color: Styles.textSecondary,
                             ),
                           ),
                         ],
@@ -110,7 +110,7 @@ Future<void> showClubMembersSheet(BuildContext context, Club club) {
                 style: TextStyle(
                   fontSize: 13.5,
                   height: 1.4,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                 ),
               ),
               const SizedBox(height: 18),
@@ -176,7 +176,7 @@ Future<void> showCommunityStandardsSheet(BuildContext context) {
                 style: TextStyle(
                   fontSize: 13.5,
                   height: 1.4,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                 ),
               ),
               const SizedBox(height: 18),
@@ -205,7 +205,7 @@ Future<void> showCommunityStandardsSheet(BuildContext context) {
                             style: const TextStyle(
                               fontSize: 13.5,
                               height: 1.4,
-                              color: Styles.surfaceHighlight,
+                              color: Styles.textSecondary,
                             ),
                           ),
                         ],
@@ -272,7 +272,7 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
                     'Select the reason that best describes the issue.',
                     style: TextStyle(
                       fontSize: 13.5,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -319,7 +319,7 @@ Future<String?> showReportClubSheet(BuildContext context, Club club) {
                                 size: 20,
                                 color: selectedReason == reasons[i]
                                     ? Styles.teal
-                                    : Styles.surfaceHighlight,
+                                    : Styles.textSecondary,
                               ),
                             ],
                           ),

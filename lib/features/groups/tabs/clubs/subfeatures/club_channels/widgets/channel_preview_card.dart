@@ -77,7 +77,7 @@ class ChannelPreviewCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13.5,
               height: 1.35,
-              color: Styles.surfaceHighlight,
+              color: Styles.textSecondary,
             ),
           ),
           const SizedBox(height: 12),

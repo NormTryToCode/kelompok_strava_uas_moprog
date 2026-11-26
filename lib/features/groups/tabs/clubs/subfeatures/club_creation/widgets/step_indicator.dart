@@ -26,7 +26,7 @@ class StepIndicator extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: step < currentStep
                       ? Styles.teal
-                      : Styles.surfaceHighlight,
+                      : Styles.textSecondary,
                   borderRadius: BorderRadius.circular(1),
                 ),
               ),
@@ -59,7 +59,7 @@ class _Node extends StatelessWidget {
             ? Styles.teal
             : (current ? Styles.selectedFill : Colors.transparent),
         border: Border.all(
-          color: done || current ? Styles.teal : Styles.surfaceHighlight,
+          color: done || current ? Styles.teal : Styles.borderStrong,
           width: 2,
         ),
       ),
@@ -70,7 +70,7 @@ class _Node extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
-                color: current ? Styles.teal : Styles.surfaceHighlight,
+                color: current ? Styles.teal : Styles.textSecondary,
               ),
             ),
     );

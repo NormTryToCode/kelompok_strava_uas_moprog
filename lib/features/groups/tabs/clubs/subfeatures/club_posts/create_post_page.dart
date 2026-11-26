@@ -196,11 +196,11 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+      hintStyle: const TextStyle(color: Styles.textSecondary),
       filled: true,
       fillColor: Styles.fieldFill,
       counterStyle: const TextStyle(
-        color: Styles.surfaceHighlight,
+        color: Styles.textSecondary,
         fontSize: 12,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -267,7 +267,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                                 'Posting as',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Styles.surfaceHighlight,
+                                  color: Styles.textSecondary,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -406,7 +406,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                                 'Let members reply to this post',
                                 style: TextStyle(
                                   fontSize: 12.5,
-                                  color: Styles.surfaceHighlight,
+                                  color: Styles.textSecondary,
                                 ),
                               ),
                             ],
@@ -420,7 +420,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                           trackColor: WidgetStateProperty.resolveWith(
                             (states) => states.contains(WidgetState.selected)
                                 ? Styles.teal
-                                : Styles.surfaceHighlight,
+                                : Styles.borderStrong,
                           ),
                           trackOutlineColor: WidgetStateProperty.all(
                             Colors.transparent,
@@ -525,7 +525,7 @@ class _Header extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13.5,
-                        color: Styles.surfaceHighlight,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ],

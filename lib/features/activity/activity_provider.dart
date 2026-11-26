@@ -20,7 +20,7 @@ class ActivityState {
 }
 
 final activityStoreProvider = Provider<ActivityStore>((ref) {
-  return PrefsActivityStore();
+  return FirestoreActivityStore();
 });
 
 class ActivityNotifier extends Notifier<ActivityState> {

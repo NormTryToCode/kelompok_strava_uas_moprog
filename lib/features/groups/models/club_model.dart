@@ -107,6 +107,7 @@ class Club {
   final List<String> adminIds;
   final ClubSettings settings;
   final DateTime createdAt;
+  final List<String> pendingRequestIds;
 
   const Club({
     required this.id,
@@ -128,6 +129,7 @@ class Club {
     this.avatarPath,
     this.coverPath,
     this.vanityUrl,
+    this.pendingRequestIds = const [],
   });
 
   factory Club.fromCreation(ClubCreationModel draft) {
@@ -181,6 +183,8 @@ class Club {
           ? location!.name
           : '${location!.name}, ${location!.detail}';
 
+  bool get isPrivate => privacy.id == ClubPrivacy.private.id;
+
   Club copyWith({
     String? id,
     String? name,
@@ -205,6 +209,7 @@ class Club {
     List<String>? adminIds,
     ClubSettings? settings,
     DateTime? createdAt,
+    List<String>? pendingRequestIds,
   }) {
     return Club(
       id: id ?? this.id,
@@ -226,6 +231,7 @@ class Club {
       adminIds: adminIds ?? this.adminIds,
       settings: settings ?? this.settings,
       createdAt: createdAt ?? this.createdAt,
+      pendingRequestIds: pendingRequestIds ?? this.pendingRequestIds,
     );
   }
 
@@ -258,14 +264,19 @@ class Club {
       'adminIds': adminIds,
       'settings': settings.toJson(),
       'createdAt': createdAt.toIso8601String(),
+      'pendingRequestIds' : pendingRequestIds,
     };
   }
 
-  factory Club.fromJson(Map<String, dynamic> json) {
+factory Club.fromJson(Map<String, dynamic> json) {
     final typeIds =
         (json['types'] as List?)?.whereType<String>().toSet() ?? <String>{};
     final place = json['location'];
     final isOwner = json['isOwner'] as bool? ?? true;
+    final isJoined = json['isJoined'] as bool? ?? true;
+    final memberIds =
+        (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [];
+    final realMemberCount = memberIds.length + (isJoined ? 1 : 0);
 
     return Club(
       id: json['id'] as String? ?? '',
@@ -292,12 +303,11 @@ class Club {
       avatarPath: json['avatarPath'] as String?,
       coverPath: json['coverPath'] as String?,
       vanityUrl: json['vanityUrl'] as String?,
-      memberCount: (json['memberCount'] as num?)?.toInt() ?? 1,
+      memberCount: realMemberCount,
       isOwner: isOwner,
       isAdmin: json['isAdmin'] as bool? ?? isOwner,
-      isJoined: json['isJoined'] as bool? ?? true,
-      memberIds:
-          (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [],
+      isJoined: isJoined,
+      memberIds: memberIds,
       adminIds:
           (json['adminIds'] as List?)?.whereType<String>().toList() ?? const [],
       settings: ClubSettings.fromJson(
@@ -308,6 +318,8 @@ class Club {
       createdAt: json['createdAt'] is String
           ? (DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now())
           : DateTime.now(),
+      pendingRequestIds: 
+          (json['pendingRequestIds'] as List?)?.whereType<String>().toList() ?? const [],
     );
   }
 }

@@ -97,7 +97,7 @@ class _ClubChannelsPageState extends ConsumerState<ClubChannelsPage> {
                   'Could not load channels.',
                   style: TextStyle(
                     fontSize: 15,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -192,7 +192,7 @@ class _EmptyFilterState extends StatelessWidget {
           Text(
             'Tap "New channel" to start a conversation here.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13.5, color: Styles.surfaceHighlight),
+            style: TextStyle(fontSize: 13.5, color: Styles.textSecondary),
           ),
         ],
       ),
