@@ -125,7 +125,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
             onPressed: canInvite ? () => _sendInvites(club, allFriends) : null,
             style: TextButton.styleFrom(
               foregroundColor: Styles.accent,
-              disabledForegroundColor: Styles.surfaceHighlight.withAlpha(90),
+              disabledForegroundColor: Styles.textSecondary.withAlpha(90),
             ),
             child: Text(
               _sending
@@ -178,10 +178,10 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
               style: const TextStyle(fontSize: 15.5, color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Search people who follow you',
-                hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+                hintStyle: const TextStyle(color: Styles.primary),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                   size: 21,
                 ),
                 suffixIcon: _query.isEmpty
@@ -193,7 +193,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                         },
                         icon: const Icon(
                           Icons.close,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                           size: 19,
                         ),
                       ),
@@ -250,7 +250,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 14.5,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ),
@@ -410,7 +410,7 @@ class _InvitableFriendTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                   ),
                 ],
@@ -433,7 +433,7 @@ class _InvitableFriendTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
               )
@@ -441,7 +441,7 @@ class _InvitableFriendTile extends StatelessWidget {
               Icon(
                 selected ? Icons.check_circle : Icons.radio_button_unchecked,
                 size: 22,
-                color: selected ? Styles.accent : Styles.surfaceHighlight,
+                color: selected ? Styles.accent : Styles.textSecondary,
               ),
           ],
         ),

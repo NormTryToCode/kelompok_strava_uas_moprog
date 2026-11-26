@@ -76,7 +76,7 @@ class _CounterPill extends StatelessWidget {
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w700,
-          color: active ? Styles.teal : Styles.surfaceHighlight,
+          color: active ? Styles.teal : Styles.textSecondary,
         ),
       ),
     );

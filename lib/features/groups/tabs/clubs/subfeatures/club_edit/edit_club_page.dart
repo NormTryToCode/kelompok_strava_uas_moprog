@@ -200,16 +200,16 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
       prefixText: prefixText,
       prefixStyle: const TextStyle(
         fontSize: 15,
-        color: Styles.surfaceHighlight,
+        color: Styles.textSecondary,
       ),
-      labelStyle: const TextStyle(color: Styles.surfaceHighlight),
+      labelStyle: const TextStyle(color: Styles.textSecondary),
       floatingLabelStyle: const TextStyle(color: Styles.teal),
-      hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+      hintStyle: const TextStyle(color: Styles.textSecondary),
       alignLabelWithHint: true,
       filled: true,
       fillColor: Styles.fieldFill,
       counterStyle: const TextStyle(
-        color: Styles.surfaceHighlight,
+        color: Styles.textSecondary,
         fontSize: 12,
       ),
       suffixIcon: suffixIcon,
@@ -331,7 +331,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                     trailing: _isGlobal
                         ? const Icon(
                             Icons.search,
-                            color: Styles.surfaceHighlight,
+                            color: Styles.textSecondary,
                             size: 20,
                           )
                         : IconButton(
@@ -340,7 +340,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                             visualDensity: VisualDensity.compact,
                             icon: const Icon(
                               Icons.cancel_outlined,
-                              color: Styles.surfaceHighlight,
+                              color: Styles.textSecondary,
                               size: 20,
                             ),
                             tooltip: 'Reset to Global',
@@ -371,7 +371,7 @@ class _EditClubPageState extends ConsumerState<EditClubPage> {
                               },
                               icon: const Icon(
                                 Icons.cancel_outlined,
-                                color: Styles.surfaceHighlight,
+                                color: Styles.textSecondary,
                                 size: 20,
                               ),
                             ),
@@ -451,7 +451,7 @@ class _Header extends StatelessWidget {
                 onPressed: canSave ? onSave : null,
                 style: TextButton.styleFrom(
                   foregroundColor: Styles.accent,
-                  disabledForegroundColor: Styles.surfaceHighlight.withAlpha(
+                  disabledForegroundColor: Styles.textSecondary.withAlpha(
                     90,
                   ),
                 ),
@@ -501,7 +501,7 @@ class _PickerField extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
-              color: Styles.surfaceHighlight,
+              color: Styles.textSecondary,
             ),
           ),
         ),
@@ -532,7 +532,7 @@ class _PickerField extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           color: placeholder
-                              ? Styles.surfaceHighlight
+                              ? Styles.textSecondary
                               : Colors.white,
                         ),
                       ),
@@ -540,7 +540,7 @@ class _PickerField extends StatelessWidget {
                     trailing ??
                         const Icon(
                           Icons.keyboard_arrow_down,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                   ],
                 ),

@@ -15,7 +15,7 @@ class IconBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isNeutral = color == Colors.white || color == Styles.surfaceHighlight;
+    final isNeutral = color == Colors.white || color == Styles.textSecondary;
 
     return Container(
       width: size,

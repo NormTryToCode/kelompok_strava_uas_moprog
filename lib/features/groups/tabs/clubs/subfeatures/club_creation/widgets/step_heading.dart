@@ -44,7 +44,7 @@ class StepHeading extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               height: 1.4,
-              color: Styles.surfaceHighlight,
+              color: Styles.primary,
             ),
           ),
         ],

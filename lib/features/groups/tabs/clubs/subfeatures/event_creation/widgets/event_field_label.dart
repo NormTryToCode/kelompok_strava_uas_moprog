@@ -65,7 +65,7 @@ class EventFieldLabel extends StatelessWidget {
         if (tag == FieldTag.optional)
           const Text(
             'Optional',
-            style: TextStyle(fontSize: 12, color: Styles.surfaceHighlight),
+            style: TextStyle(fontSize: 12, color: Styles.textSecondary),
           ),
       ],
     );

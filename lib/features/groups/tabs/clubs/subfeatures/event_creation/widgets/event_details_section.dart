@@ -103,7 +103,7 @@ class _KindCard extends StatelessWidget {
           IconBubble(
             kind.icon,
             size: 42,
-            color: selected ? Styles.teal : Styles.surfaceHighlight,
+            color: selected ? Styles.teal : Styles.textSecondary,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -125,7 +125,7 @@ class _KindCard extends StatelessWidget {
                     kind.description,
                     style: const TextStyle(
                       fontSize: 13,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                   ),
                 ],

@@ -30,12 +30,12 @@ class Step3ClubDetails extends StatelessWidget {
 
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Styles.surfaceHighlight),
+      labelStyle: const TextStyle(color: Styles.primary),
       floatingLabelStyle: const TextStyle(color: Styles.teal),
       alignLabelWithHint: true,
       filled: true,
       fillColor: Styles.fieldFill,
-      counterStyle: const TextStyle(color: Styles.surfaceHighlight),
+      counterStyle: const TextStyle(color: Styles.textSecondary),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       enabledBorder: border(Styles.cardBorder, 1.2),
       focusedBorder: border(Styles.teal, 1.8),
@@ -103,7 +103,7 @@ class Step3ClubDetails extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.primary,
                     ),
                   ),
                 ),

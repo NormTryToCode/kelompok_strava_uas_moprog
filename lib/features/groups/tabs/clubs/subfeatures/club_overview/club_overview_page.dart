@@ -12,6 +12,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/widgets/count_pill.da
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/icon_bubble.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/section_title.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_overview/club_members_page.dart';
 
 class ClubOverviewPage extends ConsumerStatefulWidget {
   final Club club;
@@ -116,7 +117,7 @@ class _ClubOverviewPageState extends ConsumerState<ClubOverviewPage> {
           const SizedBox(height: 12),
           ClubMembersCard(
             club: club,
-            onViewAll: () => showClubMembersSheet(context, club),
+            onViewAll: () => ClubMembersPage.open(context, club),
           ),
           const SizedBox(height: 28),
           const SectionTitle('Actions'),

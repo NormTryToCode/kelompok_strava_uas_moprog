@@ -26,7 +26,7 @@ Future<bool> showConfirmDeleteDialog(
       content: Text(
         message,
         style: const TextStyle(
-          color: Styles.surfaceHighlight,
+          color: Styles.textSecondary,
           fontSize: 14.5,
           height: 1.4,
         ),
@@ -36,7 +36,7 @@ Future<bool> showConfirmDeleteDialog(
           onPressed: () => Navigator.of(dialogContext).pop(false),
           child: const Text(
             'Cancel',
-            style: TextStyle(color: Styles.surfaceHighlight),
+            style: TextStyle(color: Styles.textSecondary),
           ),
         ),
         TextButton(

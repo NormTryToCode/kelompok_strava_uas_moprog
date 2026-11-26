@@ -222,7 +222,7 @@ class _Header extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13.5,
-                        color: Styles.surfaceHighlight,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ],

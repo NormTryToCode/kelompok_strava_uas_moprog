@@ -54,7 +54,7 @@ class SegmentedToggle<T> extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: option == selected
                           ? Colors.white
-                          : Styles.surfaceHighlight,
+                          : Styles.textSecondary,
                     ),
                   ),
                 ),

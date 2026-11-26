@@ -63,7 +63,7 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
               style: const TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w500,
-                color: Styles.surfaceHighlight,
+                color: Styles.textSecondary,
               ),
             ),
           ],
@@ -103,7 +103,7 @@ class _ClubEventsPageState extends ConsumerState<ClubEventsPage> {
                         'Could not load events.',
                         style: TextStyle(
                           fontSize: 15,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -249,7 +249,7 @@ class _SegmentItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: selected ? Colors.white : Styles.surfaceHighlight,
+                  color: selected ? Colors.white : Styles.textSecondary,
                 ),
               ),
             ],
@@ -297,7 +297,7 @@ class _EmptyEventsView extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14.5,
                 height: 1.4,
-                color: Styles.surfaceHighlight,
+                color: Styles.textSecondary,
               ),
             ),
             if (!isPast) ...[

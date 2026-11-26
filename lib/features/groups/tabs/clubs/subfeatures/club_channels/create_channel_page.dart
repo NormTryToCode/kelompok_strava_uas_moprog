@@ -52,11 +52,11 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+      hintStyle: const TextStyle(color: Styles.textSecondary),
       filled: true,
       fillColor: Styles.fieldFill,
       counterStyle: const TextStyle(
-        color: Styles.surfaceHighlight,
+        color: Styles.textSecondary,
         fontSize: 12,
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -237,7 +237,7 @@ class _CreateChannelPageState extends ConsumerState<CreateChannelPage> {
                       'Settings can be changed at any time.',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: Styles.surfaceHighlight,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ],
@@ -295,7 +295,7 @@ class _Header extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13.5,
-                        color: Styles.surfaceHighlight,
+                        color: Styles.textSecondary,
                       ),
                     ),
                   ],
@@ -347,7 +347,7 @@ class _FieldHeader extends StatelessWidget {
         else
           const Text(
             'Optional',
-            style: TextStyle(fontSize: 12, color: Styles.surfaceHighlight),
+            style: TextStyle(fontSize: 12, color: Styles.textSecondary),
           ),
       ],
     );

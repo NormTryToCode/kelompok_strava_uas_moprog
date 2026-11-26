@@ -39,7 +39,7 @@ class EventToggleTile extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       height: 1.3,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                   ),
                 ),
@@ -54,7 +54,7 @@ class EventToggleTile extends StatelessWidget {
           trackColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
                 ? Styles.teal
-                : Styles.surfaceHighlight,
+                : Styles.borderStrong,
           ),
           trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
         ),
