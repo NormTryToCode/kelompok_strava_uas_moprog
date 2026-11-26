@@ -17,7 +17,7 @@ class SpotCard extends StatelessWidget {
 
   String get _distanceLabel {
     final m = distanceMeters;
-    if (m == null) return 'Jarak belum tersedia';
+    if (m == null) return 'Menunggu lokasi';
     if (m < 1000) return '${m.round()} m';
     return '${(m / 1000).toStringAsFixed(1)} km';
   }
@@ -52,6 +52,8 @@ class SpotCard extends StatelessWidget {
                     ),
                     Text(
                       _distanceLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white70),
                     ),
                   ],
