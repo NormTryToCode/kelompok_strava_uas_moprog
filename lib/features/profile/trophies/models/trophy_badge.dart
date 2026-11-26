@@ -4,6 +4,7 @@ class TrophyBadge {
   final String watermarkNumber;
   final int requiredActivities;
   final String description;
+  final String tier;
 
   bool isChecked = false;
 
@@ -13,6 +14,7 @@ class TrophyBadge {
     required this.watermarkNumber,
     required this.requiredActivities,
     required this.description,
+    this.tier = 'Initiate',
   });
 
   void toggleIsChecked() {
@@ -26,6 +28,7 @@ class TrophyBadge {
       watermarkNumber: json['watermarkNumber'] as String,
       requiredActivities: json['requiredActivities'] as int,
       description: json['description'] as String,
+      tier: json['tier'] as String? ?? 'Initiate',
     );
   }
 }

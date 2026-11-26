@@ -1,6 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
+String normalizeAthleteSport(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'berlari':
+    case 'running':
+      return 'Running';
+    case 'bersepeda':
+    case 'cycling':
+      return 'Cycling';
+    case 'berenang':
+    case 'swimming':
+      return 'Swimming';
+    default:
+      return raw.trim().isEmpty ? 'Running' : raw.trim();
+  }
+}
+
+String normalizeAthleteGender(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'pria':
+    case 'male':
+      return 'Male';
+    case 'wanita':
+    case 'female':
+      return 'Female';
+    case 'non-biner':
+    case 'non-binary':
+      return 'Non-binary';
+    case 'memilih tidak mengatakan':
+    case 'prefer not to say':
+      return 'Prefer not to say';
+    default:
+      return raw.trim().isEmpty ? 'Prefer not to say' : raw.trim();
+  }
+}
+
 @immutable
 class AthleteProfileData {
   final String firstName;
@@ -31,7 +66,7 @@ class AthleteProfileData {
     final trimmedFirst = firstName.trim();
     final trimmedLast = lastName.trim();
     if (trimmedFirst.isEmpty && trimmedLast.isEmpty) {
-      return 'Atlet Stride';
+      return 'Stride Athlete';
     }
     if (trimmedLast.isEmpty) return trimmedFirst;
     if (trimmedFirst.isEmpty) return trimmedLast;
@@ -121,10 +156,14 @@ class AthleteProfileData {
       lastName: map['lastName'] as String? ?? fallback.lastName,
       city: map['city'] as String? ?? fallback.city,
       country: map['country'] as String? ?? fallback.country,
-      primarySport: map['primarySport'] as String? ?? fallback.primarySport,
+      primarySport: normalizeAthleteSport(
+        map['primarySport'] as String? ?? fallback.primarySport,
+      ),
       bio: map['bio'] as String? ?? fallback.bio,
       birthDate: parsedBirthDate,
-      gender: map['gender'] as String? ?? fallback.gender,
+      gender: normalizeAthleteGender(
+        map['gender'] as String? ?? fallback.gender,
+      ),
       weightKg: parsedWeight,
       avatarPath: parsedAvatar,
     );

@@ -5,7 +5,6 @@ import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_profile_data.dart';
 
-
 final athleteProfileProvider =
   NotifierProvider<AthleteProfileNotifier, AthleteProfileData>(
     AthleteProfileNotifier.new,
@@ -19,15 +18,15 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
       ref.read(authStateProvider).valueOrNull?.uid ?? _fallbackDocId;
 
   static const AthleteProfileData _defaultProfile = AthleteProfileData(
-    firstName: 'Atlet Stride',
+    firstName: 'Stride Athlete',
     lastName: '',
     city: '',
     country: '',
-    primarySport: 'Berlari',
+    primarySport: 'Running',
     bio: '',
     birthDate: '01/01/2000',
-    gender: 'Memilih tidak mengatakan',
-    weightKg: '65,0',
+    gender: 'Prefer not to say',
+    weightKg: '65.0',
   );
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
@@ -62,13 +61,15 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
       final String city = await _asyncPrefs.getString('city') ?? state.city;
       final String country =
         await _asyncPrefs.getString('country') ?? state.country;
-      final String sport =
-        await _asyncPrefs.getString('sport') ?? state.primarySport;
+      final String sport = normalizeAthleteSport(
+        await _asyncPrefs.getString('sport') ?? state.primarySport,
+      );
       final String savedBio = await _asyncPrefs.getString('text') ?? state.bio;
       final String birthDate =
         await _asyncPrefs.getString('birth_date') ?? state.birthDate;
-      final String gender =
-        await _asyncPrefs.getString('gender') ?? state.gender;
+      final String gender = normalizeAthleteGender(
+      await _asyncPrefs.getString('gender') ?? state.gender,
+      );
       final String weight =
         await _asyncPrefs.getString('weight_kg') ?? state.weightKg;
       final String avatarPath =
@@ -114,24 +115,28 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   }
 
   Future<bool> saveProfile(AthleteProfileData updatedData) async {
-    state = updatedData;
+    final normalized = updatedData.copyWith(
+      primarySport: normalizeAthleteSport(updatedData.primarySport),
+      gender: normalizeAthleteGender(updatedData.gender),
+    );
+    state = normalized;
 
-    await _asyncPrefs.setString('first_name', updatedData.firstName);
-    await _asyncPrefs.setString('last_name', updatedData.lastName);
-    await _asyncPrefs.setString('city', updatedData.city);
-    await _asyncPrefs.setString('country', updatedData.country);
-    await _asyncPrefs.setString('sport', updatedData.primarySport);
-    await _asyncPrefs.setString('text', updatedData.bio);
-    await _asyncPrefs.setString('birth_date', updatedData.birthDate);
-    await _asyncPrefs.setString('gender', updatedData.gender);
-    await _asyncPrefs.setString('weight_kg', updatedData.weightKg);
-    await _asyncPrefs.setString('avatar_path', updatedData.avatarPath);
+    await _asyncPrefs.setString('first_name', normalized.firstName);
+    await _asyncPrefs.setString('last_name', normalized.lastName);
+    await _asyncPrefs.setString('city', normalized.city);
+    await _asyncPrefs.setString('country', normalized.country);
+    await _asyncPrefs.setString('sport', normalized.primarySport);
+    await _asyncPrefs.setString('text', normalized.bio);
+    await _asyncPrefs.setString('birth_date', normalized.birthDate);
+    await _asyncPrefs.setString('gender', normalized.gender);
+    await _asyncPrefs.setString('weight_kg', normalized.weightKg);
+    await _asyncPrefs.setString('avatar_path', normalized.avatarPath);
 
     try {
       await DatabaseService.instance.save(
         _collection,
         _docId,
-        updatedData.toMap(),
+        normalized.toMap(),
         merge: true,
       );
       return true;

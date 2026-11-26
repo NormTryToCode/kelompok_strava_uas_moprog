@@ -35,30 +35,30 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
   with SingleTickerProviderStateMixin {
     ui.Image? _decodedImage;
 
-    Rect _initialImageRect = Rect.zero;
-    Rect _imageRect = Rect.zero;
-    Rect _baseCropRect = Rect.zero;
-    Rect? _cropRect;
-    Rect _dragStartCropRect = Rect.zero;
-    Size _lastViewportSize = Size.zero;
+  Rect _initialImageRect = Rect.zero;
+  Rect _imageRect = Rect.zero;
+  Rect _baseCropRect = Rect.zero;
+  Rect? _cropRect;
+  Rect _dragStartCropRect = Rect.zero;
+  Size _lastViewportSize = Size.zero;
 
-    _CropDragMode _dragMode = _CropDragMode.none;
-    bool _isCropping = false;
+  _CropDragMode _dragMode = _CropDragMode.none;
+  bool _isCropping = false;
 
-    late final AnimationController _snapController;
-    Rect _animStartImageRect = Rect.zero;
-    Rect _animEndImageRect = Rect.zero;
-    Rect _animStartCropRect = Rect.zero;
+  late final AnimationController _snapController;
+  Rect _animStartImageRect = Rect.zero;
+  Rect _animEndImageRect = Rect.zero;
+  Rect _animStartCropRect = Rect.zero;
 
-    static const double _cornerHitRadius = 34.0;
-    static const double _edgeHitTolerance = 24.0;
-    static const double _minCropSize = 72.0;
-    static const double _screenOuterMargin = 14.0;
-    static const double _maxZoomFactor = 6.0;
-    static const double _resizeThreshold = 6.0;
+  static const double _cornerHitRadius = 34.0;
+  static const double _edgeHitTolerance = 24.0;
+  static const double _minCropSize = 72.0;
+  static const double _screenOuterMargin = 14.0;
+  static const double _maxZoomFactor = 6.0;
+  static const double _resizeThreshold = 6.0;
 
-    @override
-    void initState() {
+  @override
+  void initState() {
     super.initState();
     _snapController = AnimationController(
       vsync: this,
@@ -66,25 +66,25 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     )..addListener(_onSnapAnimationTick);
 
     _loadImage();
-    }
+  }
 
-    @override
-    void dispose() {
+  @override
+  void dispose() {
     _snapController.removeListener(_onSnapAnimationTick);
     _snapController.dispose();
     _decodedImage?.dispose();
     super.dispose();
-    }
+  }
 
-    void _onSnapAnimationTick() {
+  void _onSnapAnimationTick() {
     final double t = Curves.easeOutCubic.transform(_snapController.value);
     setState(() {
       _imageRect = Rect.lerp(_animStartImageRect, _animEndImageRect, t)!;
       _cropRect = Rect.lerp(_animStartCropRect, _baseCropRect, t)!;
     });
-    }
+  }
 
-    Future<void> _loadImage() async {
+  Future<void> _loadImage() async {
     try {
       final Uint8List bytes = await widget.imageFile.readAsBytes();
       final ui.Codec codec = await ui.instantiateImageCodec(bytes);
@@ -103,9 +103,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       if (!mounted) return;
       Navigator.of(context).pop();
     }
-    }
+  }
 
-    void _syncLayoutBounds(Size viewportSize) {
+  void _syncLayoutBounds(Size viewportSize) {
     if (_decodedImage == null) return;
     if (_lastViewportSize == viewportSize && _cropRect != null) return;
 
@@ -140,9 +140,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
 
     _baseCropRect = Rect.fromLTWH(cropLeft, cropTop, baseSize, baseSize);
     _cropRect = _baseCropRect;
-    }
+  }
 
-    void _handlePanStart(DragStartDetails details) {
+  void _handlePanStart(DragStartDetails details) {
     final Rect? r = _cropRect;
     if (r == null || _isCropping) return;
 
@@ -185,14 +185,14 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
       _dragMode = detected;
       _dragStartCropRect = r;
     });
-    }
+  }
 
-    void _panImageWhenPushedAtEdge({
+  void _panImageWhenPushedAtEdge({
     required double rawNewLeft,
     required double rawNewTop,
     required Rect clampedCrop,
     required Rect screenBounds,
-    }) {
+  }) {
     double shiftX = 0.0;
     double shiftY = 0.0;
 
@@ -233,9 +233,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     if (shiftX != 0.0 || shiftY != 0.0) {
       _imageRect = _imageRect.shift(Offset(shiftX, shiftY));
     }
-    }
+  }
 
-    void _handlePanUpdate(DragUpdateDetails details) {
+  void _handlePanUpdate(DragUpdateDetails details) {
     final Rect? r = _cropRect;
     if (r == null || _dragMode == _CropDragMode.none || _isCropping) return;
 
@@ -286,9 +286,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxW = allowedBounds.right - r.left;
         final double maxH = allowedBounds.bottom - r.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = p.dx - r.left;
         final double dy = p.dy - r.top;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -299,9 +298,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxW = r.right - allowedBounds.left;
         final double maxH = r.bottom - allowedBounds.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = r.right - p.dx;
         final double dy = r.bottom - p.dy;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -312,9 +310,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxW = allowedBounds.right - r.left;
         final double maxH = r.bottom - allowedBounds.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = p.dx - r.left;
         final double dy = r.bottom - p.dy;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -325,9 +322,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxW = r.right - allowedBounds.left;
         final double maxH = allowedBounds.bottom - r.top;
         final double maxSize = maxW < maxH ? maxW : maxH;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double dx = r.right - p.dx;
         final double dy = p.dy - r.top;
         final double size = (dx > dy ? dx : dy).clamp(safeMin, maxSize);
@@ -339,9 +335,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxSize = maxW < allowedBounds.height
           ? maxW
           : allowedBounds.height;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (p.dx - r.left).clamp(safeMin, maxSize);
         final double newTop = (r.center.dy - size / 2).clamp(
           allowedBounds.top,
@@ -355,9 +350,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxSize = maxW < allowedBounds.height
           ? maxW
           : allowedBounds.height;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (r.right - p.dx).clamp(safeMin, maxSize);
         final double newTop = (r.center.dy - size / 2).clamp(
           allowedBounds.top,
@@ -371,9 +365,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxSize = maxH < allowedBounds.width
           ? maxH
           : allowedBounds.width;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (p.dy - r.top).clamp(safeMin, maxSize);
         final double newLeft = (r.center.dx - size / 2).clamp(
           allowedBounds.left,
@@ -387,9 +380,8 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         final double maxSize = maxH < allowedBounds.width
           ? maxH
           : allowedBounds.width;
-        final double safeMin = effectiveMinSize <= maxSize
-          ? effectiveMinSize
-          : maxSize;
+        final double safeMin =
+          effectiveMinSize <= maxSize ? effectiveMinSize : maxSize;
         final double size = (r.bottom - p.dy).clamp(safeMin, maxSize);
         final double newLeft = (r.center.dx - size / 2).clamp(
           allowedBounds.left,
@@ -405,9 +397,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     setState(() {
       _cropRect = nextRect;
     });
-    }
+  }
 
-    void _handlePanEnd(DragEndDetails details) {
+  void _handlePanEnd(DragEndDetails details) {
     final _CropDragMode finishedMode = _dragMode;
     final Rect? currentCrop = _cropRect;
 
@@ -417,13 +409,13 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
 
     if (finishedMode == _CropDragMode.none ||
       finishedMode == _CropDragMode.move) {
-      return;
+        return;
     }
 
     if (currentCrop == null || _baseCropRect == Rect.zero) return;
     if ((currentCrop.width - _dragStartCropRect.width).abs() <
       _resizeThreshold) {
-      return;
+        return;
     }
 
     final double minAllowedScale = _initialImageRect.width / _imageRect.width;
@@ -456,18 +448,16 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         ((currentCrop.width - _baseCropRect.width) / outwardSpan).clamp(
           0.0,
           1.0,
-        );
+      );
       final double fastOutProgress = (rawProgress * 1.4).clamp(0.0, 1.0);
       scale = ui.lerpDouble(1.0, minAllowedScale, fastOutProgress)!;
     }
 
     if ((scale - 1.0).abs() < 0.01) return;
 
-    final double nextLeft =
-      _baseCropRect.center.dx +
+    final double nextLeft = _baseCropRect.center.dx +
       (_imageRect.left - currentCrop.center.dx) * scale;
-    final double nextTop =
-      _baseCropRect.center.dy +
+    final double nextTop = _baseCropRect.center.dy +
       (_imageRect.top - currentCrop.center.dy) * scale;
     final double nextWidth = _imageRect.width * scale;
     final double nextHeight = _imageRect.height * scale;
@@ -505,9 +495,9 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     _animStartCropRect = currentCrop;
 
     _snapController.forward(from: 0.0);
-    }
+  }
 
-    Future<void> _cropAndSaveImage() async {
+  Future<void> _cropAndSaveImage() async {
     if (_isCropping || _decodedImage == null || _cropRect == null) return;
     if (_snapController.isAnimating) {
       _snapController.stop();
@@ -599,22 +589,22 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
         _isCropping = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: Styles.danger,
-        content: Text(
-          'Gagal memotong foto. Silakan coba lagi.',
-          style: TextStyle(
-            color: Styles.textPrimary,
-            fontWeight: FontWeight.w600,
+        const SnackBar(
+          backgroundColor: Styles.danger,
+          content: Text(
+            'Unable to crop photo. Please try again.',
+            style: TextStyle(
+              color: Styles.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-    );
+      );
     }
-    }
+  }
 
-    @override
-    Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.canvas,
       body: SafeArea(
@@ -622,10 +612,7 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
           children: [
             Container(
               color: Styles.canvas,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 14.0,
-              ),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -635,39 +622,72 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
                         onTap: _isCropping
                           ? null
                           : () => Navigator.of(context).pop(),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Styles.textPrimary,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Styles.surfaceElevated,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Styles.borderStrong),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back_rounded,
+                            color: Styles.textPrimary,
+                            size: 20,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 24),
-                      const Text(
-                        'Foto Profil',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Styles.textPrimary,
-                        ),
+                      const SizedBox(width: 14),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Avatar Studio',
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w800,
+                              color: Styles.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            'Frame your square portrait',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: Styles.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                   _isCropping
                     ? const SizedBox(
-                        width: 20,
-                        height: 20,
+                        width: 22,
+                        height: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
-                          color: Styles.accent,
+                          color: Styles.primaryLight,
                         ),
                       )
-                    : GestureDetector(
-                        onTap: _cropAndSaveImage,
+                    : TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Styles.surfaceHighlight,
+                          foregroundColor: Styles.primaryLight,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 7,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: const BorderSide(color: Styles.primary),
+                          ),
+                        ),
+                        onPressed: _cropAndSaveImage,
                         child: const Text(
-                          'BERIKUTNYA',
+                          'APPLY',
                           style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Styles.primaryLight,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.6,
                           ),
                         ),
                       ),
@@ -679,42 +699,58 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
                 color: Colors.black,
                 child: _decodedImage == null
                   ? const Center(
-                      child: CircularProgressIndicator(color: Styles.accent),
+                      child: CircularProgressIndicator(
+                        color: Styles.primaryLight,
+                      ),
                     )
                   : LayoutBuilder(
                       builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                            final Size viewportSize = Size(
-                              constraints.maxWidth,
-                              constraints.maxHeight,
-                            );
-                            _syncLayoutBounds(viewportSize);
+                        (BuildContext context, BoxConstraints constraints) {
+                          final Size viewportSize = Size(
+                            constraints.maxWidth,
+                            constraints.maxHeight,
+                          );
+                        _syncLayoutBounds(viewportSize);
 
-                            return GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onPanStart: _handlePanStart,
-                              onPanUpdate: _handlePanUpdate,
-                              onPanEnd: _handlePanEnd,
-                              child: Stack(
-                                children: [
-                                  Positioned.fromRect(
-                                    rect: _imageRect,
-                                    child: RawImage(
-                                      image: _decodedImage,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  if (_cropRect != null)
-                                    PhotoCropOverlay(
-                                      cropRect: _cropRect!,
-                                      isDragging:
-                                        _dragMode != _CropDragMode.none,
-                                    ),
-                                ],
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onPanStart: _handlePanStart,
+                          onPanUpdate: _handlePanUpdate,
+                          onPanEnd: _handlePanEnd,
+                          child: Stack(
+                            children: [
+                              Positioned.fromRect(
+                                rect: _imageRect,
+                                child: RawImage(
+                                  image: _decodedImage,
+                                  fit: BoxFit.fill,
+                                ),
                               ),
-                            );
-                          },
+                              if (_cropRect != null)
+                                PhotoCropOverlay(
+                                  cropRect: _cropRect!,
+                                  isDragging:
+                                    _dragMode != _CropDragMode.none,
+                                ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              color: Styles.canvas,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: const Text(
+                'Drag box to position  •  Pull corners or edges to zoom & frame',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Styles.textSecondary,
+                ),
               ),
             ),
           ],
@@ -723,4 +759,3 @@ class _ProfilePhotoCropScreenState extends State<ProfilePhotoCropScreen>
     );
   }
 }
-
