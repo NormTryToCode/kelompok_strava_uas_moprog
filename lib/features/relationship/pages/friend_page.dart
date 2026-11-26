@@ -4,6 +4,8 @@ import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/fr
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/friend.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/widgets/friend_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/chat_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/pages/conversation_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/pages/new_chat_page.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
@@ -110,6 +112,13 @@ class _FriendsPageState extends State<FriendsPage> {
             icon: const Icon(Icons.person_add),
             onPressed: _showAddDialog,
           ),
+          IconButton(
+            icon: const Icon(Icons.chat_bubble_outline),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NewChatPage()),
+            ),
+          ),
         ],
       ),
       body: _loading
@@ -129,7 +138,10 @@ class _FriendsPageState extends State<FriendsPage> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => ChatPage(friend: _friends[i]),
+                    builder: (_) => ConversationPage(
+                      peerUid: _friends[i].id,
+                      peerName: _friends[i].name,
+                    ),
                   ),
                 ),
               ),
