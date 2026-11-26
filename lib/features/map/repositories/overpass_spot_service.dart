@@ -1,19 +1,23 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
+
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/models/place_spot.dart';
-import 'package:flutter/foundation.dart';
 
 class OverpassSpotService {
-  static const _retryableStatus = {429, 502, 503, 504};
-  final _random = Random();
   static const _endpoints = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   ];
+  static const _retryableStatus = {429, 502, 503, 504};
+  static const _userAgent =
+      'StrideMobprog/1.0 (student UAS project; contact: emailkamu@contoh.com)';
+
+  final _random = Random();
 
   Future<http.Response> _postWithBackoff(String endpoint, String query) async {
     const maxAttempts = 3;
@@ -23,16 +27,13 @@ class OverpassSpotService {
       final res = await http
           .post(
             Uri.parse(endpoint),
-            headers: {
-              'User-Agent':
-                  'StrideMobprog/1.0 (student final project; contact: christoper1177@gmail.com)',
-              'Accept': '*/*',
-            },
+            headers: {'User-Agent': _userAgent, 'Accept': '*/*'},
             body: {'data': query},
           )
           .timeout(const Duration(seconds: 20));
 
-      if (!_retryableStatus.contains(res.statusCode) || attempt == maxAttempts) {
+      if (!_retryableStatus.contains(res.statusCode) ||
+          attempt == maxAttempts) {
         return res;
       }
 
@@ -60,7 +61,7 @@ out center 100;
 
     Object? lastError;
     for (final endpoint in _endpoints) {
-            final sw = Stopwatch()..start();
+      final sw = Stopwatch()..start();
       try {
         final res = await _postWithBackoff(endpoint, query);
         debugPrint('Overpass $endpoint -> ${res.statusCode} in ${sw.elapsed}');
@@ -68,37 +69,21 @@ out center 100;
           lastError = 'HTTP ${res.statusCode} from $endpoint';
           continue;
         }
-        // ...parsing seperti sebelumnya
-      } catch (e) {
-        lastError = e;
-        debugPrint('Overpass $endpoint failed after ${sw.elapsed}: $e');
-      }
-      try {
-        final res = await http
-            .post(
-              Uri.parse(endpoint),
-              headers: {'User-Agent': 'com.example.kelompok_strava_uas_moprog'},
-              body: {'data': query},
-            )
-            .timeout(const Duration(seconds: 20));
-
-        if (res.statusCode != 200) {
-          lastError = 'HTTP ${res.statusCode} from $endpoint';
-          continue; // coba server berikutnya
-        }
 
         final data =
             jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
         final elements = data['elements'] as List<dynamic>;
-        return elements
+        final spots = elements
             .map((e) => PlaceSpot.fromOverpass(e as Map<String, dynamic>))
             .whereType<PlaceSpot>()
             .toList();
+        debugPrint('Overpass parsed ${spots.length} spots from $endpoint');
+        return spots;
       } catch (e) {
         lastError = e;
+        debugPrint('Overpass $endpoint failed after ${sw.elapsed}: $e');
       }
     }
     throw Exception('All Overpass endpoints failed: $lastError');
   }
 }
-
