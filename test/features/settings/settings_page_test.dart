@@ -136,4 +136,41 @@ void main() {
     expect(find.byType(LoginPage), findsOneWidget);
     expect(find.text('Settings'), findsNothing);
   });
+  testWidgets('Privacy controls mengubah subtitle sesuai pilihan',
+      (tester) async {
+    _tallScreen(tester);
+    await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Privacy controls'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Followers only'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Followers only'), findsOneWidget);
+  });
+
+  testWidgets('Help center menampilkan sheet panduan', (tester) async {
+    _tallScreen(tester);
+    await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Help center'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Close'), findsOneWidget);
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('About menampilkan informasi versi Stride', (tester) async {
+    _tallScreen(tester);
+    await tester.pumpWidget(_page());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('About'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('About Stride'), findsOneWidget);
+  });
 }

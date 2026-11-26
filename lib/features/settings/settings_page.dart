@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/app_brand.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/notification_preferences_page.dart';
@@ -19,6 +20,8 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
+  String _privacyLevel = 'Everyone';
+
   @override
   void initState() {
     super.initState();
@@ -30,9 +33,124 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     });
   }
 
-  void _comingSoon() {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Coming soon')));
+  void _openInfoSheet({
+    required String title,
+    required String body,
+    List<String> bullets = const [],
+  }) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Styles.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Styles.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                body,
+                style: const TextStyle(
+                  color: Styles.textSecondary,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+              ),
+              if (bullets.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                for (final item in bullets)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(
+                      '• $item',
+                      style: const TextStyle(
+                        color: Styles.textPrimary,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+              ],
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Styles.primary,
+                    foregroundColor: Styles.textPrimary,
+                  ),
+                  child: const Text('Close'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openPrivacySheet() {
+    const options = ['Everyone', 'Followers only', 'Only you'];
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Styles.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 8),
+              child: Text(
+                'Privacy controls',
+                style: TextStyle(
+                  color: Styles.textPrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            for (final option in options)
+              ListTile(
+                onTap: () {
+                  setState(() => _privacyLevel = option);
+                  Navigator.of(sheetContext).pop();
+                },
+                title: Text(
+                  option,
+                  style: TextStyle(
+                    color: option == _privacyLevel
+                        ? Styles.primaryLight
+                        : Styles.textPrimary,
+                    fontWeight: option == _privacyLevel
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+                  ),
+                ),
+                trailing: option == _privacyLevel
+                    ? const Icon(Icons.check, color: Styles.primaryLight)
+                    : null,
+              ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
   }
 
   void _openNotificationPreferences() {
@@ -105,19 +223,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         children: [
           const SettingsSectionLabel('ACCOUNT'),
           SettingsTile(
-            icon: Icons.person_outline,
-            title: 'Profile',
-            onTap: _comingSoon,
-          ),
-          SettingsTile(
             icon: Icons.lock_outline,
             title: 'Privacy controls',
-            onTap: _comingSoon,
+            subtitle: _privacyLevel,
+            onTap: _openPrivacySheet,
           ),
           SettingsTile(
             icon: Icons.watch_outlined,
             title: 'Connected devices',
-            onTap: _comingSoon,
+            subtitle: 'GPS & Manual Sync',
+            onTap: () => _openInfoSheet(
+              title: 'Connected devices',
+              body:
+                  '${AppBrand.name} uses your device GPS for live tracking and syncs manual activities to Cloud Firestore.',
+              bullets: const [
+                'Built-in Phone GPS — Ready',
+                'Manual Activity Log — Synced',
+              ],
+            ),
           ),
           const SettingsSectionLabel('PREFERENCES'),
           SettingsTile(
@@ -137,12 +260,26 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           SettingsTile(
             icon: Icons.help_outline,
             title: 'Help center',
-            onTap: _comingSoon,
+            onTap: () => _openInfoSheet(
+              title: 'Help center',
+              body:
+                  'Quick tips for getting the most out of ${AppBrand.name}:',
+              bullets: const [
+                'Use the + menu on Home or You to log activities or publish club posts.',
+                'Switch between Kilometers and Miles anytime under Units of measurement.',
+                'Manage alert triggers under Notification preferences.',
+              ],
+            ),
           ),
           SettingsTile(
             icon: Icons.info_outline,
             title: 'About',
-            onTap: _comingSoon,
+            subtitle: '${AppBrand.name} v1.0.0',
+            onTap: () => _openInfoSheet(
+              title: 'About ${AppBrand.name}',
+              body:
+                  '${AppBrand.name} is a collaborative fitness tracking app built with Flutter, Riverpod, and Firebase Cloud Firestore.',
+            ),
           ),
           const SizedBox(height: 16),
           SettingsTile(
