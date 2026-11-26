@@ -1,11 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/challenge_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/challenge_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/challenges/challenge_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/challenges/widgets/challenge_badge_emblem.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/challenges/widgets/challenge_swipe_deck.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
 
 class ChallengesTab extends ConsumerStatefulWidget {
   const ChallengesTab({super.key});
@@ -16,10 +20,27 @@ class ChallengesTab extends ConsumerStatefulWidget {
 
 class _ChallengesTabState extends ConsumerState<ChallengesTab> {
   String? _selectedSportId;
+  String? _spotlightId;
+
+  @override
+  void initState() {
+    super.initState();
+    final initial = ref.read(challengesProvider);
+    if (initial.isNotEmpty) {
+      _spotlightId = initial[math.Random().nextInt(initial.length)].id;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final allChallenges = ref.watch(challengesProvider);
+    final spotlight = allChallenges.isEmpty
+        ? null
+        : allChallenges.firstWhere(
+            (c) => c.id == _spotlightId,
+            orElse: () => allChallenges.first,
+          );
+
     final filtered = _selectedSportId == null
         ? allChallenges
         : allChallenges
@@ -42,6 +63,19 @@ class _ChallengesTabState extends ConsumerState<ChallengesTab> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 28),
       children: [
+        if (spotlight != null) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _SpotlightChallengeCard(
+              challenge: spotlight,
+              onTap: () => ChallengeDetailPage.open(context, spotlight),
+              onToggleJoin: () => ref
+                  .read(challengesProvider.notifier)
+                  .toggleJoin(spotlight.id),
+            ),
+          ),
+          const SizedBox(height: 18),
+        ],
         SizedBox(
           height: 38,
           child: ListView.separated(
@@ -215,6 +249,162 @@ class _ChallengesTabState extends ConsumerState<ChallengesTab> {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _SpotlightChallengeCard extends StatelessWidget {
+  final Challenge challenge;
+  final VoidCallback onTap;
+  final VoidCallback onToggleJoin;
+
+  const _SpotlightChallengeCard({
+    required this.challenge,
+    required this.onTap,
+    required this.onToggleJoin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primarySport = challenge.qualifyingSports.isNotEmpty
+        ? challenge.qualifyingSports.first
+        : ClubSport.allSports;
+
+    return Container(
+      decoration: Styles.cardDecoration(
+        radius: Radii.card,
+        highlighted: true,
+        withGlow: true,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Styles.primary.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Styles.primaryLight.withValues(alpha: 0.6),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.auto_awesome,
+                            size: 12,
+                            color: Styles.primaryLight,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'FEATURED',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.8,
+                              color: Styles.primaryLight,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      formatDate(challenge.endDate),
+                      style: const TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: Styles.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    ChallengeBadgeEmblem(
+                      code: challenge.reward.badgeCode,
+                      seedId: challenge.id,
+                      sportIcon: primarySport.icon,
+                      size: 54,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            challenge.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16.5,
+                              fontWeight: FontWeight.w800,
+                              color: Styles.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            '${formatChallengeTarget(challenge)} \u00b7 ${challenge.organizingClubName}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: Styles.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    FilledButton(
+                      onPressed: onToggleJoin,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: challenge.isJoined
+                            ? Styles.surfaceHighlight
+                            : Styles.primary,
+                        foregroundColor: Styles.textPrimary,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(Radii.chip),
+                          side: challenge.isJoined
+                              ? const BorderSide(color: Styles.primary)
+                              : BorderSide.none,
+                        ),
+                      ),
+                      child: Text(
+                        challenge.isJoined ? 'Joined' : 'Join',
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

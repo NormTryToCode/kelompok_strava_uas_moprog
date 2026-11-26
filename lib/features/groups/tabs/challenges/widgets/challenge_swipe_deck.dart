@@ -180,28 +180,27 @@ class _ChallengeSwipeDeckState extends State<ChallengeSwipeDeck> {
           ),
         ),
         if (items.length > 1) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _DeckNavButton(
-                icon: Icons.chevron_left_rounded,
-                onTap: () => _step(-1),
-              ),
-              const SizedBox(width: 14),
-              Text(
-                '${_activeIndex + 1} / ${items.length}',
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: Styles.textSecondary,
+              for (var i = 0; i < items.length; i++)
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOut,
+                  margin: const EdgeInsets.symmetric(horizontal: 3.5),
+                  width: i == _activeIndex ? 20 : 6.5,
+                  height: 6.5,
+                  decoration: BoxDecoration(
+                    color: i == _activeIndex
+                        ? Styles.primaryLight
+                        : Styles.borderStrong,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: i == _activeIndex
+                        ? Styles.glow(intensity: 0.35, blur: 8)
+                        : null,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 14),
-              _DeckNavButton(
-                icon: Icons.chevron_right_rounded,
-                onTap: () => _step(1),
-              ),
             ],
           ),
         ],
@@ -405,30 +404,6 @@ class _ChallengeDeckCard extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DeckNavButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _DeckNavButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Styles.surface,
-      shape: const CircleBorder(side: BorderSide(color: Styles.borderStrong)),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: SizedBox(
-          width: 36,
-          height: 36,
-          child: Icon(icon, size: 20, color: Styles.textPrimary),
         ),
       ),
     );
