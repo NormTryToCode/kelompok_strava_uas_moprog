@@ -16,9 +16,9 @@ InputDecoration eventInputDecoration({
 }) {
   return InputDecoration(
     hintText: hint,
-    hintStyle: const TextStyle(color: Styles.surfaceHighlight),
+    hintStyle: const TextStyle(color: Styles.textSecondary),
     helperText: helper,
-    helperStyle: const TextStyle(fontSize: 13, color: Styles.surfaceHighlight),
+    helperStyle: const TextStyle(fontSize: 13, color: Styles.textSecondary),
     errorText: errorText,
     errorStyle: const TextStyle(fontSize: 13, color: eventErrorColor),
     counterText: '',

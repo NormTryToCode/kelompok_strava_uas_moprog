@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
 
 class AuthException implements Exception {
   const AuthException(this.message);
@@ -30,10 +32,12 @@ class AuthService {
     required String password,
   }) async {
     try {
-      return await _auth.signInWithEmailAndPassword(
+      final credential = await _auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
+      await _syncUserProfile(credential.user, authProvider: 'email');
+      return credential;
     } on FirebaseAuthException catch (e) {
       throw AuthException(_mapFirebaseError(e));
     } catch (_) {
@@ -58,6 +62,11 @@ class AuthService {
         await credential.user?.updateDisplayName(trimmedName);
         await credential.user?.reload();
       }
+      await _syncUserProfile(
+        _auth.currentUser ?? credential.user,
+        authProvider: 'email',
+        username: trimmedName,
+      );
       return credential;
     } on FirebaseAuthException catch (e) {
       throw AuthException(_mapFirebaseError(e));
@@ -89,11 +98,13 @@ class AuthService {
         throw const AuthException('Failed to retrieve Google ID token.');
       }
 
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        idToken: idToken,
+      final credential = await _auth.signInWithCredential(
+        GoogleAuthProvider.credential(
+          idToken: idToken,
+        ),
       );
-
-      return await _auth.signInWithCredential(credential);
+      await _syncUserProfile(credential.user, authProvider: 'google');
+      return credential;
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) {
         return null;
@@ -105,6 +116,23 @@ class AuthService {
       throw const AuthException(
         'Unable to sign in with Google right now. Please try again.',
       );
+    }
+  }
+
+  Future<void> _syncUserProfile(
+    User? user, {
+    required String authProvider,
+    String? username,
+  }) async {
+    if (user == null) return;
+    try {
+      await DatabaseService.instance.syncUserOnAuth(
+        firebaseUser: user,
+        authProvider: authProvider,
+        username: username,
+      );
+    } catch (e) {
+      debugPrint('AuthService: syncUserOnAuth skipped/failed: $e');
     }
   }
 

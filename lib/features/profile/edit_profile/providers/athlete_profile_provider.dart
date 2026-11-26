@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/athlete_profile_data.dart';
-
 
 final athleteProfileProvider =
   NotifierProvider<AthleteProfileNotifier, AthleteProfileData>(
@@ -12,18 +16,21 @@ final athleteProfileProvider =
 
 class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   static const String _collection = 'athlete_profiles';
-  static const String _docId = 'current_athlete';
+  static const String _fallbackDocId = 'current_athlete';
+
+  String get _docId =>
+      ref.read(authStateProvider).valueOrNull?.uid ?? _fallbackDocId;
 
   static const AthleteProfileData _defaultProfile = AthleteProfileData(
-    firstName: 'Michael',
-    lastName: 'Respati Sanjaya Ho',
-    city: 'Jakarta',
-    country: 'INDONESIA',
-    primarySport: 'Berlari',
-    bio: 'I Like Runnn',
-    birthDate: '30/08/2007',
-    gender: 'Pria',
-    weightKg: '74,0',
+    firstName: 'Stride Athlete',
+    lastName: '',
+    city: '',
+    country: '',
+    primarySport: 'Running',
+    bio: '',
+    birthDate: '01/01/2000',
+    gender: 'Prefer not to say',
+    weightKg: '65.0',
   );
 
   final SharedPreferencesAsync _asyncPrefs = SharedPreferencesAsync();
@@ -33,14 +40,24 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
   @override
   AthleteProfileData build() {
     _isDisposed = false;
+    final authUser = ref.watch(authStateProvider).valueOrNull;
     ref.onDispose(() {
       _isDisposed = true;
       _firestoreSub?.cancel();
     });
 
+    final displayName = authUser?.displayName?.trim();
+    final initialFirstName = (displayName != null && displayName.isNotEmpty)
+        ? displayName.split(' ').first
+        : (authUser?.email?.split('@').first ?? _defaultProfile.firstName);
+    final initialAvatarPath = authUser?.photoURL?.trim() ?? '';
+
     _loadLocalCache();
     _listenFirestore();
-    return _defaultProfile;
+    return _defaultProfile.copyWith(
+      firstName: initialFirstName,
+      avatarPath: initialAvatarPath,
+    );
   }
 
   Future<void> _loadLocalCache() async {
@@ -52,13 +69,15 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
       final String city = await _asyncPrefs.getString('city') ?? state.city;
       final String country =
         await _asyncPrefs.getString('country') ?? state.country;
-      final String sport =
-        await _asyncPrefs.getString('sport') ?? state.primarySport;
+      final String sport = normalizeAthleteSport(
+        await _asyncPrefs.getString('sport') ?? state.primarySport,
+      );
       final String savedBio = await _asyncPrefs.getString('text') ?? state.bio;
       final String birthDate =
         await _asyncPrefs.getString('birth_date') ?? state.birthDate;
-      final String gender =
-        await _asyncPrefs.getString('gender') ?? state.gender;
+      final String gender = normalizeAthleteGender(
+      await _asyncPrefs.getString('gender') ?? state.gender,
+      );
       final String weight =
         await _asyncPrefs.getString('weight_kg') ?? state.weightKg;
       final String avatarPath =
@@ -89,13 +108,16 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
           if (matches.isEmpty) return;
 
           final Map<String, dynamic> remote = matches.first;
-          final String remoteAvatar = remote['avatarPath'] as String? ?? '';
+          final String rawAvatar = (remote['avatarPath'] as String? ?? '').trim();
+          final String rawPhotoUrl = (remote['photoUrl'] as String? ?? '').trim();
+          final String remoteAvatar =
+              rawAvatar.isNotEmpty ? rawAvatar : rawPhotoUrl;
           state = AthleteProfileData.fromMap(
             remote,
             fallback: state,
           ).copyWith(
             avatarPath:
-              remoteAvatar.isNotEmpty ? remoteAvatar : state.avatarPath,
+                remoteAvatar.isNotEmpty ? remoteAvatar : state.avatarPath,
           );
         },
         onError: (_) {},
@@ -103,25 +125,64 @@ class AthleteProfileNotifier extends Notifier<AthleteProfileData> {
     } catch (_) {}
   }
 
-  Future<bool> saveProfile(AthleteProfileData updatedData) async {
-    state = updatedData;
+  Future<String> _encodeAvatarForDb(String avatarPath) async {
+    final trimmed = avatarPath.trim();
+    if (trimmed.isEmpty ||
+        trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://') ||
+        trimmed.startsWith('data:image/')) {
+      return trimmed;
+    }
 
-    await _asyncPrefs.setString('first_name', updatedData.firstName);
-    await _asyncPrefs.setString('last_name', updatedData.lastName);
-    await _asyncPrefs.setString('city', updatedData.city);
-    await _asyncPrefs.setString('country', updatedData.country);
-    await _asyncPrefs.setString('sport', updatedData.primarySport);
-    await _asyncPrefs.setString('text', updatedData.bio);
-    await _asyncPrefs.setString('birth_date', updatedData.birthDate);
-    await _asyncPrefs.setString('gender', updatedData.gender);
-    await _asyncPrefs.setString('weight_kg', updatedData.weightKg);
-    await _asyncPrefs.setString('avatar_path', updatedData.avatarPath);
+    try {
+      final file = File(trimmed);
+      if (!file.existsSync()) return trimmed;
+      final Uint8List rawBytes = await file.readAsBytes();
+      final ui.Codec codec = await ui.instantiateImageCodec(
+        rawBytes,
+        targetWidth: 256,
+      );
+      final ui.FrameInfo frame = await codec.getNextFrame();
+      codec.dispose();
+      final ByteData? pngData = await frame.image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      frame.image.dispose();
+      if (pngData == null) return trimmed;
+      final String base64Str = base64Encode(pngData.buffer.asUint8List());
+      return 'data:image/png;base64,$base64Str';
+    } catch (_) {
+      return trimmed;
+    }
+  }
+
+  Future<bool> saveProfile(AthleteProfileData updatedData) async {
+    final String persistedAvatar =
+        await _encodeAvatarForDb(updatedData.avatarPath);
+    final normalized = updatedData.copyWith(
+      primarySport: normalizeAthleteSport(updatedData.primarySport),
+      gender: normalizeAthleteGender(updatedData.gender),
+      avatarPath: persistedAvatar,
+    );
+    state = normalized;
+
+    await _asyncPrefs.setString('first_name', normalized.firstName);
+    await _asyncPrefs.setString('last_name', normalized.lastName);
+    await _asyncPrefs.setString('city', normalized.city);
+    await _asyncPrefs.setString('country', normalized.country);
+    await _asyncPrefs.setString('sport', normalized.primarySport);
+    await _asyncPrefs.setString('text', normalized.bio);
+    await _asyncPrefs.setString('birth_date', normalized.birthDate);
+    await _asyncPrefs.setString('gender', normalized.gender);
+    await _asyncPrefs.setString('weight_kg', normalized.weightKg);
+    await _asyncPrefs.setString('avatar_path', normalized.avatarPath);
 
     try {
       await DatabaseService.instance.save(
         _collection,
         _docId,
-        updatedData.toMap(),
+        normalized.toMap(),
+        merge: true,
       );
       return true;
     } catch (_) {

@@ -53,7 +53,7 @@ class ChannelListCard extends StatelessWidget {
                       const Icon(
                         Icons.lock_outline,
                         size: 14,
-                        color: Styles.surfaceHighlight,
+                        color: Styles.textSecondary,
                       ),
                     ],
                   ],
@@ -72,7 +72,7 @@ class ChannelListCard extends StatelessWidget {
                   formatClock24(last.sentAt),
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
               const SizedBox(height: 6),
@@ -99,7 +99,7 @@ class ChannelListCard extends StatelessWidget {
                 const Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                 ),
             ],
           ),
@@ -122,7 +122,7 @@ class _LastMessageRow extends StatelessWidget {
         'No messages yet',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: 13.5, color: Styles.surfaceHighlight),
+        style: TextStyle(fontSize: 13.5, color: Styles.textSecondary),
       );
     }
 
@@ -141,7 +141,7 @@ class _LastMessageRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 13.5,
-              color: Styles.surfaceHighlight,
+              color: Styles.textSecondary,
             ),
           ),
         ),

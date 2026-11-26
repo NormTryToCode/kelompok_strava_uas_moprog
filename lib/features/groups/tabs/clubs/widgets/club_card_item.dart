@@ -75,7 +75,7 @@ class ClubCardItem extends StatelessWidget {
                     Icon(
                       club.sport.icon,
                       size: 14,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -85,7 +85,7 @@ class ClubCardItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 12.5,
-                          color: Styles.surfaceHighlight,
+                          color: Styles.textSecondary,
                         ),
                       ),
                     ),

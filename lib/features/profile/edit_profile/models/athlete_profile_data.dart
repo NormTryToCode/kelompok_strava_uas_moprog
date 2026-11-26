@@ -1,4 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+
+String normalizeAthleteSport(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'berlari':
+    case 'running':
+      return 'Running';
+    case 'bersepeda':
+    case 'cycling':
+      return 'Cycling';
+    case 'berenang':
+    case 'swimming':
+      return 'Swimming';
+    default:
+      return raw.trim().isEmpty ? 'Running' : raw.trim();
+  }
+}
+
+String normalizeAthleteGender(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'pria':
+    case 'male':
+      return 'Male';
+    case 'wanita':
+    case 'female':
+      return 'Female';
+    case 'non-biner':
+    case 'non-binary':
+      return 'Non-binary';
+    case 'memilih tidak mengatakan':
+    case 'prefer not to say':
+      return 'Prefer not to say';
+    default:
+      return raw.trim().isEmpty ? 'Prefer not to say' : raw.trim();
+  }
+}
 
 @immutable
 class AthleteProfileData {
@@ -30,7 +66,7 @@ class AthleteProfileData {
     final trimmedFirst = firstName.trim();
     final trimmedLast = lastName.trim();
     if (trimmedFirst.isEmpty && trimmedLast.isEmpty) {
-      return 'Atlet Stride';
+      return 'Stride Athlete';
     }
     if (trimmedLast.isEmpty) return trimmedFirst;
     if (trimmedFirst.isEmpty) return trimmedLast;
@@ -80,6 +116,7 @@ class AthleteProfileData {
       'gender': gender,
       'weightKg': weightKg,
       'avatarPath': avatarPath,
+      if (avatarPath.isNotEmpty) 'photoUrl': avatarPath,
       'updatedAt': DateTime.now().toIso8601String(),
     };
   }
@@ -88,17 +125,48 @@ class AthleteProfileData {
     Map<String, dynamic> map, {
     required AthleteProfileData fallback,
   }) {
+    final rawBirthDate = map['birthDate'];
+    String parsedBirthDate = fallback.birthDate;
+    if (rawBirthDate is String && rawBirthDate.isNotEmpty) {
+      parsedBirthDate = rawBirthDate;
+    } else if (rawBirthDate is Timestamp) {
+      final dt = rawBirthDate.toDate();
+      final d = dt.day.toString().padLeft(2, '0');
+      final m = dt.month.toString().padLeft(2, '0');
+      parsedBirthDate = '$d/$m/${dt.year}';
+    }
+
+    final rawWeight = map['weightKg'];
+    String parsedWeight = fallback.weightKg;
+    if (rawWeight is String && rawWeight.isNotEmpty) {
+      parsedWeight = rawWeight;
+    } else if (rawWeight is num) {
+      parsedWeight = rawWeight.toStringAsFixed(1).replaceAll('.', ',');
+    }
+
+    final rawAvatar = map['avatarPath'] as String?;
+    final rawPhotoUrl = map['photoUrl'] as String?;
+    final parsedAvatar = (rawAvatar != null && rawAvatar.isNotEmpty)
+        ? rawAvatar
+        : ((rawPhotoUrl != null && rawPhotoUrl.isNotEmpty)
+            ? rawPhotoUrl
+            : fallback.avatarPath);
+
     return AthleteProfileData(
       firstName: map['firstName'] as String? ?? fallback.firstName,
       lastName: map['lastName'] as String? ?? fallback.lastName,
       city: map['city'] as String? ?? fallback.city,
       country: map['country'] as String? ?? fallback.country,
-      primarySport: map['primarySport'] as String? ?? fallback.primarySport,
+      primarySport: normalizeAthleteSport(
+        map['primarySport'] as String? ?? fallback.primarySport,
+      ),
       bio: map['bio'] as String? ?? fallback.bio,
-      birthDate: map['birthDate'] as String? ?? fallback.birthDate,
-      gender: map['gender'] as String? ?? fallback.gender,
-      weightKg: map['weightKg'] as String? ?? fallback.weightKg,
-      avatarPath: map['avatarPath'] as String? ?? fallback.avatarPath,
+      birthDate: parsedBirthDate,
+      gender: normalizeAthleteGender(
+        map['gender'] as String? ?? fallback.gender,
+      ),
+      weightKg: parsedWeight,
+      avatarPath: parsedAvatar,
     );
   }
 }

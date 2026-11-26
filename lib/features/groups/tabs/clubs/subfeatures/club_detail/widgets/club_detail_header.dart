@@ -9,13 +9,13 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/widgets/cl
 class ClubDetailHeader extends StatelessWidget {
   final Club club;
   final VoidCallback onBack;
-  final VoidCallback onSettings;
+  final VoidCallback? onSettings;
 
   const ClubDetailHeader({
     super.key,
     required this.club,
     required this.onBack,
-    required this.onSettings,
+    this.onSettings,
   });
 
   @override
@@ -60,10 +60,11 @@ class ClubDetailHeader extends StatelessWidget {
                 children: [
                   _RoundButton(icon: Icons.arrow_back, onTap: onBack),
                   const Spacer(),
-                  _RoundButton(
-                    icon: Icons.settings_outlined,
-                    onTap: onSettings,
-                  ),
+                  if (onSettings != null)
+                    _RoundButton(
+                      icon: Icons.settings_outlined,
+                      onTap: onSettings!,
+                    ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -106,7 +107,7 @@ class ClubDetailHeader extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14.5,
                     height: 1.4,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ),
               ],

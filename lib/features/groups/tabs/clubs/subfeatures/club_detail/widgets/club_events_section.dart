@@ -83,7 +83,7 @@ class ClubEventsSection extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 13.5,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                   ),
                 ],

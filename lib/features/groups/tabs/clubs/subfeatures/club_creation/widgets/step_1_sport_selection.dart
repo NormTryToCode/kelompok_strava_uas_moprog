@@ -64,7 +64,7 @@ class Step1SportSelection extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13,
                       height: 1.4,
-                      color: Styles.surfaceHighlight,
+                      color: Styles.textSecondary,
                     ),
                   ),
                 ),

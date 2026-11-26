@@ -49,12 +49,3 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
-class _Placeholder extends StatelessWidget {
-  final String name;
-  const _Placeholder(this.name);
-
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Text(name, style: const TextStyle(color: Colors.white)),
-  );
-}

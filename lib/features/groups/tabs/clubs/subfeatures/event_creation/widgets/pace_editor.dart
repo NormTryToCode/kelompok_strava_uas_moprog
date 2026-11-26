@@ -81,7 +81,7 @@ class _PaceRow extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  color: Styles.surfaceHighlight,
+                  color: Styles.textSecondary,
                 ),
               ),
             ),

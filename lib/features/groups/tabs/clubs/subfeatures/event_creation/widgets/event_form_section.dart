@@ -64,7 +64,7 @@ class _EventFormSectionState extends State<EventFormSection> {
                           widget.subtitle,
                           style: const TextStyle(
                             fontSize: 13,
-                            color: Styles.surfaceHighlight,
+                            color: Styles.textSecondary,
                           ),
                         ),
                       ],
@@ -72,7 +72,7 @@ class _EventFormSectionState extends State<EventFormSection> {
                   ),
                   Icon(
                     open ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    color: Styles.surfaceHighlight,
+                    color: Styles.textSecondary,
                   ),
                 ],
               ),
