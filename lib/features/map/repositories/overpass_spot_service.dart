@@ -1,15 +1,50 @@
 import 'dart:convert';
+import 'dart:async';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/models/place_spot.dart';
 import 'package:flutter/foundation.dart';
 
 class OverpassSpotService {
+  static const _retryableStatus = {429, 502, 503, 504};
+  final _random = Random();
   static const _endpoints = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.private.coffee/api/interpreter',
     'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
   ];
+
+  Future<http.Response> _postWithBackoff(String endpoint, String query) async {
+    const maxAttempts = 3;
+    var delay = const Duration(seconds: 1);
+
+    for (var attempt = 1; ; attempt++) {
+      final res = await http
+          .post(
+            Uri.parse(endpoint),
+            headers: {
+              'User-Agent':
+                  'StrideMobprog/1.0 (student final project; contact: christoper1177@gmail.com)',
+              'Accept': '*/*',
+            },
+            body: {'data': query},
+          )
+          .timeout(const Duration(seconds: 12));
+
+      if (!_retryableStatus.contains(res.statusCode) || attempt == maxAttempts) {
+        return res;
+      }
+
+      final retryAfter = int.tryParse(res.headers['retry-after'] ?? '');
+      final wait = retryAfter != null
+          ? Duration(seconds: min(retryAfter, 10))
+          : delay;
+      debugPrint('Overpass ${res.statusCode}, retry $attempt in $wait');
+      await Future.delayed(wait + Duration(milliseconds: _random.nextInt(400)));
+      delay *= 2;
+    }
+  }
 
   Future<List<PlaceSpot>> fetchNearby(LatLng center, {int radius = 3000}) async {
     final lat = center.latitude;
@@ -27,18 +62,7 @@ out center 40;
     for (final endpoint in _endpoints) {
             final sw = Stopwatch()..start();
       try {
-        final res = await http
-            .post(
-              Uri.parse(endpoint),
-              headers: {
-                'User-Agent':
-                    'StrideMobprog/1.0 (student UAS project; contact: emailkamu@contoh.com)',
-                'Accept': '*/*',
-              },
-              body: {'data': query},
-            )
-            .timeout(const Duration(seconds: 12));
-
+        final res = await _postWithBackoff(endpoint, query);
         debugPrint('Overpass $endpoint -> ${res.statusCode} in ${sw.elapsed}');
         if (res.statusCode != 200) {
           lastError = 'HTTP ${res.statusCode} from $endpoint';
@@ -77,3 +101,4 @@ out center 40;
     throw Exception('All Overpass endpoints failed: $lastError');
   }
 }
+
