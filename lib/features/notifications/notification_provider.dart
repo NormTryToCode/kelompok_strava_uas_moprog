@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/features/notifications/data/dummy_notifications.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/models/notification_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
@@ -14,7 +13,7 @@ class NotificationsNotifier extends Notifier<List<NotificationItem>> {
   NotificationStore get _store => ref.read(notificationStoreProvider);
 
   @override
-  List<NotificationItem> build() => buildDummyNotifications();
+  List<NotificationItem> build() => const <NotificationItem>[];
 
   Future<void> load() async {
     try {

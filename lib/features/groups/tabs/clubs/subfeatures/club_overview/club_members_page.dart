@@ -6,7 +6,6 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dar
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/models/user_profile.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/user_repository.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 
 final _allRegisteredUsersProvider =
@@ -38,7 +37,6 @@ class ClubMembersPage extends ConsumerWidget {
         ref.watch(_allRegisteredUsersProvider).valueOrNull ??
         const <UserProfile>[];
     final peopleById = <String, Person>{
-      for (final p in buildDummyPeople()) p.id: p,
       for (final u in registeredUsers)
         u.uid: Person(
           id: u.uid,

@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_clubs_provider.dart';
 
@@ -83,7 +82,7 @@ void main() {
     expect(result.single.sport, SportType.running);
   });
 
-  test('fallback ke dummy clubs saat clubsProvider kosong', () async {
+  test('mengembalikan daftar kosong saat clubsProvider kosong', () async {
     final container = ProviderContainer(
       overrides: [
         clubsProvider.overrideWith(() => _StubClubsNotifier(const [])),
@@ -92,8 +91,6 @@ void main() {
     addTearDown(container.dispose);
 
     await container.read(clubsProvider.future);
-    final result = container.read(searchClubsProvider);
-
-    expect(result.length, buildDummyClubs().length);
+    expect(container.read(searchClubsProvider), isEmpty);
   });
 }

@@ -1,12 +1,11 @@
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_seed_catalog.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 List<Club> buildDummyGroupClubs() {
-  final sourceClubs = buildDummyClubs();
-  final people = buildDummyPeople();
+  final sourceClubs = buildSeedClubs();
+  final people = buildSeedPeople();
   final baseCreatedAt = DateTime(2026, 11, 1);
 
   return [

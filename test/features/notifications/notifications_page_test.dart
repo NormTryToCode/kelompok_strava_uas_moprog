@@ -3,12 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/models/notification_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_page.dart';
-
-class _EmptyNotifier extends NotificationsNotifier {
-  @override
-  List<NotificationItem> build() => [];
-}
 
 class _SeededNotifier extends NotificationsNotifier {
   @override
@@ -30,7 +26,10 @@ class _SeededNotifier extends NotificationsNotifier {
 
 Widget _app({List<Override> overrides = const []}) {
   return ProviderScope(
-    overrides: overrides,
+    overrides: [
+      notificationStoreProvider.overrideWithValue(MemoryNotificationStore()),
+      ...overrides,
+    ],
     child: const MaterialApp(home: NotificationsPage()),
   );
 }
@@ -42,18 +41,11 @@ ProviderContainer _container(WidgetTester tester) {
 }
 
 void main() {
-  testWidgets('menampilkan daftar notifikasi bawaan', (tester) async {
+  testWidgets('menampilkan tampilan kosong saat belum ada notifikasi',
+      (tester) async {
     await tester.pumpWidget(_app());
 
     expect(find.text('Notifications'), findsOneWidget);
-    expect(find.text('Connecting a device to Stride'), findsOneWidget);
-  });
-
-  testWidgets('menampilkan tampilan kosong', (tester) async {
-    await tester.pumpWidget(
-      _app(overrides: [notificationsProvider.overrideWith(_EmptyNotifier.new)]),
-    );
-
     expect(find.text('No notifications yet'), findsOneWidget);
     expect(find.text('Mark all read'), findsNothing);
   });

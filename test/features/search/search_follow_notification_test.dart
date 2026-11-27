@@ -2,14 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/suggested_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
+import 'package:kelompok_strava_uas_moprog/shared/providers/follow_store.dart';
+
+const _fixturePeople = [
+  Person(
+    id: 'p1',
+    name: 'Dewi Anggraini',
+    location: 'Bandung',
+    tag: 'Stride athlete',
+  ),
+];
 
 ProviderContainer _container() {
   final container = ProviderContainer(
     overrides: [
       settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+      followStoreProvider.overrideWithValue(MemoryFollowStore()),
+      notificationStoreProvider.overrideWithValue(MemoryNotificationStore()),
     ],
   );
   addTearDown(container.dispose);
@@ -25,7 +40,9 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(home: Scaffold(body: SuggestedTab())),
+        child: const MaterialApp(
+          home: Scaffold(body: SuggestedTab(people: _fixturePeople)),
+        ),
       ),
     );
 
@@ -50,7 +67,9 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(home: Scaffold(body: SuggestedTab())),
+        child: const MaterialApp(
+          home: Scaffold(body: SuggestedTab(people: _fixturePeople)),
+        ),
       ),
     );
 

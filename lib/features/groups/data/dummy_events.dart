@@ -1,7 +1,6 @@
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_seed_catalog.dart';
 
 class _SeedSpec {
   final String sportId;
@@ -30,8 +29,8 @@ class _SeedSpec {
 }
 
 List<Event> buildDummyEvents() {
-  final clubs = buildDummyClubs();
-  final people = buildDummyPeople();
+  final clubs = buildSeedClubs();
+  final people = buildSeedPeople();
 
   final specs = <_SeedSpec>[
     _SeedSpec(
