@@ -4,8 +4,10 @@ import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.da
 class EventRepository {
   final _db = DatabaseService.instance;
 
-  Future<List<Event>> getEvents() async {
-    final events = (await _db.getAll('events')).map(Event.fromJson).toList();
+  Future<List<Event>> getEvents({String? currentUid}) async {
+    final events = (await _db.getAll('events'))
+        .map((row) => Event.fromJson(row, currentUid: currentUid))
+        .toList();
     events.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return events;
   }
