@@ -1,66 +1,99 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/data/dummy_events.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/dummy_challenges.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/data/dummy_clubs.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/models/event_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/dummy_events.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/dummy_races.dart';
 
 class GroupsFirestoreSeeder {
   GroupsFirestoreSeeder._();
 
-  static const _clubsCollection = 'clubs';
-  static const _eventsCollection = 'events';
-  static final _db = DatabaseService.instance;
+  static const _clubsCol = 'clubs';
+  static const _eventsCol = 'events';
+  static const _racesCol = 'races';
+  static const _challengesCol = 'challenges';
 
-  static Future<List<Club>> seedMissingClubs({List<Club>? existing}) async {
-    final current = existing ??
-        (await _db.getAll(_clubsCollection)).map(Club.fromJson).toList();
+  static FirebaseFirestore get _firestore => FirebaseFirestore.instance;
+  static Future<void>? _inFlight;
+  static bool _seededInSession = false;
 
-    try {
-      final existingIds = {for (final club in current) club.id};
-      final missing = buildDummyGroupClubs()
-          .where((seed) => !existingIds.contains(seed.id))
-          .toList();
-
-      if (missing.isEmpty) return current;
-
-      debugPrint('[Seeder] Inserting ${missing.length} missing clubs...');
-      for (final club in missing) {
-        await _db.save(_clubsCollection, club.id, club.toJson());
-      }
-      debugPrint('[Seeder] Done inserting missing clubs.');
-
-      return [...current, ...missing]
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    } catch (e, st) {
-      debugPrint('[Seeder] seedMissingClubs FAILED: $e\n$st');
-      return current;
-    }
+  /// Seed koleksi dasar (Clubs, Events, Races, Challenges) 1 kali saja jika
+  /// masih kosong di Firestore. Tidak menambahkan relasi ke user yang login.
+  static Future<void> ensureSeededForUser({
+    required String uid,
+    String? displayName,
+  }) {
+    return ensureSeeded();
   }
 
-  static Future<List<Event>> seedMissingEvents({List<Event>? existing}) async {
-    final current = existing ??
-        (await _db.getAll(_eventsCollection)).map(Event.fromJson).toList();
+  static Future<void> ensureSeeded() {
+    if (_seededInSession) return Future.value();
+    return _inFlight ??= _runBaseSeed()
+        .timeout(const Duration(seconds: 10))
+        .catchError((Object e, StackTrace st) {
+          debugPrint('[GroupsSeeder] timeout/error: $e');
+        })
+        .whenComplete(() {
+          _seededInSession = true;
+          _inFlight = null;
+        });
+  }
 
-    try {
-      final existingIds = {for (final event in current) event.id};
-      final missing = buildDummyEvents()
-          .where((seed) => !existingIds.contains(seed.id))
-          .toList();
+  static Future<void> _runBaseSeed() async {
+    final snaps = await Future.wait([
+      _firestore.collection(_clubsCol).limit(1).get(),
+      _firestore.collection(_eventsCol).limit(1).get(),
+      _firestore.collection(_racesCol).limit(1).get(),
+      _firestore.collection(_challengesCol).limit(1).get(),
+    ]);
 
-      if (missing.isEmpty) return current;
+    final needsClubs = snaps[0].docs.isEmpty;
+    final needsEvents = snaps[1].docs.isEmpty;
+    final needsRaces = snaps[2].docs.isEmpty;
+    final needsChallenges = snaps[3].docs.isEmpty;
 
-      debugPrint('[Seeder] Inserting ${missing.length} missing events...');
-      for (final event in missing) {
-        await _db.save(_eventsCollection, event.id, event.toJson());
-      }
-      debugPrint('[Seeder] Done inserting missing events.');
-
-      return [...current, ...missing]
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    } catch (e, st) {
-      debugPrint('[Seeder] seedMissingEvents FAILED: $e\n$st');
-      return current;
+    if (!needsClubs && !needsEvents && !needsRaces && !needsChallenges) {
+      return;
     }
+
+    final batch = _firestore.batch();
+
+    if (needsClubs) {
+      for (final club in buildDummyGroupClubs()) {
+        batch.set(
+          _firestore.collection(_clubsCol).doc(club.id),
+          club.toJson(),
+        );
+      }
+    }
+
+    if (needsEvents) {
+      for (final event in buildDummyEvents()) {
+        batch.set(
+          _firestore.collection(_eventsCol).doc(event.id),
+          event.toJson(),
+        );
+      }
+    }
+
+    if (needsRaces) {
+      for (final race in buildDummyRaces()) {
+        batch.set(
+          _firestore.collection(_racesCol).doc(race.id),
+          race.toJson(),
+        );
+      }
+    }
+
+    if (needsChallenges) {
+      for (final ch in buildDummyChallenges()) {
+        batch.set(
+          _firestore.collection(_challengesCol).doc(ch.id),
+          ch.toJson(),
+        );
+      }
+    }
+
+    await batch.commit();
   }
 }

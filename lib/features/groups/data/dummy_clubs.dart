@@ -9,23 +9,23 @@ List<Club> buildDummyGroupClubs() {
   final people = buildDummyPeople();
   final baseCreatedAt = DateTime(2026, 11, 1);
 
-  const ownedClubIds = {'club1', 'club2'};
-
   return [
     for (var i = 0; i < sourceClubs.length; i++)
       _toGroupClub(
         source: sourceClubs[i],
         index: i,
-        isOwner: ownedClubIds.contains(sourceClubs[i].id),
+        ownerId: people[i % people.length].id,
         isPrivate: sourceClubs[i].id == 'club2',
         memberIds: [
+          people[i % people.length].id,
           for (var j = 0; j < people.length; j++)
-            if ((i + j) % 2 == 0 || j < 2) people[j].id,
+            if ((i + j) % 2 == 0) people[j].id,
         ],
         pendingRequestIds: sourceClubs[i].id == 'club2'
             ? [
                 for (final p in people)
-                  if (!{'p1', 'p2'}.contains(p.id)) p.id,
+                  if (p.id != people[i % people.length].id && p.id != 'p1')
+                    p.id,
               ].take(2).toList()
             : const [],
         createdAt: baseCreatedAt.subtract(Duration(days: i)),
@@ -36,16 +36,16 @@ List<Club> buildDummyGroupClubs() {
 Club _toGroupClub({
   required SearchClub source,
   required int index,
-  required bool isOwner,
+  required String ownerId,
   required bool isPrivate,
   required List<String> memberIds,
   required List<String> pendingRequestIds,
   required DateTime createdAt,
 }) {
-  final cleanMembers = memberIds
-      .where((id) => !pendingRequestIds.contains(id))
-      .toList();
-  final realCount = cleanMembers.length + (isOwner ? 1 : 0);
+  final cleanMembers = <String>{
+    ownerId,
+    ...memberIds.where((id) => !pendingRequestIds.contains(id)),
+  }.toList();
 
   return Club(
     id: source.id,
@@ -60,12 +60,13 @@ Club _toGroupClub({
     privacy: isPrivate ? ClubPrivacy.private : ClubPrivacy.public,
     isGlobal: false,
     location: ClubLocation(name: source.city, detail: 'Indonesia'),
-    memberCount: realCount,
-    isOwner: isOwner,
-    isAdmin: isOwner,
-    isJoined: isOwner,
+    ownerId: ownerId,
+    memberCount: cleanMembers.length,
+    isOwner: false,
+    isAdmin: false,
+    isJoined: false,
     memberIds: cleanMembers,
-    adminIds: const [],
+    adminIds: [ownerId],
     pendingRequestIds: pendingRequestIds,
     createdAt: createdAt,
   );

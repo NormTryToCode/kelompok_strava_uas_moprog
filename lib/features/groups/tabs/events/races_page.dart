@@ -34,7 +34,7 @@ class _RacesPageState extends ConsumerState<RacesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final allRaces = ref.watch(racesProvider);
+    final allRaces = ref.watch(racesProvider).valueOrNull ?? const <Race>[];
     final needle = _query.trim().toLowerCase();
 
     final filtered = allRaces.where((r) {

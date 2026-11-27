@@ -75,6 +75,7 @@ class Race {
   final bool isFeatured;
   final bool isRegistered;
   final String? selectedTierId;
+  final Map<String, String> registrations;
   final DateTime createdAt;
 
   const Race({
@@ -110,6 +111,7 @@ class Race {
     this.isFeatured = false,
     this.isRegistered = false,
     this.selectedTierId,
+    this.registrations = const {},
     required this.createdAt,
   });
 
@@ -141,6 +143,7 @@ class Race {
     bool? isRegistered,
     String? selectedTierId,
     bool clearSelectedTier = false,
+    Map<String, String>? registrations,
   }) {
     return Race(
       id: id,
@@ -176,6 +179,7 @@ class Race {
       isRegistered: isRegistered ?? this.isRegistered,
       selectedTierId:
           clearSelectedTier ? null : (selectedTierId ?? this.selectedTierId),
+      registrations: registrations ?? this.registrations,
       createdAt: createdAt,
     );
   }
@@ -213,11 +217,23 @@ class Race {
         'isFeatured': isFeatured,
         'isRegistered': isRegistered,
         'selectedTierId': selectedTierId,
+        'registrations': registrations,
         'createdAt': createdAt.toIso8601String(),
       };
 
-  factory Race.fromJson(Map<String, dynamic> json) {
+  factory Race.fromJson(Map<String, dynamic> json, {String? currentUid}) {
     final tiersRaw = json['distanceTiers'] as List? ?? const [];
+    final rawRegs = json['registrations'];
+    final registrations = rawRegs is Map
+        ? rawRegs.map((k, v) => MapEntry(k.toString(), v.toString()))
+        : <String, String>{};
+    final hasUid = currentUid != null && currentUid.isNotEmpty;
+    final isRegistered = hasUid
+        ? registrations.containsKey(currentUid)
+        : (json['isRegistered'] as bool? ?? false);
+    final selectedTierId = hasUid
+        ? registrations[currentUid]
+        : json['selectedTierId'] as String?;
 
     return Race(
       id: json['id'] as String? ?? '',
@@ -263,8 +279,9 @@ class Race {
       registeredCount: (json['registeredCount'] as num?)?.toInt() ?? 0,
       maxParticipants: (json['maxParticipants'] as num?)?.toInt(),
       isFeatured: json['isFeatured'] as bool? ?? false,
-      isRegistered: json['isRegistered'] as bool? ?? false,
-      selectedTierId: json['selectedTierId'] as String?,
+      isRegistered: isRegistered,
+      selectedTierId: selectedTierId,
+      registrations: registrations,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
     );

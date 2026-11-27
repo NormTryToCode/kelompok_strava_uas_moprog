@@ -187,7 +187,7 @@ class PopularClubCard extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: Ink(
-                          decoration: isJoined
+                          decoration: (isJoined || club.hasPendingRequest)
                               ? BoxDecoration(
                                   color: Styles.surfaceHighlight,
                                   borderRadius: BorderRadius.circular(Radii.chip),
@@ -206,19 +206,31 @@ class PopularClubCard extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  isJoined ? Icons.check : Icons.add,
+                                  isJoined
+                                      ? Icons.check
+                                      : club.hasPendingRequest
+                                      ? Icons.schedule_rounded
+                                      : club.isPrivate
+                                      ? Icons.lock_outline
+                                      : Icons.add,
                                   size: 17,
-                                  color: isJoined
+                                  color: (isJoined || club.hasPendingRequest)
                                       ? Styles.primaryLight
                                       : Styles.textPrimary,
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  isJoined ? 'Joined' : 'Join club',
+                                  isJoined
+                                      ? 'Joined'
+                                      : club.hasPendingRequest
+                                      ? 'Requested'
+                                      : club.isPrivate
+                                      ? 'Request to join'
+                                      : 'Join club',
                                   style: TextStyle(
                                     fontSize: 13.5,
                                     fontWeight: FontWeight.w700,
-                                    color: isJoined
+                                    color: (isJoined || club.hasPendingRequest)
                                         ? Styles.primaryLight
                                         : Styles.textPrimary,
                                   ),

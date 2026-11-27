@@ -44,7 +44,7 @@ class _RaceDetailPageState extends ConsumerState<RaceDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final allRaces = ref.watch(racesProvider);
+    final allRaces = ref.watch(racesProvider).valueOrNull ?? const <Race>[];
     final race = allRaces.firstWhere(
       (r) => r.id == widget.initialRace.id,
       orElse: () => widget.initialRace,

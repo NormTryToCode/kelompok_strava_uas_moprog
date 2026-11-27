@@ -99,7 +99,7 @@ class ChallengeDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final all = ref.watch(challengesProvider);
+    final all = ref.watch(challengesProvider).valueOrNull ?? const <Challenge>[];
     final challenge = all.firstWhere(
       (c) => c.id == initialChallenge.id,
       orElse: () => initialChallenge,
