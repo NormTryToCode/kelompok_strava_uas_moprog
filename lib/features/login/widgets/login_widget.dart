@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_card.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_header.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
@@ -144,34 +145,9 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    child: SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: Image.asset(
-                      'asset/images/Logo.png'
-                    ),),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Let's Start Running!",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Track every mile, beat your personal best.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white70,
-                    ),
+                  const AuthHeader(
+                    title: "Let's Start Running!",
+                    subtitle: "Track every mile, beat your personal best.",
                   ),
                   const SizedBox(height: 24),
                   AuthTextField(
