@@ -4,6 +4,7 @@ import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_header.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_primary_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/widgets/login_credentials_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
@@ -163,36 +164,10 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  ElevatedButton(
+                  AuthPrimaryButton(
+                    label: 'Login',
+                    isLoading: _isEmailLoading,
                     onPressed: _isBusy ? null : _handleEmailLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF191136),
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          const Color(0xFF191136).withValues(alpha: 0.6),
-                      disabledForegroundColor: Colors.white70,
-                      elevation: 0,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: _isEmailLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                   const SizedBox(height: 20),
                   const Row(
