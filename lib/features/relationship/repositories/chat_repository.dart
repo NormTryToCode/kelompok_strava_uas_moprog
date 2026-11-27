@@ -60,4 +60,23 @@ class ChatRepository {
     );
     return _db.save(_path(chatId), id, message.toJson());
   }
+
+  Future<void> markRead(String peerUid) {
+    final me = FirebaseAuth.instance.currentUser!.uid;
+    return _db.save(
+      'chats',
+      dmChatId(me, peerUid),
+      {
+        'readAt': {me: DateTime.now().toIso8601String()},
+      },
+      merge: true,
+    );
+  }
+
+  Stream<int> watchUnreadCount() {
+    final me = FirebaseAuth.instance.currentUser?.uid;
+    if (me == null) return Stream.value(0);
+    return watchConversations()
+        .map((list) => list.where((c) => c.isUnread(me)).length);
+  }
 }
