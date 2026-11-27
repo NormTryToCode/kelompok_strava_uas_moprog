@@ -1,4 +1,5 @@
 import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/storage_user_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 typedef JsonMap = Map<String, dynamic>;
@@ -31,19 +32,22 @@ class PrefsActivityStore implements ActivityStore {
 
 class FirestoreActivityStore implements ActivityStore {
   static const String collectionName = 'manual_activities_store';
-  static const String docId = 'default_user';
+  static const String docId = defaultStorageUserId;
 
   final ActivityStore _fallback;
   final FirestoreReadAll? _readAll;
   final FirestoreSaveDoc? _saveDoc;
+  final String Function() _userId;
 
   FirestoreActivityStore({
     ActivityStore? fallback,
     FirestoreReadAll? readAll,
     FirestoreSaveDoc? saveDoc,
+    String Function()? userId,
   })  : _fallback = fallback ?? PrefsActivityStore(),
         _readAll = readAll,
-        _saveDoc = saveDoc;
+        _saveDoc = saveDoc,
+        _userId = userId ?? resolveStorageUserId;
 
   Future<List<JsonMap>> _getAll(String collection) {
     final reader = _readAll ?? DatabaseService.instance.getAll;
@@ -57,15 +61,15 @@ class FirestoreActivityStore implements ActivityStore {
 
   @override
   Future<String?> read() async {
+    final activeDocId = _userId();
     try {
       final docs = await _getAll(collectionName);
       for (final doc in docs) {
-        if (doc['id'] == docId && doc['payload'] is String) {
+        if (doc['id'] == activeDocId && doc['payload'] is String) {
           return doc['payload'] as String;
         }
       }
-    } catch (_) {
-    }
+    } catch (_) {}
     return _fallback.read();
   }
 
@@ -73,10 +77,9 @@ class FirestoreActivityStore implements ActivityStore {
   Future<void> write(String json) async {
     try {
       await _fallback.write(json);
-    } catch (_) {
-    }
+    } catch (_) {}
     try {
-      await _save(collectionName, docId, {
+      await _save(collectionName, _userId(), {
         'payload': json,
         'updatedAt': DateTime.now().toIso8601String(),
       });
