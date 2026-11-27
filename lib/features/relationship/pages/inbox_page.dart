@@ -101,6 +101,7 @@ class _InboxPageState extends State<InboxPage> {
               final name = _profiles[peerUid]?.name ?? 'Pengguna';
               final prefix = c.lastSenderUid == _myUid ? 'Kamu: ' : '';
               return ConversationTile(
+                unread: c.isUnread(_myUid),
                 name: name,
                 preview: '$prefix${c.lastMessage}',
                 time: _timeLabel(c.updatedAt),
