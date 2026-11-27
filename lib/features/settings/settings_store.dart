@@ -1,4 +1,5 @@
 import 'package:kelompok_strava_uas_moprog/core/database/database_service.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/storage_user_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 typedef SettingsJsonMap = Map<String, dynamic>;
@@ -45,11 +46,12 @@ class PrefsSettingsStore implements SettingsStore {
 
 class FirestoreSettingsStore implements SettingsStore {
   static const String collectionName = 'user_settings';
-  static const String docId = 'default_user';
+  static const String docId = defaultStorageUserId;
 
   final SettingsStore _fallback;
   final SettingsReadAll? _readAll;
   final SettingsSaveDoc? _saveDoc;
+  final String Function() _userId;
   final Map<String, Object> _remoteCache = {};
   bool _fetched = false;
 
@@ -57,18 +59,21 @@ class FirestoreSettingsStore implements SettingsStore {
     SettingsStore? fallback,
     SettingsReadAll? readAll,
     SettingsSaveDoc? saveDoc,
+    String Function()? userId,
   })  : _fallback = fallback ?? PrefsSettingsStore(),
         _readAll = readAll,
-        _saveDoc = saveDoc;
+        _saveDoc = saveDoc,
+        _userId = userId ?? resolveStorageUserId;
 
   Future<void> _ensureFetched() async {
     if (_fetched) return;
     _fetched = true;
+    final activeDocId = _userId();
     try {
       final reader = _readAll ?? DatabaseService.instance.getAll;
       final docs = await reader(collectionName);
       for (final doc in docs) {
-        if (doc['id'] == docId) {
+        if (doc['id'] == activeDocId) {
           doc.forEach((key, value) {
             if (key != 'id' && value is Object) {
               _remoteCache[key] = value;
@@ -87,7 +92,7 @@ class FirestoreSettingsStore implements SettingsStore {
       final writer = _saveDoc ?? DatabaseService.instance.save;
       await writer(
         collectionName,
-        docId,
+        _userId(),
         SettingsJsonMap.from(_remoteCache),
       );
     } catch (_) {
