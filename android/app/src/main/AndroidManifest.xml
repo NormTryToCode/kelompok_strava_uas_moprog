@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     
     <application
-        android:label="kelompok_strava_uas_moprog"
+        android:label="Stride"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

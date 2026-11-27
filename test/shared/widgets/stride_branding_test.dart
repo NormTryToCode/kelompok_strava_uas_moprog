@@ -14,7 +14,7 @@ void main() {
     );
 
     expect(find.text(AppBrand.wordmark), findsOneWidget);
-    expect(find.byIcon(Icons.bolt_rounded), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
   });
 
   testWidgets('AppFooter menampilkan 5 tab dan memanggil onTap saat diketuk',
