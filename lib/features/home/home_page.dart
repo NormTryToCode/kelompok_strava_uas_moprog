@@ -16,6 +16,7 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dar
 import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/inbox_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/providers/chat_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/posts/widgets/home_posts_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -74,6 +75,7 @@ class HomePage extends StatelessWidget {
             ),
             DailyStatsSection(),
             BadgesSection(),
+            HomePostsSection(),
           ],
         ),
       ),
