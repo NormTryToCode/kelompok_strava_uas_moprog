@@ -12,13 +12,23 @@ class ClubInviteRepository {
     return rows.map(ClubInvite.fromJson).toList();
   }
 
+  Future<List<ClubInvite>> getPendingInvitesForUser(String uid) async {
+    final rows = await _db.getWhere(_collection, 'friendId', uid);
+    return rows
+        .map(ClubInvite.fromJson)
+        .where((invite) => invite.isPending)
+        .toList()
+      ..sort((a, b) => b.invitedAt.compareTo(a.invitedAt));
+  }
+
   Future<List<ClubInvite>> addInvites(List<ClubInvite> newInvites) async {
     if (newInvites.isEmpty) return const [];
 
     final clubId = newInvites.first.clubId;
     final existing = await getInvitesByClub(clubId);
     final existingIds = {
-      for (final item in existing) _docId(item.clubId, item.friendId),
+      for (final item in existing)
+        if (item.isPending) _docId(item.clubId, item.friendId),
     };
 
     final toAdd = <ClubInvite>[];
@@ -31,4 +41,7 @@ class ClubInviteRepository {
     }
     return toAdd;
   }
+
+  Future<void> removeInvite(String clubId, String friendId) =>
+      _db.remove(_collection, _docId(clubId, friendId));
 }

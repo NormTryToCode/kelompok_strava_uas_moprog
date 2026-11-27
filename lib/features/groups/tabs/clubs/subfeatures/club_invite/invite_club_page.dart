@@ -73,7 +73,7 @@ class _InviteClubPageState extends ConsumerState<InviteClubPage> {
     try {
       final count = await ref
           .read(clubInvitesProvider(club.id).notifier)
-          .inviteFriends(chosen);
+          .inviteFriends(chosen, clubName: club.name);
       if (!mounted) return;
 
       setState(() {
