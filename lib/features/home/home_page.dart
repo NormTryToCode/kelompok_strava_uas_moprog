@@ -9,12 +9,13 @@ import 'package:kelompok_strava_uas_moprog/features/home/widgets/welcome_banner_
 import 'package:kelompok_strava_uas_moprog/features/home/widgets/daily_challenges_widget.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notifications_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/add_menu_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/pages/inbox_page.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -30,7 +31,7 @@ class HomePage extends StatelessWidget {
             icon: Icons.forum_outlined,
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const FriendsPage()),
+              MaterialPageRoute(builder: (_) => const InboxPage()),
             ),
           ),
           HeaderIconButton(
