@@ -2,34 +2,36 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/map/widgets/user_location_marker.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/models/record_sport_catalog.dart';
+import 'package:kelompok_strava_uas_moprog/features/record/providers/record_sport_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/widgets/map_overlay_sheets.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/widgets/sport_filter_sheet.dart';
 import 'package:latlong2/latlong.dart';
 
 /// Live activity recording framework screen with map, telemetry bar, and resizable controls.
-class RecordTrackPage extends StatefulWidget {
-  final String initialSportName;
+class RecordTrackPage extends ConsumerStatefulWidget {
+  final String? initialSportName;
   final bool autoStart;
   final bool enableLiveLocation;
   final WidgetBuilder? mapOverride;
 
   const RecordTrackPage({
     super.key,
-    this.initialSportName = 'Run',
+    this.initialSportName,
     this.autoStart = false,
     this.enableLiveLocation = true,
     this.mapOverride,
   });
 
   @override
-  State<RecordTrackPage> createState() => _RecordTrackPageState();
+  ConsumerState<RecordTrackPage> createState() => _RecordTrackPageState();
 }
 
-class _RecordTrackPageState extends State<RecordTrackPage> {
+class _RecordTrackPageState extends ConsumerState<RecordTrackPage> {
   static const double _collapsedFraction = 0.34;
   static const double _expandedFraction = 0.70;
   static const double _telemetryBarHeight = 84.0;
@@ -39,7 +41,7 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
   StreamSubscription<Position>? _positionSub;
   bool _follow = true;
 
-  late RecordSportItem _selectedSport;
+  RecordSportItem? _pendingInitialSport;
   late bool _isRecording;
   bool _isTelemetryFullScreen = false;
   double _sheetFraction = _collapsedFraction;
@@ -47,8 +49,20 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
   @override
   void initState() {
     super.initState();
-    _selectedSport = RecordSportCatalog.byName(widget.initialSportName);
     _isRecording = widget.autoStart;
+    if (widget.initialSportName != null) {
+      final initial = RecordSportCatalog.byName(widget.initialSportName!);
+      if (ref.read(selectedRecordSportProvider).id != initial.id) {
+        _pendingInitialSport = initial;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          ref.read(selectedRecordSportProvider.notifier).select(initial);
+          if (_pendingInitialSport != null) {
+            setState(() => _pendingInitialSport = null);
+          }
+        });
+      }
+    }
   }
 
   @override
@@ -142,12 +156,15 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
   }
 
   Future<void> _openSportFilter() async {
+    final RecordSportItem currentSport =
+        _pendingInitialSport ?? ref.read(selectedRecordSportProvider);
     final chosen = await showSportFilterSheet(
       context,
-      selectedSport: _selectedSport,
+      selectedSport: currentSport,
     );
     if (chosen != null && mounted) {
-      setState(() => _selectedSport = chosen);
+      _pendingInitialSport = null;
+      ref.read(selectedRecordSportProvider.notifier).select(chosen);
     }
   }
 
@@ -164,8 +181,11 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
 
   @override
   Widget build(BuildContext context) {
+    final RecordSportItem selectedSport =
+        _pendingInitialSport ?? ref.watch(selectedRecordSportProvider);
+
     if (_isTelemetryFullScreen) {
-      return _buildFullScreenTelemetry(context);
+      return _buildFullScreenTelemetry(context, selectedSport);
     }
 
     return Scaffold(
@@ -246,6 +266,7 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
                       totalHeight: totalHeight,
                       menuHeight: menuHeight,
                       showExtraItems: showExtraItems,
+                      selectedSport: selectedSport,
                     ),
                   ],
                 ),
@@ -400,6 +421,7 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
     required double totalHeight,
     required double menuHeight,
     required bool showExtraItems,
+    required RecordSportItem selectedSport,
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
@@ -454,7 +476,7 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
                   horizontal: 16,
                   vertical: 4,
                 ),
-                child: _buildThreeColumnActionBar(),
+                child: _buildThreeColumnActionBar(selectedSport),
               ),
               if (showExtraItems)
                 Expanded(
@@ -491,7 +513,7 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
     );
   }
 
-  Widget _buildThreeColumnActionBar() {
+  Widget _buildThreeColumnActionBar(RecordSportItem selectedSport) {
     return Row(
       children: [
         Expanded(
@@ -504,13 +526,13 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    _selectedSport.icon,
+                    selectedSport.icon,
                     color: Styles.primaryLight,
                     size: 24,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _selectedSport.name,
+                    selectedSport.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
@@ -590,7 +612,10 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
     );
   }
 
-  Widget _buildFullScreenTelemetry(BuildContext context) {
+  Widget _buildFullScreenTelemetry(
+    BuildContext context,
+    RecordSportItem selectedSport,
+  ) {
     return Scaffold(
       backgroundColor: Styles.canvas,
       body: SafeArea(
@@ -729,7 +754,7 @@ class _RecordTrackPageState extends State<RecordTrackPage> {
                 border: Border(top: BorderSide(color: Styles.borderStrong)),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: _buildThreeColumnActionBar(),
+              child: _buildThreeColumnActionBar(selectedSport),
             ),
           ],
         ),

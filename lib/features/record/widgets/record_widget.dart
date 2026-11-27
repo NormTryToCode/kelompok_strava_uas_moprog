@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/manual_activity_page.dart';
-import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/models/workout_series_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/record/providers/record_sport_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/record_track.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/widgets/record_action_card_button.dart';
+import 'package:kelompok_strava_uas_moprog/features/record/widgets/sport_filter_sheet.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/widgets/workout_figure_animation.dart';
 import 'package:kelompok_strava_uas_moprog/features/record/widgets/workout_series_section.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
@@ -13,20 +15,11 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 
 /// Main Record tab layout featuring quick-start sport cards and guided strength series.
-class RecordWidget extends StatelessWidget {
+class RecordWidget extends ConsumerWidget {
   const RecordWidget({super.key});
 
-  static const _extraSportIds = <String>[
-    'hiking',
-    'swimming',
-    'weight-training',
-    'yoga',
-    'rowing',
-    'crossfit',
-  ];
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppHeader(
         title: 'Record',
@@ -60,11 +53,13 @@ class RecordWidget extends StatelessWidget {
                     action: 'Walk',
                     onTap: () => _openRecordTrack(
                       context,
+                      ref,
                       action: 'Walk',
                       autoStart: false,
                     ),
                     onStart: () => _openRecordTrack(
                       context,
+                      ref,
                       action: 'Walk',
                       autoStart: true,
                     ),
@@ -74,11 +69,13 @@ class RecordWidget extends StatelessWidget {
                     action: 'Run',
                     onTap: () => _openRecordTrack(
                       context,
+                      ref,
                       action: 'Run',
                       autoStart: false,
                     ),
                     onStart: () => _openRecordTrack(
                       context,
+                      ref,
                       action: 'Run',
                       autoStart: true,
                     ),
@@ -88,11 +85,13 @@ class RecordWidget extends StatelessWidget {
                     action: 'Ride',
                     onTap: () => _openRecordTrack(
                       context,
+                      ref,
                       action: 'Ride',
                       autoStart: false,
                     ),
                     onStart: () => _openRecordTrack(
                       context,
+                      ref,
                       action: 'Ride',
                       autoStart: true,
                     ),
@@ -107,7 +106,7 @@ class RecordWidget extends StatelessWidget {
                           backgroundColor: Styles.surfaceElevated,
                           borderColor: Styles.borderStrong,
                           foregroundColor: Styles.primaryLight,
-                          onTap: () => _showMoreSportsSheet(context),
+                          onTap: () => _openMoreSportsFilter(context, ref),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -151,10 +150,12 @@ class RecordWidget extends StatelessWidget {
   }
 
   void _openRecordTrack(
-    BuildContext context, {
+    BuildContext context,
+    WidgetRef ref, {
     required String action,
     required bool autoStart,
   }) {
+    ref.read(selectedRecordSportProvider.notifier).selectByName(action);
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => RecordTrackPage(
@@ -162,6 +163,25 @@ class RecordWidget extends StatelessWidget {
           autoStart: autoStart,
         ),
       ),
+    );
+  }
+
+  Future<void> _openMoreSportsFilter(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final currentSport = ref.read(selectedRecordSportProvider);
+    final chosen = await showSportFilterSheet(
+      context,
+      selectedSport: currentSport,
+    );
+    if (chosen == null || !context.mounted) return;
+    ref.read(selectedRecordSportProvider.notifier).select(chosen);
+    _openRecordTrack(
+      context,
+      ref,
+      action: chosen.name,
+      autoStart: false,
     );
   }
 
@@ -418,88 +438,6 @@ class RecordWidget extends StatelessWidget {
                         },
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showMoreSportsSheet(BuildContext context) {
-    final sports = _extraSportIds.map(ClubSport.byId).toList();
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Styles.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.card)),
-      ),
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Styles.borderStrong,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'More sports',
-                  style: TextStyle(
-                    color: Styles.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...sports.map(
-                  (sport) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: Styles.surfaceHighlight,
-                        borderRadius: BorderRadius.circular(11),
-                        border: Border.all(color: Styles.borderStrong),
-                      ),
-                      child: Icon(
-                        sport.icon,
-                        color: Styles.primaryLight,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text(
-                      sport.name,
-                      style: const TextStyle(
-                        color: Styles.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.chevron_right_rounded,
-                      color: Styles.textMuted,
-                    ),
-                    onTap: () {
-                      Navigator.of(sheetContext).pop();
-                      _openRecordTrack(
-                        context,
-                        action: sport.name,
-                        autoStart: false,
-                      );
-                    },
                   ),
                 ),
               ],
