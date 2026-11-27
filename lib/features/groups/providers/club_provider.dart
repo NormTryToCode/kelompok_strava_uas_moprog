@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/data/groups_firestore_seeder.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/repositories/club_repository.dart';
 
@@ -8,15 +10,42 @@ final clubRepositoryProvider = Provider<ClubRepository>((ref) {
 
 class ClubsNotifier extends AsyncNotifier<List<Club>> {
   ClubRepository get _repository => ref.read(clubRepositoryProvider);
+  String? get _currentUid => ref.read(authStateProvider).valueOrNull?.uid;
 
   @override
-  Future<List<Club>> build() => _repository.getClubs();
+  Future<List<Club>> build() async {
+    final user = ref.watch(authStateProvider).valueOrNull;
+    final uid = user?.uid;
+    if (uid != null && uid.isNotEmpty) {
+      await GroupsFirestoreSeeder.ensureSeededForUser(
+        uid: uid,
+        displayName: user?.displayName ?? user?.email?.split('@').first,
+      );
+    }
+    return _repository.getClubs(currentUid: uid);
+  }
 
   Future<void> addClub(Club club) async {
-    await _repository.addClub(club);
+    final uid = _currentUid;
+    final withOwner = (uid != null && club.ownerId == null)
+        ? club.copyWith(
+            ownerId: uid,
+            memberIds: club.memberIds.contains(uid)
+                ? club.memberIds
+                : [...club.memberIds, uid],
+            memberCount: club.memberIds.contains(uid)
+                ? club.memberIds.length
+                : club.memberIds.length + 1,
+            isOwner: true,
+            isAdmin: true,
+            isJoined: true,
+          )
+        : club;
+
+    await _repository.addClub(withOwner);
     final current = state.valueOrNull ?? const <Club>[];
-    final filtered = current.where((c) => c.id != club.id).toList();
-    state = AsyncData([club, ...filtered]);
+    final filtered = current.where((c) => c.id != withOwner.id).toList();
+    state = AsyncData([withOwner, ...filtered]);
   }
 
   Future<void> updateClub(Club updated) async {
@@ -29,29 +58,44 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
   }
 
   Future<void> joinClub(String clubId) async {
+    final uid = _currentUid;
     final current = state.valueOrNull ?? const <Club>[];
     final match = current.where((c) => c.id == clubId);
-    if (match.isEmpty || match.first.isJoined) return;
+    if (match.isEmpty || match.first.isJoined || uid == null) return;
 
-    final updated = match.first.copyWith(
-      isJoined: true,
-      memberCount: match.first.memberCount + 1,
+    final club = match.first;
+    final nextMembers = club.memberIds.contains(uid)
+        ? club.memberIds
+        : [...club.memberIds, uid];
+
+    await updateClub(
+      club.copyWith(
+        isJoined: true,
+        memberIds: nextMembers,
+        memberCount: nextMembers.length,
+      ),
     );
-    await updateClub(updated);
   }
 
   Future<void> leaveClub(String clubId) async {
+    final uid = _currentUid;
     final current = state.valueOrNull ?? const <Club>[];
     final match = current.where((c) => c.id == clubId);
-    if (match.isEmpty || match.first.isOwner) return;
+    if (match.isEmpty || match.first.isOwner || uid == null) return;
 
     final club = match.first;
-    final updated = club.copyWith(
-      isJoined: false,
-      isAdmin: false,
-      memberCount: club.memberCount > 0 ? club.memberCount - 1 : 0,
+    final nextMembers = club.memberIds.where((id) => id != uid).toList();
+    final nextAdmins = club.adminIds.where((id) => id != uid).toList();
+
+    await updateClub(
+      club.copyWith(
+        isJoined: false,
+        isAdmin: false,
+        memberIds: nextMembers,
+        adminIds: nextAdmins,
+        memberCount: nextMembers.length,
+      ),
     );
-    await updateClub(updated);
   }
 
   Future<void> toggleMemberAdmin(String clubId, String memberId) async {
@@ -92,7 +136,7 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
       club.copyWith(
         pendingRequestIds: nextPending,
         memberIds: nextMembers,
-        memberCount: nextMembers.length + (club.isJoined ? 1 : 0),
+        memberCount: nextMembers.length,
       ),
     );
   }

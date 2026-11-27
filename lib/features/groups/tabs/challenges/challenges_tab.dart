@@ -23,17 +23,20 @@ class _ChallengesTabState extends ConsumerState<ChallengesTab> {
   String? _spotlightId;
 
   @override
-  void initState() {
-    super.initState();
-    final initial = ref.read(challengesProvider);
-    if (initial.isNotEmpty) {
-      _spotlightId = initial[math.Random().nextInt(initial.length)].id;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final allChallenges = ref.watch(challengesProvider);
+    final challengesAsync = ref.watch(challengesProvider);
+    if (challengesAsync.isLoading && !challengesAsync.hasValue) {
+      return const Center(
+        child: CircularProgressIndicator(color: Styles.primary),
+      );
+    }
+
+    final allChallenges = challengesAsync.valueOrNull ?? const <Challenge>[];
+    if (_spotlightId == null && allChallenges.isNotEmpty) {
+      _spotlightId =
+          allChallenges[math.Random().nextInt(allChallenges.length)].id;
+    }
+
     final spotlight = allChallenges.isEmpty
         ? null
         : allChallenges.firstWhere(

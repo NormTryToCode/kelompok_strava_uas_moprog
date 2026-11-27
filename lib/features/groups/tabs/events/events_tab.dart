@@ -12,6 +12,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/providers/race_provid
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/race_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/races_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/races_3d_carousel.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/race_model.dart';
 
 class EventsTab extends ConsumerWidget {
   const EventsTab({super.key});
@@ -21,7 +22,7 @@ class EventsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final eventsAsync = ref.watch(eventsProvider);
-    final races = ref.watch(racesProvider);
+    final races = ref.watch(racesProvider).valueOrNull ?? const <Race>[];
     final now = DateTime.now();
 
     return eventsAsync.when(
