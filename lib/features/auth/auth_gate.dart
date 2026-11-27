@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/features/login/login_page.dart';
+import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/welcome/welcome_page.dart';
 import 'package:kelompok_strava_uas_moprog/shell/main_shell.dart';
 import 'auth_providers.dart';
 
@@ -12,11 +13,13 @@ class AuthGate extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
 
     return authState.when(
-      data: (user) => user != null ? MainShell() : LoginPage(),
+      data: (user) => user != null ? const MainShell() : const WelcomePage(),
       loading: () => const Scaffold(
+        backgroundColor: Styles.canvas,
         body: Center(child: CircularProgressIndicator()),
       ),
       error: (_, _) => Scaffold(
+        backgroundColor: Styles.canvas,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),

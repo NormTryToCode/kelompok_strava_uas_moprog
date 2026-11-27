@@ -68,6 +68,20 @@ class DatabaseService {
         );
   }
 
+  Stream<List<Map<String, dynamic>>> watchWhereArrayContains(
+    String collection,
+    String field,
+    Object value,
+  ) {
+    return _db
+        .collection(collection)
+        .where(field, arrayContains: value)
+        .snapshots()
+        .map(
+          (s) => s.docs.map((d) => {...d.data(), 'id': d.id}).toList(),
+        );
+  }
+
   CollectionReference<UserModel> get users => UserModel.collection(_db);
 
   DocumentReference<UserModel> userDoc(String uid) => users.doc(uid);
@@ -87,18 +101,27 @@ class DatabaseService {
 
         if (!snap.exists) {
           final displayName = firebaseUser.displayName?.trim();
-
-          final fallbackFirstName =
-              (username != null && username.trim().isNotEmpty)
-                  ? username.trim()
-                  : (displayName != null && displayName.isNotEmpty
-                      ? displayName.split(' ').first
-                      : (firebaseUser.email?.split('@').first ?? 'Athlete'));
+          final rawFullName = (username != null && username.trim().isNotEmpty)
+              ? username.trim()
+              : (displayName != null && displayName.isNotEmpty
+                  ? displayName
+                  : null);
+          final nameParts = rawFullName == null
+              ? const <String>[]
+              : rawFullName
+                  .split(RegExp(r'\s+'))
+                  .where((p) => p.isNotEmpty)
+                  .toList();
+          final fallbackFirstName = nameParts.isNotEmpty
+              ? nameParts.first
+              : (firebaseUser.email?.split('@').first ?? 'Athlete');
+          final fallbackLastName =
+              nameParts.length > 1 ? nameParts.sublist(1).join(' ') : null;
 
           tx.set(rawDoc, {
             'email': firebaseUser.email ?? '',
             'firstName': fallbackFirstName,
-            'lastName': null,
+            'lastName': fallbackLastName,
             'photoUrl': firebaseUser.photoURL,
             'city': null,
             'country': null,

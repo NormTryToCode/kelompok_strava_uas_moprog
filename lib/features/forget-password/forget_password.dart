@@ -9,7 +9,38 @@ class ForgetPassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Styles.canvas,
-      body: Center(child: ForgetPasswordWidget()),
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: Styles.radialGlow(intensity: 0.22, radius: 1.1),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              const Center(child: ForgetPasswordWidget()),
+              if (Navigator.canPop(context))
+                Positioned(
+                  top: 12,
+                  left: 16,
+                  child: Material(
+                    color: Styles.surfaceElevated,
+                    shape: const CircleBorder(
+                      side: BorderSide(color: Styles.border),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: Styles.textPrimary,
+                      ),
+                      tooltip: 'Back',
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
