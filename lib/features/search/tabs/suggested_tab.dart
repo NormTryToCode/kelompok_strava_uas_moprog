@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_people_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/follow_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/widgets/person_tile.dart';
 import 'package:kelompok_strava_uas_moprog/shared/providers/follow_provider.dart';
@@ -16,33 +16,41 @@ class SuggestedTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final following = ref.watch(followProvider);
-    final list = people ?? buildDummyPeople();
+    final watchedPeople = ref.watch(searchPeopleProvider);
+    final list = people ?? watchedPeople;
 
     return Column(
       children: [
         const _SectionLabel('PEOPLE YOU MAY KNOW'),
         Expanded(
-          child: ListView.builder(
-            itemCount: list.length,
-            itemBuilder: (_, i) {
-              final person = list[i];
-              final isFollowing = following.contains(person.id);
-              return PersonTile(
-                person: person,
-                trailing: FollowButton(
-                  isFollowing: isFollowing,
-                  onPressed: () {
-                    ref.read(followProvider.notifier).toggle(person.id);
-                    if (!isFollowing) {
-                      ref
-                          .read(notificationsProvider.notifier)
-                          .notifyFollowing(personName: person.name);
-                    }
+          child: list.isEmpty
+              ? const Center(
+                  child: Text(
+                    'No athletes found yet',
+                    style: TextStyle(color: Styles.textSecondary, fontSize: 15),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (_, i) {
+                    final person = list[i];
+                    final isFollowing = following.contains(person.id);
+                    return PersonTile(
+                      person: person,
+                      trailing: FollowButton(
+                        isFollowing: isFollowing,
+                        onPressed: () {
+                          ref.read(followProvider.notifier).toggle(person.id);
+                          if (!isFollowing) {
+                            ref
+                                .read(notificationsProvider.notifier)
+                                .notifyFollowing(personName: person.name);
+                          }
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
         ),
       ],
     );
