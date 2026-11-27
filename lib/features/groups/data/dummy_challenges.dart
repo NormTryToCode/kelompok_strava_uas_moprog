@@ -26,6 +26,8 @@ List<Challenge> buildDummyChallenges() {
         points: 200,
       ),
       participantCount: 412,
+      participantIds: const ['p1', 'p2', 'p3'],
+      isJoined: false,
       createdAt: now,
     ),
     Challenge(
@@ -50,6 +52,8 @@ List<Challenge> buildDummyChallenges() {
         points: 150,
       ),
       participantCount: 289,
+      participantIds: const ['p3', 'p4', 'p5'],
+      isJoined: false,
       createdAt: now.subtract(const Duration(days: 1)),
     ),
     Challenge(
@@ -74,6 +78,8 @@ List<Challenge> buildDummyChallenges() {
         points: 300,
       ),
       participantCount: 196,
+      participantIds: const ['p2', 'p4'],
+      isJoined: false,
       createdAt: now.subtract(const Duration(days: 2)),
     ),
     Challenge(
@@ -98,6 +104,8 @@ List<Challenge> buildDummyChallenges() {
         points: 250,
       ),
       participantCount: 134,
+      participantIds: const ['p1', 'p3', 'p5'],
+      isJoined: false,
       createdAt: now.subtract(const Duration(days: 3)),
     ),
   ];
