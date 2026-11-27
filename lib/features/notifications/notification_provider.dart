@@ -63,6 +63,14 @@ class NotificationsNotifier extends Notifier<List<NotificationItem>> {
     );
   }
 
+  void notifyClubJoined({required String clubName}) {
+    addNotification(
+      title: 'Joined $clubName',
+      body: 'You are now a member of $clubName. Stay tuned for club events!',
+      preference: NotificationPref.clubEvents,
+    );
+  }
+
   void markAsRead(String id) {
     state = [
       for (final item in state)
