@@ -57,13 +57,29 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     ]);
   }
 
-  Future<void> joinClub(String clubId) async {
+  /// Mengembalikan `true` jika langsung join (Public), `false` jika mengirim/membatalkan request (Private).
+  Future<bool> joinClub(String clubId) async {
     final uid = _currentUid;
     final current = state.valueOrNull ?? const <Club>[];
     final match = current.where((c) => c.id == clubId);
-    if (match.isEmpty || match.first.isJoined || uid == null) return;
+    if (match.isEmpty || match.first.isJoined || uid == null) return false;
 
     final club = match.first;
+
+    if (club.isPrivate) {
+      final alreadyPending = club.pendingRequestIds.contains(uid);
+      final nextPending = alreadyPending
+          ? club.pendingRequestIds.where((id) => id != uid).toList()
+          : [...club.pendingRequestIds, uid];
+      await updateClub(
+        club.copyWith(
+          pendingRequestIds: nextPending,
+          hasPendingRequest: !alreadyPending,
+        ),
+      );
+      return false;
+    }
+
     final nextMembers = club.memberIds.contains(uid)
         ? club.memberIds
         : [...club.memberIds, uid];
@@ -71,7 +87,35 @@ class ClubsNotifier extends AsyncNotifier<List<Club>> {
     await updateClub(
       club.copyWith(
         isJoined: true,
+        hasPendingRequest: false,
         memberIds: nextMembers,
+        memberCount: nextMembers.length,
+      ),
+    );
+    return true;
+  }
+
+  /// Langsung bergabung ke klub (termasuk Private) karena sudah di-invite oleh Owner/Admin.
+  Future<void> acceptClubInvite(String clubId) async {
+    final uid = _currentUid;
+    if (uid == null) return;
+
+    final current = state.valueOrNull ?? await _repository.getClubs(currentUid: uid);
+    final match = current.where((c) => c.id == clubId);
+    if (match.isEmpty) return;
+
+    final club = match.first;
+    final nextMembers = club.memberIds.contains(uid)
+        ? club.memberIds
+        : [...club.memberIds, uid];
+    final nextPending = club.pendingRequestIds.where((id) => id != uid).toList();
+
+    await updateClub(
+      club.copyWith(
+        isJoined: true,
+        hasPendingRequest: false,
+        memberIds: nextMembers,
+        pendingRequestIds: nextPending,
         memberCount: nextMembers.length,
       ),
     );

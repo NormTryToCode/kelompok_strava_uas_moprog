@@ -104,6 +104,7 @@ class Club {
   final bool isOwner;
   final bool isAdmin;
   final bool isJoined;
+  final bool hasPendingRequest;
   final List<String> memberIds;
   final List<String> adminIds;
   final ClubSettings settings;
@@ -125,6 +126,7 @@ class Club {
     this.isOwner = true,
     this.isAdmin = false,
     this.isJoined = true,
+    this.hasPendingRequest = false,
     this.memberIds = const [],
     this.adminIds = const [],
     this.settings = const ClubSettings(),
@@ -185,7 +187,7 @@ class Club {
       ? 'Global'
       : location!.detail.isEmpty
           ? location!.name
-          : '${location!.name}, ${location!.detail}';
+          : '${location!.name},${location!.detail}';
 
   bool get isPrivate => privacy.id == ClubPrivacy.private.id;
 
@@ -210,6 +212,7 @@ class Club {
     bool? isOwner,
     bool? isAdmin,
     bool? isJoined,
+    bool? hasPendingRequest,
     List<String>? memberIds,
     List<String>? adminIds,
     ClubSettings? settings,
@@ -233,6 +236,7 @@ class Club {
       isOwner: isOwner ?? this.isOwner,
       isAdmin: isAdmin ?? this.isAdmin,
       isJoined: isJoined ?? this.isJoined,
+      hasPendingRequest: hasPendingRequest ?? this.hasPendingRequest,
       memberIds: memberIds ?? this.memberIds,
       adminIds: adminIds ?? this.adminIds,
       settings: settings ?? this.settings,
@@ -284,6 +288,9 @@ class Club {
         (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [];
     final adminIds =
         (json['adminIds'] as List?)?.whereType<String>().toList() ?? const [];
+    final pendingRequestIds =
+        (json['pendingRequestIds'] as List?)?.whereType<String>().toList() ??
+            const [];
 
     final hasUid = currentUid != null && currentUid.isNotEmpty;
     final isOwner = hasUid
@@ -295,6 +302,8 @@ class Club {
     final isJoined = hasUid
         ? (isOwner || memberIds.contains(currentUid))
         : (json['isJoined'] as bool? ?? false);
+    final hasPendingRequest =
+        hasUid && !isJoined && pendingRequestIds.contains(currentUid);
 
     final uniqueMembers = {
       ...memberIds,
@@ -331,6 +340,7 @@ class Club {
       isOwner: isOwner,
       isAdmin: isAdmin,
       isJoined: isJoined,
+      hasPendingRequest: hasPendingRequest,
       memberIds: memberIds,
       adminIds: adminIds,
       settings: ClubSettings.fromJson(
@@ -341,9 +351,7 @@ class Club {
       createdAt: json['createdAt'] is String
           ? (DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now())
           : DateTime.now(),
-      pendingRequestIds:
-          (json['pendingRequestIds'] as List?)?.whereType<String>().toList() ??
-              const [],
+      pendingRequestIds: pendingRequestIds,
     );
   }
 }

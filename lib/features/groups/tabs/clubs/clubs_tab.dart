@@ -37,12 +37,18 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
       return;
     }
 
-    await ref.read(clubsProvider.notifier).joinClub(club.id);
+    final wasPending = club.hasPendingRequest;
+    final joinedDirectly =
+        await ref.read(clubsProvider.notifier).joinClub(club.id);
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Joined ${club.name}')),
-    );
+    final message = joinedDirectly
+        ? 'Joined ${club.name}'
+        : wasPending
+        ? 'Join request cancelled'
+        : 'Join request sent to ${club.name}';
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   bool _matchesFilter(Club club) {
