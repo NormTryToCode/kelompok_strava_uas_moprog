@@ -4,7 +4,9 @@ import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_header.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_or_divider.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_primary_button.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/widgets/google_auth_button.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
 import 'package:kelompok_strava_uas_moprog/features/login/widgets/login_credentials_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
@@ -170,68 +172,12 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     onPressed: _isBusy ? null : _handleEmailLogin,
                   ),
                   const SizedBox(height: 20),
-                  const Row(
-                    children: [
-                      Expanded(
-                        child: Divider(color: Colors.white54, thickness: 1),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          "OR",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(color: Colors.white54, thickness: 1),
-                      ),
-                    ],
-                  ),
+                  const AuthOrDivider(),
                   const SizedBox(height: 20),
-                  ElevatedButton.icon(
+                  GoogleAuthButton(
+                    label: 'Login with Google',
+                    isLoading: _isGoogleLoading,
                     onPressed: _isBusy ? null : _handleGoogleLogin,
-                    icon: _isGoogleLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Color(0xFF110E1B),
-                            ),
-                          )
-                        : Image.asset(
-                            'asset/images/google.png',
-                            height: 20,
-                            width: 20,
-                            errorBuilder: (_, _, _) => const Icon(
-                              Icons.g_mobiledata_rounded,
-                              size: 24,
-                              color: Color(0xFF110E1B),
-                            ),
-                          ),
-                    label: const Text(
-                      "Login with Google",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: const Color(0xFF110E1B),
-                      disabledBackgroundColor:
-                          Colors.white.withValues(alpha: 0.8),
-                      disabledForegroundColor: Colors.black54,
-                      elevation: 0,
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
                   ),
                   const SizedBox(height: 16),
                   Row(
