@@ -15,6 +15,7 @@ import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/header_icon_button.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/stride_wordmark.dart';
 import 'package:kelompok_strava_uas_moprog/features/relationship/pages/inbox_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/providers/chat_provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -27,11 +28,14 @@ class HomePage extends StatelessWidget {
         titleWidget: const StrideWordmark(),
         actions: [
           AddMenuButton(onSelected: (action) => openAddAction(context, action)),
-          HeaderIconButton(
-            icon: Icons.forum_outlined,
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const InboxPage()),
+          Consumer(
+            builder: (context, ref, _) => HeaderIconButton(
+              icon: Icons.forum_outlined,
+              badgeCount: ref.watch(unreadDmCountProvider).valueOrNull ?? 0,
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const InboxPage()),
+              ),
             ),
           ),
           HeaderIconButton(
