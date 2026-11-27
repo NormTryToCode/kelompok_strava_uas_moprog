@@ -99,6 +99,7 @@ class Club {
   final String? avatarPath;
   final String? coverPath;
   final String? vanityUrl;
+  final String? ownerId;
   final int memberCount;
   final bool isOwner;
   final bool isAdmin;
@@ -120,6 +121,7 @@ class Club {
     required this.location,
     required this.memberCount,
     required this.createdAt,
+    this.ownerId,
     this.isOwner = true,
     this.isAdmin = false,
     this.isJoined = true,
@@ -132,7 +134,7 @@ class Club {
     this.pendingRequestIds = const [],
   });
 
-  factory Club.fromCreation(ClubCreationModel draft) {
+  factory Club.fromCreation(ClubCreationModel draft, {String? ownerId}) {
     final now = DateTime.now();
     return Club(
       id: now.microsecondsSinceEpoch.toString(),
@@ -144,6 +146,8 @@ class Club {
       isGlobal: draft.isGlobal,
       location: draft.isGlobal ? null : draft.location,
       avatarPath: draft.avatarPath,
+      ownerId: ownerId,
+      memberIds: [if (ownerId != null && ownerId.isNotEmpty) ownerId],
       memberCount: 1,
       isOwner: true,
       isAdmin: true,
@@ -201,6 +205,7 @@ class Club {
     bool clearCover = false,
     String? vanityUrl,
     bool clearVanityUrl = false,
+    String? ownerId,
     int? memberCount,
     bool? isOwner,
     bool? isAdmin,
@@ -223,6 +228,7 @@ class Club {
       avatarPath: clearAvatar ? null : (avatarPath ?? this.avatarPath),
       coverPath: clearCover ? null : (coverPath ?? this.coverPath),
       vanityUrl: clearVanityUrl ? null : (vanityUrl ?? this.vanityUrl),
+      ownerId: ownerId ?? this.ownerId,
       memberCount: memberCount ?? this.memberCount,
       isOwner: isOwner ?? this.isOwner,
       isAdmin: isAdmin ?? this.isAdmin,
@@ -256,6 +262,7 @@ class Club {
       'avatarPath': avatarPath,
       'coverPath': coverPath,
       'vanityUrl': vanityUrl,
+      'ownerId': ownerId,
       'memberCount': memberCount,
       'isOwner': isOwner,
       'isAdmin': isAdmin,
@@ -264,19 +271,35 @@ class Club {
       'adminIds': adminIds,
       'settings': settings.toJson(),
       'createdAt': createdAt.toIso8601String(),
-      'pendingRequestIds' : pendingRequestIds,
+      'pendingRequestIds': pendingRequestIds,
     };
   }
 
-factory Club.fromJson(Map<String, dynamic> json) {
+  factory Club.fromJson(Map<String, dynamic> json, {String? currentUid}) {
     final typeIds =
         (json['types'] as List?)?.whereType<String>().toSet() ?? <String>{};
     final place = json['location'];
-    final isOwner = json['isOwner'] as bool? ?? true;
-    final isJoined = json['isJoined'] as bool? ?? true;
+    final ownerId = json['ownerId'] as String?;
     final memberIds =
         (json['memberIds'] as List?)?.whereType<String>().toList() ?? const [];
-    final realMemberCount = memberIds.length + (isJoined ? 1 : 0);
+    final adminIds =
+        (json['adminIds'] as List?)?.whereType<String>().toList() ?? const [];
+
+    final hasUid = currentUid != null && currentUid.isNotEmpty;
+    final isOwner = hasUid
+        ? ownerId == currentUid
+        : (json['isOwner'] as bool? ?? false);
+    final isAdmin = hasUid
+        ? (isOwner || adminIds.contains(currentUid))
+        : (json['isAdmin'] as bool? ?? isOwner);
+    final isJoined = hasUid
+        ? (isOwner || memberIds.contains(currentUid))
+        : (json['isJoined'] as bool? ?? false);
+
+    final uniqueMembers = {
+      ...memberIds,
+      if (ownerId != null && ownerId.isNotEmpty) ownerId,
+    };
 
     return Club(
       id: json['id'] as String? ?? '',
@@ -303,13 +326,13 @@ factory Club.fromJson(Map<String, dynamic> json) {
       avatarPath: json['avatarPath'] as String?,
       coverPath: json['coverPath'] as String?,
       vanityUrl: json['vanityUrl'] as String?,
-      memberCount: realMemberCount,
+      ownerId: ownerId,
+      memberCount: uniqueMembers.length,
       isOwner: isOwner,
-      isAdmin: json['isAdmin'] as bool? ?? isOwner,
+      isAdmin: isAdmin,
       isJoined: isJoined,
       memberIds: memberIds,
-      adminIds:
-          (json['adminIds'] as List?)?.whereType<String>().toList() ?? const [],
+      adminIds: adminIds,
       settings: ClubSettings.fromJson(
         json['settings'] is Map
             ? Map<String, dynamic>.from(json['settings'] as Map)
@@ -318,8 +341,9 @@ factory Club.fromJson(Map<String, dynamic> json) {
       createdAt: json['createdAt'] is String
           ? (DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now())
           : DateTime.now(),
-      pendingRequestIds: 
-          (json['pendingRequestIds'] as List?)?.whereType<String>().toList() ?? const [],
+      pendingRequestIds:
+          (json['pendingRequestIds'] as List?)?.whereType<String>().toList() ??
+              const [],
     );
   }
 }
