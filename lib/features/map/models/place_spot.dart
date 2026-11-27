@@ -14,6 +14,22 @@ class PlaceSpot {
     required this.type,
     required this.position,
   });
+  
+  Map<String, dynamic> toJson() => {
+      'id': id,
+      'name': name,
+      'type': type.name,
+      'lat': position.latitude,
+      'lng': position.longitude,
+    };
+
+  Map<String, dynamic> toJson() => {
+      'id': id,
+      'name': name,
+      'type': type.name,
+      'lat': position.latitude,
+      'lng': position.longitude,
+    };
 
   factory PlaceSpot.fromJson(Map<String, dynamic> json) => PlaceSpot(
         id: json['id'] as String,
@@ -32,7 +48,14 @@ class PlaceSpot {
     final lon = (e['lon'] ?? center?['lon']) as num?;
     if (name == null || lat == null || lon == null) return null;
 
-    final isBike = tags['highway'] == 'cycleway' || tags['route'] == 'bicycle';
+    final cycleway = tags['cycleway'] ??
+        tags['cycleway:right'] ??
+        tags['cycleway:left'] ??
+        tags['cycleway:both'];
+    final isBike = tags['highway'] == 'cycleway' ||
+        tags['route'] == 'bicycle' ||
+        cycleway == 'lane' ||
+        cycleway == 'track';
     final leisure = tags['leisure'];
     if (!isBike && leisure != 'park' && leisure != 'track') return null;
     return PlaceSpot(
