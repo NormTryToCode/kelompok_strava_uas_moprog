@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_creation_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_clubs.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 
 SportType mapClubSportToSportType(ClubSport sport) {
@@ -33,10 +32,9 @@ SearchClub searchClubFromGroupClub(Club club) {
 }
 
 final searchClubsProvider = Provider<List<SearchClub>>((ref) {
-  final asyncClubs = ref.watch(clubsProvider);
-  final firestoreClubs = asyncClubs.valueOrNull;
+  final firestoreClubs = ref.watch(clubsProvider).valueOrNull;
   if (firestoreClubs == null || firestoreClubs.isEmpty) {
-    return buildDummyClubs();
+    return const <SearchClub>[];
   }
   return firestoreClubs.map(searchClubFromGroupClub).toList(growable: false);
 });
