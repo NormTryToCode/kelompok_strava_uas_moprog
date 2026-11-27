@@ -25,6 +25,7 @@ class _ConversationPageState extends State<ConversationPage> {
   late final String _myUid;
   late final String _chatId;
   late final Stream<List<ChatMessage>> _stream;
+  String? _lastMarked;
 
   @override
   void initState() {
@@ -67,6 +68,13 @@ class _ConversationPageState extends State<ConversationPage> {
                       'Belum ada pesan',
                       style: TextStyle(color: Colors.white70),
                     ),
+                  );
+                }
+                final last = messages.last;
+                if (last.senderUid != _myUid && _lastMarked != last.id) {
+                  _lastMarked = last.id;
+                  WidgetsBinding.instance.addPostFrameCallback(
+                    (_) => _repo.markRead(widget.peerUid),
                   );
                 }
                 return ListView.builder(
