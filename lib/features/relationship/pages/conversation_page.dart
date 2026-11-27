@@ -80,7 +80,7 @@ class _ConversationPageState extends State<ConversationPage> {
               },
             ),
           ),
-          MessageInput(onSend: (text) => _repo.sendMessage(_chatId, text)),
+          MessageInput(onSend: (text) => _repo.sendDirectMessage(widget.peerUid, text)),
         ],
       ),
     );
