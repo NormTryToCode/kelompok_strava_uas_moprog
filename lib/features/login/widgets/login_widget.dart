@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
@@ -138,32 +138,9 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
       ),
     );
 
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF6D4AFF), Color(0xFF432C85)],
-              ),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.16),
-                width: 1.2,
-              ),
-              boxShadow: Styles.ambientGlow(
-                color: Styles.primary,
-                intensity: 0.35,
-                blur: 36,
-              ),
-            ),
-            child: Form(
-              key: _formKey,
+    return AuthCard(
+      child: Form(
+        key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -404,9 +381,6 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                 ],
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }
