@@ -23,16 +23,6 @@ class PlaceSpot {
       'lng': position.longitude,
     };
 
-<<<<<<< HEAD
-  Map<String, dynamic> toJson() => {
-      'id': id,
-      'name': name,
-      'type': type.name,
-      'lat': position.latitude,
-      'lng': position.longitude,
-    };
-=======
->>>>>>> 5885e5b1a5e855a9157000e8d65c148b68e25752
 
   factory PlaceSpot.fromJson(Map<String, dynamic> json) => PlaceSpot(
         id: json['id'] as String,

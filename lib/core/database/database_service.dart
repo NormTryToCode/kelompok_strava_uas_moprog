@@ -68,6 +68,20 @@ class DatabaseService {
         );
   }
 
+  Stream<List<Map<String, dynamic>>> watchWhereArrayContains(
+    String collection,
+    String field,
+    Object value,
+  ) {
+    return _db
+        .collection(collection)
+        .where(field, arrayContains: value)
+        .snapshots()
+        .map(
+          (s) => s.docs.map((d) => {...d.data(), 'id': d.id}).toList(),
+        );
+  }
+
   CollectionReference<UserModel> get users => UserModel.collection(_db);
 
   DocumentReference<UserModel> userDoc(String uid) => users.doc(uid);
