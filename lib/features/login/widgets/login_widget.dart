@@ -5,8 +5,8 @@ import 'package:kelompok_strava_uas_moprog/features/auth/auth_service.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_card.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/widgets/auth_header.dart';
 import 'package:kelompok_strava_uas_moprog/features/forget-password/forget_password.dart';
+import 'package:kelompok_strava_uas_moprog/features/login/widgets/login_credentials_fields.dart';
 import 'package:kelompok_strava_uas_moprog/features/register/register_page.dart';
-import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/checkbox_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,9 +30,6 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
   bool _rememberMe = false;
 
   bool get _isBusy => _isEmailLoading || _isGoogleLoading;
-
-  static final _emailRegex =
-      RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
   @override
   void initState() {
@@ -150,44 +147,10 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     subtitle: "Track every mile, beat your personal best.",
                   ),
                   const SizedBox(height: 24),
-                  AuthTextField(
-                    controller: _emailController,
-                    hintText: "Enter your email",
-                    prefixIcon: Icons.email_outlined,
-                    keyboardType: TextInputType.emailAddress,
-                    autofillHints: const [AutofillHints.email],
-                    validator: (value) {
-                      final email = value?.trim() ?? '';
-                      if (email.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!_emailRegex.hasMatch(email)) {
-                        return 'Please enter a valid email address';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 14),
-                  AuthTextField(
-                    controller: _passwordController,
-                    hintText: "Enter your password",
-                    prefixIcon: Icons.lock_outline,
-                    isPassword: true,
-                    textInputAction: TextInputAction.done,
-                    autofillHints: const [AutofillHints.password],
-                    onFieldSubmitted: (_) {
-                      if (!_isBusy) _handleEmailLogin();
-                    },
-                    validator: (value) {
-                      final password = value ?? '';
-                      if (password.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (password.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
+                  LoginCredentialsFields(
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    onSubmitted: _isBusy ? null : _handleEmailLogin,
                   ),
                   const SizedBox(height: 6),
                   Theme(
