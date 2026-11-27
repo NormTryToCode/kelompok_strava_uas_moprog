@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Secondary navigation actions below the Google button on the login card.
 class LoginSecondaryActions extends StatelessWidget {
   final VoidCallback? onForgotPassword;
   final VoidCallback? onCreateAccount;

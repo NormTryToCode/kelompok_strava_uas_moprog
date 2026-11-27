@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kelompok_strava_uas_moprog/features/auth/utils/auth_validators.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/auth_text_field.dart';
 
-/// Email and password fields grouped inside an [AutofillGroup] for OS password
-/// manager integration on the login screen.
 class LoginCredentialsFields extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
