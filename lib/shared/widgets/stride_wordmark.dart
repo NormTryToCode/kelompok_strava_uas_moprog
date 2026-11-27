@@ -10,10 +10,27 @@ class StrideWordmark extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: 28,
-          height: 28,
-          child: Image.asset('asset/images/Logo.png', width: 200, height: 200,),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(
+            AppBrand.logoAsset,
+            width: 30,
+            height: 30,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                gradient: Styles.primaryGradient,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.bolt_rounded,
+                color: Styles.canvas,
+                size: 18,
+              ),
+            ),
+          ),
         ),
         const SizedBox(width: 8),
         const Text(
@@ -29,4 +46,3 @@ class StrideWordmark extends StatelessWidget {
     );
   }
 }
-
