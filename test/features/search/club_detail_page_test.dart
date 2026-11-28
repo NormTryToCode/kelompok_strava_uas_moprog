@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/club_detail_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/joined_clubs_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
@@ -25,6 +26,8 @@ Widget _page({ProviderContainer? container}) {
     overrides: [
       joinedClubsStoreProvider.overrideWithValue(MemoryJoinedClubsStore()),
       settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+      notificationStoreProvider.overrideWithValue(MemoryNotificationStore()),
+      pendingClubInvitesProvider.overrideWithValue(const []),
     ],
     child: app,
   );
@@ -40,12 +43,15 @@ void main() {
     expect(find.text('Join Club'), findsOneWidget);
   });
 
-  testWidgets('Join Club menambah anggota, berubah Joined, dan memicu notifikasi',
+  testWidgets(
+      'Join Club menambah anggota, berubah Joined, dan memicu notifikasi',
       (tester) async {
     final container = ProviderContainer(
       overrides: [
         joinedClubsStoreProvider.overrideWithValue(MemoryJoinedClubsStore()),
         settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+        notificationStoreProvider.overrideWithValue(MemoryNotificationStore()),
+        pendingClubInvitesProvider.overrideWithValue(const []),
       ],
     );
     addTearDown(container.dispose);

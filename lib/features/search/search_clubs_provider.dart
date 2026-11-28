@@ -28,6 +28,7 @@ SearchClub searchClubFromGroupClub(Club club) {
     memberCount: club.memberCount,
     city: club.locationLabel,
     isVerified: club.memberCount >= 10,
+    avatarPath: club.avatarPath,
   );
 }
 

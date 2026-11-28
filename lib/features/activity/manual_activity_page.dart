@@ -5,6 +5,7 @@ import 'package:kelompok_strava_uas_moprog/features/activity/activity_list_page.
 import 'package:kelompok_strava_uas_moprog/features/activity/activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/models/manual_activity.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/utils/activity_format.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/providers/weekly_activity_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
@@ -58,6 +59,24 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
       return '$hours:${minutes.toString().padLeft(2, '0')}';
     }
     return '${duration.inMinutes}';
+  }
+
+  int _estimateCalories(ActivityType type, double distanceKm) {
+    final kcalPerKm = switch (type) {
+      ActivityType.run || ActivityType.hike => 62,
+      ActivityType.walk => 45,
+      ActivityType.ride => 35,
+      ActivityType.swim || ActivityType.workout => 75,
+    };
+    return (distanceKm * kcalPerKm).round();
+  }
+
+  int _estimateSteps(ActivityType type, double distanceKm) {
+    return switch (type) {
+      ActivityType.run || ActivityType.walk || ActivityType.hike =>
+        (distanceKm * 1300).round(),
+      ActivityType.ride || ActivityType.swim || ActivityType.workout => 0,
+    };
   }
 
   @override
@@ -125,6 +144,15 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
             title: activity.title,
             distanceLabel: formatDistanceWithUnit(activity.distanceKm, unit),
           );
+      try {
+        await ref.read(weeklyActivityProvider.notifier).addRecordedActivity(
+              distanceKm: activity.distanceKm,
+              calories: _estimateCalories(activity.type, activity.distanceKm),
+              steps: _estimateSteps(activity.type, activity.distanceKm),
+              date: activity.date,
+            );
+      } catch (_) {
+      }
     }
     if (!mounted) return;
 

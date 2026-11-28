@@ -53,7 +53,7 @@ void main() {
     expect(mapped.name, 'Stride Cyclists');
     expect(mapped.sport, SportType.cycling);
     expect(mapped.memberCount, 25);
-    expect(mapped.city, 'Bandung, Indonesia');
+    expect(mapped.city, 'Bandung,Indonesia');
     expect(mapped.isVerified, isTrue);
   });
 

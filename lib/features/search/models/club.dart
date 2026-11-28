@@ -19,6 +19,7 @@ class SearchClub {
   final int memberCount;
   final String city;
   final bool isVerified;
+  final String? avatarPath;
 
   const SearchClub({
     required this.id,
@@ -27,6 +28,7 @@ class SearchClub {
     required this.memberCount,
     required this.city,
     this.isVerified = false,
+    this.avatarPath,
   });
 
   String get memberLabel => '${memberCount.withThousands} ${sport.memberNoun}';
@@ -40,7 +42,7 @@ class SearchClub {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  SearchClub copyWith({int? memberCount}) {
+  SearchClub copyWith({int? memberCount, String? avatarPath}) {
     return SearchClub(
       id: id,
       name: name,
@@ -48,6 +50,7 @@ class SearchClub {
       memberCount: memberCount ?? this.memberCount,
       city: city,
       isVerified: isVerified,
+      avatarPath: avatarPath ?? this.avatarPath,
     );
   }
 }

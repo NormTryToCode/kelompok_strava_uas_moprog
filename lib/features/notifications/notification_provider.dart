@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/models/notification_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/models/club_invite_model.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/invite_provider.dart';
 
 final notificationStoreProvider = Provider<NotificationStore>((ref) {
   return FirestoreNotificationStore();
@@ -110,6 +112,18 @@ final notificationsProvider =
   NotificationsNotifier.new,
 );
 
+final pendingClubInvitesProvider = Provider<List<ClubInvite>>((ref) {
+  try {
+    return ref.watch(myPendingInvitesProvider).valueOrNull ??
+        const <ClubInvite>[];
+  } catch (_) {
+    return const <ClubInvite>[];
+  }
+});
+
 final unreadCountProvider = Provider<int>((ref) {
-  return ref.watch(notificationsProvider).where((item) => !item.isRead).length;
+  final unreadItems =
+      ref.watch(notificationsProvider).where((item) => !item.isRead).length;
+  final pendingInvites = ref.watch(pendingClubInvitesProvider).length;
+  return unreadItems + pendingInvites;
 });
