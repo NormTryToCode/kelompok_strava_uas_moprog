@@ -14,7 +14,6 @@ class _SeedDayPreset {
   });
 }
 
-/// Seeds Mon–Sun distance, calories, and steps into Firestore until live recording lands.
 class WeeklyActivitySeeder {
   WeeklyActivitySeeder._();
 

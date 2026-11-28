@@ -18,7 +18,6 @@ typedef WeeklySaveDoc = Future<void> Function(
   bool merge,
 });
 
-/// Storage contract for reading and updating weekly activity summaries.
 abstract class WeeklyActivityStore {
   Future<WeeklyActivityData?> fetchWeek({
     required String userId,
@@ -36,7 +35,6 @@ abstract class WeeklyActivityStore {
   });
 }
 
-/// Firestore-backed weekly activity repository with local SharedPreferences fallback.
 class FirestoreWeeklyActivityRepository implements WeeklyActivityStore {
   static const String collectionName = 'weekly_activities';
   static const String _prefsPrefix = 'weekly_activity_cache_';
