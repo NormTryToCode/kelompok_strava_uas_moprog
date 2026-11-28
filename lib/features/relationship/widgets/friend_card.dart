@@ -16,23 +16,30 @@ class FriendCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Material(
         color: Styles.surface,
         borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: CircleAvatar(
-          backgroundColor: Styles.accent,
-          child: Text(friend.name[0], style: const TextStyle(color: Colors.white)),
-        ),
-        title: Text(friend.name, style: const TextStyle(color: Colors.white)),
-        subtitle: Text('@${friend.username}', style: const TextStyle(color: Colors.white70)),
-        trailing: IconButton(
-          icon: const Icon(Icons.person_remove, color: Colors.white70),
-          onPressed: onRemove,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          onTap: onTap,
+          leading: CircleAvatar(
+            backgroundColor: Styles.accent,
+            child: Text(
+              friend.name.isNotEmpty ? friend.name[0] : '?',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          title: Text(friend.name, style: const TextStyle(color: Colors.white)),
+          subtitle: Text(
+            '@${friend.username}',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.person_remove, color: Colors.white70),
+            onPressed: onRemove,
+          ),
         ),
       ),
     );

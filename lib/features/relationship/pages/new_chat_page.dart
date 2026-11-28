@@ -6,7 +6,14 @@ import 'package:kelompok_strava_uas_moprog/features/relationship/pages/conversat
 import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/user_repository.dart';
 
 class NewChatPage extends StatefulWidget {
-  const NewChatPage({super.key});
+  final String title;
+  final void Function(UserProfile user)? onSelect;
+
+  const NewChatPage({
+    super.key,
+    this.title = 'Pesan baru',
+    this.onSelect,
+  });
 
   @override
   State<NewChatPage> createState() => _NewChatPageState();
@@ -50,7 +57,7 @@ class _NewChatPageState extends State<NewChatPage> {
     return Scaffold(
       backgroundColor: Styles.canvas,
       appBar: AppBar(
-        title: const Text('Pesan baru'),
+        title: Text(widget.title),
         backgroundColor: Styles.canvas,
         foregroundColor: Colors.white,
       ),
@@ -104,15 +111,22 @@ class _NewChatPageState extends State<NewChatPage> {
                               '@${u.username}',
                               style: const TextStyle(color: Colors.white70),
                             ),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ConversationPage(
-                                  peerUid: u.uid,
-                                  peerName: u.name,
+                            onTap: () {
+                              final select = widget.onSelect;
+                              if (select != null) {
+                                select(u);
+                                return;
+                              }
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ConversationPage(
+                                    peerUid: u.uid,
+                                    peerName: u.name,
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           );
                         },
                       ),
