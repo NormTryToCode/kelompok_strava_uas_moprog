@@ -50,6 +50,22 @@ class FeedPostsNotifier extends Notifier<List<FeedPost>> {
     await _store.save(updated);
   }
 
+  Future<void> addComment(String postId, FeedComment comment) async {
+    FeedPost? updated;
+    final next = [
+      for (final item in state)
+        if (item.id == postId)
+          updated = item.copyWith(
+            comments: List.unmodifiable([...item.comments, comment]),
+          )
+        else
+          item,
+    ];
+    if (updated == null) return;
+    state = List.unmodifiable(next);
+    await _store.save(updated);
+  }
+  
   Future<void> remove(String id) async {
     final next = state.where((item) => item.id != id).toList();
     if (next.length == state.length) return;

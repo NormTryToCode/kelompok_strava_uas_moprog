@@ -126,6 +126,11 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final unit = ref.read(settingsProvider).unit;
+    final rawDistance = parseDistance(_distance.text)!;
+    final distanceKm =
+        unit == SettingsDistanceUnit.miles ? rawDistance / 0.621371 : rawDistance;
+
     final activity = ManualActivity(
       id: widget.existing?.id ??
           DateTime.now().microsecondsSinceEpoch.toString(),
@@ -133,13 +138,12 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
       type: _type,
       date: _date,
       duration: parseDuration(_duration.text)!,
-      distanceKm: parseDistance(_distance.text)!,
+      distanceKm: distanceKm,
       notes: _notes.text.trim(),
     );
 
     await ref.read(activityProvider.notifier).add(activity);
     if (!_isEditing) {
-      final unit = ref.read(settingsProvider).unit;
       ref.read(notificationsProvider.notifier).notifyActivityLogged(
             title: activity.title,
             distanceLabel: formatDistanceWithUnit(activity.distanceKm, unit),
@@ -152,6 +156,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
               date: activity.date,
             );
       } catch (_) {
+        // Lewati jika Firebase belum diinisialisasi (misalnya di widget test).
       }
     }
     if (!mounted) return;
@@ -166,6 +171,7 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
 
   @override
   Widget build(BuildContext context) {
+    final unit = ref.watch(settingsProvider).unit;
     return Scaffold(
       backgroundColor: Styles.canvas,
       appBar: AppHeader(
@@ -248,7 +254,10 @@ class _ManualActivityPageState extends ConsumerState<ManualActivityPage> {
                 decimal: true,
               ),
               style: const TextStyle(color: Styles.textPrimary),
-              decoration: _decoration('Distance (km)', hint: '5.2'),
+              decoration: _decoration(
+                'Distance (${unit.abbreviation})',
+                hint: '5.2',
+              ),
               validator: (value) => parseDistance(value ?? '') == null
                   ? 'Enter a distance greater than 0'
                   : null,

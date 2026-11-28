@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/activity_list_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/activity/manual_activity_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/posts/create_feed_post_page.dart';
@@ -22,11 +23,18 @@ Future<void> openAddAction(BuildContext context, AddAction action) async {
       );
       return;
     case AddAction.photo:
-      await Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => const CreateFeedPostPage(pickPhotoOnOpen: true),
-        ),
-      );
+      try {
+        final picked =
+            await ImagePicker().pickImage(source: ImageSource.gallery);
+        if (picked == null || !context.mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => CreateFeedPostPage(initialImagePath: picked.path),
+          ),
+        );
+      } catch (_) {
+        return;
+      }
       return;
   }
 }
