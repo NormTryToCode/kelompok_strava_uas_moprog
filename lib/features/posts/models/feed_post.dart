@@ -33,6 +33,7 @@ class FeedComment {
 
 class FeedPost {
   final String id;
+  final String authorId;
   final String authorName;
   final String? authorPhotoUrl;
   final String title;
@@ -42,6 +43,7 @@ class FeedPost {
   final DateTime createdAt;
   final int likes;
   final bool isLiked;
+  final List<String> likedBy;
   final List<FeedComment> comments;
 
   const FeedPost({
@@ -50,13 +52,20 @@ class FeedPost {
     required this.title,
     required this.caption,
     required this.createdAt,
+    this.authorId = '',
     this.authorPhotoUrl,
     this.tag = 'Workout',
     this.imagePath,
     this.likes = 0,
     this.isLiked = false,
+    this.likedBy = const <String>[],
     this.comments = const <FeedComment>[],
   });
+
+  bool isLikedBy(String userId) {
+    if (likedBy.isNotEmpty) return likedBy.contains(userId);
+    return isLiked;
+  }
 
   FeedPost copyWith({
     String? title,
@@ -65,10 +74,12 @@ class FeedPost {
     String? imagePath,
     int? likes,
     bool? isLiked,
+    List<String>? likedBy,
     List<FeedComment>? comments,
   }) {
     return FeedPost(
       id: id,
+      authorId: authorId,
       authorName: authorName,
       authorPhotoUrl: authorPhotoUrl,
       title: title ?? this.title,
@@ -78,6 +89,7 @@ class FeedPost {
       createdAt: createdAt,
       likes: likes ?? this.likes,
       isLiked: isLiked ?? this.isLiked,
+      likedBy: likedBy ?? this.likedBy,
       comments: comments ?? this.comments,
     );
   }
@@ -85,6 +97,7 @@ class FeedPost {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'authorId': authorId,
       'authorName': authorName,
       'authorPhotoUrl': authorPhotoUrl,
       'title': title,
@@ -94,6 +107,7 @@ class FeedPost {
       'createdAt': createdAt.toIso8601String(),
       'likes': likes,
       'isLiked': isLiked,
+      'likedBy': likedBy,
       'comments': [for (final c in comments) c.toJson()],
     };
   }
@@ -108,8 +122,14 @@ class FeedPost {
           ]
         : const <FeedComment>[];
 
+    final rawLikedBy = json['likedBy'];
+    final parsedLikedBy = rawLikedBy is List
+        ? rawLikedBy.whereType<String>().toList(growable: false)
+        : const <String>[];
+
     return FeedPost(
       id: json['id'] as String? ?? '',
+      authorId: json['authorId'] as String? ?? '',
       authorName: json['authorName'] as String? ?? 'Stride Athlete',
       authorPhotoUrl: json['authorPhotoUrl'] as String?,
       title: json['title'] as String? ?? '',
@@ -118,8 +138,9 @@ class FeedPost {
       imagePath: json['imagePath'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
-      likes: (json['likes'] as num?)?.toInt() ?? 0,
+      likes: (json['likes'] as num?)?.toInt() ?? parsedLikedBy.length,
       isLiked: json['isLiked'] as bool? ?? false,
+      likedBy: List.unmodifiable(parsedLikedBy),
       comments: List.unmodifiable(parsedComments),
     );
   }

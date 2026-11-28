@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/storage_user_id.dart';
 import 'package:kelompok_strava_uas_moprog/core/extensions/date_time_extensions.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/posts/create_feed_post_page.dart';
@@ -18,8 +19,7 @@ class HomePostsSection extends ConsumerWidget {
     );
   }
 
-  void _openComments(BuildContext context, WidgetRef ref, FeedPost post) {
-    final controller = TextEditingController();
+  void _openComments(BuildContext context, FeedPost post) {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -27,138 +27,64 @@ class HomePostsSection extends ConsumerWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (sheetContext) => Padding(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          16,
-          16,
-          MediaQuery.of(sheetContext).viewInsets.bottom + 16,
+      builder: (_) => _CommentsSheet(post: post),
+    );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    FeedPost post,
+    String currentUid,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Styles.surface,
+        title: const Text(
+          'Delete Post?',
+          style: TextStyle(
+            color: Styles.textPrimary,
+            fontWeight: FontWeight.w800,
+          ),
         ),
-        child: Consumer(
-          builder: (context, innerRef, _) {
-            final latest = innerRef
-                .watch(feedPostsProvider)
-                .firstWhere((p) => p.id == post.id, orElse: () => post);
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Comments (${latest.comments.length})',
-                  style: const TextStyle(
-                    color: Styles.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                if (latest.comments.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
-                      'No comments yet. Be the first to cheer!',
-                      style: TextStyle(color: Styles.textSecondary),
-                    ),
-                  )
-                else
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 240),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: latest.comments.length,
-                      itemBuilder: (_, i) {
-                        final comment = latest.comments[i];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${comment.authorName} • ${comment.createdAt.timeAgo()}',
-                                style: const TextStyle(
-                                  color: Styles.primaryLight,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                comment.text,
-                                style: const TextStyle(
-                                  color: Styles.textPrimary,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        style: const TextStyle(color: Styles.textPrimary),
-                        decoration: InputDecoration(
-                          hintText: 'Write a comment...',
-                          hintStyle: const TextStyle(color: Styles.textMuted),
-                          filled: true,
-                          fillColor: Styles.fieldFill,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Styles.border),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton.filled(
-                      style: IconButton.styleFrom(
-                        backgroundColor: Styles.primary,
-                        foregroundColor: Styles.textPrimary,
-                      ),
-                      icon: const Icon(Icons.send_rounded, size: 18),
-                      onPressed: () {
-                        final text = controller.text.trim();
-                        if (text.isEmpty) return;
-                        String author = 'Stride Athlete';
-                        try {
-                          final user = FirebaseAuth.instance.currentUser;
-                          final name = user?.displayName?.trim();
-                          if (name != null && name.isNotEmpty) author = name;
-                        } catch (_) {}
-                        innerRef.read(feedPostsProvider.notifier).addComment(
-                              latest.id,
-                              FeedComment(
-                                id: 'c_${DateTime.now().microsecondsSinceEpoch}',
-                                authorName: author,
-                                text: text,
-                                createdAt: DateTime.now(),
-                              ),
-                            );
-                        controller.clear();
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
+        content: Text(
+          'Remove "${post.title}" from the community feed?',
+          style: const TextStyle(color: Styles.textSecondary),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Styles.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text(
+              'Delete',
+              style: TextStyle(
+                color: Styles.danger,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
       ),
     );
+
+    if (confirmed == true) {
+      await ref
+          .read(feedPostsProvider.notifier)
+          .remove(post.id, requesterId: currentUid);
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final posts = ref.watch(feedPostsProvider);
+    final currentUid = resolveStorageUserId();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -237,12 +163,171 @@ class HomePostsSection extends ConsumerWidget {
             for (final post in posts)
               _FeedPostCard(
                 post: post,
-                onLike: () =>
-                    ref.read(feedPostsProvider.notifier).toggleLike(post.id),
-                onComment: () => _openComments(context, ref, post),
-                onDelete: () =>
-                    ref.read(feedPostsProvider.notifier).remove(post.id),
+                isLiked: post.isLikedBy(currentUid),
+                canDelete:
+                    post.authorId.isNotEmpty && post.authorId == currentUid,
+                onLike: () => ref
+                    .read(feedPostsProvider.notifier)
+                    .toggleLike(post.id, userId: currentUid),
+                onComment: () => _openComments(context, post),
+                onDelete: () => _confirmDelete(context, ref, post, currentUid),
               ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommentsSheet extends ConsumerStatefulWidget {
+  final FeedPost post;
+
+  const _CommentsSheet({required this.post});
+
+  @override
+  ConsumerState<_CommentsSheet> createState() => _CommentsSheetState();
+}
+
+class _CommentsSheetState extends ConsumerState<_CommentsSheet> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _resolveCommentAuthor() {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final name = user?.displayName?.trim();
+      if (name != null && name.isNotEmpty) return name;
+      final emailPrefix = user?.email?.split('@').first.trim();
+      if (emailPrefix != null && emailPrefix.isNotEmpty) return emailPrefix;
+    } catch (_) {}
+    return 'Stride Athlete';
+  }
+
+  void _submit(String postId) {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    ref.read(feedPostsProvider.notifier).addComment(
+          postId,
+          FeedComment(
+            id: 'c_${DateTime.now().microsecondsSinceEpoch}',
+            authorName: _resolveCommentAuthor(),
+            text: text,
+            createdAt: DateTime.now(),
+          ),
+        );
+    _controller.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final latest = ref
+        .watch(feedPostsProvider)
+        .firstWhere((p) => p.id == widget.post.id, orElse: () => widget.post);
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        16,
+        16,
+        16,
+        MediaQuery.of(context).viewInsets.bottom + 16,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Comments (${latest.comments.length})',
+            style: const TextStyle(
+              color: Styles.textPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (latest.comments.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'No comments yet. Be the first to cheer!',
+                style: TextStyle(color: Styles.textSecondary),
+              ),
+            )
+          else
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 240),
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: latest.comments.length,
+                itemBuilder: (_, i) {
+                  final comment = latest.comments[i];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${comment.authorName} • ${comment.createdAt.timeAgo()}',
+                          style: const TextStyle(
+                            color: Styles.primaryLight,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          comment.text,
+                          style: const TextStyle(
+                            color: Styles.textPrimary,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _submit(latest.id),
+                  style: const TextStyle(color: Styles.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: 'Write a comment...',
+                    hintStyle: const TextStyle(color: Styles.textMuted),
+                    filled: true,
+                    fillColor: Styles.fieldFill,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Styles.border),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton.filled(
+                style: IconButton.styleFrom(
+                  backgroundColor: Styles.primary,
+                  foregroundColor: Styles.textPrimary,
+                ),
+                icon: const Icon(Icons.send_rounded, size: 18),
+                onPressed: () => _submit(latest.id),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -251,12 +336,16 @@ class HomePostsSection extends ConsumerWidget {
 
 class _FeedPostCard extends StatelessWidget {
   final FeedPost post;
+  final bool isLiked;
+  final bool canDelete;
   final VoidCallback onLike;
   final VoidCallback onComment;
   final VoidCallback onDelete;
 
   const _FeedPostCard({
     required this.post,
+    required this.isLiked,
+    required this.canDelete,
     required this.onLike,
     required this.onComment,
     required this.onDelete,
@@ -346,15 +435,16 @@ class _FeedPostCard extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                tooltip: 'Delete ${post.title}',
-                icon: const Icon(
-                  Icons.delete_outline,
-                  color: Styles.textMuted,
-                  size: 20,
+              if (canDelete)
+                IconButton(
+                  tooltip: 'Delete ${post.title}',
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    color: Styles.textMuted,
+                    size: 20,
+                  ),
+                  onPressed: onDelete,
                 ),
-                onPressed: onDelete,
-              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -403,10 +493,9 @@ class _FeedPostCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        post.isLiked ? Icons.favorite : Icons.favorite_border,
+                        isLiked ? Icons.favorite : Icons.favorite_border,
                         size: 18,
-                        color:
-                            post.isLiked ? Styles.danger : Styles.textSecondary,
+                        color: isLiked ? Styles.danger : Styles.textSecondary,
                       ),
                       const SizedBox(width: 6),
                       Text(
