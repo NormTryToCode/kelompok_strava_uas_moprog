@@ -87,7 +87,7 @@ class WelcomeBannerWidget extends ConsumerWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   color: Styles.textPrimary,
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.3,
                 ),
