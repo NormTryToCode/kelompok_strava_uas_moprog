@@ -1,6 +1,6 @@
 import 'dart:math';
 
-const quotes = ['Are You Sonic?', 'Need for speed', 'I am fast'];
+const quotes = ['Are You Sonic?', 'Need For Speed', 'I Am Fast', 'I am kid flash'];
 
 String getRandomQuote(){
   var random = Random();
@@ -10,6 +10,3 @@ String getRandomQuote(){
 
 }
 
-void main(List<String> args) {
-  print(getRandomQuote());
-}

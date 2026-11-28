@@ -6,6 +6,8 @@ import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/edit_profile/models/athlete_profile_data.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/edit_profile/providers/athlete_profile_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/profile/shared/widgets/athlete_avatar_widget.dart';
+import 'package:kelompok_strava_uas_moprog/features/home/data/welcome_quotes_data.dart';
+
 
 class WelcomeBannerWidget extends ConsumerWidget {
   const WelcomeBannerWidget({super.key});
@@ -80,7 +82,7 @@ class WelcomeBannerWidget extends ConsumerWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                userName,
+                "${userName}, ${getRandomQuote()}",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
