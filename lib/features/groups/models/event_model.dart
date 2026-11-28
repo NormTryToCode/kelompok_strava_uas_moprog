@@ -81,7 +81,6 @@ class PaceRange {
 class EventRecurrence {
   final bool isMonthly;
   final int interval;
-
   final bool monthlyByWeekday;
 
   const EventRecurrence({
@@ -220,6 +219,7 @@ class Event {
   Event copyWith({
     int? attendeeCount,
     bool? isAttending,
+    List<String>? participantIds,
   }) {
     return Event(
       id: id,
@@ -248,7 +248,7 @@ class Event {
       clubMemberCount: clubMemberCount,
       clubDescription: clubDescription,
       organizerName: organizerName,
-      participantIds: participantIds,
+      participantIds: participantIds ?? this.participantIds,
     );
   }
 
@@ -308,13 +308,20 @@ class Event {
     };
   }
 
-  factory Event.fromJson(Map<String, dynamic> json) {
+  factory Event.fromJson(Map<String, dynamic> json, {String? currentUid}) {
     final sportId = json['sport'];
     final place = json['location'];
     final recurrence = json['recurrence'];
     final paceUnitName = json['paceUnit'];
     final surfaceId = json['surface'];
     final ranges = json['paceRanges'];
+    final participantIds =
+        (json['participantIds'] as List?)?.whereType<String>().toList() ??
+            const [];
+    final hasUid = currentUid != null && currentUid.isNotEmpty;
+    final isAttending = hasUid
+        ? participantIds.contains(currentUid)
+        : (json['isAttending'] as bool? ?? false);
 
     return Event(
       id: json['id'] as String? ?? '',
@@ -355,11 +362,13 @@ class Event {
           : null,
       paceRanges: ranges is List
           ? ranges
-              .whereType<Map>()
-              .map((r) => PaceRange(
-                    min: (r['min'] as num?)?.toDouble() ?? 0,
-                    max: (r['max'] as num?)?.toDouble() ?? 0,
-                  ))
+              .whereType()
+              .map(
+                (r) => PaceRange(
+                  min: (r['min'] as num?)?.toDouble() ?? 0,
+                  max: (r['max'] as num?)?.toDouble() ?? 0,
+                ),
+              )
               .toList()
           : const [],
       distance: (json['distance'] as num?)?.toDouble(),
@@ -376,17 +385,14 @@ class Event {
       womenOnly: json['womenOnly'] as bool? ?? false,
       clubMembersOnly: json['clubMembersOnly'] as bool? ?? true,
       capacity: (json['capacity'] as num?)?.toInt(),
-      attendeeCount: (json['attendeeCount'] as num?)?.toInt() ?? 1,
+      attendeeCount: participantIds.length,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
-      isAttending: json['isAttending'] as bool? ?? true,
+      isAttending: isAttending,
       clubMemberCount: (json['clubMemberCount'] as num?)?.toInt(),
       clubDescription: json['clubDescription'] as String?,
       organizerName: json['organizerName'] as String?,
-      participantIds: (json['participantIds'] as List?)
-              ?.whereType<String>()
-              .toList() ??
-          const [],
+      participantIds: participantIds,
     );
   }
 }

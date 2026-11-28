@@ -92,6 +92,7 @@ class Challenge {
   final bool allowManualActivities;
   final bool publicOnlyLeaderboard;
   final int participantCount;
+  final List<String> participantIds;
   final bool isJoined;
   final double userProgress;
   final List<String> invitedFriendIds;
@@ -117,6 +118,7 @@ class Challenge {
     this.allowManualActivities = false,
     this.publicOnlyLeaderboard = true,
     this.participantCount = 0,
+    this.participantIds = const [],
     this.isJoined = false,
     this.userProgress = 0,
     this.invitedFriendIds = const [],
@@ -137,6 +139,7 @@ class Challenge {
     String? summary,
     String? description,
     int? participantCount,
+    List<String>? participantIds,
     bool? isJoined,
     double? userProgress,
     List<String>? invitedFriendIds,
@@ -161,6 +164,7 @@ class Challenge {
       allowManualActivities: allowManualActivities,
       publicOnlyLeaderboard: publicOnlyLeaderboard,
       participantCount: participantCount ?? this.participantCount,
+      participantIds: participantIds ?? this.participantIds,
       isJoined: isJoined ?? this.isJoined,
       userProgress: userProgress ?? this.userProgress,
       invitedFriendIds: invitedFriendIds ?? this.invitedFriendIds,
@@ -188,6 +192,7 @@ class Challenge {
         'allowManualActivities': allowManualActivities,
         'publicOnlyLeaderboard': publicOnlyLeaderboard,
         'participantCount': participantCount,
+        'participantIds': participantIds,
         'isJoined': isJoined,
         'userProgress': userProgress,
         'invitedFriendIds': invitedFriendIds,
@@ -195,8 +200,15 @@ class Challenge {
         'createdAt': createdAt.toIso8601String(),
       };
 
-  factory Challenge.fromJson(Map<String, dynamic> json) {
+  factory Challenge.fromJson(Map<String, dynamic> json, {String? currentUid}) {
     final boardRaw = json['leaderboard'] as List? ?? const [];
+    final participantIds =
+        (json['participantIds'] as List?)?.whereType<String>().toList() ??
+            const [];
+    final hasUid = currentUid != null && currentUid.isNotEmpty;
+    final isJoined = hasUid
+        ? participantIds.contains(currentUid)
+        : (json['isJoined'] as bool? ?? false);
 
     return Challenge(
       id: json['id'] as String? ?? '',
@@ -234,7 +246,8 @@ class Challenge {
       allowManualActivities: json['allowManualActivities'] as bool? ?? false,
       publicOnlyLeaderboard: json['publicOnlyLeaderboard'] as bool? ?? true,
       participantCount: (json['participantCount'] as num?)?.toInt() ?? 0,
-      isJoined: json['isJoined'] as bool? ?? false,
+      participantIds: participantIds,
+      isJoined: isJoined,
       userProgress: (json['userProgress'] as num?)?.toDouble() ?? 0,
       invitedFriendIds:
           (json['invitedFriendIds'] as List?)?.whereType<String>().toList() ??

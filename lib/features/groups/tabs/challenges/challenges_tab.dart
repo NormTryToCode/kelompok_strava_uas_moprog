@@ -23,17 +23,20 @@ class _ChallengesTabState extends ConsumerState<ChallengesTab> {
   String? _spotlightId;
 
   @override
-  void initState() {
-    super.initState();
-    final initial = ref.read(challengesProvider);
-    if (initial.isNotEmpty) {
-      _spotlightId = initial[math.Random().nextInt(initial.length)].id;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final allChallenges = ref.watch(challengesProvider);
+    final challengesAsync = ref.watch(challengesProvider);
+    if (challengesAsync.isLoading && !challengesAsync.hasValue) {
+      return const Center(
+        child: CircularProgressIndicator(color: Styles.primary),
+      );
+    }
+
+    final allChallenges = challengesAsync.valueOrNull ?? const <Challenge>[];
+    if (_spotlightId == null && allChallenges.isNotEmpty) {
+      _spotlightId =
+          allChallenges[math.Random().nextInt(allChallenges.length)].id;
+    }
+
     final spotlight = allChallenges.isEmpty
         ? null
         : allChallenges.firstWhere(
@@ -63,6 +66,83 @@ class _ChallengesTabState extends ConsumerState<ChallengesTab> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(0, 8, 0, 28),
       children: [
+        if (joined.isNotEmpty) ...[
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Your Active Challenges',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Styles.textPrimary,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                for (var i = 0; i < joined.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 10),
+                  InkWell(
+                    onTap: () => ChallengeDetailPage.open(context, joined[i]),
+                    borderRadius: BorderRadius.circular(Radii.card),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: Styles.cardDecoration(radius: Radii.card),
+                      child: Row(
+                        children: [
+                          ChallengeBadgeEmblem(
+                            code: joined[i].reward.badgeCode,
+                            seedId: joined[i].id,
+                            sportIcon: joined[i].qualifyingSports.isNotEmpty
+                                ? joined[i].qualifyingSports.first.icon
+                                : ClubSport.allSports.icon,
+                            size: 46,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  joined[i].title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Styles.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  '${formatChallengeTarget(joined[i])} \u00b7 ${joined[i].organizingClubName}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    color: Styles.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Styles.textMuted,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 22),
+        ],
         if (spotlight != null) ...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -171,83 +251,6 @@ class _ChallengesTabState extends ConsumerState<ChallengesTab> {
                       ref.read(challengesProvider.notifier).toggleJoin(ch.id),
                 ),
         ),
-        if (joined.isNotEmpty) ...[
-          const SizedBox(height: 26),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Your Active Challenges',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: Styles.textPrimary,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                for (var i = 0; i < joined.length; i++) ...[
-                  if (i > 0) const SizedBox(height: 10),
-                  InkWell(
-                    onTap: () => ChallengeDetailPage.open(context, joined[i]),
-                    borderRadius: BorderRadius.circular(Radii.card),
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: Styles.cardDecoration(radius: Radii.card),
-                      child: Row(
-                        children: [
-                          ChallengeBadgeEmblem(
-                            code: joined[i].reward.badgeCode,
-                            seedId: joined[i].id,
-                            sportIcon: joined[i].qualifyingSports.isNotEmpty
-                                ? joined[i].qualifyingSports.first.icon
-                                : ClubSport.allSports.icon,
-                            size: 46,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  joined[i].title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 14.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: Styles.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  '${formatChallengeTarget(joined[i])} \u00b7 ${joined[i].organizingClubName}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 12.5,
-                                    color: Styles.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Icon(
-                            Icons.chevron_right,
-                            color: Styles.textMuted,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }

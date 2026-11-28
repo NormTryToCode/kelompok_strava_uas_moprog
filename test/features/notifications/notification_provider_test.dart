@@ -1,26 +1,57 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/models/notification_item.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_store.dart';
 
-ProviderContainer _container() {
-  final container = ProviderContainer();
+List<NotificationItem> _fixtures() => [
+      NotificationItem(
+        id: 'n1',
+        title: 'First alert',
+        body: 'Body 1',
+        createdAt: DateTime(2026, 11, 20),
+      ),
+      NotificationItem(
+        id: 'n2',
+        title: 'Second alert',
+        body: 'Body 2',
+        createdAt: DateTime(2026, 11, 21),
+      ),
+      NotificationItem(
+        id: 'n3',
+        title: 'Third alert',
+        body: 'Body 3',
+        createdAt: DateTime(2026, 11, 22),
+      ),
+    ];
+
+ProviderContainer _container({List<NotificationItem>? initial}) {
+  final container = ProviderContainer(
+    overrides: [
+      notificationStoreProvider.overrideWithValue(
+        MemoryNotificationStore(initial),
+      ),
+      settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
+    ],
+  );
   addTearDown(container.dispose);
   return container;
 }
 
 void main() {
-  test('awal: semua notifikasi dummy belum dibaca', () {
+  test('awal: daftar notifikasi kosong sebelum dimuat dari Firestore', () {
     final container = _container();
-    final total = container.read(notificationsProvider).length;
 
-    expect(total, greaterThan(0));
-    expect(container.read(unreadCountProvider), total);
+    expect(container.read(notificationsProvider), isEmpty);
+    expect(container.read(unreadCountProvider), 0);
   });
 
-  test('markAsRead hanya menandai satu notifikasi', () {
-    final container = _container();
+  test('markAsRead hanya menandai satu notifikasi', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
+
     final total = container.read(notificationsProvider).length;
     final id = container.read(notificationsProvider).first.id;
 
@@ -31,8 +62,9 @@ void main() {
     expect(container.read(unreadCountProvider), total - 1);
   });
 
-  test('markAsRead dengan id tidak dikenal tidak mengubah apa pun', () {
-    final container = _container();
+  test('markAsRead dengan id tidak dikenal tidak mengubah apa pun', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
     final before = container.read(unreadCountProvider);
 
     container.read(notificationsProvider.notifier).markAsRead('tidak-ada');
@@ -40,8 +72,9 @@ void main() {
     expect(container.read(unreadCountProvider), before);
   });
 
-  test('markAllAsRead mengosongkan jumlah belum dibaca', () {
-    final container = _container();
+  test('markAllAsRead mengosongkan jumlah belum dibaca', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
 
     container.read(notificationsProvider.notifier).markAllAsRead();
 
@@ -49,7 +82,9 @@ void main() {
   });
 
   test('unreadCountProvider memberi tahu listener saat berubah', () async {
-    final container = _container();
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
+
     final initial = container.read(unreadCountProvider);
     final values = <int>[];
     container.listen<int>(
@@ -64,8 +99,10 @@ void main() {
     expect(values, [initial, 0]);
   });
 
-  test('remove menghapus satu notifikasi', () {
-    final container = _container();
+  test('remove menghapus satu notifikasi', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
+
     final notifier = container.read(notificationsProvider.notifier);
     final before = container.read(notificationsProvider).length;
     final id = container.read(notificationsProvider).first.id;
@@ -77,8 +114,10 @@ void main() {
     expect(after.any((e) => e.id == id), isFalse);
   });
 
-  test('restore mengembalikan notifikasi ke posisi semula', () {
-    final container = _container();
+  test('restore mengembalikan notifikasi ke posisi semula', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
+
     final notifier = container.read(notificationsProvider.notifier);
     final ids = container.read(notificationsProvider).map((e) => e.id).toList();
     final removed = container.read(notificationsProvider)[1];
@@ -89,8 +128,10 @@ void main() {
     expect(container.read(notificationsProvider).map((e) => e.id).toList(), ids);
   });
 
-  test('restore dengan indeks di luar batas menaruhnya di ujung', () {
-    final container = _container();
+  test('restore dengan indeks di luar batas menaruhnya di ujung', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
+
     final notifier = container.read(notificationsProvider.notifier);
     final removed = container.read(notificationsProvider).first;
 
@@ -100,8 +141,10 @@ void main() {
     expect(container.read(notificationsProvider).last.id, removed.id);
   });
 
-  test('restore tidak menambah notifikasi yang sudah ada', () {
-    final container = _container();
+  test('restore tidak menambah notifikasi yang sudah ada', () async {
+    final container = _container(initial: _fixtures());
+    await container.read(notificationsProvider.notifier).load();
+
     final notifier = container.read(notificationsProvider.notifier);
     final existing = container.read(notificationsProvider).first;
     final before = container.read(notificationsProvider).length;
@@ -110,16 +153,16 @@ void main() {
 
     expect(container.read(notificationsProvider).length, before);
   });
+
   test('notifyActivityLogged menambahkan notifikasi belum dibaca di paling atas', () {
     final container = _container();
-    final before = container.read(unreadCountProvider);
 
     container.read(notificationsProvider.notifier).notifyActivityLogged(
           title: 'Morning Run',
           distanceLabel: '5 km',
         );
 
-    expect(container.read(unreadCountProvider), before + 1);
+    expect(container.read(unreadCountProvider), 1);
     expect(
       container.read(notificationsProvider).first.title,
       'Activity logged: Morning Run',
@@ -127,38 +170,26 @@ void main() {
   });
 
   test('notifyFollowing menambah notifikasi saat preferensi followers aktif', () {
-    final container = ProviderContainer(
-      overrides: [
-        settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
-      ],
-    );
-    addTearDown(container.dispose);
+    final container = _container();
 
-    final before = container.read(unreadCountProvider);
     container
         .read(notificationsProvider.notifier)
         .notifyFollowing(personName: 'Dewi Anggraini');
 
-    expect(container.read(unreadCountProvider), before + 1);
+    expect(container.read(unreadCountProvider), 1);
   });
 
   test('notifyFollowing dilewati saat preferensi followers dimatikan', () async {
-    final container = ProviderContainer(
-      overrides: [
-        settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
-      ],
-    );
-    addTearDown(container.dispose);
+    final container = _container();
 
     await container
         .read(settingsProvider.notifier)
         .setNotification(NotificationPref.followers, false);
-    final before = container.read(unreadCountProvider);
 
     container
         .read(notificationsProvider.notifier)
         .notifyFollowing(personName: 'Dewi Anggraini');
 
-    expect(container.read(unreadCountProvider), before);
+    expect(container.read(unreadCountProvider), 0);
   });
 }

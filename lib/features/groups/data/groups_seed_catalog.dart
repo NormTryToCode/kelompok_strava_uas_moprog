@@ -1,6 +1,7 @@
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 
-List<SearchClub> buildDummyClubs() {
+List<SearchClub> buildSeedClubs() {
   return const [
     SearchClub(
       id: 'club1',
@@ -46,34 +47,40 @@ List<SearchClub> buildDummyClubs() {
       memberCount: 6310,
       city: 'Yogyakarta',
     ),
-    SearchClub(
-      id: 'club7',
-      name: 'Medan Road Riders',
-      sport: SportType.cycling,
-      memberCount: 5875,
-      city: 'Medan',
+  ];
+}
+
+List<Person> buildSeedPeople() {
+  return const [
+    Person(
+      id: 'p1',
+      name: 'Dewi Anggraini',
+      location: 'Bandung, West Java',
+      tag: 'Stride athlete',
     ),
-    SearchClub(
-      id: 'club8',
-      name: 'Semarang Morning Run',
-      sport: SportType.running,
-      memberCount: 4932,
-      city: 'Semarang',
-      isVerified: true,
+    Person(
+      id: 'p2',
+      name: 'Rizky Pratama',
+      location: 'Surabaya, East Java',
+      tag: 'Stride athlete',
     ),
-    SearchClub(
-      id: 'club9',
-      name: 'Makassar Harbor Swim',
-      sport: SportType.swimming,
-      memberCount: 2140,
-      city: 'Makassar',
+    Person(
+      id: 'p3',
+      name: 'Maya Lestari',
+      location: 'Yogyakarta',
+      tag: 'Local Legend near you',
     ),
-    SearchClub(
-      id: 'club10',
-      name: 'Malang Hill Walkers',
-      sport: SportType.walking,
-      memberCount: 1890,
-      city: 'Malang',
+    Person(
+      id: 'p4',
+      name: 'Bagas Wicaksono',
+      location: 'Bekasi',
+      tag: 'Local Legend near you',
+    ),
+    Person(
+      id: 'p5',
+      name: 'Nadia Putri',
+      location: 'Medan, North Sumatra',
+      tag: 'Local Legend near you',
     ),
   ];
 }

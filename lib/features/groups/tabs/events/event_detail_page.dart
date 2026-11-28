@@ -8,7 +8,7 @@ import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/widgets/e
 import 'package:kelompok_strava_uas_moprog/features/groups/utils/event_date_format.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/confirm_delete_dialog.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/soft_card.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_people_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -36,8 +36,7 @@ class EventDetailPage extends ConsumerWidget {
     }
   }
 
-  List<Person> _resolveParticipants(Event event) {
-    final allPeople = buildDummyPeople();
+  List<Person> _resolveParticipants(Event event, List<Person> allPeople) {
     final byId = {for (final p in allPeople) p.id: p};
     return [
       for (final id in event.participantIds)
@@ -104,7 +103,10 @@ class EventDetailPage extends ConsumerWidget {
     final lat = event.location?.latitude;
     final lng = event.location?.longitude;
     final hasCoords = !event.isVirtual && lat != null && lng != null;
-    final participants = _resolveParticipants(event);
+    final participants = _resolveParticipants(
+      event,
+      ref.watch(searchPeopleProvider),
+    );
     final kindColor = _kindColor(event.kind);
 
     final fullSchedule =

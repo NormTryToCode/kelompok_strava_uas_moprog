@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/auth/auth_providers.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/models/club_model.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
-import 'package:kelompok_strava_uas_moprog/features/search/data/dummy_people.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/models/user_profile.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/repositories/user_repository.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
+
+final _allRegisteredUsersProvider =
+    FutureProvider.autoDispose<List<UserProfile>>((ref) {
+      return UserRepository.instance.getAll();
+    });
 
 class ClubMembersPage extends ConsumerWidget {
   final Club club;
@@ -19,20 +26,36 @@ class ClubMembersPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentUid = ref.watch(authStateProvider).valueOrNull?.uid;
     final clubs = ref.watch(clubsProvider).valueOrNull ?? const <Club>[];
     final current = clubs.firstWhere(
       (c) => c.id == club.id,
       orElse: () => club,
     );
 
-    final peopleById = {for (final p in buildDummyPeople()) p.id: p};
+    final registeredUsers =
+        ref.watch(_allRegisteredUsersProvider).valueOrNull ??
+        const <UserProfile>[];
+    final peopleById = <String, Person>{
+      for (final u in registeredUsers)
+        u.uid: Person(
+          id: u.uid,
+          name: u.name.isNotEmpty ? u.name : '@${u.username}',
+          location: '@${u.username}',
+          tag: 'Athlete',
+        ),
+    };
+
+    Person resolvePerson(String id) =>
+        peopleById[id] ??
+        Person(id: id, name: 'Athlete', location: 'Member', tag: 'Athlete');
+
     final members = [
       for (final id in current.memberIds)
-        if (peopleById[id] != null) peopleById[id]!,
+        if (id != currentUid) resolvePerson(id),
     ];
     final pendingPeople = [
-      for (final id in current.pendingRequestIds)
-        if (peopleById[id] != null) peopleById[id]!,
+      for (final id in current.pendingRequestIds) resolvePerson(id),
     ];
     final admins = [
       for (final p in members)

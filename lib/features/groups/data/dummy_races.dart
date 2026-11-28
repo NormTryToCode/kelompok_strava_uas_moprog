@@ -13,7 +13,7 @@ List<Race> buildDummyRaces() {
           'A premier flat-to-rolling road marathon celebrating Yogyakarta heritage with full road closures, cheering villages, and certified pacers across every distance tier.',
       sport: ClubSport.byId('running'),
       organizerClubId: 'club6',
-      organizerName: 'Yogyakarta Running Federation',
+      organizerName: 'Yogyakarta Walking Group',
       startDate: DateTime(2027, 6, 20, 5, 0),
       city: 'Yogyakarta',
       region: 'Special Region of Yogyakarta',
@@ -37,7 +37,9 @@ List<Race> buildDummyRaces() {
       minPriceIdr: 250000,
       tags: const ['Road', 'Scenic', 'PB Friendly', 'Medal'],
       registeredCount: 256,
+      registrations: const {'p1': 'hm', 'p3': '10k', 'p4': '5k'},
       isFeatured: true,
+      isRegistered: false,
       createdAt: createdAt,
     ),
     Race(
@@ -71,7 +73,9 @@ List<Race> buildDummyRaces() {
       minPriceIdr: 200000,
       tags: const ['Road', 'Flat', 'City', 'Eco'],
       registeredCount: 239,
+      registrations: const {'p1': '10k', 'p2': 'hm'},
       isFeatured: true,
+      isRegistered: false,
       createdAt: createdAt,
     ),
     Race(
@@ -105,6 +109,8 @@ List<Race> buildDummyRaces() {
       minPriceIdr: 420000,
       tags: const ['Trail', 'Mountain', 'Technical', 'Cool Weather'],
       registeredCount: 148,
+      registrations: const {'p3': '30k', 'p5': '15k'},
+      isRegistered: false,
       createdAt: createdAt,
     ),
     Race(
@@ -137,7 +143,9 @@ List<Race> buildDummyRaces() {
       minPriceIdr: 550000,
       tags: const ['Cycling', 'Coastal', 'KOM'],
       registeredCount: 184,
+      registrations: const {'p2': '120k', 'p4': '65k'},
       isFeatured: true,
+      isRegistered: false,
       createdAt: createdAt,
     ),
     Race(
@@ -169,6 +177,8 @@ List<Race> buildDummyRaces() {
       minPriceIdr: 0,
       tags: const ['Free', 'Road', 'Flat', 'City'],
       registeredCount: 92,
+      registrations: const {'p1': '10k', 'p5': '10k'},
+      isRegistered: false,
       createdAt: createdAt,
     ),
   ];

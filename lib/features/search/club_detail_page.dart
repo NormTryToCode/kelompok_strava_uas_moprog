@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/joined_clubs_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
 
-class SearchClubDetailPage extends StatefulWidget {
+class SearchClubDetailPage extends ConsumerWidget {
   final SearchClub club;
 
   const SearchClubDetailPage({super.key, required this.club});
 
   @override
-  State<SearchClubDetailPage> createState() => _SearchClubDetailPageState();
-}
-
-class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
-  bool _joined = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final club = _joined
-        ? widget.club.copyWith(memberCount: widget.club.memberCount + 1)
-        : widget.club;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final joinedIds = ref.watch(joinedClubsProvider);
+    final isJoined = joinedIds.contains(club.id);
+    final displayedClub = isJoined
+        ? club.copyWith(memberCount: club.memberCount + 1)
+        : club;
 
     return Scaffold(
       backgroundColor: Styles.canvas,
@@ -30,36 +28,49 @@ class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              club.name,
+              displayedClub.name,
               style: const TextStyle(
-                color: Styles.primaryLight,
+                color: Styles.textPrimary,
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              club.subtitle,
-              style: const TextStyle(color: Colors.white70, fontSize: 16),
+              displayedClub.subtitle,
+              style: const TextStyle(color: Styles.textSecondary, fontSize: 16),
             ),
             const SizedBox(height: 4),
             Text(
-              club.sport.label,
-              style: const TextStyle(color: Styles.accent, fontSize: 15),
+              displayedClub.sport.label,
+              style: const TextStyle(
+                color: Styles.primaryLight,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const Spacer(),
             SizedBox(
               width: double.infinity,
               height: 52,
               child: FilledButton(
-                onPressed: () => setState(() => _joined = !_joined),
+                onPressed: () {
+                  final justJoined =
+                      ref.read(joinedClubsProvider.notifier).toggle(club.id);
+                  if (justJoined) {
+                    ref
+                        .read(notificationsProvider.notifier)
+                        .notifyClubJoined(clubName: club.name);
+                  }
+                },
                 style: FilledButton.styleFrom(
-                  backgroundColor: _joined ? Colors.white12 : Styles.accent,
-                  foregroundColor: Styles.primaryLight,
+                  backgroundColor:
+                      isJoined ? Styles.surfaceElevated : Styles.primary,
+                  foregroundColor: Styles.textPrimary,
                   shape: const StadiumBorder(),
                 ),
                 child: Text(
-                  _joined ? 'Joined' : 'Join Club',
+                  isJoined ? 'Joined' : 'Join Club',
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
@@ -73,4 +84,3 @@ class _SearchClubDetailPageState extends State<SearchClubDetailPage> {
     );
   }
 }
-

@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/models/person.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_history_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/search/search_history_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/tabs/friends_tab.dart';
+
+const _fixturePeople = [
+  Person(
+    id: 'p1',
+    name: 'Dewi Anggraini',
+    location: 'Bandung, West Java',
+    tag: 'Stride athlete',
+  ),
+];
+
+const _fixtureClubs = [
+  SearchClub(
+    id: 'club5',
+    name: 'Bali Open Water Swimmers',
+    sport: SportType.swimming,
+    memberCount: 8420,
+    city: 'Denpasar',
+    isVerified: true,
+  ),
+];
 
 ProviderContainer _container({List<String>? initial}) {
   final container = ProviderContainer(
     overrides: [
+      searchHistoryStoreProvider.overrideWithValue(MemorySearchHistoryStore()),
       if (initial != null)
         searchHistoryProvider.overrideWith(
           () => SearchHistoryNotifier(initial: initial),
@@ -19,12 +43,19 @@ ProviderContainer _container({List<String>? initial}) {
 
 Widget _wrap({ProviderContainer? container}) {
   const app = MaterialApp(
-    home: Scaffold(body: FriendsTab()),
+    home: Scaffold(
+      body: FriendsTab(people: _fixturePeople, clubs: _fixtureClubs),
+    ),
   );
   if (container != null) {
     return UncontrolledProviderScope(container: container, child: app);
   }
-  return const ProviderScope(child: app);
+  return ProviderScope(
+    overrides: [
+      searchHistoryStoreProvider.overrideWithValue(MemorySearchHistoryStore()),
+    ],
+    child: app,
+  );
 }
 
 void main() {

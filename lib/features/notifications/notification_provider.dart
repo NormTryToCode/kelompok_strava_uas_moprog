@@ -1,11 +1,30 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kelompok_strava_uas_moprog/features/notifications/data/dummy_notifications.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/models/notification_item.dart';
+import 'package:kelompok_strava_uas_moprog/features/notifications/notification_store.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_provider.dart';
 
+final notificationStoreProvider = Provider<NotificationStore>((ref) {
+  return FirestoreNotificationStore();
+});
+
 class NotificationsNotifier extends Notifier<List<NotificationItem>> {
+  NotificationStore get _store => ref.read(notificationStoreProvider);
+
   @override
-  List<NotificationItem> build() => buildDummyNotifications();
+  List<NotificationItem> build() => const <NotificationItem>[];
+
+  Future<void> load() async {
+    try {
+      final stored = await _store.read();
+      if (stored != null) {
+        state = List.unmodifiable(stored);
+      }
+    } catch (_) {
+      return;
+    }
+  }
 
   void addNotification({
     required String title,
@@ -22,6 +41,7 @@ class NotificationsNotifier extends Notifier<List<NotificationItem>> {
       createdAt: DateTime.now(),
     );
     state = [item, ...state];
+    unawaited(_persist(state));
   }
 
   void notifyActivityLogged({
@@ -42,19 +62,30 @@ class NotificationsNotifier extends Notifier<List<NotificationItem>> {
     );
   }
 
+  void notifyClubJoined({required String clubName}) {
+    addNotification(
+      title: 'Joined $clubName',
+      body: 'You are now a member of $clubName. Stay tuned for club events!',
+      preference: NotificationPref.clubEvents,
+    );
+  }
+
   void markAsRead(String id) {
     state = [
       for (final item in state)
         item.id == id ? item.copyWith(isRead: true) : item,
     ];
+    unawaited(_persist(state));
   }
 
   void markAllAsRead() {
     state = [for (final item in state) item.copyWith(isRead: true)];
+    unawaited(_persist(state));
   }
 
   void remove(String id) {
     state = state.where((item) => item.id != id).toList();
+    unawaited(_persist(state));
   }
 
   void restore(NotificationItem item, int index) {
@@ -62,6 +93,15 @@ class NotificationsNotifier extends Notifier<List<NotificationItem>> {
     final position =
         index < 0 ? 0 : (index > state.length ? state.length : index);
     state = [...state.sublist(0, position), item, ...state.sublist(position)];
+    unawaited(_persist(state));
+  }
+
+  Future<void> _persist(List<NotificationItem> items) async {
+    try {
+      await _store.write(items);
+    } catch (_) {
+      return;
+    }
   }
 }
 

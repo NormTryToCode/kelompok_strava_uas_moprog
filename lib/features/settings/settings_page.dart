@@ -20,7 +20,6 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  String _privacyLevel = 'Everyone';
 
   @override
   void initState() {
@@ -102,7 +101,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _openPrivacySheet() {
-    const options = ['Everyone', 'Followers only', 'Only you'];
+    final current = ref.read(settingsProvider).privacy;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Styles.surface,
@@ -125,24 +124,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 ),
               ),
             ),
-            for (final option in options)
+            for (final option in PrivacyLevel.values)
               ListTile(
                 onTap: () {
-                  setState(() => _privacyLevel = option);
+                  ref.read(settingsProvider.notifier).setPrivacy(option);
                   Navigator.of(sheetContext).pop();
                 },
                 title: Text(
-                  option,
+                  option.label,
                   style: TextStyle(
-                    color: option == _privacyLevel
+                    color: option == current
                         ? Styles.primaryLight
                         : Styles.textPrimary,
-                    fontWeight: option == _privacyLevel
+                    fontWeight: option == current
                         ? FontWeight.w700
                         : FontWeight.w500,
                   ),
                 ),
-                trailing: option == _privacyLevel
+                trailing: option == current
                     ? const Icon(Icons.check, color: Styles.primaryLight)
                     : null,
               ),
@@ -152,7 +151,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ),
     );
   }
-
+  
   void _openNotificationPreferences() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -160,7 +159,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ),
     );
   }
-
+  
   Future<void> _confirmLogout() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -225,7 +224,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           SettingsTile(
             icon: Icons.lock_outline,
             title: 'Privacy controls',
-            subtitle: _privacyLevel,
+            subtitle: settings.privacy.label,
             onTap: _openPrivacySheet,
           ),
           SettingsTile(
