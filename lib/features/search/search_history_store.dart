@@ -19,19 +19,26 @@ abstract class SearchHistoryStore {
 }
 
 class PrefsSearchHistoryStore implements SearchHistoryStore {
-  static const String _key = 'search_history_items';
+  static const String _keyPrefix = 'search_history_items';
 
+  final String Function() _userId;
   SharedPreferencesAsync? _cache;
+
+  PrefsSearchHistoryStore({String Function()? userId})
+      : _userId = userId ?? resolveStorageUserId;
 
   SharedPreferencesAsync get _prefs => _cache ??= SharedPreferencesAsync();
 
+  String get _scopedKey => '${_keyPrefix}_${_userId()}';
+
   @override
   Future<List<String>> read() async {
-    return (await _prefs.getStringList(_key)) ?? const <String>[];
+    return (await _prefs.getStringList(_scopedKey)) ?? const <String>[];
   }
 
   @override
-  Future<void> write(List<String> items) => _prefs.setStringList(_key, items);
+  Future<void> write(List<String> items) =>
+      _prefs.setStringList(_scopedKey, items);
 }
 
 class FirestoreSearchHistoryStore implements SearchHistoryStore {
@@ -47,10 +54,10 @@ class FirestoreSearchHistoryStore implements SearchHistoryStore {
     HistoryReadAll? readAll,
     HistorySaveDoc? saveDoc,
     String Function()? userId,
-  })  : _fallback = fallback ?? PrefsSearchHistoryStore(),
+  })  : _userId = userId ?? resolveStorageUserId,
+        _fallback = fallback ?? PrefsSearchHistoryStore(userId: userId),
         _readAll = readAll,
-        _saveDoc = saveDoc,
-        _userId = userId ?? resolveStorageUserId;
+        _saveDoc = saveDoc;
 
   @override
   Future<List<String>> read() async {
@@ -63,11 +70,13 @@ class FirestoreSearchHistoryStore implements SearchHistoryStore {
           return (doc['items'] as List).whereType<String>().toList();
         }
       }
-    } catch (_) {}
-    try {
-      return await _fallback.read();
-    } catch (_) {
       return const <String>[];
+    } catch (_) {
+      try {
+        return await _fallback.read();
+      } catch (_) {
+        return const <String>[];
+      }
     }
   }
 

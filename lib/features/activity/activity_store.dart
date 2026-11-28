@@ -17,17 +17,23 @@ abstract class ActivityStore {
 }
 
 class PrefsActivityStore implements ActivityStore {
-  static const String _key = 'manual_activities';
+  static const String _keyPrefix = 'manual_activities';
 
+  final String Function() _userId;
   SharedPreferencesAsync? _cache;
+
+  PrefsActivityStore({String Function()? userId})
+      : _userId = userId ?? resolveStorageUserId;
 
   SharedPreferencesAsync get _prefs => _cache ??= SharedPreferencesAsync();
 
-  @override
-  Future<String?> read() => _prefs.getString(_key);
+  String get _scopedKey => '${_keyPrefix}_${_userId()}';
 
   @override
-  Future<void> write(String json) => _prefs.setString(_key, json);
+  Future<String?> read() => _prefs.getString(_scopedKey);
+
+  @override
+  Future<void> write(String json) => _prefs.setString(_scopedKey, json);
 }
 
 class FirestoreActivityStore implements ActivityStore {
@@ -44,10 +50,10 @@ class FirestoreActivityStore implements ActivityStore {
     FirestoreReadAll? readAll,
     FirestoreSaveDoc? saveDoc,
     String Function()? userId,
-  })  : _fallback = fallback ?? PrefsActivityStore(),
+  })  : _userId = userId ?? resolveStorageUserId,
+        _fallback = fallback ?? PrefsActivityStore(userId: userId),
         _readAll = readAll,
-        _saveDoc = saveDoc,
-        _userId = userId ?? resolveStorageUserId;
+        _saveDoc = saveDoc;
 
   Future<List<JsonMap>> _getAll(String collection) {
     final reader = _readAll ?? DatabaseService.instance.getAll;
@@ -69,8 +75,14 @@ class FirestoreActivityStore implements ActivityStore {
           return doc['payload'] as String;
         }
       }
-    } catch (_) {}
-    return _fallback.read();
+      return null;
+    } catch (_) {
+      try {
+        return await _fallback.read();
+      } catch (_) {
+        return null;
+      }
+    }
   }
 
   @override

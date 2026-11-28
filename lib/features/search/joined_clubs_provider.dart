@@ -22,21 +22,27 @@ abstract class JoinedClubsStore {
 }
 
 class PrefsJoinedClubsStore implements JoinedClubsStore {
-  static const String _key = 'joined_club_ids';
+  static const String _keyPrefix = 'joined_club_ids';
 
+  final String Function() _userId;
   SharedPreferencesAsync? _cache;
+
+  PrefsJoinedClubsStore({String Function()? userId})
+      : _userId = userId ?? resolveStorageUserId;
 
   SharedPreferencesAsync get _prefs => _cache ??= SharedPreferencesAsync();
 
+  String get _scopedKey => '${_keyPrefix}_${_userId()}';
+
   @override
   Future<Set<String>> read() async {
-    final list = await _prefs.getStringList(_key);
+    final list = await _prefs.getStringList(_scopedKey);
     return list == null ? <String>{} : list.toSet();
   }
 
   @override
   Future<void> write(Set<String> ids) {
-    return _prefs.setStringList(_key, ids.toList(growable: false));
+    return _prefs.setStringList(_scopedKey, ids.toList(growable: false));
   }
 }
 
@@ -53,10 +59,10 @@ class FirestoreJoinedClubsStore implements JoinedClubsStore {
     JoinedClubReadAll? readAll,
     JoinedClubSaveDoc? saveDoc,
     String Function()? userId,
-  })  : _fallback = fallback ?? PrefsJoinedClubsStore(),
+  })  : _userId = userId ?? resolveStorageUserId,
+        _fallback = fallback ?? PrefsJoinedClubsStore(userId: userId),
         _readAll = readAll,
-        _saveDoc = saveDoc,
-        _userId = userId ?? resolveStorageUserId;
+        _saveDoc = saveDoc;
 
   @override
   Future<Set<String>> read() async {
@@ -69,11 +75,13 @@ class FirestoreJoinedClubsStore implements JoinedClubsStore {
           return (doc['ids'] as List).whereType<String>().toSet();
         }
       }
-    } catch (_) {}
-    try {
-      return await _fallback.read();
-    } catch (_) {
       return <String>{};
+    } catch (_) {
+      try {
+        return await _fallback.read();
+      } catch (_) {
+        return <String>{};
+      }
     }
   }
 

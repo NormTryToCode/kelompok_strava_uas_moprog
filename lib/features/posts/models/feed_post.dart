@@ -43,6 +43,7 @@ class FeedPost {
   final DateTime createdAt;
   final int likes;
   final bool isLiked;
+  final List<String> likedBy;
   final List<FeedComment> comments;
 
   const FeedPost({
@@ -57,8 +58,14 @@ class FeedPost {
     this.imagePath,
     this.likes = 0,
     this.isLiked = false,
+    this.likedBy = const <String>[],
     this.comments = const <FeedComment>[],
   });
+
+  bool isLikedBy(String userId) {
+    if (likedBy.isNotEmpty) return likedBy.contains(userId);
+    return isLiked;
+  }
 
   FeedPost copyWith({
     String? title,
@@ -67,6 +74,7 @@ class FeedPost {
     String? imagePath,
     int? likes,
     bool? isLiked,
+    List<String>? likedBy,
     List<FeedComment>? comments,
   }) {
     return FeedPost(
@@ -81,6 +89,7 @@ class FeedPost {
       createdAt: createdAt,
       likes: likes ?? this.likes,
       isLiked: isLiked ?? this.isLiked,
+      likedBy: likedBy ?? this.likedBy,
       comments: comments ?? this.comments,
     );
   }
@@ -98,6 +107,7 @@ class FeedPost {
       'createdAt': createdAt.toIso8601String(),
       'likes': likes,
       'isLiked': isLiked,
+      'likedBy': likedBy,
       'comments': [for (final c in comments) c.toJson()],
     };
   }
@@ -112,6 +122,11 @@ class FeedPost {
           ]
         : const <FeedComment>[];
 
+    final rawLikedBy = json['likedBy'];
+    final parsedLikedBy = rawLikedBy is List
+        ? rawLikedBy.whereType<String>().toList(growable: false)
+        : const <String>[];
+
     return FeedPost(
       id: json['id'] as String? ?? '',
       authorId: json['authorId'] as String? ?? '',
@@ -123,8 +138,9 @@ class FeedPost {
       imagePath: json['imagePath'] as String?,
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
-      likes: (json['likes'] as num?)?.toInt() ?? 0,
+      likes: (json['likes'] as num?)?.toInt() ?? parsedLikedBy.length,
       isLiked: json['isLiked'] as bool? ?? false,
+      likedBy: List.unmodifiable(parsedLikedBy),
       comments: List.unmodifiable(parsedComments),
     );
   }
