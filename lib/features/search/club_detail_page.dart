@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/subfeatures/club_detail/club_detail_page.dart'
+    as groups_detail;
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/joined_clubs_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
@@ -102,6 +104,36 @@ class SearchClubDetailPage extends ConsumerWidget {
               ),
             ),
             const Spacer(),
+            Builder(
+              builder: (context) {
+                final groupsClubs = ref.watch(clubsProvider).valueOrNull;
+                final matched = groupsClubs
+                    ?.where((c) => c.id == club.id)
+                    .firstOrNull;
+                if (matched == null) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          groups_detail.ClubDetailPage.open(context, matched),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Styles.primaryLight,
+                        side: const BorderSide(color: Styles.borderStrong),
+                        shape: const StadiumBorder(),
+                      ),
+                      icon: const Icon(Icons.groups_outlined),
+                      label: const Text(
+                        'Open Club Page',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
             SizedBox(
               width: double.infinity,
               height: 52,

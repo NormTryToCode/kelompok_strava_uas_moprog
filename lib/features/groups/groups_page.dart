@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/challenges/challenges_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/clubs/clubs_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/tabs/events/events_tab.dart';
 import 'package:kelompok_strava_uas_moprog/features/groups/widgets/groups_tab_bar.dart';
-import 'package:kelompok_strava_uas_moprog/features/relationship/pages/friend_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/pages/inbox_page.dart';
+import 'package:kelompok_strava_uas_moprog/features/relationship/providers/chat_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/search_page.dart';
 import 'package:kelompok_strava_uas_moprog/features/settings/settings_page.dart';
 import 'package:kelompok_strava_uas_moprog/shared/widgets/app_header.dart';
@@ -25,10 +27,13 @@ class GroupsPage extends StatelessWidget {
         appBar: AppHeader(
           title: 'Groups',
           actions: [
-            HeaderIconButton(
-              icon: Icons.forum_outlined,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const FriendsPage()),
+            Consumer(
+              builder: (context, ref, _) => HeaderIconButton(
+                icon: Icons.forum_outlined,
+                badgeCount: ref.watch(unreadDmCountProvider).valueOrNull ?? 0,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(builder: (_) => const InboxPage()),
+                ),
               ),
             ),
             HeaderIconButton(
@@ -59,4 +64,3 @@ class GroupsPage extends StatelessWidget {
     );
   }
 }
-
