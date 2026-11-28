@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
+import 'package:kelompok_strava_uas_moprog/features/groups/providers/club_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/joined_clubs_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/search/models/club.dart';
@@ -10,6 +13,53 @@ class SearchClubDetailPage extends ConsumerWidget {
   final SearchClub club;
 
   const SearchClubDetailPage({super.key, required this.club});
+
+  Widget _buildHeaderAvatar() {
+    final path = club.avatarPath?.trim();
+    if (path == null || path.isEmpty) {
+      return CircleAvatar(
+        radius: 32,
+        backgroundColor: Styles.surfaceHighlight,
+        child: Text(
+          club.initials,
+          style: const TextStyle(
+            color: Styles.primaryLight,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      );
+    }
+    final isNetwork =
+        path.startsWith('http://') || path.startsWith('https://');
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: isNetwork
+          ? Image.network(path, width: 64, height: 64, fit: BoxFit.cover)
+          : Image.file(File(path), width: 64, height: 64, fit: BoxFit.cover),
+    );
+  }
+
+  Future<void> _toggleJoin(WidgetRef ref) async {
+    final justJoined = ref.read(joinedClubsProvider.notifier).toggle(club.id);
+    if (justJoined) {
+      ref
+          .read(notificationsProvider.notifier)
+          .notifyClubJoined(clubName: club.name);
+    }
+    try {
+      final groupsClubs = ref.read(clubsProvider).valueOrNull;
+      if (groupsClubs != null && groupsClubs.any((c) => c.id == club.id)) {
+        if (justJoined) {
+          await ref.read(clubsProvider.notifier).joinClub(club.id);
+        } else {
+          await ref.read(clubsProvider.notifier).leaveClub(club.id);
+        }
+      }
+    } catch (_) {
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,6 +77,8 @@ class SearchClubDetailPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildHeaderAvatar(),
+            const SizedBox(height: 16),
             Text(
               displayedClub.name,
               style: const TextStyle(
@@ -54,15 +106,7 @@ class SearchClubDetailPage extends ConsumerWidget {
               width: double.infinity,
               height: 52,
               child: FilledButton(
-                onPressed: () {
-                  final justJoined =
-                      ref.read(joinedClubsProvider.notifier).toggle(club.id);
-                  if (justJoined) {
-                    ref
-                        .read(notificationsProvider.notifier)
-                        .notifyClubJoined(clubName: club.name);
-                  }
-                },
+                onPressed: () => _toggleJoin(ref),
                 style: FilledButton.styleFrom(
                   backgroundColor:
                       isJoined ? Styles.surfaceElevated : Styles.primary,
