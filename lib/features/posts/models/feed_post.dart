@@ -33,6 +33,7 @@ class FeedComment {
 
 class FeedPost {
   final String id;
+  final String authorId;
   final String authorName;
   final String? authorPhotoUrl;
   final String title;
@@ -50,6 +51,7 @@ class FeedPost {
     required this.title,
     required this.caption,
     required this.createdAt,
+    this.authorId = '',
     this.authorPhotoUrl,
     this.tag = 'Workout',
     this.imagePath,
@@ -69,6 +71,7 @@ class FeedPost {
   }) {
     return FeedPost(
       id: id,
+      authorId: authorId,
       authorName: authorName,
       authorPhotoUrl: authorPhotoUrl,
       title: title ?? this.title,
@@ -85,6 +88,7 @@ class FeedPost {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'authorId': authorId,
       'authorName': authorName,
       'authorPhotoUrl': authorPhotoUrl,
       'title': title,
@@ -110,6 +114,7 @@ class FeedPost {
 
     return FeedPost(
       id: json['id'] as String? ?? '',
+      authorId: json['authorId'] as String? ?? '',
       authorName: json['authorName'] as String? ?? 'Stride Athlete',
       authorPhotoUrl: json['authorPhotoUrl'] as String?,
       title: json['title'] as String? ?? '',

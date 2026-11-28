@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kelompok_strava_uas_moprog/core/database/storage_user_id.dart';
 import 'package:kelompok_strava_uas_moprog/core/theme/styles.dart';
 import 'package:kelompok_strava_uas_moprog/features/notifications/notification_provider.dart';
 import 'package:kelompok_strava_uas_moprog/features/posts/feed_posts_provider.dart';
@@ -102,6 +103,7 @@ class _CreateFeedPostPageState extends ConsumerState<CreateFeedPostPage> {
 
     final post = FeedPost(
       id: 'post_${DateTime.now().microsecondsSinceEpoch}',
+      authorId: resolveStorageUserId(),
       authorName: _resolveAuthorName(),
       authorPhotoUrl: _resolveAuthorPhoto(),
       title: _title.text.trim(),
@@ -313,7 +315,10 @@ class _CreateFeedPostPageState extends ConsumerState<CreateFeedPostPage> {
                               foregroundColor: Styles.primaryLight,
                               side: const BorderSide(color: Styles.borderStrong),
                             ),
-                            icon: const Icon(Icons.photo_library_outlined, size: 18),
+                            icon: const Icon(
+                              Icons.photo_library_outlined,
+                              size: 18,
+                            ),
                             label: const Text('Gallery'),
                           ),
                         ),
@@ -325,7 +330,10 @@ class _CreateFeedPostPageState extends ConsumerState<CreateFeedPostPage> {
                               foregroundColor: Styles.primaryLight,
                               side: const BorderSide(color: Styles.borderStrong),
                             ),
-                            icon: const Icon(Icons.camera_alt_outlined, size: 18),
+                            icon: const Icon(
+                              Icons.camera_alt_outlined,
+                              size: 18,
+                            ),
                             label: const Text('Camera'),
                           ),
                         ),
