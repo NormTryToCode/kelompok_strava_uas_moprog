@@ -23,24 +23,30 @@ abstract class SettingsStore {
 }
 
 class PrefsSettingsStore implements SettingsStore {
+  final String Function() _userId;
   SharedPreferencesAsync? _cache;
+
+  PrefsSettingsStore({String Function()? userId})
+      : _userId = userId ?? resolveStorageUserId;
 
   SharedPreferencesAsync get _prefs => _cache ??= SharedPreferencesAsync();
 
+  String _scopedKey(String key) => '${_userId()}_$key';
+
   @override
-  Future<String?> readString(String key) => _prefs.getString(key);
+  Future<String?> readString(String key) => _prefs.getString(_scopedKey(key));
 
   @override
   Future<void> writeString(String key, String value) {
-    return _prefs.setString(key, value);
+    return _prefs.setString(_scopedKey(key), value);
   }
 
   @override
-  Future<bool?> readBool(String key) => _prefs.getBool(key);
+  Future<bool?> readBool(String key) => _prefs.getBool(_scopedKey(key));
 
   @override
   Future<void> writeBool(String key, bool value) {
-    return _prefs.setBool(key, value);
+    return _prefs.setBool(_scopedKey(key), value);
   }
 }
 
@@ -54,22 +60,24 @@ class FirestoreSettingsStore implements SettingsStore {
   final String Function() _userId;
   final Map<String, Object> _remoteCache = {};
   String? _fetchedUid;
+  bool _remoteSucceeded = false;
 
   FirestoreSettingsStore({
     SettingsStore? fallback,
     SettingsReadAll? readAll,
     SettingsSaveDoc? saveDoc,
     String Function()? userId,
-  })  : _fallback = fallback ?? PrefsSettingsStore(),
+  })  : _userId = userId ?? resolveStorageUserId,
+        _fallback = fallback ?? PrefsSettingsStore(userId: userId),
         _readAll = readAll,
-        _saveDoc = saveDoc,
-        _userId = userId ?? resolveStorageUserId;
+        _saveDoc = saveDoc;
 
   Future<void> _ensureFetched() async {
     final activeDocId = _userId();
     if (_fetchedUid == activeDocId) return;
     _fetchedUid = activeDocId;
     _remoteCache.clear();
+    _remoteSucceeded = false;
     try {
       final reader = _readAll ?? DatabaseService.instance.getAll;
       final docs = await reader(collectionName);
@@ -83,8 +91,9 @@ class FirestoreSettingsStore implements SettingsStore {
           break;
         }
       }
+      _remoteSucceeded = true;
     } catch (_) {
-      return;
+      _remoteSucceeded = false;
     }
   }
 
@@ -106,7 +115,12 @@ class FirestoreSettingsStore implements SettingsStore {
     await _ensureFetched();
     final remote = _remoteCache[key];
     if (remote is String) return remote;
-    return _fallback.readString(key);
+    if (_remoteSucceeded) return null;
+    try {
+      return await _fallback.readString(key);
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -124,7 +138,12 @@ class FirestoreSettingsStore implements SettingsStore {
     await _ensureFetched();
     final remote = _remoteCache[key];
     if (remote is bool) return remote;
-    return _fallback.readBool(key);
+    if (_remoteSucceeded) return null;
+    try {
+      return await _fallback.readBool(key);
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

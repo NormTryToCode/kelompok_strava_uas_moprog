@@ -17,21 +17,27 @@ abstract class FollowStore {
 }
 
 class PrefsFollowStore implements FollowStore {
-  static const String _key = 'following_ids';
+  static const String _keyPrefix = 'following_ids';
 
+  final String Function() _userId;
   SharedPreferencesAsync? _cache;
+
+  PrefsFollowStore({String Function()? userId})
+      : _userId = userId ?? resolveStorageUserId;
 
   SharedPreferencesAsync get _prefs => _cache ??= SharedPreferencesAsync();
 
+  String get _scopedKey => '${_keyPrefix}_${_userId()}';
+
   @override
   Future<Set<String>> read() async {
-    final list = await _prefs.getStringList(_key);
+    final list = await _prefs.getStringList(_scopedKey);
     return list == null ? <String>{} : list.toSet();
   }
 
   @override
   Future<void> write(Set<String> ids) {
-    return _prefs.setStringList(_key, ids.toList(growable: false));
+    return _prefs.setStringList(_scopedKey, ids.toList(growable: false));
   }
 }
 
@@ -48,10 +54,10 @@ class FirestoreFollowStore implements FollowStore {
     FollowReadAll? readAll,
     FollowSaveDoc? saveDoc,
     String Function()? userId,
-  })  : _fallback = fallback ?? PrefsFollowStore(),
+  })  : _userId = userId ?? resolveStorageUserId,
+        _fallback = fallback ?? PrefsFollowStore(userId: userId),
         _readAll = readAll,
-        _saveDoc = saveDoc,
-        _userId = userId ?? resolveStorageUserId;
+        _saveDoc = saveDoc;
 
   @override
   Future<Set<String>> read() async {
@@ -64,11 +70,13 @@ class FirestoreFollowStore implements FollowStore {
           return (doc['ids'] as List).whereType<String>().toSet();
         }
       }
-    } catch (_) {}
-    try {
-      return await _fallback.read();
-    } catch (_) {
       return <String>{};
+    } catch (_) {
+      try {
+        return await _fallback.read();
+      } catch (_) {
+        return <String>{};
+      }
     }
   }
 

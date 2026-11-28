@@ -22,15 +22,21 @@ abstract class NotificationStore {
 }
 
 class PrefsNotificationStore implements NotificationStore {
-  static const String _key = 'user_notifications_json';
+  static const String _keyPrefix = 'user_notifications_json';
 
+  final String Function() _userId;
   SharedPreferencesAsync? _cache;
+
+  PrefsNotificationStore({String Function()? userId})
+      : _userId = userId ?? resolveStorageUserId;
 
   SharedPreferencesAsync get _prefs => _cache ??= SharedPreferencesAsync();
 
+  String get _scopedKey => '${_keyPrefix}_${_userId()}';
+
   @override
   Future<List<NotificationItem>?> read() async {
-    final raw = await _prefs.getString(_key);
+    final raw = await _prefs.getString(_scopedKey);
     if (raw == null || raw.isEmpty) return null;
     final decoded = jsonDecode(raw) as List<dynamic>;
     return [
@@ -42,7 +48,7 @@ class PrefsNotificationStore implements NotificationStore {
   @override
   Future<void> write(List<NotificationItem> items) {
     final encoded = jsonEncode([for (final item in items) item.toJson()]);
-    return _prefs.setString(_key, encoded);
+    return _prefs.setString(_scopedKey, encoded);
   }
 }
 
@@ -59,10 +65,10 @@ class FirestoreNotificationStore implements NotificationStore {
     NotificationReadAll? readAll,
     NotificationSaveDoc? saveDoc,
     String Function()? userId,
-  })  : _fallback = fallback ?? PrefsNotificationStore(),
+  })  : _userId = userId ?? resolveStorageUserId,
+        _fallback = fallback ?? PrefsNotificationStore(userId: userId),
         _readAll = readAll,
-        _saveDoc = saveDoc,
-        _userId = userId ?? resolveStorageUserId;
+        _saveDoc = saveDoc;
 
   @override
   Future<List<NotificationItem>?> read() async {
@@ -81,11 +87,13 @@ class FirestoreNotificationStore implements NotificationStore {
           ];
         }
       }
-    } catch (_) {}
-    try {
-      return await _fallback.read();
+      return const <NotificationItem>[];
     } catch (_) {
-      return null;
+      try {
+        return await _fallback.read();
+      } catch (_) {
+        return null;
+      }
     }
   }
 
