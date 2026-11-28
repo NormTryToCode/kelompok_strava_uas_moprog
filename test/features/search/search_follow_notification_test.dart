@@ -25,6 +25,7 @@ ProviderContainer _container() {
       settingsStoreProvider.overrideWithValue(MemorySettingsStore()),
       followStoreProvider.overrideWithValue(MemoryFollowStore()),
       notificationStoreProvider.overrideWithValue(MemoryNotificationStore()),
+      pendingClubInvitesProvider.overrideWithValue(const []),
     ],
   );
   addTearDown(container.dispose);

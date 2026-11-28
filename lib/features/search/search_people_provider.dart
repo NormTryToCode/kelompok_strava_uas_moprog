@@ -26,12 +26,6 @@ Person? personFromAthleteDoc(AthleteJson doc) {
   final location = [city, country].where((s) => s.isNotEmpty).join(', ');
 
   final sport = (doc['primarySport'] as String? ?? '').trim();
-  return Person(
-    id: id,
-    name: displayName,
-    location: location.isEmpty ? 'Indonesia' : location,
-    tag: sport.isEmpty ? 'Stride Athlete' : '$sport athlete',
-  );
   final photo = (doc['photoUrl'] as String?)?.trim();
   return Person(
     id: id,
