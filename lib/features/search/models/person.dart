@@ -3,12 +3,14 @@ class Person {
   final String name;
   final String location;
   final String tag;
+  final String? photoUrl;
 
   const Person({
     required this.id,
     required this.name,
     required this.location,
     required this.tag,
+    this.photoUrl,
   });
 
   String get initials {

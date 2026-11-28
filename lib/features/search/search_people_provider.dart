@@ -32,6 +32,14 @@ Person? personFromAthleteDoc(AthleteJson doc) {
     location: location.isEmpty ? 'Indonesia' : location,
     tag: sport.isEmpty ? 'Stride Athlete' : '$sport athlete',
   );
+  final photo = (doc['photoUrl'] as String?)?.trim();
+  return Person(
+    id: id,
+    name: displayName,
+    location: location.isEmpty ? 'Indonesia' : location,
+    tag: sport.isEmpty ? 'Stride Athlete' : '$sport athlete',
+    photoUrl: (photo == null || photo.isEmpty) ? null : photo,
+  );
 }
 
 final searchPeopleAsyncProvider = FutureProvider<List<Person>>((ref) async {
