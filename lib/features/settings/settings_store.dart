@@ -53,7 +53,7 @@ class FirestoreSettingsStore implements SettingsStore {
   final SettingsSaveDoc? _saveDoc;
   final String Function() _userId;
   final Map<String, Object> _remoteCache = {};
-  bool _fetched = false;
+  String? _fetchedUid;
 
   FirestoreSettingsStore({
     SettingsStore? fallback,
@@ -66,9 +66,10 @@ class FirestoreSettingsStore implements SettingsStore {
         _userId = userId ?? resolveStorageUserId;
 
   Future<void> _ensureFetched() async {
-    if (_fetched) return;
-    _fetched = true;
     final activeDocId = _userId();
+    if (_fetchedUid == activeDocId) return;
+    _fetchedUid = activeDocId;
+    _remoteCache.clear();
     try {
       final reader = _readAll ?? DatabaseService.instance.getAll;
       final docs = await reader(collectionName);
@@ -110,6 +111,7 @@ class FirestoreSettingsStore implements SettingsStore {
 
   @override
   Future<void> writeString(String key, String value) async {
+    await _ensureFetched();
     _remoteCache[key] = value;
     try {
       await _fallback.writeString(key, value);
@@ -127,6 +129,7 @@ class FirestoreSettingsStore implements SettingsStore {
 
   @override
   Future<void> writeBool(String key, bool value) async {
+    await _ensureFetched();
     _remoteCache[key] = value;
     try {
       await _fallback.writeBool(key, value);
